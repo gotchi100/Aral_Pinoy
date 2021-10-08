@@ -1,19 +1,17 @@
 <template>
   <div id="app">
     <Navbar />
-    <img alt="Vue logo" src="./assets/logo.png">
-    <Content msg="Admin Title"/>
+
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import Content from './components/Content.vue'
 import Navbar from './components/Navbar.vue'
 
 export default {
   name: 'App',
   components: {
-    Content,
     Navbar
   }
 }
