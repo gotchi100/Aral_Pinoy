@@ -1,11 +1,19 @@
 <template>
-  <div>
-      Login Page
-  </div>
+    <div>
+        <img alt="Vue logo" src="../assets/logo.png">
+        <Content/>
+    </div>
 </template>
 
 <script>
-export default {
-  name: 'Login'
-}
+
+import Content from '../components/Login_Form'
+
+export default ({
+
+  name: 'Login_Page',
+  components: {
+    Content
+  }
+})
 </script>

@@ -1,7 +1,7 @@
 <template>
   <b-navbar toggleable="lg" type="dark" variant="info">
     <b-navbar-brand to="home">
-      <img :src="logo" style="width: 25px; height: 25px">
+      <img :src="logo" style="width: 75px; height: 75px">
     </b-navbar-brand>
 
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
@@ -19,7 +19,7 @@
 </template>
 
 <script>
-const logo = require('../assets/logo.png')
+const logo = require('../assets/aralpinoy.png')
 
 export default {
   name: 'Navbar',

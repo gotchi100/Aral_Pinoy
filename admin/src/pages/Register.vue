@@ -1,11 +1,16 @@
 <template>
-  <div>
-      Register Page
-  </div>
+    <div>
+        <RegistrationForm/>
+        </div>
 </template>
 
 <script>
-export default {
-  name: 'Register'
-}
+import RegistrationForm from '../components/Registration_Form.vue'
+
+export default ({
+  name: 'Registration_Page',
+  components: {
+    RegistrationForm
+  }
+})
 </script>
