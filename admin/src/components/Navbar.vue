@@ -1,7 +1,7 @@
 <template>
-  <b-navbar toggleable="lg" type="dark" variant="info">
+  <b-navbar class="navbar">
     <b-navbar-brand to="home">
-      <img :src="logo" style="width: 75px; height: 75px">
+      <img :src="logo" style="margin-left: 25px; width: 55px; height: 32px">
     </b-navbar-brand>
 
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
@@ -10,9 +10,8 @@
     </b-collapse>
 
     <b-navbar-nav class="ml-auto">
-      <b-navbar-nav>
-        <b-nav-item to="login">Login</b-nav-item>
-        <b-nav-item to="register">Register</b-nav-item>
+      <b-navbar-nav right>
+        <b-nav-item to="login" style="margin-right: 8px;" class="login">Login</b-nav-item>
       </b-navbar-nav>
     </b-navbar-nav>
   </b-navbar>
@@ -30,3 +29,15 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+.navbar{
+  background-color: #b6b6b6;
+}
+.events, .about, .login, .register {
+  color: black;
+  font-family: 'Bebas Neue', cursive;
+  font-size: 18px;
+}
+</style>
