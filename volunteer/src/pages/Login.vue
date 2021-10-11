@@ -36,7 +36,7 @@
               </b-button>
             </p>
           </div>
-          <label class="signup" for="input-small">Don't have an account? Sign up here</label>
+          <label class="signup" for="input-small">Don't have an account? <b-link to="register">Sign up here</b-link></label>
         </b-container>
       </b-card>
     </div>
