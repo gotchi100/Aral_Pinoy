@@ -1,12 +1,22 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const UserModel = require('../models/users');
 
-/* GET users listing. */
-router.post('/', function(req, res, next) {
-  res.send({
-    id: 1,
-    name: ''
-  });
+/* Create a user. */
+router.post('/', async function(req, res, next) {
+  const {
+    firstName,
+    lastName
+  } = req.body;
+
+  const user = new UserModel();
+
+  user.firstName = firstName;
+  user.lastName = lastName;
+
+  await user.save();
+
+  res.send(user);
 });
 
 module.exports = router;
