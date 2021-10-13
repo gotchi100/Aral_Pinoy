@@ -1,6 +1,6 @@
 <template>
   <b-navbar class="navbar">
-    <b-navbar-brand to="home">
+    <b-navbar-brand to="/">
       <img :src="logo" style="margin-left: 25px; width: 55px; height: 32px">
     </b-navbar-brand>
 
