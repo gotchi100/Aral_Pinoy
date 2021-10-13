@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -8,7 +10,7 @@ const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 
 async function connectDatabase () {
-    await mongoose.connect('mongodb://localhost:27017/aral_pinoy');
+    await mongoose.connect(process.env.MONGODB_URI);
 
     console.log('Connected to database');
 }
