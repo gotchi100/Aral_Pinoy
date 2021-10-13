@@ -9,40 +9,40 @@
           <b-row class="my-1">
             <label class="lname" for="input-small">Last Name</label>
             <b-col>
-              <b-form-input v-model="text"></b-form-input>
+              <b-form-input v-model="lastName"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="fname" for="input-small">First Name</label>
             <b-col>
-              <b-form-input v-model="text"></b-form-input>
+              <b-form-input v-model="firstName"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="cnum" for="input-small">Contact Number</label>
             <b-col>
-              <b-form-input v-model="text"></b-form-input>
+              <b-form-input v-model="contactNumber"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="email" for="input-small">Email Address</label>
             <b-col>
-              <b-form-input v-model="text"></b-form-input>
+              <b-form-input v-model="email"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="password" for="input-small">Password</label>
             <b-col>
-              <b-form-input v-model="text" type="password"></b-form-input>
+              <b-form-input v-model="password" type="password"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="cpassword" for="input-small">Confirm Password</label>
             <b-col>
-              <b-form-input v-model="text" type="password"></b-form-input>
+              <b-form-input v-model="confirmPassword" type="password"></b-form-input>
             </b-col>
           </b-row>
-          <b-button pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
+          <b-button @click="register" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
             Register
           </b-button>
           <div class="col-md-12 ">
@@ -69,13 +69,30 @@
 </template>
 
 <script>
+const axios = require('axios').default
 const logo = require('../assets/aralpinoywords.png')
 
 export default {
   name: 'Register',
   data () {
     return {
-      logo
+      logo,
+      firstName: '',
+      lastName: '',
+      contactNumber: '',
+      email: '',
+      password: '',
+      confirmPassword: ''
+    }
+  },
+  methods: {
+    register () {
+      axios.post('http://localhost:3000/users', {
+        email: this.email,
+        password: this.password,
+        firstName: this.firstName,
+        lastName: this.lastName
+      })
     }
   }
 }
