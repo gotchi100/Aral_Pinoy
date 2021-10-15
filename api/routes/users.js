@@ -1,59 +1,70 @@
 const express = require('express');
-const router = express.Router();
+const expressJwt = require('express-jwt')
+
 const UserModel = require('../models/users');
 
+const router = express.Router();
+
 /* Create a user. */
-router.post('/', async function(req, res, next) {
-  const {
-    email,
-    password,
-    contactNumber,
-    firstName,
-    middleName,
-    lastName
-  } = req.body;
+router.post(
+  '/', 
+  expressJwt({ secret: 'secret', algorithms: ['HS256'] }),
+  async function(req, res, next) {
+    const {
+      email,
+      password,
+      contactNumber,
+      firstName,
+      middleName,
+      lastName
+    } = req.body;
 
-  const user = new UserModel();
+    const user = new UserModel();
 
-  user.email = email;
-  user.password = password;
-  user.contactNumber = contactNumber;
-  user.firstName = firstName;
-  user.middleName = middleName;
-  user.lastName = lastName;
+    user.email = email;
+    user.password = password;
+    user.contactNumber = contactNumber;
+    user.firstName = firstName;
+    user.middleName = middleName;
+    user.lastName = lastName;
 
-  try {
-    await user.save();
+    try {
+      await user.save();
 
-    res.send(user);
-  } catch (error) {
-    res.json({
-      error: {
-        message: error.message
-      }
-    });
+      res.send(user);
+    } catch (error) {
+      res.json({
+        error: {
+          message: error.message
+        }
+      });
 
-    next();
+      next();
+    }
   }
-});
+);
 
 /* Retrieve a user. */
-router.get('/:id', async function(req, res, next) {
-  const { id } = req.params;
+router.get(
+  '/:id',
+  expressJwt({ secret: 'secret', algorithms: ['HS256'] }),
+  async function(req, res, next) {
+    const { id } = req.params;
 
-  const user = await UserModel.findById(id);
+    const user = await UserModel.findById(id);
 
-  try {
+    if (user === null) {
+      res.json({
+        error: {
+          message: 'User not found'
+        }
+      });
+
+      return next();
+    }
+
     res.send(user);
-  } catch (error) {
-    res.json({
-      error: {
-        message: error.message
-      }
-    });
-
-    next();
   }
-});
+);
 
 module.exports = router;
