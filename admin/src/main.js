@@ -20,6 +20,8 @@ import AdminProfile from './pages/AdminProfile.vue'
 import Events from './pages/AdminEventList.vue'
 import Volunteers from './pages/AdminVolunteerList.vue'
 
+import vuexStore from './store'
+
 library.add(fas)
 library.add(fab)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
@@ -33,23 +35,102 @@ Vue.use(IconsPlugin)
 Vue.use(VueRouter)
 Vue.use(Vuex)
 
+const store = new Vuex.Store(vuexStore)
+
 const routes = [
-  { path: '/login', component: Login },
-  { path: '/dashboard', component: Dashboard },
-  { path: '/inkindreport', component: InKindReport },
-  { path: '/monetaryreport', component: MonetaryReport },
-  { path: '/eventevalreport', component: EventEvalReport },
-  { path: '/volunteerreport', component: VolunteerReport },
-  { path: '/adminprofile', component: AdminProfile },
-  { path: '/events', component: Events },
-  { path: '/volunteers', component: Volunteers }
+  {
+    path: '/',
+    component: Dashboard,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/login',
+    component: Login
+  },
+  {
+    path: '/dashboard',
+    component: Dashboard,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/inkindreport',
+    component: InKindReport,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/monetaryreport',
+    component: MonetaryReport,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/eventevalreport',
+    component: EventEvalReport,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/volunteerreport',
+    component: VolunteerReport,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/adminprofile',
+    component: AdminProfile,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/events',
+    component: Events,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/volunteers',
+    component: Volunteers,
+    meta: {
+      requiresAuth: true
+    }
+  }
 ]
 
 const router = new VueRouter({
   routes
 })
 
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    // this route requires auth, check if logged in
+    // if not, redirect to login page.
+    if (!store.getters.isLoggedIn) {
+      next({ path: '/login' })
+    } else {
+      next() // go to wherever I'm going
+    }
+  } else {
+    if (to.path === '/login' && store.getters.isLoggedIn) {
+      next({ path: '/dashboard' })
+    } else {
+      next() // does not require auth, make sure to always call next()!
+    }
+  }
+})
+
 new Vue({
   render: h => h(App),
-  router
+  router,
+  store
 }).$mount('#app')

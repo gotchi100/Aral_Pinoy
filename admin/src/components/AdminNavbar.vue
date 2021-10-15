@@ -48,11 +48,11 @@
 
     <b-navbar-nav class="ml-auto">
       <b-navbar-nav right>
-        <b-nav-item-dropdown style="margin-right: 40px; color: black;" class="user" text="Antonio">
+        <b-nav-item-dropdown style="margin-right: 40px; color: black;" class="user" :text="$store.state.user.firstName">
             <b-dropdown-item to="AdminProfile">Profile</b-dropdown-item>
             <b-dropdown-item href="#">Edit Homepage</b-dropdown-item>
             <b-dropdown-item href="#">Edit Dashboard</b-dropdown-item>
-            <b-dropdown-item to="login">Logout</b-dropdown-item>
+            <b-dropdown-item @click="logout">Logout</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
     </b-navbar-nav>
@@ -67,6 +67,15 @@ export default {
   data () {
     return {
       logo
+    }
+  },
+  methods: {
+    logout () {
+      this.$store.dispatch('logout')
+
+      this.$router.push({
+        path: '/login'
+      })
     }
   }
 }
