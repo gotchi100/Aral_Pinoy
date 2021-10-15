@@ -8,7 +8,6 @@ const router = express.Router();
 /* Create a user. */
 router.post(
   '/', 
-  expressJwt({ secret: 'secret', algorithms: ['HS256'] }),
   async function(req, res, next) {
     const {
       email,
