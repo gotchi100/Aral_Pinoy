@@ -4,7 +4,7 @@
       <div class="image" style="padding: 28px;">
         <img :src="logo" style="width: 320px; height: 150px">
       </div>
-      <b-card class="card" bg-variant="light" style="display: inline-block; height: 450px; width: 400px; border-radius: 20px;">
+      <b-card class="card" bg-variant="light" style="display: inline-block; height: 300px; width: 400px; border-radius: 20px;">
         <b-container fluid>
           <b-row class="my-1">
             <label class="email" for="input-small">Email Address</label>
@@ -18,24 +18,10 @@
               <b-form-input v-model="text" type="password"></b-form-input>
             </b-col>
           </b-row>
-          <label class="forgot" for="input-small">Forgot Password?</label>
-          <b-button pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
+          <b-button to="dashboard" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
             Login
           </b-button>
-          <div class="col-md-12 ">
-            <div class="login-or">
-                <hr class="hr-or">
-                <span class="span-or">or</span>
-            </div>
-          </div>
-          <div class="col-md-12 mb-3">
-            <p class="text-center">
-              <b-button pill variant="danger" style="margin: 8px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
-                <font-awesome-icon style="margin-right: 8px;" :icon="['fab', 'google']" />
-                Sign in with Google
-              </b-button>
-            </p>
-          </div>
+          <label class="signup" for="input-small"><b-link to="PasswordChange">Forgot Password?</b-link></label>
         </b-container>
       </b-card>
     </div>
