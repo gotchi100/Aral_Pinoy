@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="login">
-      <div class="image" style="padding: 28px;">
+      <div class="image">
         <img :src="logo" style="width: 320px; height: 150px">
       </div>
       <b-card class="card" bg-variant="light" style="display: inline-block; height: 450px; width: 400px; border-radius: 20px;">
@@ -57,25 +57,23 @@ export default {
 </script>
 
 <style scoped>
-.login {
-position: relative;
-}
 .image {
-position: relative;
+padding-top: 75px;
+padding-bottom: 25px;
 }
-.login:before {
-background-image: url('https://rs.projects-abroad.ie/v1/hero/product-5b5b2f57d7d1b.[1600].jpeg');
-content: ' ';
-display: block;
-position: absolute;
-left: 0;
-top: 0;
-width: 100%;
-height: 100%;
-opacity: 0.4;
+.login {
+background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
+url('https://rs.projects-abroad.ie/v1/hero/product-5b5b2f57d7d1b.[1600].jpeg');
+background-position: center;
 background-repeat: no-repeat;
 background-size: cover;
-padding-top: 695px;
+display: block;
+position:absolute;
+left:0px;
+top:0px;
+width: 100%;
+height: 100%;
+z-index:-1;
 }
 .login-or {
 position: relative;

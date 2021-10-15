@@ -9,6 +9,7 @@ import { fab } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import App from './App.vue'
+import HomePage from './pages/Home'
 import LoginPage from './pages/Login'
 import RegisterPage from './pages/Register'
 
@@ -25,6 +26,7 @@ Vue.use(IconsPlugin)
 Vue.use(VueRouter)
 
 const routes = [
+  { path: '/', component: HomePage },
   { path: '/login', component: LoginPage },
   { path: '/register', component: RegisterPage }
 ]
