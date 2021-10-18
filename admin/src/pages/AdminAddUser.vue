@@ -42,7 +42,7 @@
               <b-form-input v-model="confirmPassword" type="password"></b-form-input>
             </b-col>
           </b-row>
-          <b-button pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
+          <b-button @click="register" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
             Register User
           </b-button>
         </b-container>
@@ -69,12 +69,16 @@ export default {
     }
   },
   methods: {
-    register () {
-      axios.post('http://localhost:3000/users', {
+    async register () {
+      await axios.post('http://localhost:3000/users', {
         email: this.email,
         password: this.password,
         firstName: this.firstName,
         lastName: this.lastName
+      })
+
+      this.$router.push({
+        path: '/officers'
       })
     }
   }
