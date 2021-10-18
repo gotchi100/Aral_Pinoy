@@ -5,11 +5,15 @@
     </b-navbar-brand>
 
     <b-navbar-nav>
-      <b-nav-item style="margin-left: 18px;" class="events">Events</b-nav-item>
+      <b-nav-item style="margin-left: 18px;" class="events" href="#events">Events</b-nav-item>
     </b-navbar-nav>
 
     <b-navbar-nav>
-      <b-nav-item style="margin-left: 18px;" class="about">About Us</b-nav-item>
+      <b-nav-item style="margin-left: 18px;" class="about" href="#about">About Us</b-nav-item>
+    </b-navbar-nav>
+
+     <b-navbar-nav v-if="$store.getters.isLoggedIn">
+      <b-nav-item style="margin-left: 18px;" class="about">Events Calendar</b-nav-item>
     </b-navbar-nav>
 
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
@@ -17,10 +21,19 @@
     <b-collapse id="nav-collapse" is-nav>
     </b-collapse>
 
-    <b-navbar-nav class="ml-auto">
+    <b-navbar-nav class="ml-auto" v-if="!$store.getters.isLoggedIn">
       <b-navbar-nav right>
         <b-nav-item to="login" style="margin-right: 8px;" class="login">Login</b-nav-item>
         <b-nav-item to="register" style="margin-right: 10px;" class="register">Register</b-nav-item>
+      </b-navbar-nav>
+    </b-navbar-nav>
+
+    <b-navbar-nav class="ml-auto" v-else>
+      <b-navbar-nav right>
+        <b-nav-item-dropdown style="margin-right: 40px; color: black;" class="user" :text="$store.state.user.firstName">
+            <b-dropdown-item to="AdminProfile">Profile</b-dropdown-item>
+            <b-dropdown-item @click="logout">Logout</b-dropdown-item>
+        </b-nav-item-dropdown>
       </b-navbar-nav>
     </b-navbar-nav>
   </b-navbar>
@@ -34,6 +47,15 @@ export default {
   data () {
     return {
       logo
+    }
+  },
+  methods: {
+    logout () {
+      this.$store.dispatch('logout')
+
+      this.$router.push({
+        path: '/login'
+      })
     }
   }
 }
