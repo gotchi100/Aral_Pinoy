@@ -1,26 +1,23 @@
 <template>
   <div class="inkindreport">
-   <div class="image" style="padding: 28px;">
-      <img :src="logo" style="width: 320px; height: 150px">
-   </div>
-   <b-card class="card" bg-variant="light" style="display: inline-block; height: 250px; width: 1000px; border-radius: 20px;">
-      <h3 style="font-family:'Bebas Neue', cursive; color: black; position: relative;">In-Kind Donations Report</h3>
-        <b-container fluid>
-          <b-row class="my-1">
-            <b-col style="margin-top:20px; margin-bottom:20px;">
-              <label for="start-datepicker" style="font-family: 'Bebas Neue', cursive;">From</label>
-              <b-form-datepicker id="start-datepicker" v-model="value" class="mb-2"></b-form-datepicker>
-            </b-col>
-            <b-col style="margin-top:20px; margin-bottom:20px;">
-              <label for="end-datepicker" style="font-family: 'Bebas Neue', cursive;">To</label>
-              <b-form-datepicker id="end-datepicker" v-model="value" class="mb-2"></b-form-datepicker>
-            </b-col>
-          </b-row>
-          <b-button pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
-            Generate Report
-          </b-button>
-        </b-container>
-      </b-card>
+   <b-card class="card" bg-variant="light" style="display: inline-block; height: 250px; width: 1000px; border-radius: 20px; margin-top:40px;">
+      <b-container fluid>
+        <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative;">In-Kind Donations Report</h2>
+        <b-row class="my-1">
+          <b-col style="margin-top:20px; margin-bottom:20px;">
+            <label for="start-datepicker" style="font-family: 'Bebas Neue', cursive;">From</label>
+            <b-form-datepicker id="start-datepicker" v-model="value" class="mb-2"></b-form-datepicker>
+          </b-col>
+          <b-col style="margin-top:20px; margin-bottom:20px;">
+            <label for="end-datepicker" style="font-family: 'Bebas Neue', cursive;">To</label>
+            <b-form-datepicker id="end-datepicker" v-model="value" class="mb-2"></b-form-datepicker>
+          </b-col>
+        </b-row>
+        <b-button pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
+          Generate Report
+        </b-button>
+      </b-container>
+    </b-card>
   </div>
 </template>
 
@@ -39,9 +36,6 @@ export default {
 
 <style scoped>
 .inkindreport {
-position: relative;
-}
-.image {
 position: relative;
 }
 .inkindreport:before {

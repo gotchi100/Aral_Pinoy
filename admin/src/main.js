@@ -19,6 +19,9 @@ import VolunteerReport from './pages/VolunteerReport.vue'
 import AdminProfile from './pages/AdminProfile.vue'
 import Events from './pages/AdminEventList.vue'
 import Volunteers from './pages/AdminVolunteerList.vue'
+import OfficersList from './pages/AdminOfficerList.vue'
+import InKindList from './pages/AdminInKindList.vue'
+import AddUser from './pages/AdminAddUser.vue'
 
 import vuexStore from './store'
 
@@ -101,6 +104,27 @@ const routes = [
   {
     path: '/volunteers',
     component: Volunteers,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/officers',
+    component: OfficersList,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/inkindlist',
+    component: InKindList,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/adduser',
+    component: AddUser,
     meta: {
       requiresAuth: true
     }
