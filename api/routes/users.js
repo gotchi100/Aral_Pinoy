@@ -26,6 +26,7 @@ router.post(
     user.firstName = firstName;
     user.middleName = middleName;
     user.lastName = lastName;
+    user.roles = ['Volunteer'];
 
     try {
       await user.save();

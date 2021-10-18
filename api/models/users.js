@@ -21,6 +21,10 @@ const userSchema = new Schema({
     lastName: {
         type: String,
         required: true
+    },
+    roles: {
+        type: [String],
+        required: true
     }
 });
 
