@@ -70,11 +70,16 @@ export default {
   },
   methods: {
     async register () {
+      const token = this.$store.getters.token
       await axios.post('http://localhost:3000/users', {
         email: this.email,
         password: this.password,
         firstName: this.firstName,
         lastName: this.lastName
+      }, {
+        headers: {
+          authorization: `Bearer ${token}`
+        }
       })
 
       this.$router.push({

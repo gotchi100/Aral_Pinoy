@@ -41,6 +41,9 @@ export default {
     },
     isLoggedIn: (state) => {
       return state.token !== null
+    },
+    token: (state) => {
+      return state.token
     }
   }
 }

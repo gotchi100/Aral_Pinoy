@@ -7,7 +7,8 @@ const router = express.Router();
 
 /* Create a user. */
 router.post(
-  '/', 
+  '/',
+  expressJwt({ secret: 'secret', algorithms: ['HS256'] }), 
   async function(req, res, next) {
     const {
       email,
@@ -26,7 +27,7 @@ router.post(
     user.firstName = firstName;
     user.middleName = middleName;
     user.lastName = lastName;
-    user.roles = ['Volunteer'];
+    user.roles = ['Officer'];
 
     try {
       await user.save();
