@@ -1,9 +1,13 @@
 <template>
     <div>
-    <div class="bg">
-    <div class="image">
-        <img :src="logo" style="width: 450px; height: 250px">
-    </div>
+    <div class="wp-block-cover alignfull has-background-dim-40 has-background-dim is-style-bottom-wave">
+      <div class="bg">
+      <div class="wp-block-cover__inner-container">
+          <div class="image">
+            <img :src="logo" style="width: 420px; height: 240px">
+          </div>
+        </div>
+      </div>
     </div>
     <div class="events">
       <b-container>
@@ -322,13 +326,19 @@ padding-top: 45px;
 padding-bottom: 45px;
 }
 .events {
-background: #04AC6B;
+background: white;
 }
 .text {
-color: white;
+color: black;
 font-family: 'Bebas Neue', cursive;
 font-size: 50px;
 text-align: left;
 padding-top: 18px;
+}
+.wp-block-cover:not(.components-placeholder):not(.is-placeholder).is-style-bottom-wave {
+  mask-image: url('data:image/svg+xml;utf8,<svg width="235" height="248" xmlns="http://www.w3.org/2000/svg"><path d="M250 220.092145s-12.873712-8.581631-26.547345-11.208661c-13.673633-2.62703-19.948005-2.014057-25.847415-1.094596-14.723528 2.276759-29.197081 7.662171-48.145186 21.760565-7.399261 5.341628-19.223078 13.485421-25.122488 15.630829-5.999399 2.145408-13.223677 3.415139-18.873112 2.320543-2.574743-.437838-5.6494355-.612974-12.4487556-3.371355-6.8743126-2.62703-14.6235377-7.049197-19.9230076-10.595688-10.2989701-6.874062-23.6976303-9.501092-33.4966504-9.807579C17.9982002 222.806743 0 237.080273 0 237.080273V0h250z"/></svg>');
+  mask-position: bottom;
+  mask-repeat: no-repeat;
+  mask-size: cover;
 }
 </style>

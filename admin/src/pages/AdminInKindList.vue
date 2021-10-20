@@ -48,7 +48,6 @@
         </b-row>
       </b-container>
     </b-row>
-
     <!-- Main table element -->
     <b-table
       :items="items"
@@ -102,16 +101,58 @@
     <b-col></b-col>
     <b-col></b-col>
     <b-col>
-      <b-button pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;">
+    <div>
+      <b-button v-b-modal.modal-1 >Category</b-button>
+
+      <b-modal id="modal-1" title="Category" size="lg">
+      <div>
+        <label for="tags-basic">Type a new tag and press enter</label>
+        <b-form-tags input-id="tags-basic" v-model="value"></b-form-tags>
+        <br>
+        <p>Category</p>
+        <b-form-input v-model="text" placeholder="Enter your Category"></b-form-input>
+        <br>
+        <b-row>
+        <p>Best Before</p>
+          <b-col><b-form-checkbox></b-form-checkbox></b-col>
+          <b-col><b-form-input v-model="text" placeholder="Best Before" style="width:400px"></b-form-input></b-col>
+        </b-row>
+        <b-row>
+        <p>Expiration Date</p>
+          <b-col><b-form-checkbox></b-form-checkbox></b-col>
+          <b-col><b-form-input v-model="text" placeholder="Expiration" style="width:400px"></b-form-input></b-col>
+        </b-row>
+      </div>
+      </b-modal>
+    </div>
+      <!-- <b-button pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;">
           Category
-      </b-button>
+      </b-button> -->
     </b-col>
     <b-col>
-      <b-button pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;">
-          Add an Item
-      </b-button>
+    <div>
+      <b-button v-b-modal.modal-2>Add Item</b-button>
+
+      <b-modal id="modal-2" title="Add Item" >
+      <div>
+        <p>Add Item</p>
+        <b-form-input v-model="text" placeholder="Enter your Category Name"></b-form-input>
+        <br>
+        <b-row>
+        <p>Best Before</p>
+          <b-col><b-form-checkbox></b-form-checkbox></b-col>
+          <b-col><b-form-input v-model="text" placeholder="Best Before" style="width:400px"></b-form-input></b-col>
+        </b-row>
+        <b-row>
+        <p>Expiration Date</p>
+          <b-col><b-form-checkbox></b-form-checkbox></b-col>
+          <b-col><b-form-input v-model="text" placeholder="Expiration" style="width:400px"></b-form-input></b-col>
+        </b-row>
+      </div>
+      </b-modal>
+    </div>
     </b-col>
-    <b-col>
+    <!-- <b-col>
       <b-button pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;">
           Edit an Item
       </b-button>
@@ -120,7 +161,7 @@
       <b-button pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;">
           Delete an Item
       </b-button>
-    </b-col>
+    </b-col> -->
   </b-row>
   <b-row>
     <b-col></b-col>
@@ -138,7 +179,6 @@
     </b-col>
     <b-col></b-col>
   </b-row>
-
   </b-container>
 </b-card>
 </div>

@@ -102,7 +102,7 @@
     <b-col></b-col>
     <b-col></b-col>
     <b-col>
-      <b-button pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 145px;">
+      <b-button to="createevent" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 145px;">
           Create an Event
       </b-button>
     </b-col>

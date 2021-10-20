@@ -19,7 +19,7 @@
             </b-col>
           </b-row>
           <label class="forgot" for="input-small">Forgot Password?</label>
-          <b-button @click="login" variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
+          <b-button @click="login" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
             Login
           </b-button>
           <div class="col-md-12 ">

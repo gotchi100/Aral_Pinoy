@@ -22,6 +22,7 @@ import Volunteers from './pages/AdminVolunteerList.vue'
 import OfficersList from './pages/AdminOfficerList.vue'
 import InKindList from './pages/AdminInKindList.vue'
 import AddUser from './pages/AdminAddUser.vue'
+import AdminCreateEvent from './pages/AdminCreateEvent.vue'
 
 import vuexStore from './store'
 
@@ -125,6 +126,13 @@ const routes = [
   {
     path: '/adduser',
     component: AddUser,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/createevent',
+    component: AdminCreateEvent,
     meta: {
       requiresAuth: true
     }

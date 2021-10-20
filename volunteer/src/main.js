@@ -13,6 +13,10 @@ import App from './App.vue'
 import HomePage from './pages/Home'
 import LoginPage from './pages/Login'
 import RegisterPage from './pages/Register'
+import EventsPage from './pages/Events'
+import ProfilePage from './pages/Profile'
+//  import CalendarPage from './pages/EventCalendar'
+// import EventDetailsPage from './pages/EventPage'
 
 import vuexStore from './store'
 
@@ -34,7 +38,10 @@ const store = new Vuex.Store(vuexStore)
 const routes = [
   { path: '/', component: HomePage },
   { path: '/login', component: LoginPage },
-  { path: '/register', component: RegisterPage }
+  { path: '/register', component: RegisterPage },
+  { path: '/events', component: EventsPage },
+  { path: '/profile', component: ProfilePage }
+  //  { path: '/calendar', component: CalendarPage }
 ]
 
 const router = new VueRouter({

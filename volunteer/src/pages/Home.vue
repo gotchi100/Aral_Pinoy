@@ -1,13 +1,14 @@
 <template>
   <div>
-    <div class="bg">
-    <div class="image">
-        <img :src="logo" style="width: 450px; height: 250px">
+    <div class="wp-block-cover alignfull has-background-dim-40 has-background-dim is-style-bottom-wave">
+      <div class="bg">
+      <div class="wp-block-cover__inner-container">
+          <div class="image">
+            <img :src="logo" style="width: 420px; height: 240px">
+          </div>
+        </div>
+      </div>
     </div>
-    </div>
-    <div class="wp-block-cover alignfull has-background-dim-40 has-background-dim is-style-bottom-wave" style="background-color:#000000;/* min-height:640px; */"><img data-attachment-id="90" data-permalink="https://aralpinoy481127099.wordpress.com/charlein-gracia-06f9tzl3fqy-unsplash/" data-orig-file="https://aralpinoy481127099.files.wordpress.com/2020/01/charlein-gracia-06f9tzl3fqy-unsplash.jpg" data-orig-size="3872,2592" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="charlein-gracia-06f9tzl3fqy-unsplash" data-image-description="" data-image-caption="" data-medium-file="https://aralpinoy481127099.files.wordpress.com/2020/01/charlein-gracia-06f9tzl3fqy-unsplash.jpg?w=300" data-large-file="https://aralpinoy481127099.files.wordpress.com/2020/01/charlein-gracia-06f9tzl3fqy-unsplash.jpg?w=750" class="wp-block-cover__image-background wp-image-90" alt="" src="https://aralpinoy481127099.files.wordpress.com/2020/01/charlein-gracia-06f9tzl3fqy-unsplash.jpg" data-object-fit="cover" scale="0"><div class="wp-block-cover__inner-container">
-    <blockquote class="wp-block-quote has-text-align-left"><p>“Change is the </p><p> end result of </p><p> all true learning.”</p><cite> – Leo Buscaglia</cite></blockquote>
-    </div></div>
     <div class="featured">
       <b-container>
         <p>Featured</p>
@@ -67,6 +68,7 @@
       </p>
       </b-container>
     </div>
+    <div class="wp-block-cover alignfull has-background-dim-40 has-background-dim is-style-bottom-wave">
     <div class="events">
       <b-container>
         <p class="text" id="events">
@@ -200,11 +202,12 @@
             </b-col>
            </b-row>
         </b-card-group>
-        <p class="more">
-          View More Events
+        <p class="more"> <b-link to="events">
+          View More Events</b-link>
           <b-icon icon="chevron-right"></b-icon>
         </p>
       </b-container>
+      </div>
     </div>
     <div class="about">
       <b-container class="bv-example-row">
@@ -235,8 +238,8 @@
         </b-row>
       </b-container>
       <br>
-      <Footer />
     </div>
+    <Footer />
   </div>
 </template>
 
@@ -296,7 +299,7 @@ padding-top: 18px;
 }
 .events {
 background: #04AC6B;
-height: 1200px;
+height: 1425px;
 }
 .text {
 color: white;
@@ -331,7 +334,7 @@ font-family: 'Bebas Neue', cursive;
   text-align: justify;
 }
 .wp-block-cover:not(.components-placeholder):not(.is-placeholder).is-style-bottom-wave {
-  mask-image: url('data:image/svg+xml;utf8,<svg width="250" height="248" xmlns="http://www.w3.org/2000/svg"><path d="M250 220.092145s-12.873712-8.581631-26.547345-11.208661c-13.673633-2.62703-19.948005-2.014057-25.847415-1.094596-14.723528 2.276759-29.197081 7.662171-48.145186 21.760565-7.399261 5.341628-19.223078 13.485421-25.122488 15.630829-5.999399 2.145408-13.223677 3.415139-18.873112 2.320543-2.574743-.437838-5.6494355-.612974-12.4487556-3.371355-6.8743126-2.62703-14.6235377-7.049197-19.9230076-10.595688-10.2989701-6.874062-23.6976303-9.501092-33.4966504-9.807579C17.9982002 222.806743 0 237.080273 0 237.080273V0h250z"/></svg>');
+  mask-image: url('data:image/svg+xml;utf8,<svg width="235" height="248" xmlns="http://www.w3.org/2000/svg"><path d="M250 220.092145s-12.873712-8.581631-26.547345-11.208661c-13.673633-2.62703-19.948005-2.014057-25.847415-1.094596-14.723528 2.276759-29.197081 7.662171-48.145186 21.760565-7.399261 5.341628-19.223078 13.485421-25.122488 15.630829-5.999399 2.145408-13.223677 3.415139-18.873112 2.320543-2.574743-.437838-5.6494355-.612974-12.4487556-3.371355-6.8743126-2.62703-14.6235377-7.049197-19.9230076-10.595688-10.2989701-6.874062-23.6976303-9.501092-33.4966504-9.807579C17.9982002 222.806743 0 237.080273 0 237.080273V0h250z"/></svg>');
   mask-position: bottom;
   mask-repeat: no-repeat;
   mask-size: cover;

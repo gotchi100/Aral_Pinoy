@@ -4,7 +4,7 @@
       <div class="image" style="padding: 28px;">
         <img :src="logo" style="width: 320px; height: 150px">
       </div>
-      <b-card class="card" bg-variant="light" style="display: inline-block; height: 300px; width: 400px; border-radius: 20px;">
+      <b-card class="card" bg-variant="light" style="display: inline-block; height: 100%; overflow: auto; width: 400px; border-radius: 20px;">
         <b-container fluid>
           <b-row v-if="errorMessage !== ''" class="my-1">
             <span>{{ errorMessage }}</span>
