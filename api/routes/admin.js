@@ -6,10 +6,6 @@ const UserModel = require('../models/users');
 
 const router = express.Router();
 
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
-
 router.post('/login', async function (req, res, next) {
   const {
     email,
@@ -19,7 +15,9 @@ router.post('/login', async function (req, res, next) {
   try {
     const user = await UserModel.findOne({
       email,
-      roles: 'Volunteer'
+      roles: {
+          $in: ['Admin','Officer']
+      }
     });
   
     if (user === null) {
@@ -53,44 +51,6 @@ router.post('/login', async function (req, res, next) {
     next();
   }
 });
-
-router.post(
-  '/register', 
-  async function(req, res, next) {
-    const {
-      email,
-      password,
-      contactNumber,
-      firstName,
-      middleName,
-      lastName
-    } = req.body;
-
-    const user = new UserModel();
-
-    user.email = email;
-    user.password = password;
-    user.contactNumber = contactNumber;
-    user.firstName = firstName;
-    user.middleName = middleName;
-    user.lastName = lastName;
-    user.roles = ['Volunteer'];
-
-    try {
-      await user.save();
-
-      res.send(user);
-    } catch (error) {
-      res.json({
-        error: {
-          message: error.message
-        }
-      });
-
-      next();
-    }
-  }
-);
 
 router.get(
   '/protected', 

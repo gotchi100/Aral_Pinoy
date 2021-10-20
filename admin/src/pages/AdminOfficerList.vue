@@ -1,15 +1,17 @@
 <template>
-  <b-container fluid style="background:green">
+<div class="volunteerlist">
+  <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
+  <b-container fluid>
     <!-- User Interface controls -->
-    <h1 style="color:white">
-        Volunteer List
+    <h1 style="font-family:'Bebas Neue', cursive;">
+        Officers
     </h1>
     <b-row>
       <b-container class="bv-example-row">
         <b-row>
           <b-col>
             <b-col sm="5" md="6" class="my-1">
-              <b-form-group
+              <b-form-group style="font-size: 15px; font-family:'Bebas Neue', cursive;"
                 label="Per page"
                 label-for="per-page-select"
                 label-cols-sm="6"
@@ -33,16 +35,13 @@
           <b-col>
             <br>
             <b-input-group size="sm">
-              <p style="color:white; font-size: 20px" >Search &nbsp; &nbsp; </p>
+              <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
               <b-form-input
                 id="filter-input"
                 v-model="filter"
                 type="search"
-                placeholder="Type to Search"
+                placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
               ></b-form-input>
-              <b-input-group-append>
-                <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
-              </b-input-group-append>
             </b-input-group>
             <br>
           </b-col>
@@ -89,9 +88,25 @@
       </template>
     </b-table>
         <!-- Info modal -->
-      <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
+      <!-- <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
         <pre>{{ infoModal.content }}</pre>
-      </b-modal>
+      </b-modal> -->
+  <b-row>
+    <b-col></b-col>
+    <b-col></b-col>
+    <b-col></b-col>
+    <b-col></b-col>
+    <b-col></b-col>
+    <b-col></b-col>
+    <b-col></b-col>
+    <b-col></b-col>
+    <b-col></b-col>
+    <b-col>
+      <b-button to="adduser" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;">
+          Add an Officer
+      </b-button>
+    </b-col>
+  </b-row>
   <b-row>
     <b-col></b-col>
     <b-col>
@@ -110,6 +125,8 @@
   </b-row>
 
   </b-container>
+</b-card>
+</div>
 </template>
 
 <script>
@@ -117,32 +134,15 @@ export default {
   data () {
     return {
       items: [
-        { email: 'Macdonald@gmail.com', name: { first: 'Dickerson', last: 'Macdonald' }, number: 90857489714 },
-        { email: 'Shaw@gmail.com', name: { first: 'Larsen', last: 'Shaw' }, number: 90857475714 },
-        {
-          email: 'Navarro@gmail.com',
-          name: { first: 'Mini', last: 'Navarro' },
-          number: 98857489714,
-          _rowVariant: 'success'
-        },
-        { email: 'Wilson@gmail.com', name: { first: 'Geneva', last: 'Wilson' } },
-        { email: 'Carney@gmail.com', name: { first: 'Jami', last: 'Carney' } },
-        { email: 'Dunlap@gmail.com', name: { first: 'Essie', last: 'Dunlap' } },
-        { email: 'Macdonald@gmail.com', name: { first: 'Thor', last: 'Macdonald' } },
-        {
-          email: 'Shaw@gmail.com',
-          name: { first: 'Larsen', last: 'Shaw' },
-          _cellVariants: { email: 'danger', isActive: 'warning' }
-        },
-        { email: 'Navarro@gmail.com', name: { first: 'Mitzi', last: 'Navarro' } },
-        { email: 'Wilson@gmail.com', name: { first: 'Genevieve', last: 'Wilson' } },
-        { email: 'Carney@gmail.com', name: { first: 'John', last: 'Carney' } },
-        { email: 'Dunlap@gmail.com', name: { first: 'Dick', last: 'Dunlap' } }
+        { email: 'John@gmail.com', name: { first: 'John', last: 'John' }, number: 91857489714 },
+        { email: 'Kaarl@gmail.com', name: { first: 'Karl', last: 'Karl' }, number: 90857475614 },
+        { email: 'Joshua@gmail.com', name: { first: 'Joshua', last: 'Joshua' }, number: 98857489714 },
+        { email: 'Christian@gmail.com', name: { first: 'Christian', last: 'Christian' }, number: 48857489712 }
       ],
       fields: [
         { key: 'name', label: 'Full Name', sortable: true, sortDirection: 'desc' },
         { key: 'email', label: 'Email', sortable: true, class: 'text-center' },
-        { key: 'number', label: 'Contact Number', sortable: true, class: 'text-center' },
+        { key: 'number', label: 'Contact Number', sortable: true, class: 'text-center' }
         // {
         //   key: 'isActive',
         //   label: 'Is Active',
@@ -153,12 +153,12 @@ export default {
         //   sortByFormatted: true,
         //   filterByFormatted: true
         // },
-        { key: 'actions', label: 'Actions' }
+        // { key: 'actions', label: 'Actions' }
       ],
       totalRows: 1,
       currentPage: 1,
       perPage: 5,
-      pageOptions: [5, 10, 15, { value: 100, text: 'Show a lot' }],
+      pageOptions: [5, 10, { value: 100, text: 'Show a lot' }],
       sortBy: '',
       sortDesc: false,
       sortDirection: 'asc',
@@ -191,10 +191,10 @@ export default {
       this.infoModal.content = JSON.stringify(item, null, 2)
       this.$root.$emit('bv::show::modal', this.infoModal.id, button)
     },
-    resetInfoModal () {
-      this.infoModal.title = ''
-      this.infoModal.content = ''
-    },
+    // resetInfoModal () {
+    //   this.infoModal.title = ''
+    //   this.infoModal.content = ''
+    // },
     onFiltered (filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length
@@ -203,3 +203,23 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.volunteerlist {
+position: relative;
+}
+.volunteerlist:before {
+background-image: url('https://rs.projects-abroad.ie/v1/hero/product-5b5b2f57d7d1b.[1600].jpeg');
+content: ' ';
+display: block;
+position: absolute;
+left: 0;
+top: 0;
+width: 100%;
+height: 100%;
+opacity: 0.4;
+background-repeat: no-repeat;
+background-size: cover;
+padding-top: 695px;
+}
+</style>

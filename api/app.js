@@ -9,6 +9,8 @@ const cors = require('cors')
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const rolesRouter = require('./routes/roles');
+const adminRouter = require('./routes/admin');
 
 async function connectDatabase () {
     await mongoose.connect(process.env.MONGODB_URI);
@@ -29,5 +31,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/roles', rolesRouter);
+app.use('/admin', adminRouter);
 
 module.exports = app;

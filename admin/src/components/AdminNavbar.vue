@@ -18,13 +18,13 @@
     </b-navbar-nav>
 
     <b-navbar-nav>
-      <b-nav-item style="margin-left: 18px;" class="officers">Officers</b-nav-item>
+      <b-nav-item to="officers" style="margin-left: 18px;" class="officers">Officers</b-nav-item>
     </b-navbar-nav>
 
     <b-navbar-nav class="ml-auto">
       <b-navbar-nav right>
         <b-nav-item-dropdown style="margin-left: 18px; color: black;" class="donations" text="Donations">
-            <b-dropdown-item href="#">In-Kind</b-dropdown-item>
+            <b-dropdown-item to="inkindlist">In-Kind</b-dropdown-item>
             <b-dropdown-item href="#">Monetary</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>

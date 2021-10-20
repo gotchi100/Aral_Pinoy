@@ -9,17 +9,17 @@
           <b-row class="my-1">
             <label class="email" for="input-small">Email Address</label>
             <b-col>
-              <b-form-input v-model="text"></b-form-input>
+              <b-form-input v-model="email"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="password" for="input-small">Password</label>
             <b-col>
-              <b-form-input v-model="text" type="password"></b-form-input>
+              <b-form-input v-model="password" type="password"></b-form-input>
             </b-col>
           </b-row>
           <label class="forgot" for="input-small">Forgot Password?</label>
-          <b-button pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
+          <b-button @click="login" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
             Login
           </b-button>
           <div class="col-md-12 ">
@@ -44,13 +44,41 @@
 </template>
 
 <script>
+import axios from 'axios'
 const logo = require('../assets/aralpinoywords.png')
 
 export default {
   name: 'Login',
   data () {
     return {
-      logo
+      logo,
+      email: '',
+      password: ''
+    }
+  },
+  methods: {
+    async login () {
+      try {
+        const results = await axios.post('http://localhost:3000/login', {
+          email: this.email,
+          password: this.password
+        })
+
+        const { user, token } = results.data
+
+        this.$store.dispatch('login', {
+          user,
+          token
+        })
+
+        this.$router.push({
+          path: '/'
+        })
+      } catch (error) {
+        console.log(error.message)
+        const message = error.response.data.error.message
+        this.errorMessage = message
+      }
     }
   }
 }
