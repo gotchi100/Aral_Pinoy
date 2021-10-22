@@ -83,17 +83,34 @@
           </b-card>
         </b-row>
         <b-row>
+            <b-card v-for="(role, index) in roles" :key="index" class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
+            <b-row>
+              <b-col>
+                <b-form-group label="Role:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                  <b-form-input v-model="role.name" disabled placeholder="Enter Specific Role" required></b-form-input>
+                </b-form-group>
+              </b-col>
+              <b-col>
+                <b-form-group label="Number of Volunteers for this Role:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                  <b-form-input v-model="role.max" disabled type="number" placeholder="Enter Number of Volunteers needed for this Role" required></b-form-input>
+                </b-form-group>
+              </b-col>
+              <b-form-group label="Description:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                <b-form-input v-model="role.description" disabled placeholder="Enter Description of the Role" required></b-form-input>
+              </b-form-group>
+            </b-row>
+          </b-card>
           <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
             <b-row>
               <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; text-align: left; font-size:20px; margin-top:15px; margin-bottom:0px;">Roles Needed:</h2>
               <b-col>
                 <b-form-group label="Role:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-input v-model="form.role" placeholder="Enter Specific Role" required></b-form-input>
+                  <b-form-input v-model="form.roleName" placeholder="Enter Specific Role" required></b-form-input>
                 </b-form-group>
               </b-col>
               <b-col>
                 <b-form-group label="Number of Volunteers for this Role:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-input v-model="form.rolenum" type="number" placeholder="Enter Number of Volunteers needed for this Role" required></b-form-input>
+                  <b-form-input v-model="form.roleNumber" type="number" placeholder="Enter Number of Volunteers needed for this Role" required></b-form-input>
                 </b-form-group>
               </b-col>
               <b-form-group label="Skills:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
@@ -149,16 +166,13 @@
                 </b-form-tags>
               </b-form-group>
               <b-form-group label="Description:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                <b-form-input v-model="form.roledes" placeholder="Enter Description of the Role" required></b-form-input>
+                <b-form-input v-model="form.roleDescription" placeholder="Enter Description of the Role" required></b-form-input>
               </b-form-group>
             </b-row>
             <b-row>
-              <b-col></b-col>
-              <b-col></b-col>
-              <b-col></b-col>
-              <b-col></b-col>
+              <b-col cols="10"></b-col>
               <b-col>
-                <b-button pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 170px;">
+                <b-button @click="addRole" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 170px;">
                   Add Another Role
                 </b-button>
               </b-col>
@@ -259,8 +273,9 @@ export default ({
         e_time: '',
         numvol: '',
         numdon: '',
-        role: '',
-        roledes: '',
+        roleName: '',
+        roleDescription: '',
+        roleNumber: 0,
         food: null,
         file1: null,
         checked: []
@@ -268,6 +283,7 @@ export default ({
       text: {
         eventdes: ''
       },
+      roles: [],
       show: true,
       options: ['Goal 1: No Poverty', 'Goal 2: Zero Hunger', 'Goal 3: Good Health & Well-Being', 'Goal 4: Quality Education', 'Goal 5: Gender Equality', 'Goal 6: Clean Water & Sanitation', 'Goal 7: Affordable & Clean Energy', 'Goal 8: Decent Work & Ecenomic Growth', 'Goal 9: Industry Innovation & Infastructure', 'Goal 10: Reduced Inequalities', 'Goal 11: Sustainable Cities & Communities', 'Goal 12: Responsible Consumption & Production', 'Goal 13: Climate Action', 'Goal 14: Life Below Water', 'Goal 15: Life on Land', 'Goal 16: Peace, Justice & Strong Instutions', 'Goal 17: Partnerships for the Goals'],
       choices: ['Teaches at Math', 'Fluent in English', 'Heavy Lifter', 'Playing the guitar'],
@@ -279,6 +295,17 @@ export default ({
     onSubmit (event) {
       event.preventDefault()
       alert(JSON.stringify(this.form))
+    },
+    addRole () {
+      this.roles.push({
+        name: this.form.roleName,
+        description: this.form.roleDescription,
+        max: this.form.roleNumber
+      })
+
+      this.form.roleName = ''
+      this.form.roleDescription = ''
+      this.form.roleNumber = ''
     },
     onReset (event) {
       event.preventDefault()

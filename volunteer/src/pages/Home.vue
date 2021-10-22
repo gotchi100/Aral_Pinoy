@@ -202,7 +202,7 @@
             </b-col>
            </b-row>
         </b-card-group>
-        <p class="more"> <b-link to="events">
+        <p class="more"> <b-link to="/events">
           View More Events</b-link>
           <b-icon icon="chevron-right"></b-icon>
         </p>

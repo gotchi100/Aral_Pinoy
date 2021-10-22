@@ -66,31 +66,10 @@
       @filtered="onFiltered"
       style="background:white"
     >
-      <template #cell(name)="row">
-        {{ row.value.first }} {{ row.value.last }}
-      </template>
-
-      <template #cell(actions)="row">
-        <b-button size="sm" @click="info(row.item, row.index, $event.target)" class="mr-1">
-          Info modal
-        </b-button>
-        <b-button size="sm" @click="row.toggleDetails">
-          {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
-        </b-button>
-      </template>
-
-      <template #row-details="row">
-        <b-card>
-          <ul>
-            <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
-          </ul>
-        </b-card>
+      <template #cell(event)="row">
+        <b-link :to="`/events/${row.index}`">{{ row.value }}</b-link>
       </template>
     </b-table>
-        <!-- Info modal -->
-      <!-- <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
-        <pre>{{ infoModal.content }}</pre>
-      </b-modal> -->
   <b-row>
     <b-col></b-col>
     <b-col></b-col>
@@ -102,7 +81,7 @@
     <b-col></b-col>
     <b-col></b-col>
     <b-col>
-      <b-button to="createevent" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 145px;">
+      <b-button to="/create-event" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 145px;">
           Create an Event
       </b-button>
     </b-col>
@@ -154,21 +133,10 @@ export default {
         { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed' }
       ],
       fields: [
-        { key: 'date', label: 'Date', sortable: true, class: 'text-center' },
         { key: 'event', label: 'Event', sortable: true, class: 'text-center' },
+        { key: 'date', label: 'Date', sortable: true, class: 'text-center' },
         { key: 'venue', label: 'Venue', sortable: true, class: 'text-center' },
         { key: 'status', label: 'Status', sortable: true, class: 'text-center' }
-        // {
-        //   key: 'isActive',
-        //   label: 'Is Active',
-        //   formatter: (value, key, item) => {
-        //     return value ? 'Yes' : 'No'
-        //   },
-        //   sortable: true,
-        //   sortByFormatted: true,
-        //   filterByFormatted: true
-        // },
-        // { key: 'actions', label: 'Actions' }
       ],
       totalRows: 1,
       currentPage: 1,

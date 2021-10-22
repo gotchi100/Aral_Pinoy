@@ -62,35 +62,35 @@ const routes = [
     }
   },
   {
-    path: '/inkindreport',
+    path: '/inkind-report',
     component: InKindReport,
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/monetaryreport',
+    path: '/monetary-report',
     component: MonetaryReport,
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/eventevalreport',
+    path: '/event-eval-report',
     component: EventEvalReport,
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/volunteerreport',
+    path: '/volunteer-report',
     component: VolunteerReport,
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/adminprofile',
+    path: '/profile',
     component: AdminProfile,
     meta: {
       requiresAuth: true
@@ -118,21 +118,21 @@ const routes = [
     }
   },
   {
-    path: '/inkindlist',
+    path: '/inkind-list',
     component: InKindList,
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/adduser',
+    path: '/add-user',
     component: AddUser,
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/createevent',
+    path: '/create-event',
     component: AdminCreateEvent,
     meta: {
       requiresAuth: true

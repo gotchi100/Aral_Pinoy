@@ -59,7 +59,7 @@
               </b-button>
             </p>
             <p class="signin">
-              Already have an account? <b-link to="login">Sign in</b-link>
+              Already have an account? <b-link to="/login">Sign in</b-link>
             </p>
           </div>
         </b-container>

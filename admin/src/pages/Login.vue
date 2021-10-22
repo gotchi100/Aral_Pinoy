@@ -25,7 +25,7 @@
           <b-button @click="login" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
             Login
           </b-button>
-          <label class="signup" for="input-small"><b-link to="PasswordChange">Forgot Password?</b-link></label>
+          <label class="signup" for="input-small"><b-link to="/password-change">Forgot Password?</b-link></label>
         </b-container>
       </b-card>
     </div>

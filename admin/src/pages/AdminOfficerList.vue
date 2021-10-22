@@ -66,43 +66,18 @@
       @filtered="onFiltered"
       style="background:white"
     >
+      <template #cell(email)="row">
+        <b-link :to="`/officers/${row.item._id}`">{{ row.value }}</b-link>
+      </template>
+
       <template #cell(name)="row">
-        {{ row.value.first }} {{ row.value.last }}
-      </template>
-
-      <template #cell(actions)="row">
-        <b-button size="sm" @click="info(row.item, row.index, $event.target)" class="mr-1">
-          Info modal
-        </b-button>
-        <b-button size="sm" @click="row.toggleDetails">
-          {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
-        </b-button>
-      </template>
-
-      <template #row-details="row">
-        <b-card>
-          <ul>
-            <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
-          </ul>
-        </b-card>
+        {{ row.item.firstName }} {{ row.item.lastName }}
       </template>
     </b-table>
-        <!-- Info modal -->
-      <!-- <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
-        <pre>{{ infoModal.content }}</pre>
-      </b-modal> -->
   <b-row>
-    <b-col></b-col>
-    <b-col></b-col>
-    <b-col></b-col>
-    <b-col></b-col>
-    <b-col></b-col>
-    <b-col></b-col>
-    <b-col></b-col>
-    <b-col></b-col>
-    <b-col></b-col>
+    <b-col cols="10"></b-col>
     <b-col>
-      <b-button to="adduser" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;">
+      <b-button to="/add-user" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;">
           Add an Officer
       </b-button>
     </b-col>
@@ -134,26 +109,15 @@ export default {
   data () {
     return {
       items: [
-        { email: 'John@gmail.com', name: { first: 'John', last: 'John' }, number: 91857489714 },
-        { email: 'Kaarl@gmail.com', name: { first: 'Karl', last: 'Karl' }, number: 90857475614 },
-        { email: 'Joshua@gmail.com', name: { first: 'Joshua', last: 'Joshua' }, number: 98857489714 },
-        { email: 'Christian@gmail.com', name: { first: 'Christian', last: 'Christian' }, number: 48857489712 }
+        { _id: '6172cd711ff80470e0fe0dd4', email: 'John@gmail.com', firstName: 'John', lastName: 'John', contactNumber: '+6391857489714' },
+        { _id: '6172cd753b5075450daf5a5c', email: 'Kaarl@gmail.com', firstName: 'Karl', lastName: 'Karl', contactNumber: '+6390857475614' },
+        { _id: '6172cd789f8997dbb37d42ba', email: 'Joshua@gmail.com', firstName: 'Joshua', lastName: 'Joshua', contactNumber: '+6398857489714' },
+        { _id: '6172cd7ca5b93fac5e85f86b', email: 'Christian@gmail.com', firstName: 'Christian', lastName: 'Christian', contactNumber: '+6348857489712' }
       ],
       fields: [
-        { key: 'name', label: 'Full Name', sortable: true, sortDirection: 'desc' },
         { key: 'email', label: 'Email', sortable: true, class: 'text-center' },
-        { key: 'number', label: 'Contact Number', sortable: true, class: 'text-center' }
-        // {
-        //   key: 'isActive',
-        //   label: 'Is Active',
-        //   formatter: (value, key, item) => {
-        //     return value ? 'Yes' : 'No'
-        //   },
-        //   sortable: true,
-        //   sortByFormatted: true,
-        //   filterByFormatted: true
-        // },
-        // { key: 'actions', label: 'Actions' }
+        { key: 'name', label: 'Full Name', sortable: true, sortDirection: 'desc' },
+        { key: 'contactNumber', label: 'Contact Number', sortable: true, class: 'text-center' }
       ],
       totalRows: 1,
       currentPage: 1,

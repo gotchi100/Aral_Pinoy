@@ -9,19 +9,19 @@
         <b-row class="my-1">
           <label class="name" for="input-small" style="font-family:'Bebas Neue', cursive;">First Name</label>
           <b-col>
-            <b-form-input v-model="name" :disabled="!isDisabled"></b-form-input>
+            <b-form-input v-model="firstName" :disabled="!isDisabled"></b-form-input>
           </b-col>
         </b-row>
         <b-row class="my-1">
           <label class="name" for="input-small" style="font-family:'Bebas Neue', cursive;">Last Name</label>
           <b-col>
-            <b-form-input v-model="lastname" :disabled="!isDisabled"></b-form-input>
+            <b-form-input v-model="lastName" :disabled="!isDisabled"></b-form-input>
           </b-col>
         </b-row>
         <b-row class="my-1">
           <label class="cnum" for="input-small" style="font-family:'Bebas Neue', cursive;">Contact Number</label>
           <b-col>
-            <b-form-input v-model="cnum" :disabled="!isDisabled"></b-form-input>
+            <b-form-input v-model="contactNumber" :disabled="!isDisabled"></b-form-input>
           </b-col>
         </b-row>
         <b-row class="my-1">
@@ -63,8 +63,22 @@ export default {
   data () {
     return {
       logo,
+      firstName: '',
+      lastName: '',
+      contactNumber: '',
+      email: '',
+      password: '',
+      cpassword: '',
       isDisabled: false
     }
+  },
+  created () {
+    const user = this.$store.getters.user
+
+    this.firstName = user.firstName
+    this.lastName = user.lastName
+    this.contactNumber = user.contactNumber
+    this.email = user.email
   }
 }
 </script>
