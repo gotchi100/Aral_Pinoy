@@ -14,7 +14,7 @@
             </b-col>
           </b-row>
           <b-row class="my-1">
-            <label class="name" for="input-small" style="font-family:'Bebas Neue', cursive;">First Name</label>
+            <label class="name" for="input-small" style="font-family:'Bebas Neue', cursive;">Last Name</label>
             <b-col>
               <b-form-input v-model="name" :disabled="!isDisabled"></b-form-input>
             </b-col>

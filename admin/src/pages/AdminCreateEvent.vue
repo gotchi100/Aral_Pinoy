@@ -112,11 +112,11 @@
 
                     <b-dropdown size="sm" variant="outline-secondary" block menu-class="w-100">
                       <template #button-content>
-                        <b-icon icon="tag-fill"></b-icon> Choose tags
+                        <b-icon icon="tag-fill"></b-icon> Skills Provided
                       </template>
                       <b-dropdown-form @submit.stop.prevent="() => {}">
                         <b-form-group
-                          label="Search tags"
+                          label="Search Skills"
                           label-for="tag-search-input"
                           label-cols-md="auto"
                           class="mb-0"
@@ -185,11 +185,11 @@
 
                     <b-dropdown size="sm" variant="outline-secondary" block menu-class="w-100">
                       <template #button-content>
-                        <b-icon icon="tag-fill"></b-icon> Choose tags
+                        <b-icon icon="tag-fill"></b-icon> SDGs Provided
                       </template>
                       <b-dropdown-form @submit.stop.prevent="() => {}">
                         <b-form-group
-                          label="Search tags"
+                          label="Search SDGs"
                           label-for="tag-search-input"
                           label-cols-md="auto"
                           class="mb-0"

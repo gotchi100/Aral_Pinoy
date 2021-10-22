@@ -52,6 +52,7 @@
             <b-dropdown-item to="AdminProfile">Profile</b-dropdown-item>
             <b-dropdown-item href="#">Edit Homepage</b-dropdown-item>
             <b-dropdown-item href="#">Edit Dashboard</b-dropdown-item>
+            <b-dropdown-item to="/skills">Edit Skills</b-dropdown-item>
             <b-dropdown-item @click="logout">Logout</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
