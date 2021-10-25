@@ -26,12 +26,30 @@
             </b-col>
           </b-row>
           <b-row class="my-1">
+            <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Gender</label>
+            <b-col>
+              <b-form-input v-model="email" :disabled="!isDisabled"></b-form-input>
+            </b-col>
+          </b-row>
+          <b-row class="my-1">
+            <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Home Address</label>
+            <b-col>
+              <b-form-input v-model="email" :disabled="!isDisabled"></b-form-input>
+            </b-col>
+          </b-row>
+          <b-row class="my-1">
+            <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Skills</label>
+            <b-col>
+              <b-form-input v-model="email" :disabled="!isDisabled"></b-form-input>
+            </b-col>
+          </b-row>
+          <b-row class="my-1">
             <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Email Address</label>
             <b-col>
               <b-form-input v-model="email" :disabled="!isDisabled"></b-form-input>
             </b-col>
           </b-row>
-          <!-- <b-row class="my-1">
+          <b-row class="my-1">
             <label class="change" for="input-small" style="font-family:'Bebas Neue', cursive;">Change Password?</label>
           </b-row>
           <b-row class="my-1" v-if="isDisabled">
@@ -51,7 +69,7 @@
           </b-button>
           <b-button pill variant="danger" @click="isDisabled = false" v-show="isDisabled" style="margin: 8px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
                 Save
-          </b-button> -->
+          </b-button>
         </b-container>
       </b-card>
          <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
@@ -250,6 +268,13 @@ export default {
   data () {
     return {
       logo,
+      isDisabled: false,
+      firstName: '',
+      lastName: '',
+      contactNumber: '',
+      email: '',
+      password: '',
+      cpassword: '',
       items: [
         { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed' },
         { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed' },
@@ -348,6 +373,14 @@ export default {
       this.currentPage = 1
       this.currentPages = 1
     }
+  },
+  created () {
+    const user = this.$store.getters.user
+
+    this.firstName = user.firstName
+    this.lastName = user.lastName
+    this.contactNumber = user.contactNumber
+    this.email = user.email
   }
 }
 </script>

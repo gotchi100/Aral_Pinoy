@@ -19,6 +19,7 @@ import ProfilePage from './pages/Profile'
 import CalendarPage from './pages/EventCalendar'
 import EventDetailsPage from './pages/EventPage'
 import trial from './trial/Profile2.vue'
+import ForgetPassword from './pages/ForgetPassword.vue'
 
 import vuexStore from './store'
 
@@ -39,14 +40,16 @@ Vue.use(VModal)
 const store = new Vuex.Store(vuexStore)
 
 const routes = [
-  { path: '/', component: EventDetailsPage },
+  { path: '/', component: HomePage },
   { path: '/login', component: LoginPage },
   { path: '/register', component: RegisterPage },
   { path: '/events', component: EventsPage },
   { path: '/profile', component: ProfilePage },
-  { path: '/home', component: HomePage },
+  // { path: '/home', component: HomePage },
   { path: '/calendar', component: CalendarPage },
-  { path: '/trial', component: trial }
+  { path: '/event-page', component: EventDetailsPage },
+  { path: '/trial', component: trial },
+  { path: '/forget-password', component: ForgetPassword }
 ]
 
 const router = new VueRouter({
