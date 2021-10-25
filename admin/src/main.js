@@ -18,6 +18,7 @@ import EventEvalReport from './pages/EventEvalReport.vue'
 import VolunteerReport from './pages/VolunteerReport.vue'
 import AdminProfile from './pages/AdminProfile.vue'
 import Events from './pages/AdminEventList.vue'
+import EventDetails from './pages/events/EventDetails.vue'
 import Volunteers from './pages/AdminVolunteerList.vue'
 import OfficersList from './pages/AdminOfficerList.vue'
 import InKindList from './pages/AdminInKindList.vue'
@@ -107,6 +108,13 @@ const routes = [
   {
     path: '/events',
     component: Events,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/events/:id',
+    component: EventDetails,
     meta: {
       requiresAuth: true
     }
