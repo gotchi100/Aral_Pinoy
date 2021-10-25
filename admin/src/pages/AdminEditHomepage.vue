@@ -211,28 +211,26 @@
     </div>
     <div class="about">
       <b-container class="bv-example-row">
-        <p id="about">About Us</p>
+        <p id="about">
+          <span>About Us</span>&nbsp;
+          <b-icon
+            @click="isAboutTextEditable = !isAboutTextEditable"
+            :icon="isAboutTextEditable ? 'file-check' : 'pencil'"
+            font-scale="0.75"
+          ></b-icon>
+        </p>
         <b-row>
           <b-col>
             <div class="info">
-              Founded in August 11, 2010 by the organization’s
-              founder and president, Antonio Levy S. Ingles, Jr.,
-              PhD, an educator for 30 years and is currently a full-time
-              faculty member in the De La Salle-College of Saint Benilde,
-              City of Manila, Philippines.
-            </div>
-          </b-col>
-          <b-col>
-            <div class="info">
-              SUPPORT AND HELP THE PROGRAMS, PROJECTS AND
-              ACTIVITIES OF ARALPINOY.ORG INC, A NON-STOCK, NON-PROFIT
-              AND NON-PARTISAN ORGANIZATION REGISTERED UNDER THE LAWS OF
-              THE RP ON AUGUST 11, 2010 WITH
-              SEC CRN CN201012580 AND BIR TIN 007-842-097.<br>
-              FOR ANY HELP, PLEASE NOTIFY US AT<br>
-              INGLES.ANTONIO@GMAIL.COM OR <br>
-              09178661006 <br>
-              MARAMING MARAMING SALAMAT PO!
+              <div v-if="!isAboutTextEditable" style="white-space: pre">
+                {{ aboutText }}
+              </div>
+              <b-form-textarea
+                v-else
+                v-model="aboutText"
+                rows="7"
+                max-rows="7"
+              ></b-form-textarea>
             </div>
           </b-col>
         </b-row>
@@ -256,7 +254,15 @@ export default {
       logo,
       slide: 0,
       sliding: null,
-      value: 75
+      value: 75,
+      isAboutTextEditable: false,
+      aboutText: 'Founded in August 11, 2010 by the organization’s founder and president, ' +
+      'Antonio Levy S. Ingles, Jr., PhD, an educator for 30 years\nand is currently a ' +
+      'full-time faculty member in the De La Salle-College of Saint Benilde, City of Manila, Philippines.\n\n' +
+      'SUPPORT AND HELP THE PROGRAMS, PROJECTS AND ACTIVITIES OF ARALPINOY.ORG INC, A NON-STOCK, NON-PROFIT ' +
+      'AND NON-PARTISAN ORGANIZATION\nREGISTERED UNDER THE LAWS OF THE RP ON AUGUST 11, 2010 WITH ' +
+      'SEC CRN CN201012580 AND BIR TIN 007-842-097. FOR ANY HELP, PLEASE NOTIFY US AT \nINGLES.ANTONIO@GMAIL.COM OR ' +
+      '09178661006.\n\nMARAMING SALAMAT PO!'
     }
   },
   methods: {
@@ -265,6 +271,11 @@ export default {
     },
     onSlideEnd (slide) {
       this.sliding = false
+    }
+  },
+  watch: {
+    aboutText (val) {
+      console.log(val)
     }
   }
 }
