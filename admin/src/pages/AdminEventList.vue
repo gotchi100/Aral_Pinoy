@@ -71,15 +71,7 @@
       </template>
     </b-table>
   <b-row>
-    <b-col></b-col>
-    <b-col></b-col>
-    <b-col></b-col>
-    <b-col></b-col>
-    <b-col></b-col>
-    <b-col></b-col>
-    <b-col></b-col>
-    <b-col></b-col>
-    <b-col></b-col>
+    <b-col cols="10"></b-col>
     <b-col>
       <b-button to="/create-event" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 145px;">
           Create an Event

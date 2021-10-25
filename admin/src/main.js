@@ -24,6 +24,14 @@ import InKindList from './pages/AdminInKindList.vue'
 import AddUser from './pages/AdminAddUser.vue'
 import AdminCreateEvent from './pages/AdminCreateEvent.vue'
 import Skills from './pages/AdminSkillsPage.vue'
+import AddSkills from './pages/AdminAddSkill.vue'
+import ViewVolunteerProfile from './pages/AdminVolunteerViewProfile.vue'
+import ViewOfficerProfile from './pages/AdminViewOfficerProfile.vue'
+import CategoryList from './pages/AdminCategoryList.vue'
+import AddCategory from './pages/AdminAddCategory.vue'
+import ForgetPassword from './pages/AdminForgetPassword.vue'
+import EditSDG from './pages/AdminEditSDG.vue'
+import Homepage from './pages/AdminEditHomepage.vue'
 
 import vuexStore from './store'
 
@@ -141,6 +149,59 @@ const routes = [
   {
     path: '/skills',
     component: Skills,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/add-skills',
+    component: AddSkills,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/view-volunteer-profile',
+    component: ViewVolunteerProfile,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/view-officer-profile',
+    component: ViewOfficerProfile,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/category-list',
+    component: CategoryList,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/add-category',
+    component: AddCategory,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/forget-password',
+    component: ForgetPassword
+  },
+  {
+    path: '/edit-sdg',
+    component: EditSDG,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/homepage',
+    component: Homepage,
     meta: {
       requiresAuth: true
     }

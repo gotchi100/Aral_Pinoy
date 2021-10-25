@@ -240,13 +240,13 @@
 </template>
 
 <script>
-import Footer from '../components/Footer.vue'
+// import Footer from '../components/Footer.vue'
 const logo = require('../assets/aralpinoywords.png')
 
 export default {
-  components: {
-    Footer
-  },
+  // components: {
+  //   Footer
+  // },
   data () {
     return {
       logo,

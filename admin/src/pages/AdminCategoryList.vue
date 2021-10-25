@@ -1,10 +1,10 @@
 <template>
-<div class="volunteerlist">
+<div class="categorylist">
   <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
   <b-container fluid>
     <!-- User Interface controls -->
     <h1 style="font-family:'Bebas Neue', cursive;">
-        Officers
+        Categories
     </h1>
     <b-row>
       <b-container class="bv-example-row">
@@ -66,24 +66,44 @@
       @filtered="onFiltered"
       style="background:white"
     >
-      <template #cell(email)="row">
+      <!-- <template #cell(email)="row">
         <b-link :to="`/officers/${row.item._id}`">{{ row.value }}</b-link>
       </template>
 
       <template #cell(name)="row">
         {{ row.item.firstName }} {{ row.item.lastName }}
+      </template> -->
+      <template #cell(actions)="row">
+        <b-button size="sm" @click="info(row.item, row.index, $event.target)" class="mr-1">
+          Edit Cateogry
+        </b-button>
+        <!-- <b-button size="sm" @click="row.toggleDetails">
+          {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
+        </b-button> -->
+      </template>
+
+      <template #row-details="row">
+        <b-card>
+          <ul>
+            <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
+          </ul>
+        </b-card>
       </template>
     </b-table>
+    <!-- Info modal -->
+      <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
+        <pre>{{ infoModal.content }}</pre>
+      </b-modal>
   <b-row>
-    <b-col cols="8"></b-col>
-    <b-col>
-      <b-button to="/view-officer-profile" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;">
-          (Temp Officer Profile)
+    <b-col cols="9"></b-col>
+    <!-- <b-col>
+      <b-button pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 200px;">
+          Edit a category entry
       </b-button>
-    </b-col>
+    </b-col> -->
     <b-col>
-      <b-button to="/add-user" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;">
-          Add an Officer
+      <b-button to="/add-category" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 200px;">
+          Add a category entry
       </b-button>
     </b-col>
   </b-row>
@@ -114,15 +134,16 @@ export default {
   data () {
     return {
       items: [
-        { _id: '6172cd711ff80470e0fe0dd4', email: 'John@gmail.com', firstName: 'John', lastName: 'John', contactNumber: '+6391857489714' },
-        { _id: '6172cd753b5075450daf5a5c', email: 'Kaarl@gmail.com', firstName: 'Karl', lastName: 'Karl', contactNumber: '+6390857475614' },
-        { _id: '6172cd789f8997dbb37d42ba', email: 'Joshua@gmail.com', firstName: 'Joshua', lastName: 'Joshua', contactNumber: '+6398857489714' },
-        { _id: '6172cd7ca5b93fac5e85f86b', email: 'Christian@gmail.com', firstName: 'Christian', lastName: 'Christian', contactNumber: '+6348857489712' }
+        { _id: '6172cd711ff80470e0fe0dd4', category: 'Food', bestbefore: 'Yes', expiration: 'Yes' },
+        { _id: '6172cd753b5075450daf5a5c', category: 'School Supply', bestbefore: 'No', expiration: 'No' },
+        { _id: '6172cd789f8997dbb37d42ba', category: 'Apparel', bestbefore: 'No', expiration: 'No' },
+        { _id: '6172cd7ca5b93fac5e85f86b', category: 'Material', bestbefore: 'No', expiration: 'No' }
       ],
       fields: [
-        { key: 'email', label: 'Email', sortable: true, class: 'text-center' },
-        { key: 'name', label: 'Full Name', sortable: true, sortDirection: 'desc' },
-        { key: 'contactNumber', label: 'Contact Number', sortable: true, class: 'text-center' }
+        { key: 'category', label: 'Category', sortable: true, class: 'text-center' },
+        { key: 'bestbefore', label: 'Requires Best Before Date?', sortable: true, class: 'text-center' },
+        { key: 'expiration', label: 'Requires Expiration Date?', sortable: true, class: 'text-center' },
+        { key: 'actions', label: ' ' }
       ],
       totalRows: 1,
       currentPage: 1,
@@ -160,10 +181,10 @@ export default {
       this.infoModal.content = JSON.stringify(item, null, 2)
       this.$root.$emit('bv::show::modal', this.infoModal.id, button)
     },
-    // resetInfoModal () {
-    //   this.infoModal.title = ''
-    //   this.infoModal.content = ''
-    // },
+    resetInfoModal () {
+      this.infoModal.title = ''
+      this.infoModal.content = ''
+    },
     onFiltered (filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length
@@ -174,10 +195,10 @@ export default {
 </script>
 
 <style scoped>
-.volunteerlist {
+.categorylist {
 position: relative;
 }
-.volunteerlist:before {
+.categorylist:before {
 background-image: url('https://rs.projects-abroad.ie/v1/hero/product-5b5b2f57d7d1b.[1600].jpeg');
 content: ' ';
 display: block;

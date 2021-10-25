@@ -90,8 +90,15 @@
     </b-col>
     <b-col></b-col>
   </b-row>
-
   </b-container>
+  <b-row>
+    <b-col cols="10"></b-col>
+    <b-col>
+      <b-button to="/view-volunteer-profile" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;">
+          (Temp view volunteer profile)
+      </b-button>
+    </b-col>
+  </b-row>
 </b-card>
 </div>
 </template>
@@ -165,10 +172,6 @@ export default {
       this.infoModal.content = JSON.stringify(item, null, 2)
       this.$root.$emit('bv::show::modal', this.infoModal.id, button)
     },
-    // resetInfoModal () {
-    //   this.infoModal.title = ''
-    //   this.infoModal.content = ''
-    // },
     onFiltered (filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length

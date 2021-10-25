@@ -1,180 +1,177 @@
 <template>
-  <div class="skillspage">
-    <div class>
-      <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
-        <b-container fluid>
-            <h2 style="font-family:'Bebas Neue', cursive;">
-                SKILLS
-            </h2>
-            <b-row>
-                <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
-                    <b-form-group style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                        <b-form-tags id="tags-with-dropdown" v-model="value" no-outer-focus class="mb-2" style="text-align:center;">
-                        <template v-slot="{ tags, disabled, addTag, removeTag }" style="display: inline-block; height: 100%; overflow: auto;">
-                            <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
-                            <li v-for="tag in tags" :key="tag" class="list-inline-item">
-                                <b-form-tag
-                                @remove="removeTag(tag)"
-                                :title="tag"
-                                :disabled="disabled"
-                                variant="info"
-                                >{{ tag }}</b-form-tag>
-                            </li>
-                            </ul>
+<div class="skillslist">
+  <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
+  <b-container fluid>
+    <!-- User Interface controls -->
+    <h1 style="font-family:'Bebas Neue', cursive;">
+        Skills
+    </h1>
+    <b-row>
+      <b-container class="bv-example-row">
+        <b-row>
+          <b-col>
+            <b-col sm="5" md="6" class="my-1">
+              <b-form-group style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                label="Per page"
+                label-for="per-page-select"
+                label-cols-sm="6"
+                label-cols-md="4"
+                label-cols-lg="3"
+                label-align-sm="right"
+                label-size="sm"
+                class="mb-0"
+              >
+                <b-form-select
+                  id="per-page-select"
+                  v-model="perPage"
+                  :options="pageOptions"
+                  size="sm"
+                ></b-form-select>
+              </b-form-group>
+            </b-col>
+          </b-col>
+          <b-col>
+          </b-col>
+          <b-col>
+            <br>
+            <b-input-group size="sm">
+              <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
+              <b-form-input
+                id="filter-input"
+                v-model="filter"
+                type="search"
+                placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
+              ></b-form-input>
+            </b-input-group>
+            <br>
+          </b-col>
+        </b-row>
+      </b-container>
+    </b-row>
 
-                            <b-dropdown size="sm" variant="outline-secondary" block menu-class="w-100">
-                            <template #button-content>
-                                <b-icon icon="tag-fill"></b-icon> Skills Provided
-                            </template>
-                            <b-dropdown-form @submit.stop.prevent="() => {}">
-                                <b-form-group
-                                label="Search Skills"
-                                label-for="tag-search-input"
-                                label-cols-md="auto"
-                                class="mb-0"
-                                label-size="sm"
-                                :description="searchDesc"
-                                :disabled="disabled"
-                                >
-                                <b-form-input
-                                    v-model="search"
-                                    id="tag-search-input"
-                                    type="search"
-                                    size="sm"
-                                    autocomplete="off"
-                                    ></b-form-input>
-                                </b-form-group>
-                            </b-dropdown-form>
-                            <b-dropdown-divider></b-dropdown-divider>
-                            <b-dropdown-item-button
-                                v-for="option in availableOptions"
-                                :key="option"
-                                @click="onOptionClick({ option, addTag })"
-                            >
-                                {{ option }}
-                            </b-dropdown-item-button>
-                            <b-dropdown-text v-if="availableOptions.length === 0">
-                                There are no tags available to select
-                            </b-dropdown-text>
-                            </b-dropdown>
-                        </template>
-                        </b-form-tags>
-                    </b-form-group>
-                </b-card>
-            </b-row>
-            <b-row>
-                <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
-                    <b-row>
-                    <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; text-align: left; font-size:20px; margin-top:15px; margin-bottom:0px;">Roles Needed:</h2>
-                    <b-col>
-                        <b-form-group label="Skill:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                        <b-form-input placeholder="Enter Specific Skill" required></b-form-input>
-                        </b-form-group>
-                    </b-col>
-                    <b-col>
-                    </b-col>
-                    <b-form-group label="Description:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                        <b-form-input placeholder="Enter Description of the Skill" required></b-form-input>
-                    </b-form-group>
-                    </b-row>
-                    <b-row>
-                    <b-col></b-col>
-                    <b-col></b-col>
-                    <b-col></b-col>
-                    <b-col></b-col>
-                    <b-col>
-                        <!-- <b-button style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 170px;">
-                        Add Another Role
-                        </b-button> -->
-                    </b-col>
-                    </b-row>
-                </b-card>
-                <b-row>
-                    <b-col></b-col>
-                    <b-col></b-col>
-                    <b-col></b-col>
-                    <b-col></b-col>
-                    <b-col>
-                        <b-button pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 170px;">
-                        Add skill
-                        </b-button>
-                    </b-col>
-                    <b-col>
-                        <b-button pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 170px;">
-                        Delete skill
-                        </b-button>
-                    </b-col>
-                    </b-row>
-            </b-row>
-        </b-container>
-      </b-card>
-    </div>
-  </div>
+    <!-- Main table element -->
+    <b-table
+      :items="items"
+      :fields="fields"
+      :current-page="currentPage"
+      :per-page="perPage"
+      :filter="filter"
+      :filter-included-fields="filterOn"
+      :sort-by.sync="sortBy"
+      :sort-desc.sync="sortDesc"
+      :sort-direction="sortDirection"
+      stacked="md"
+      show-empty
+      small
+      @filtered="onFiltered"
+      style="background:white"
+    >
+      <!-- <template #cell(email)="row">
+        <b-link :to="`/officers/${row.item._id}`">{{ row.value }}</b-link>
+      </template>
+
+      <template #cell(name)="row">
+        {{ row.item.firstName }} {{ row.item.lastName }}
+      </template> -->
+    </b-table>
+  <b-row>
+    <b-col cols="10"></b-col>
+    <b-col>
+      <b-button to="/add-skills" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;">
+          Add a Skill
+      </b-button>
+    </b-col>
+  </b-row>
+  <b-row>
+    <b-col></b-col>
+    <b-col>
+        <b-col class="my-1">
+          <b-pagination
+            v-model="currentPage"
+            :total-rows="totalRows"
+            :per-page="perPage"
+            align="fill"
+            size="sm"
+            class="my-0"
+          ></b-pagination>
+        </b-col>
+    </b-col>
+    <b-col></b-col>
+  </b-row>
+
+  </b-container>
+</b-card>
+</div>
 </template>
 
 <script>
-
-export default ({
+export default {
   data () {
     return {
-      options: ['Teaches at Math', 'Fluent in English', 'Heavy Lifter', 'Playing the guitar'],
-      search: '',
-      value: [],
-      data: []
-    }
-  },
-  methods: {
-    onOptionClick ({ option, addTag }) {
-      addTag(option)
-      this.search = ''
-    },
-    onChoicesClick ({ choices, addTag }) {
-      addTag(choices)
-      this.search = ''
+      items: [
+        { _id: '6172cd711ff80470e0fe0dd4', skills: 'Teaches Math', description: 'Knowledgable with basic Math' },
+        { _id: '6172cd753b5075450daf5a5c', skills: 'Teaches English', description: 'Knowledgable with basic English' },
+        { _id: '6172cd789f8997dbb37d42ba', skills: 'Teaches History', description: 'Knowledgable with History of the Philippines' },
+        { _id: '6172cd7ca5b93fac5e85f86b', skills: 'Dancer', description: 'Can teach non-dancer basic moves' }
+      ],
+      fields: [
+        { key: 'skills', label: 'Skills', sortable: true, class: 'text-center' },
+        { key: 'description', label: 'Description', sortable: true, sortDirection: 'desc' }
+      ],
+      totalRows: 1,
+      currentPage: 1,
+      perPage: 5,
+      pageOptions: [5, 10, { value: 100, text: 'Show a lot' }],
+      sortBy: '',
+      sortDesc: false,
+      sortDirection: 'asc',
+      filter: null,
+      filterOn: []
+      // infoModal: {
+      //   id: 'info-modal',
+      //   title: '',
+      //   content: ''
+      // }
     }
   },
   computed: {
-    criteria () {
-      // Compute the search criteria
-      return this.search.trim().toLowerCase()
-    },
-    availableOptions () {
-      const criteria = this.criteria
-      // Filter out already selected options
-      const options = this.options.filter(opt => this.value.indexOf(opt) === -1)
-      if (criteria) {
-        // Show only options that match criteria
-        return options.filter(opt => opt.toLowerCase().indexOf(criteria) > -1)
-      }
-      // Show all options available
-      return options
-    },
-    availableChoices () {
-      const criteria = this.criteria
-      const choices = this.choices.filter(opt => this.value.indexOf(opt) === -1)
-      if (criteria) {
-        // Show only options that match criteria
-        return choices.filter(opt => opt.toLowerCase().indexOf(criteria) > -1)
-      }
-      // Show all options available
-      return choices
-    },
-    searchDesc () {
-      if (this.criteria && this.availableOptions.length === 0) {
-        return 'There are no tags matching your search criteria'
-      }
-      return ''
+    sortOption () {
+      // Create an options list from our fields
+      return this.fields
+        .filter(f => f.sortable)
+        .map(f => {
+          return { text: f.label, value: f.key }
+        })
+    }
+  },
+  mounted () {
+    // Set the initial number of items
+    this.totalRows = this.items.length
+  },
+  methods: {
+    // info (item, index, button) {
+    //   this.infoModal.title = `Row index: ${index}`
+    //   this.infoModal.content = JSON.stringify(item, null, 2)
+    //   this.$root.$emit('bv::show::modal', this.infoModal.id, button)
+    // },
+    // resetInfoModal () {
+    //   this.infoModal.title = ''
+    //   this.infoModal.content = ''
+    // },
+    onFiltered (filteredItems) {
+      // Trigger pagination to update the number of buttons/pages due to filtering
+      this.totalRows = filteredItems.length
+      this.currentPage = 1
     }
   }
-
-})
+}
 </script>
 
 <style scoped>
-.skillspage {
+.skillslist {
 position: relative;
 }
-.skillspage:before {
+.skillslist:before {
 background-image: url('https://rs.projects-abroad.ie/v1/hero/product-5b5b2f57d7d1b.[1600].jpeg');
 content: ' ';
 display: block;

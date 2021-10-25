@@ -152,13 +152,13 @@
                       </b-dropdown-form>
                       <b-dropdown-divider></b-dropdown-divider>
                       <b-dropdown-item-button
-                        v-for="choices in availableChoices"
-                        :key="choices"
-                        @click="onChoicesClick({ choices, addTag })"
+                        v-for="options in availableOptions"
+                        :key="options"
+                        @click="onOptionClick({ options, addTag })"
                       >
-                        {{ choices }}
+                        {{ options }}
                       </b-dropdown-item-button>
-                      <b-dropdown-text v-if="availableChoices.length === 0">
+                      <b-dropdown-text v-if="availableOptions.length === 0">
                         There are no tags available to select
                       </b-dropdown-text>
                     </b-dropdown>
@@ -170,7 +170,7 @@
               </b-form-group>
             </b-row>
             <b-row>
-              <b-col cols="10"></b-col>
+              <b-col cols="9"></b-col>
               <b-col>
                 <b-button @click="addRole" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 170px;">
                   Add Another Role
@@ -184,7 +184,7 @@
             <b-row>
               <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; text-align: left; font-size:20px; margin-top:15px; margin-bottom:20px;">Sustainable Development Goals for this Event:</h2>
               <b-form-group style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                <b-form-tags id="tags-with-dropdown" v-model="value" no-outer-focus class="mb-2" style="text-align:center;">
+                <b-form-tags id="tags-with-dropdown" v-model="values" no-outer-focus class="mb-2" style="text-align:center;">
                   <template v-slot="{ tags, disabled, addTag, removeTag }" style="display: inline-block; height: 100%; overflow: auto;">
                     <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
                       <li v-for="tag in tags" :key="tag" class="list-inline-item">
@@ -208,11 +208,11 @@
                           label-cols-md="auto"
                           class="mb-0"
                           label-size="sm"
-                          :description="searchDesc"
+                          :description="searchDescs"
                           :disabled="disabled"
                         >
                           <b-form-input
-                            v-model="search"
+                            v-model="searcher"
                             id="tag-search-input"
                             type="search"
                             size="sm"
@@ -222,13 +222,13 @@
                       </b-dropdown-form>
                       <b-dropdown-divider></b-dropdown-divider>
                       <b-dropdown-item-button
-                        v-for="option in availableOptions"
-                        :key="option"
-                        @click="onOptionClick({ option, addTag })"
+                        v-for="choices in availableChoices"
+                        :key="choices"
+                        @click="onChoicesClick({ choices, addTag })"
                       >
-                        {{ option }}
+                        {{ choices }}
                       </b-dropdown-item-button>
-                      <b-dropdown-text v-if="availableOptions.length === 0">
+                      <b-dropdown-text v-if="availableChoices.length === 0">
                         There are no tags available to select
                       </b-dropdown-text>
                     </b-dropdown>
@@ -285,10 +285,12 @@ export default ({
       },
       roles: [],
       show: true,
-      options: ['Goal 1: No Poverty', 'Goal 2: Zero Hunger', 'Goal 3: Good Health & Well-Being', 'Goal 4: Quality Education', 'Goal 5: Gender Equality', 'Goal 6: Clean Water & Sanitation', 'Goal 7: Affordable & Clean Energy', 'Goal 8: Decent Work & Ecenomic Growth', 'Goal 9: Industry Innovation & Infastructure', 'Goal 10: Reduced Inequalities', 'Goal 11: Sustainable Cities & Communities', 'Goal 12: Responsible Consumption & Production', 'Goal 13: Climate Action', 'Goal 14: Life Below Water', 'Goal 15: Life on Land', 'Goal 16: Peace, Justice & Strong Instutions', 'Goal 17: Partnerships for the Goals'],
-      choices: ['Teaches at Math', 'Fluent in English', 'Heavy Lifter', 'Playing the guitar'],
+      options: ['Teaches at Math', 'Fluent in English', 'Heavy Lifter', 'Playing the guitar'],
+      choices: ['Goal 1: No Poverty', 'Goal 4: Quality Education', 'Goal 13: Climate Action'],
       search: '',
-      value: []
+      searcher: '',
+      value: [],
+      values: []
     }
   },
   methods: {
@@ -333,19 +335,23 @@ export default ({
         this.show = true
       })
     },
-    onOptionClick ({ option, addTag }) {
-      addTag(option)
+    onOptionClick ({ options, addTag }) {
+      addTag(options)
       this.search = ''
     },
     onChoicesClick ({ choices, addTag }) {
       addTag(choices)
-      this.search = ''
+      this.searcher = ''
     }
   },
   computed: {
     criteria () {
       // Compute the search criteria
       return this.search.trim().toLowerCase()
+    },
+    criterias () {
+      // Compute the search criteria
+      return this.searcher.trim().toLowerCase()
     },
     availableOptions () {
       const criteria = this.criteria
@@ -359,17 +365,23 @@ export default ({
       return options
     },
     availableChoices () {
-      const criteria = this.criteria
-      const choices = this.choices.filter(opt => this.value.indexOf(opt) === -1)
-      if (criteria) {
+      const criterias = this.criterias
+      const choices = this.choices.filter(opt => this.values.indexOf(opt) === -1)
+      if (criterias) {
         // Show only options that match criteria
-        return choices.filter(opt => opt.toLowerCase().indexOf(criteria) > -1)
+        return choices.filter(opt => opt.toLowerCase().indexOf(criterias) > -1)
       }
       // Show all options available
       return choices
     },
     searchDesc () {
       if (this.criteria && this.availableOptions.length === 0) {
+        return 'There are no tags matching your search criteria'
+      }
+      return ''
+    },
+    searchDescs () {
+      if (this.criterias && this.availableChoices.length === 0) {
         return 'There are no tags matching your search criteria'
       }
       return ''

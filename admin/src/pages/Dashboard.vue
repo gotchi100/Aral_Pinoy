@@ -57,6 +57,30 @@
    <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
      <b-container fluid>
         <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">SDG Campaign</h2>
+        <b-row>
+          <b-col>
+            <b-card style="margin-bottom:20px;" img-src="../assets/sdg1.png" img-alt="Card image" img-top>
+              <b-button to="/edit-sdg"  v-if="isDisabled">SDG #1</b-button>
+            </b-card>
+          </b-col>
+          <b-col>
+            <b-card style="margin-bottom:20px;" img-src="../assets/sdg4.png" img-alt="Card image" img-top>
+              <b-button to="/edit-sdg"  v-if="isDisabled">SDG #4</b-button>
+            </b-card>
+          </b-col>
+          <b-col>
+            <b-card style="margin-bottom:20px;" img-src="../assets/sdg13.png" img-alt="Card image" img-top>
+              <b-button to="/edit-sdg"  v-if="isDisabled">SDG #12</b-button>
+            </b-card>
+            </b-col>
+        </b-row>
+        <b-row>
+          <b-col cols="10"></b-col>
+          <b-col>
+              <b-button @click="isDisabled = true" v-show="!isDisabled">Edit SDG</b-button>
+              <b-button @click="isDisabled = false" v-show="isDisabled">Done</b-button>
+          </b-col>
+        </b-row>
       </b-container>
    </b-card>
    <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
@@ -79,7 +103,8 @@ export default {
   name: 'Register',
   data () {
     return {
-      logo
+      logo,
+      isDisabled: false
     }
   }
 }

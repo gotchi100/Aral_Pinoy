@@ -4,7 +4,7 @@
       <div class="image">
         <img :src="logo" style="width: 320px; height: 150px">
       </div>
-      <b-card class="card" bg-variant="light" style="display: inline-block; height: 715px; width: 415px; border-radius: 20px;">
+      <b-card class="card" bg-variant="light" style="display: inline-block; max-height:75rem; width: 415px; border-radius: 20px;">
         <b-container fluid>
           <b-row class="my-1">
             <label class="lname" for="input-small">Last Name</label>
@@ -19,9 +19,35 @@
             </b-col>
           </b-row>
           <b-row class="my-1">
+            <label class="gender" for="input-small">Gender</label>
+            <b-col>
+              <b-form-select v-model="selected" :options="options" class="mb-3">
+                <template #first>
+                  <b-form-select-option :value="null" disabled>-- Please select an option --</b-form-select-option>
+                </template>
+              </b-form-select>
+            </b-col>
+          </b-row>
+          <b-row class="my-1">
             <label class="cnum" for="input-small">Contact Number</label>
             <b-col>
               <b-form-input v-model="contactNumber"></b-form-input>
+            </b-col>
+          </b-row>
+          <b-row class="my-1">
+            <label class="homeAddress" for="input-small">Home Address</label>
+            <b-col>
+              <b-form-input v-model="homeAddress"></b-form-input>
+            </b-col>
+          </b-row>
+          <b-row class="my-1">
+            <label class="skills" for="input-small">Skills</label>
+            <b-col>
+              <b-form-select v-model="selected" :options="options" class="mb-3">
+                <template #first>
+                  <b-form-select-option :value="null" disabled>-- Please select an option --</b-form-select-option>
+                </template>
+              </b-form-select>
             </b-col>
           </b-row>
           <b-row class="my-1">
@@ -51,7 +77,7 @@
                 <span class="span-or">or</span>
             </div>
           </div>
-          <div class="col-md-12 mb-3">
+          <div class="col-md-12">
             <p class="text-center">
               <b-button pill variant="danger" style="margin: 8px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
                 <font-awesome-icon style="margin-right: 8px;" :icon="['fab', 'google']" />
@@ -59,7 +85,7 @@
               </b-button>
             </p>
             <p class="signin">
-              Already have an account? <b-link to="/login">Sign in</b-link>
+              Already have an account? <b-link to="login">Sign in</b-link>
             </p>
           </div>
         </b-container>
@@ -77,6 +103,11 @@ export default {
   data () {
     return {
       logo,
+      selected: null,
+      options: [
+        { value: 'Male', text: 'Male' },
+        { value: 'Female', text: 'Female' }
+      ],
       firstName: '',
       lastName: '',
       contactNumber: '',
@@ -114,7 +145,7 @@ position:absolute;
 left:0px;
 top:0px;
 width: 100%;
-height: 135%;
+max-height: 100rem;
 z-index:-1;
 }
 .login-or {
@@ -140,12 +171,29 @@ height: 1px;
 margin-top: 0px !important;
 margin-bottom: 0px !important;
 }
-.lname, .fname, .cnum, .email, .password, .cpassword{
+.lname, .fname, .cnum, .email, .password, .cpassword,
+.homeAddress, .gender, .skills {
   padding: 8px;
   text-align: left;
   font-size: 14px;
 }
 .signin {
   font-size: 14px;
+}
+.mb-3{
+display: block;
+width: 100%;
+height: 40px;
+padding: 0.375rem 0.75rem;
+font-size: 1rem;
+font-weight: 400;
+line-height: 1.5;
+color: #212529;
+background-color: #fff;
+background-clip: padding-box;
+border: 1px solid #ced4da;
+box-sizing: border-box;
+border-radius: 0.25rem;
+margin-bottom: 0 !important;
 }
 </style>
