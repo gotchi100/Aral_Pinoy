@@ -8,6 +8,7 @@ import { fas } from '@fortawesome/free-solid-svg-icons'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import Vuex from 'vuex'
+import VModal from 'vue-js-modal'
 
 import App from './App.vue'
 import Login from './pages/Login'
@@ -31,8 +32,11 @@ import ViewOfficerProfile from './pages/AdminViewOfficerProfile.vue'
 import CategoryList from './pages/AdminCategoryList.vue'
 import AddCategory from './pages/AdminAddCategory.vue'
 import ForgetPassword from './pages/AdminForgetPassword.vue'
-import EditSDG from './pages/AdminEditSDG.vue'
+import EditSDG1 from './pages/AdminEditSDG1.vue'
+import EditSDG4 from './pages/AdminEditSDG4.vue'
+import EditSDG13 from './pages/AdminEditSDG13.vue'
 import Homepage from './pages/AdminEditHomepage.vue'
+import EventPage from './pages/AdminEventPage.vue'
 
 import vuexStore from './store'
 
@@ -48,6 +52,7 @@ Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 Vue.use(VueRouter)
 Vue.use(Vuex)
+Vue.use(VModal)
 
 const store = new Vuex.Store(vuexStore)
 
@@ -201,8 +206,22 @@ const routes = [
     component: ForgetPassword
   },
   {
-    path: '/edit-sdg',
-    component: EditSDG,
+    path: '/edit-sdg1',
+    component: EditSDG1,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/edit-sdg4',
+    component: EditSDG4,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/edit-sdg13',
+    component: EditSDG13,
     meta: {
       requiresAuth: true
     }
@@ -210,6 +229,13 @@ const routes = [
   {
     path: '/homepage',
     component: Homepage,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/event-page',
+    component: EventPage,
     meta: {
       requiresAuth: true
     }

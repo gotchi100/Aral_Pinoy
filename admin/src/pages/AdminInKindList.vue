@@ -4,7 +4,7 @@
   <b-container fluid>
     <!-- User Interface controls -->
     <h1 style="font-family:'Bebas Neue', cursive;">
-        In Kind Donations
+        In-Kind Donations
     </h1>
     <b-row>
       <b-container class="bv-example-row">
@@ -134,28 +134,29 @@ export default {
   data () {
     return {
       items: [
-        { item: 'Unicef Shirt Large', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Unicef Shirt Medium', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Unicef Shirt Small', qty: 40, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Monggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Nissin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' },
-        { item: 'FUnicef Shirt Large', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'FUnicef Shirt Medium', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'FUnicef Shirt Small', qty: 40, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Bonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Zissin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' },
-        { item: 'Bnicef Shirt Large', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Bnicef Shirt Medium', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Bnicef Shirt Small', qty: 40, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Nonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Missin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' },
-        { item: 'Ynicef Shirt Large', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Ynicef Shirt Medium', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Ynicef Shirt Small', qty: 40, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Yonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Pissin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' }
+        { date: '9/27/21', item: 'Unicef Shirt Large', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Unicef Shirt Medium', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Unicef Shirt Small', qty: 40, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Monggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Nissin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' },
+        { date: '9/27/21', item: 'FUnicef Shirt Large', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'FUnicef Shirt Medium', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'FUnicef Shirt Small', qty: 40, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Bonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Zissin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' },
+        { date: '9/27/21', item: 'Bnicef Shirt Large', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Bnicef Shirt Medium', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Bnicef Shirt Small', qty: 40, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Nonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Missin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' },
+        { date: '9/27/21', item: 'Ynicef Shirt Large', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Ynicef Shirt Medium', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Ynicef Shirt Small', qty: 40, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Yonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Pissin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' }
       ],
       fields: [
+        { key: 'date', label: 'Date', sortable: true, class: 'text-center' },
         { key: 'item', label: 'Item', sortable: true, class: 'text-center' },
         { key: 'qty', label: 'Quantity', sortable: true, class: 'text-center' },
         { key: 'ctgry', label: 'Category', sortable: true, class: 'text-center' },
