@@ -175,14 +175,14 @@ const routes = [
     }
   },
   {
-    path: '/view-volunteer-profile',
+    path: '/view-volunteer-profile/:id',
     component: ViewVolunteerProfile,
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/view-officer-profile',
+    path: '/view-officer-profile/:id',
     component: ViewOfficerProfile,
     meta: {
       requiresAuth: true

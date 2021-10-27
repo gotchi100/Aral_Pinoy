@@ -67,7 +67,7 @@
       style="background:white"
     >
       <template #cell(email)="row">
-        <b-link :to="`/volunteers/${row.index}`">{{ row.value }}</b-link>
+        <b-link :to="`/view-volunteer-profile/${row.index}`">{{ row.value }}</b-link>
       </template>
 
       <template #cell(name)="row">
@@ -91,14 +91,6 @@
     <b-col></b-col>
   </b-row>
   </b-container>
-  <b-row>
-    <b-col cols="10"></b-col>
-    <b-col>
-      <b-button to="/view-volunteer-profile" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;">
-          (Temp view volunteer profile)
-      </b-button>
-    </b-col>
-  </b-row>
 </b-card>
 </div>
 </template>

@@ -67,7 +67,7 @@
       style="background:white"
     >
       <template #cell(email)="row">
-        <b-link :to="`/officers/${row.item._id}`">{{ row.value }}</b-link>
+        <b-link :to="`/view-officer-profile/${row.item._id}`">{{ row.value }}</b-link>
       </template>
 
       <template #cell(name)="row">
@@ -75,12 +75,7 @@
       </template>
     </b-table>
   <b-row>
-    <b-col cols="8"></b-col>
-    <b-col>
-      <b-button to="/view-officer-profile" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;">
-          (Temp Officer Profile)
-      </b-button>
-    </b-col>
+    <b-col cols="9"></b-col>
     <b-col>
       <b-button to="/add-user" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;">
           Add an Officer
