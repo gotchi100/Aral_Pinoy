@@ -37,6 +37,7 @@ import EditSDG4 from './pages/AdminEditSDG4.vue'
 import EditSDG13 from './pages/AdminEditSDG13.vue'
 import Homepage from './pages/AdminEditHomepage.vue'
 import EventPage from './pages/AdminEventPage.vue'
+import Crowdsource from './pages/events/Crowdsource.vue'
 
 import vuexStore from './store'
 
@@ -235,7 +236,11 @@ const routes = [
   },
   {
     path: '/event-page',
-    component: EventPage,
+    component: EventPage
+  },
+  {
+    path: '/crowdsource',
+    component: Crowdsource,
     meta: {
       requiresAuth: true
     }
