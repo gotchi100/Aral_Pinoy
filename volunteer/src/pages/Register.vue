@@ -4,7 +4,7 @@
       <div class="image">
         <img :src="logo" style="width: 320px; height: 150px">
       </div>
-      <b-card class="card" bg-variant="light" style="display: inline-block; max-height:75rem; width: 415px; border-radius: 20px;">
+      <b-card v-if="step === 0" class="card" bg-variant="light" style="display: inline-block; max-height:75rem; width: 415px; border-radius: 20px;">
         <b-container fluid>
           <b-row class="my-1">
             <label class="lname" for="input-small">Last Name</label>
@@ -40,16 +40,21 @@
               <b-form-input v-model="homeAddress"></b-form-input>
             </b-col>
           </b-row>
-          <b-row class="my-1">
-            <label class="skills" for="input-small">Skills</label>
-            <b-col>
-              <b-form-select v-model="selected" :options="options" class="mb-3">
-                <template #first>
-                  <b-form-select-option :value="null" disabled>-- Please select an option --</b-form-select-option>
-                </template>
-              </b-form-select>
-            </b-col>
-          </b-row>
+
+          <b-button @click="updateStep(1)" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
+            Next
+          </b-button>
+
+          <div class="col-md-12">
+            <p class="signin">
+              Already have an account? <b-link to="login">Sign in</b-link>
+            </p>
+          </div>
+        </b-container>
+      </b-card>
+
+      <b-card v-if="step === 1" class="card" bg-variant="light" style="display: inline-block; max-height:75rem; width: 415px; border-radius: 20px;">
+        <b-container fluid>
           <b-row class="my-1">
             <label class="email" for="input-small">Email Address</label>
             <b-col>
@@ -68,26 +73,33 @@
               <b-form-input v-model="confirmPassword" type="password"></b-form-input>
             </b-col>
           </b-row>
+          <b-button @click="updateStep(-1)" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
+            Previous
+          </b-button>
+          <b-button @click="updateStep(1)" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
+            Next
+          </b-button>
+        </b-container>
+      </b-card>
+
+      <b-card v-if="step === 2" class="card" bg-variant="light" style="display: inline-block; max-height:75rem; width: 415px; border-radius: 20px;">
+        <b-container fluid>
+          <b-row class="my-1">
+            <label class="skills" for="input-small">Skills</label>
+            <b-col>
+              <b-form-select v-model="selected" :options="options" class="mb-3">
+                <template #first>
+                  <b-form-select-option :value="null" disabled>-- Please select an option --</b-form-select-option>
+                </template>
+              </b-form-select>
+            </b-col>
+          </b-row>
+          <b-button @click="updateStep(-1)" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
+            Previous
+          </b-button>
           <b-button @click="register" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
             Register
           </b-button>
-          <div class="col-md-12 ">
-            <div class="login-or">
-                <hr class="hr-or">
-                <span class="span-or">or</span>
-            </div>
-          </div>
-          <div class="col-md-12">
-            <p class="text-center">
-              <b-button pill variant="danger" style="margin: 8px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
-                <font-awesome-icon style="margin-right: 8px;" :icon="['fab', 'google']" />
-                Sign in with Google
-              </b-button>
-            </p>
-            <p class="signin">
-              Already have an account? <b-link to="login">Sign in</b-link>
-            </p>
-          </div>
         </b-container>
       </b-card>
     </div>
@@ -103,6 +115,7 @@ export default {
   data () {
     return {
       logo,
+      step: 0,
       selected: null,
       options: [
         { value: 'Male', text: 'Male' },
@@ -124,6 +137,9 @@ export default {
         firstName: this.firstName,
         lastName: this.lastName
       })
+    },
+    updateStep (value) {
+      this.step += value
     }
   }
 }
