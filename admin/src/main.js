@@ -18,8 +18,8 @@ import MonetaryReport from './pages/MonetaryReport.vue'
 import EventEvalReport from './pages/EventEvalReport.vue'
 import VolunteerReport from './pages/VolunteerReport.vue'
 import AdminProfile from './pages/AdminProfile.vue'
-import Events from './pages/AdminEventList.vue'
-import EventDetails from './pages/events/EventDetails.vue'
+import EventList from './pages/AdminEventList.vue'
+// import EventDetails from './pages/events/EventDetails.vue'
 import Volunteers from './pages/AdminVolunteerList.vue'
 import OfficersList from './pages/AdminOfficerList.vue'
 import InKindList from './pages/AdminInKindList.vue'
@@ -37,7 +37,7 @@ import EditSDG4 from './pages/AdminEditSDG4.vue'
 import EditSDG13 from './pages/AdminEditSDG13.vue'
 import Homepage from './pages/AdminEditHomepage.vue'
 import EventPage from './pages/AdminEventPage.vue'
-import Crowdsource from './pages/events/Crowdsource.vue'
+import VolunteerSuggestion from './pages/events/VolunteerSuggestion.vue'
 
 import vuexStore from './store'
 
@@ -113,18 +113,18 @@ const routes = [
   },
   {
     path: '/events',
-    component: Events,
+    component: EventList,
     meta: {
       requiresAuth: true
     }
   },
-  {
-    path: '/events/:id',
-    component: EventDetails,
-    meta: {
-      requiresAuth: true
-    }
-  },
+  // {
+  //   path: '/events/:id',
+  //   component: EventDetails,
+  //   meta: {
+  //     requiresAuth: true
+  //   }
+  // },
   {
     path: '/volunteers',
     component: Volunteers,
@@ -235,12 +235,16 @@ const routes = [
     }
   },
   {
+    path: '/event-page/:id',
+    component: EventPage
+  },
+  {
     path: '/event-page',
     component: EventPage
   },
   {
-    path: '/crowdsource',
-    component: Crowdsource,
+    path: '/volunteersuggestion',
+    component: VolunteerSuggestion,
     meta: {
       requiresAuth: true
     }

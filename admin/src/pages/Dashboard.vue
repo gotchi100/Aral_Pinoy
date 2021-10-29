@@ -93,7 +93,7 @@
         <b-row>
           <b-col cols="10"></b-col>
           <b-col>
-              <b-button style="margin-top:60px;" @click="isDisabled = true"  pill variant="danger" v-show="!isDisabled">Modify SDG</b-button>
+              <b-button style="margin-top:60px;" @click="isDisabled = true"  pill variant="danger" v-show="!isDisabled">Edit SDG</b-button>
               <b-button style="margin-top:60px;" @click="isDisabled = false"  pill variant="danger" v-show="isDisabled">Cancel</b-button>
           </b-col>
         </b-row>

@@ -67,7 +67,7 @@
       style="background:white"
     >
       <template #cell(event)="row">
-        <b-link :to="`/events/${row.index}`">{{ row.value }}</b-link>
+        <b-link :to="`/event-page/${row.index}`">{{ row.value }}</b-link>
       </template>
     </b-table>
   <b-row>

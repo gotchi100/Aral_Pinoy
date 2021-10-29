@@ -1,10 +1,10 @@
 <template>
- <div>
+ <div class="suggestion">
   <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
   <b-container fluid>
     <!-- User Interface controls -->
     <h1 style="font-family:'Bebas Neue', cursive;">
-        Volunteer Crowdsource
+        Volunteer Suggestion List
     </h1>
     <b-row>
       <b-container class="bv-example-row">
@@ -180,3 +180,23 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.suggestion {
+position: relative;
+}
+.suggestion:before {
+background-image: url('https://rs.projects-abroad.ie/v1/hero/product-5b5b2f57d7d1b.[1600].jpeg');
+content: ' ';
+display: block;
+position: absolute;
+left: 0;
+top: 0;
+width: 100%;
+height: 100%;
+opacity: 0.4;
+background-repeat: no-repeat;
+background-size: cover;
+padding-top: 695px;
+}
+</style>

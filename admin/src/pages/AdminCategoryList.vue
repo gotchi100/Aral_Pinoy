@@ -75,7 +75,7 @@
       </template> -->
       <template #cell(actions)="row">
         <b-button size="sm" @click="info(row.item, row.index, $event.target)" class="mr-1">
-          Edit Cateogry
+          Delete
         </b-button>
         <!-- <b-button size="sm" @click="row.toggleDetails">
           {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
