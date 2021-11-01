@@ -51,7 +51,6 @@
         <b-nav-item-dropdown style="margin-right: 40px; color: black;" class="user" :text="$store.state.user.firstName">
             <b-dropdown-item to="/profile">Profile</b-dropdown-item>
             <b-dropdown-item to="/homepage">Edit Homepage</b-dropdown-item>
-            <b-dropdown-item href="#">Edit Dashboard</b-dropdown-item>
             <b-dropdown-item to="/skills">Edit Skills</b-dropdown-item>
             <b-dropdown-item @click="logout">Logout</b-dropdown-item>
         </b-nav-item-dropdown>

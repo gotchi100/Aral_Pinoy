@@ -4,30 +4,86 @@
             <b-container>
             <b-row>
             <b-col><p>
-            Connect with Us
+            Connect with Us&nbsp;&nbsp;
+            <b-icon
+              @click="showModal = !showModal"
+              :icon="isAboutTextEditable3 ? 'file-check' : 'pencil'"
+              font-scale="0.75"
+            ></b-icon>
             </p>
             <Icon icon="logos:google-gmail" height="32"  style="margin: 20px;"/>
             <Icon icon="fa-brands:facebook" color="#1877f2" height="40"  style="margin: 20px;"/>
             <Icon icon="logos:twitter" color="#1877f2" height="35"  style="margin: 20px;"/>
             </b-col>
             <b-col><p>
-            Location
+            Location&nbsp;&nbsp;
+            <b-icon
+              @click="isAboutTextEditable = !isAboutTextEditable"
+              :icon="isAboutTextEditable ? 'file-check' : 'pencil'"
+              font-scale="0.75"
+            ></b-icon>
             </p>
-            <p>
-            2339 Taft Ave, <br> Malate, Manila, 1004 <br> Metro Manila
-            </p>
+            <div class="info">
+              <div v-if="!isAboutTextEditable" style="white-space: pre">
+                {{ aboutText }}
+              </div>
+              <b-form-textarea
+                v-else
+                v-model="aboutText"
+                rows="7"
+                max-rows="7"
+              ></b-form-textarea>
+            </div>
             </b-col>
             <b-col><p>
-            Donate
+            Donate&nbsp;&nbsp;
+            <b-icon
+              @click="isAboutTextEditable2 = !isAboutTextEditable2"
+              :icon="isAboutTextEditable2 ? 'file-check' : 'pencil'"
+              font-scale="0.75"
+            ></b-icon>
             </p>
-            <div class="donation">
-            Bank of the Philippine Islands: ARAL PINOY ORG INC.
-            PAYMAYA: ARAL PINOY ORG INC.<br>
-            GCASH: ARAL PINOY ORG INC.
+            <div class="info">
+              <div v-if="!isAboutTextEditable2" style="white-space: pre">
+                {{ aboutText2 }}
+              </div>
+              <b-form-textarea
+                v-else
+                v-model="aboutText2"
+                rows="7"
+                max-rows="7"
+              ></b-form-textarea>
             </div>
             </b-col>
             </b-row>
             </b-container>
+            <b-modal v-model="showModal" size="xl">
+              <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 100%; border-radius: 20px; margin-top: 40px;">
+                <b-container fluid>
+                    <h1 style="font-family:'Bebas Neue', cursive;">
+                        Edit Contact Details
+                    </h1>
+                  <b-row class="my-1">
+                    <label class="skill" for="input-small">Gmail Address:</label>
+                    <b-col>
+                      <b-form-input v-model="skill"></b-form-input>
+                    </b-col>
+                  </b-row>
+                  <b-row class="my-1">
+                    <label class="description" for="input-small">Facebook Profile Link:</label>
+                    <b-col>
+                      <b-form-input v-model="description"></b-form-input>
+                    </b-col>
+                  </b-row>
+                  <b-row class="my-1">
+                    <label class="description" for="input-small">Twitter Profile Link:</label>
+                    <b-col>
+                      <b-form-input v-model="description"></b-form-input>
+                    </b-col>
+                  </b-row>
+                </b-container>
+              </b-card>
+            </b-modal>
         </div>
     </footer>
 </template>
@@ -39,6 +95,25 @@ export default {
   name: 'Footer',
   components: {
     Icon
+  },
+  data () {
+    return {
+      showModal: false,
+      isAboutTextEditable: false,
+      isAboutTextEditable2: false,
+      isAboutTextEditable3: false,
+      aboutText: '2339 Taft Ave\n' +
+      'Malate, Manila, 1004\n' +
+      'Metro Manila',
+      aboutText2: 'Bank of the Philippine Islands: ARAL PINOY ORG INC.\n' +
+      'PAYMAYA: ARAL PINOY ORG INC.\n' +
+      'GCASH: ARAL PINOY ORG INC.'
+    }
+  },
+  watch: {
+    aboutText (val) {
+      console.log(val)
+    }
   }
 }
 </script>
@@ -80,5 +155,11 @@ font-family: 'Bebas Neue', cursive;
 font-size: 24px;
 text-align: right;
 line-height: 1.5;
+}
+.info {
+  font-family: 'Bebas Neue', cursive;
+  line-height: 2.0;
+  font-size: 18px;
+  text-align: justify;
 }
 </style>
