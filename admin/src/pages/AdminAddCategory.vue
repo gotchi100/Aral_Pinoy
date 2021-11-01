@@ -24,10 +24,25 @@
                 </b-form-checkbox>
             </b-col>
           </b-row>
-          <b-button pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
+          <b-button @click="showModal = !showModal" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
             Add Category
           </b-button>
         </b-container>
+        <b-modal v-model="showModal" size="xl">
+        <b-container fluid>
+              <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
+                  Are you sure with all the details?
+              </h1>
+              <!-- <b-row>
+                <b-col cols="5"></b-col>
+                <b-col>
+                  <b-button type="submit" variant="success">Yes</b-button>
+                  &nbsp;
+                  <b-button type="reset" variant="danger">No</b-button>
+                </b-col>
+              </b-row> -->
+          </b-container>
+      </b-modal>
       </b-card>
     </div>
   </div>
@@ -41,7 +56,8 @@ export default {
   data () {
     return {
       skill: '',
-      description: ''
+      description: '',
+      showModal: false
     }
   }
 //   methods: {

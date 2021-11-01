@@ -38,6 +38,7 @@ import EditSDG13 from './pages/AdminEditSDG13.vue'
 import Homepage from './pages/AdminEditHomepage.vue'
 import EventPage from './pages/AdminEventPage.vue'
 import VolunteerSuggestion from './pages/events/VolunteerSuggestion.vue'
+import AddDonation from './pages/AdminAddDonation.vue'
 
 import vuexStore from './store'
 
@@ -118,13 +119,6 @@ const routes = [
       requiresAuth: true
     }
   },
-  // {
-  //   path: '/events/:id',
-  //   component: EventDetails,
-  //   meta: {
-  //     requiresAuth: true
-  //   }
-  // },
   {
     path: '/volunteers',
     component: Volunteers,
@@ -245,6 +239,13 @@ const routes = [
   {
     path: '/volunteersuggestion',
     component: VolunteerSuggestion,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/add-donation',
+    component: AddDonation,
     meta: {
       requiresAuth: true
     }

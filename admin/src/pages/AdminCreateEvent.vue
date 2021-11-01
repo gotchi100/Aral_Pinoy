@@ -270,9 +270,9 @@
                 </b-col>
               </b-row>
             </b-container>
-            <b-col>
+            <!-- <b-col>
               <b-button pill variant="danger" to="dashboard" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 125px;">Save</b-button>
-            </b-col>
+            </b-col> -->
           </b-card>
         </b-row>
       </b-form>
@@ -282,7 +282,7 @@
         <b-col></b-col>
         <b-col></b-col>
         <b-col>
-          <b-button type="submit">Create</b-button>
+          <b-button @click="showModal = !showModal">Create</b-button>
           &nbsp;
           <b-button type="reset" variant="danger">Reset</b-button>
         </b-col>
@@ -291,6 +291,21 @@
         <pre class="m-0">{{ form }}</pre>
       </b-card> -->
       </b-container>
+      <b-modal v-model="showModal" size="xl">
+        <b-container fluid>
+              <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
+                  Are you sure with all the details?
+              </h1>
+              <!-- <b-row>
+                <b-col cols="5"></b-col>
+                <b-col>
+                  <b-button type="submit" variant="success">Yes</b-button>
+                  &nbsp;
+                  <b-button type="reset" variant="danger">No</b-button>
+                </b-col>
+              </b-row> -->
+          </b-container>
+      </b-modal>
     </b-card>
   </div>
 </template>
@@ -317,6 +332,7 @@ export default ({
         file1: null,
         checked: []
       },
+      showModal: false,
       text: {
         eventdes: ''
       },

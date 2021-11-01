@@ -91,10 +91,15 @@
         <pre>{{ infoModal.content }}</pre>
       </b-modal> -->
   <b-row>
-    <b-col cols="10"></b-col>
+    <b-col cols="8"></b-col>
+    <b-col>
+      <b-button to="/add-donation" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 180px;">
+        Add a Donation
+      </b-button>
+    </b-col>
     <b-col>
       <b-button to="/category-list" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 180px;">
-        Modify Categories
+        View Categories
       </b-button>
     </b-col>
     <!-- <b-col>

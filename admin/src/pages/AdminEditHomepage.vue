@@ -11,7 +11,13 @@
     </div>
     <div class="featured">
       <b-container>
-        <p>Featured</p>
+        <p>Featured&nbsp;&nbsp;
+          <b-icon
+          @click="showModal = !showModal"
+          :icon="isAboutTextEditable2 ? 'file-check' : 'pencil'"
+          font-scale="0.75"
+        ></b-icon>
+        </p>
         <b-carousel
           id="carousel-1"
           v-model="slide"
@@ -235,6 +241,67 @@
           </b-col>
         </b-row>
       </b-container>
+      <b-modal v-model="showModal" size="xl">
+        <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 100%; border-radius: 20px; margin-top: 40px;">
+          <b-container fluid>
+              <h1 style="font-family:'Bebas Neue', cursive;">
+                  Select events to be featured
+              </h1>
+            <b-form-group label="Events:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                <b-form-tags id="tags-with-dropdown" v-model="values" no-outer-focus class="mb-2" style="text-align:center;">
+                  <template v-slot="{ tags, disabled, addTag, removeTag }" style="display: inline-block; height: 100%; overflow: auto;">
+                    <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
+                      <li v-for="tag in tags" :key="tag" class="list-inline-item">
+                        <b-form-tag
+                          @remove="removeTag(tag)"
+                          :title="tag"
+                          :disabled="disabled"
+                          variant="info"
+                        >{{ tag }}</b-form-tag>
+                      </li>
+                    </ul>
+
+                    <b-dropdown size="sm" variant="outline-secondary" block menu-class="w-100">
+                      <template #button-content>
+                        <b-icon icon="tag-fill"></b-icon> Events Provided
+                      </template>
+                      <b-dropdown-form @submit.stop.prevent="() => {}">
+                        <b-form-group
+                          label="Search Events"
+                          label-for="tag-search-input"
+                          label-cols-md="auto"
+                          class="mb-0"
+                          label-size="sm"
+                          :description="searchDesc"
+                          :disabled="disabled"
+                        >
+                          <b-form-input
+                            v-model="search"
+                            id="tag-search-input"
+                            type="search"
+                            size="sm"
+                            autocomplete="off"
+                            ></b-form-input>
+                        </b-form-group>
+                      </b-dropdown-form>
+                      <b-dropdown-divider></b-dropdown-divider>
+                      <b-dropdown-item-button
+                        v-for="options in availableOptions"
+                        :key="options"
+                        @click="onOptionClick({ options, addTag })"
+                      >
+                        {{ options }}
+                      </b-dropdown-item-button>
+                      <b-dropdown-text v-if="availableOptions.length === 0">
+                        There are no tags available to select
+                      </b-dropdown-text>
+                    </b-dropdown>
+                  </template>
+                </b-form-tags>
+            </b-form-group>
+          </b-container>
+        </b-card>
+      </b-modal>
       <br>
     </div>
     <Footer />
@@ -256,13 +323,18 @@ export default {
       sliding: null,
       value: 75,
       isAboutTextEditable: false,
+      isAboutTextEditable2: false,
+      showModal: false,
       aboutText: 'Founded in August 11, 2010 by the organization’s founder and president, ' +
       'Antonio Levy S. Ingles, Jr., PhD, an educator for 30 years\nand is currently a ' +
       'full-time faculty member in the De La Salle-College of Saint Benilde, City of Manila, Philippines.\n\n' +
       'SUPPORT AND HELP THE PROGRAMS, PROJECTS AND ACTIVITIES OF ARALPINOY.ORG INC, A NON-STOCK, NON-PROFIT ' +
       'AND NON-PARTISAN ORGANIZATION\nREGISTERED UNDER THE LAWS OF THE RP ON AUGUST 11, 2010 WITH ' +
       'SEC CRN CN201012580 AND BIR TIN 007-842-097. FOR ANY HELP, PLEASE NOTIFY US AT \nINGLES.ANTONIO@GMAIL.COM OR ' +
-      '09178661006.\n\nMARAMING SALAMAT PO!'
+      '09178661006.\n\nMARAMING SALAMAT PO!',
+      options: ['Batangas Coastal Cleanup', 'Rizal Community Outreach', 'Adventuro Batangas'],
+      search: '',
+      values: []
     }
   },
   methods: {
@@ -271,6 +343,33 @@ export default {
     },
     onSlideEnd (slide) {
       this.sliding = false
+    },
+    onOptionClick ({ options, addTag }) {
+      addTag(options)
+      this.search = ''
+    }
+  },
+  computed: {
+    criteria () {
+      // Compute the search criteria
+      return this.search.trim().toLowerCase()
+    },
+    availableOptions () {
+      const criteria = this.criteria
+      // Filter out already selected options
+      const options = this.options.filter(opt => this.values.indexOf(opt) === -1)
+      if (criteria) {
+        // Show only options that match criteria
+        return options.filter(opt => opt.toLowerCase().indexOf(criteria) > -1)
+      }
+      // Show all options available
+      return options
+    },
+    searchDesc () {
+      if (this.criteria && this.availableOptions.length === 0) {
+        return 'There are no tags matching your search criteria'
+      }
+      return ''
     }
   },
   watch: {
