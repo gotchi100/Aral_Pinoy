@@ -1,9 +1,9 @@
-const express = require('express');
+const express = require('express')
 const expressJwt = require('express-jwt')
 
-const RoleModel = require('../models/roles');
+const RoleModel = require('../models/roles')
 
-const router = express.Router();
+const router = express.Router()
 
 /* Create a role. */
 router.post(
@@ -11,27 +11,27 @@ router.post(
   expressJwt({ secret: 'secret', algorithms: ['HS256'] }),
   async function(req, res, next) {
     const {
-        name
-    } = req.body;
+      name
+    } = req.body
 
-    const role = new RoleModel();
+    const role = new RoleModel()
 
-    role.name = name;
+    role.name = name
 
     try {
-      await role.save();
+      await role.save()
 
-      res.send(role);
+      res.send(role)
     } catch (error) {
       res.json({
         error: {
           message: error.message
         }
-      });
+      })
 
-      next();
+      next()
     }
   }
-);
+)
 
-module.exports = router;
+module.exports = router

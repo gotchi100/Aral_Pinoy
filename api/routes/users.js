@@ -1,9 +1,9 @@
-const express = require('express');
+const express = require('express')
 const expressJwt = require('express-jwt')
 
-const UserModel = require('../models/users');
+const UserModel = require('../models/users')
 
-const router = express.Router();
+const router = express.Router()
 
 /* Create a user. */
 router.post(
@@ -17,55 +17,55 @@ router.post(
       firstName,
       middleName,
       lastName
-    } = req.body;
+    } = req.body
 
-    const user = new UserModel();
+    const user = new UserModel()
 
-    user.email = email;
-    user.password = password;
-    user.contactNumber = contactNumber;
-    user.firstName = firstName;
-    user.middleName = middleName;
-    user.lastName = lastName;
-    user.roles = ['Officer'];
+    user.email = email
+    user.password = password
+    user.contactNumber = contactNumber
+    user.firstName = firstName
+    user.middleName = middleName
+    user.lastName = lastName
+    user.roles = ['Officer']
 
     try {
-      await user.save();
+      await user.save()
 
-      res.send(user);
+      res.send(user)
     } catch (error) {
       res.json({
         error: {
           message: error.message
         }
-      });
+      })
 
-      next();
+      next()
     }
   }
-);
+)
 
 /* Retrieve a user. */
 router.get(
   '/:id',
   expressJwt({ secret: 'secret', algorithms: ['HS256'] }),
   async function(req, res, next) {
-    const { id } = req.params;
+    const { id } = req.params
 
-    const user = await UserModel.findById(id);
+    const user = await UserModel.findById(id)
 
     if (user === null) {
       res.json({
         error: {
           message: 'User not found'
         }
-      });
+      })
 
-      return next();
+      return next()
     }
 
-    res.send(user);
+    res.send(user)
   }
-);
+)
 
-module.exports = router;
+module.exports = router
