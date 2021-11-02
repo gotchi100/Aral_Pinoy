@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
+    "start:dev": "nodemon ./bin/www",
     "lint": "eslint . --fix"
   },
   "dependencies": {
@@ -13,11 +14,13 @@
     "dotenv": "^10.0.0",
     "express": "~4.16.1",
     "express-jwt": "^6.1.0",
+    "joi": "^17.4.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.0.10",
     "morgan": "~1.9.1"
   },
   "devDependencies": {
-    "eslint": "^8.1.0"
+    "eslint": "^8.1.0",
+    "nodemon": "^2.0.14"
   }
 }

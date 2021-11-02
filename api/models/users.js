@@ -1,3 +1,5 @@
+'use strict'
+
 const mongoose = require('mongoose')
 
 const { Schema } = mongoose
@@ -10,7 +12,8 @@ const userSchema = new Schema({
   },
   password: {
     type: String,
-    required: true
+    required: true,
+    select: false
   },
   contactNumber: String,
   firstName: {

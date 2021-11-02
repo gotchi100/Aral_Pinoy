@@ -1,37 +1,71 @@
-require('dotenv').config()
+'use strict'
 
 const express = require('express')
-const path = require('path')
+const debug = require('debug')
 const cookieParser = require('cookie-parser')
-const logger = require('morgan')
+const morgan = require('morgan')
 const mongoose = require('mongoose')
 const cors = require('cors')
+const jwtMiddleware = require('express-jwt')
+
+const config = require('./config')
 
 const indexRouter = require('./routes/index')
 const usersRouter = require('./routes/users')
 const rolesRouter = require('./routes/roles')
 const adminRouter = require('./routes/admin')
 
-async function connectDatabase () {
-  await mongoose.connect(process.env.MONGODB_URI)
+const logger = debug('api:server')
 
-  console.log('Connected to database')
+async function connectDatabase () {
+  await mongoose.connect(config.mongodb.uri)
+
+  logger('Connected to database')
 }
 
 connectDatabase()
 
+const publicRoutes = ['/login', '/register', '/admin/login']
+
 const app = express()
 
 app.use(cors())
-app.use(logger('dev'))
+app.use(morgan('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
-app.use(express.static(path.join(__dirname, 'public')))
+app.use(
+  jwtMiddleware({ 
+    secret: config.jwt.secret, 
+    algorithms: ['HS256']
+  }).unless({
+    path: publicRoutes
+  })
+)
 
 app.use('/', indexRouter)
 app.use('/users', usersRouter)
 app.use('/roles', rolesRouter)
 app.use('/admin', adminRouter)
+
+app.use(function (err, req, res, next) {
+  if (err.name === 'UnauthorizedError') {
+    return res.status(401).json({
+      code: 'Unauthorized',
+      status: 401,
+      message: err.message
+    })
+  }
+
+  logger(err)
+
+  res.status(500).json({
+    code: 'Internal Server Error',
+    status: 500,
+    message: 'The server encountered an internal error and was unable to complete your request.'
+  })
+
+  next()
+})
 
 module.exports = app

@@ -1,35 +1,58 @@
+'use strict'
+
 const express = require('express')
-const expressJwt = require('express-jwt')
+const Joi = require('joi')
 
 const RoleModel = require('../models/roles')
 
 const router = express.Router()
+const createRoleValidator = Joi.object({
+  name: Joi.string().trim().lowercase().required(),
+  label: Joi.string().trim().max(50).required(),
+})
 
-/* Create a role. */
 router.post(
   '/', 
-  expressJwt({ secret: 'secret', algorithms: ['HS256'] }),
+  function (req, res, next) {
+    const { value: validatedBody, error } = createRoleValidator.validate(req.body)
+
+    if (error !== undefined) {      
+      return res.status(400).json({
+        code: 'BadRequest',
+        status: 400,
+        message: error.message
+      })
+    }
+
+    req.body = validatedBody
+
+    next()
+  },
   async function(req, res, next) {
     const {
-      name
+      name,
+      label
     } = req.body
 
     const role = new RoleModel()
 
     role.name = name
+    role.label = label
 
     try {
       await role.save()
 
-      res.send(role)
+      return res.status(201).json(role)
     } catch (error) {
-      res.json({
-        error: {
-          message: error.message
-        }
-      })
+      if (error.code === 11000 && error.keyPattern.name === 1) {
+        return res.status(400).json({
+          code: 'RoleAlreadyExists',
+          status: 400,
+          message: `Duplicate role: ${error.keyValue.name}`
+        })
+      }
 
-      next()
+      next(error)
     }
   }
 )
