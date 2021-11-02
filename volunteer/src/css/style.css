@@ -1,0 +1,51 @@
+.b-form-tag {
+font-size: 15px;
+font-weight: 400;
+line-height: 1.5;
+margin-right: 0.25rem;
+margin-top: 8px;
+}
+.mw-100 {
+max-width: 100%!important;
+}
+.align-items-baseline {
+align-items: baseline!important;
+}
+.d-inline-flex {
+display: inline-flex!important;
+}
+.badge-info {
+color: #fff;
+background-color: #17a2b8;
+}
+.badge {
+padding: 0.25em 0.4em;
+text-align: center;
+white-space: nowrap;
+vertical-align: baseline;
+border-radius: 0.25rem;
+transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+button.close {
+background-color: transparent;
+border: none;
+}
+.sr-only {
+display: none;
+}
+.carousel-indicators li {
+box-sizing: content-box;
+flex: 0 1 auto;
+width: 30px;
+height: 3px;
+margin-right: 3px;
+margin-left: 3px;
+text-indent: -999px;
+cursor: pointer;
+background-color: #fff;
+background-clip: padding-box;
+border-top: 10px solid transparent;
+border-bottom: 10px solid transparent;
+opacity: .5;
+transition: opacity .6s ease;
+}

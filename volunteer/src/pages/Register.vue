@@ -73,33 +73,95 @@
               <b-form-input v-model="confirmPassword" type="password"></b-form-input>
             </b-col>
           </b-row>
-          <b-button @click="updateStep(-1)" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
-            Previous
-          </b-button>
-          <b-button @click="updateStep(1)" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
-            Next
-          </b-button>
+          <b-container class="bv-example-row">
+            <b-row>
+              <b-col>
+                <b-button @click="updateStep(-1)" pill variant="danger" style="margin-top: 15px; display: inline-block; font-size: 16px; padding: 8px; width: 152px;">
+                  Previous
+                </b-button>
+              </b-col>
+              <b-col>
+                <b-button @click="updateStep(1)" pill variant="danger" style="margin-top: 15px; display: inline-block; font-size: 16px; padding: 8px; width: 152px;">
+                  Next
+                </b-button>
+              </b-col>
+            </b-row>
+          </b-container>
         </b-container>
       </b-card>
 
       <b-card v-if="step === 2" class="card" bg-variant="light" style="display: inline-block; max-height:75rem; width: 415px; border-radius: 20px;">
         <b-container fluid>
           <b-row class="my-1">
-            <label class="skills" for="input-small">Skills</label>
             <b-col>
-              <b-form-select v-model="selected" :options="options" class="mb-3">
-                <template #first>
-                  <b-form-select-option :value="null" disabled>-- Please select an option --</b-form-select-option>
-                </template>
-              </b-form-select>
+               <b-form-group label="Skills:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                <b-form-tags id="tags-with-dropdown" v-model="value" no-outer-focus class="mb-2" style="text-align:center;">
+                    <template v-slot="{ tags, disabled, addTag, removeTag }" style="display: inline-block; height: 100%; overflow: auto;">
+                    <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
+                        <li v-for="tag in tags" :key="tag" class="list-inline-item">
+                        <b-form-tag
+                            @remove="removeTag(tag)"
+                            :title="tag"
+                            :disabled="disabled"
+                            variant="info"
+                        >{{ tag }}</b-form-tag>
+                        </li>
+                    </ul>
+
+                    <b-dropdown size="sm" variant="outline-secondary" block menu-class="w-100">
+                        <template #button-content>
+                        <b-icon icon="tag-fill"></b-icon> Skills Provided
+                        </template>
+                        <b-dropdown-form @submit.stop.prevent="() => {}">
+                        <b-form-group
+                            label="Search Skills"
+                            label-for="tag-search-input"
+                            label-cols-md="auto"
+                            class="mb-0"
+                            label-size="sm"
+                            :description="searchDesc"
+                            :disabled="disabled"
+                        >
+                            <b-form-input
+                            v-model="search"
+                            id="tag-search-input"
+                            type="search"
+                            size="sm"
+                            autocomplete="off"
+                            ></b-form-input>
+                        </b-form-group>
+                        </b-dropdown-form>
+                        <b-dropdown-divider></b-dropdown-divider>
+                        <b-dropdown-item-button
+                        v-for="option in availableOptions"
+                        :key="option"
+                        @click="onOptionClick({ option, addTag })"
+                        >
+                        {{ option }}
+                        </b-dropdown-item-button>
+                        <b-dropdown-text v-if="availableOptions.length === 0">
+                        There are no tags available to select
+                        </b-dropdown-text>
+                    </b-dropdown>
+                    </template>
+                </b-form-tags>
+              </b-form-group>
             </b-col>
           </b-row>
-          <b-button @click="updateStep(-1)" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
-            Previous
-          </b-button>
-          <b-button @click="register" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
-            Register
-          </b-button>
+         <b-container class="bv-example-row">
+            <b-row>
+              <b-col>
+                <b-button @click="updateStep(-1)" pill variant="danger" style="margin-top: 15px; display: inline-block; font-size: 16px; padding: 8px; width: 152px;">
+                  Previous
+                </b-button>
+              </b-col>
+              <b-col>
+                <b-button @click="register" pill variant="danger" style="margin-top: 15px; display: inline-block; font-size: 16px; padding: 8px; width: 152px;">
+                  Register
+                </b-button>
+              </b-col>
+            </b-row>
+          </b-container>
         </b-container>
       </b-card>
     </div>
@@ -126,7 +188,11 @@ export default {
       contactNumber: '',
       email: '',
       password: '',
-      confirmPassword: ''
+      confirmPassword: '',
+      roles: [],
+      option: ['Teaches at Math', 'Fluent in English', 'Heavy Lifter', 'Playing the guitar', 'Teaches at English', 'Doing Handicrafts', 'Cleaning'],
+      search: '',
+      value: []
     }
   },
   methods: {
@@ -140,12 +206,41 @@ export default {
     },
     updateStep (value) {
       this.step += value
+    },
+    onOptionClick ({ option, addTag }) {
+      addTag(option)
+      this.search = ''
+    }
+  },
+  computed: {
+    criteria () {
+      // Compute the search criteria
+      return this.search.trim().toLowerCase()
+    },
+    availableOptions () {
+      const criteria = this.criteria
+      // Filter out already selected options
+      const options = this.option.filter(opt => this.value.indexOf(opt) === -1)
+      if (criteria) {
+        // Show only options that match criteria
+        return options.filter(opt => opt.toLowerCase().indexOf(criteria) > -1)
+      }
+      // Show all options available
+      return options
+    },
+    searchDesc () {
+      if (this.criteria && this.availableOptions.length === 0) {
+        return 'There are no tags matching your search criteria'
+      }
+      return ''
     }
   }
 }
 </script>
 
 <style scoped>
+@import '../css/style.css';
+
 .image {
 padding-top: 75px;
 padding-bottom: 25px;
@@ -161,7 +256,7 @@ position:absolute;
 left:0px;
 top:0px;
 width: 100%;
-max-height: 100rem;
+height: 110%;
 z-index:-1;
 }
 .login-or {
@@ -189,12 +284,12 @@ margin-bottom: 0px !important;
 }
 .lname, .fname, .cnum, .email, .password, .cpassword,
 .homeAddress, .gender, .skills {
-  padding: 8px;
-  text-align: left;
-  font-size: 14px;
+padding: 8px;
+text-align: left;
+font-size: 14px;
 }
 .signin {
-  font-size: 14px;
+font-size: 14px;
 }
 .mb-3{
 display: block;
