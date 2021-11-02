@@ -4,7 +4,7 @@
       <img :src="logo" style="width: 320px; height: 150px">
    </div>
    <b-card class="card" bg-variant="light" style="display: inline-block; max-height:50rem; width: 1000px; border-radius: 20px;">
-      <h3 style="font-family:'Bebas Neue', cursive; color: black; position: relative;">Admin Profile</h3>
+      <h3 style="font-family:'Bebas Neue', cursive; color: black; position: relative;">Officer Profile</h3>
       <b-container fluid>
         <b-row class="my-1">
           <label class="name" for="input-small" style="font-family:'Bebas Neue', cursive;">First Name</label>
@@ -30,7 +30,7 @@
             <b-form-input v-model="email" :disabled="!isDisabled"></b-form-input>
           </b-col>
         </b-row>
-        <b-row class="my-1">
+        <!-- <b-row class="my-1">
           <label class="change" for="input-small" style="font-family:'Bebas Neue', cursive;">Change Password?</label>
         </b-row>
         <b-row class="my-1" v-if="isDisabled">
@@ -50,7 +50,7 @@
         </b-button>
         <b-button pill variant="danger" @click="isDisabled = false" v-show="isDisabled" style="margin: 8px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
               Save
-        </b-button>
+        </b-button> -->
       </b-container>
     </b-card>
   </div>

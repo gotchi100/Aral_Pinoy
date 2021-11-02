@@ -10,7 +10,7 @@
           </b-col>
           <b-col style="margin-top:20px; margin-bottom:20px;">
             <label for="end-datepicker" style="font-family: 'Bebas Neue', cursive;">To</label>
-            <b-form-datepicker id="end-datepicker" v-model="value" class="mb-2"></b-form-datepicker>
+            <b-form-datepicker id="end-datepicker" v-model="value" :max="new Date()" class="mb-2"></b-form-datepicker>
           </b-col>
         </b-row>
         <b-button pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">

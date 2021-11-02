@@ -66,31 +66,14 @@
       @filtered="onFiltered"
       style="background:white"
     >
+      <template #cell(email)="row">
+        <b-link :to="`/view-volunteer-profile/${row.index}`">{{ row.value }}</b-link>
+      </template>
+
       <template #cell(name)="row">
-        {{ row.value.first }} {{ row.value.last }}
-      </template>
-
-      <template #cell(actions)="row">
-        <b-button size="sm" @click="info(row.item, row.index, $event.target)" class="mr-1">
-          Info modal
-        </b-button>
-        <b-button size="sm" @click="row.toggleDetails">
-          {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
-        </b-button>
-      </template>
-
-      <template #row-details="row">
-        <b-card>
-          <ul>
-            <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
-          </ul>
-        </b-card>
+        {{ row.item.firstName }} {{ row.item.lastName }}
       </template>
     </b-table>
-        <!-- Info modal -->
-      <!-- <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
-        <pre>{{ infoModal.content }}</pre>
-      </b-modal> -->
   <b-row>
     <b-col></b-col>
     <b-col>
@@ -107,7 +90,6 @@
     </b-col>
     <b-col></b-col>
   </b-row>
-
   </b-container>
 </b-card>
 </div>
@@ -118,44 +100,33 @@ export default {
   data () {
     return {
       items: [
-        { email: 'Macdonald@gmail.com', name: { first: 'Dickerson', last: 'Macdonald' }, number: 91857489714 },
-        { email: 'Shaw@gmail.com', name: { first: 'Larsen', last: 'Shaw' }, number: 90857475614 },
-        { email: 'Navarro@gmail.com', name: { first: 'Mini', last: 'Navarro' }, number: 98857489714 },
-        { email: 'Wilson@gmail.com', name: { first: 'Geneva', last: 'Wilson' }, number: 48857489712 },
-        { email: 'Carney@gmail.com', name: { first: 'Jami', last: 'Carney' }, number: 68857489712 },
-        { email: 'Dunlap@gmail.com', name: { first: 'Essie', last: 'Dunlap' }, number: 18857489712 },
-        { email: 'Macdonald@gmail.com', name: { first: 'Thor', last: 'Macdonald' }, number: 88857489712 },
-        { email: 'Navarro@gmail.com', name: { first: 'Mitzi', last: 'Navarro' }, number: 98857689712 },
-        { email: 'Wilson@gmail.com', name: { first: 'Genevieve', last: 'Wilson' }, number: 98837489712 },
-        { email: 'Carney@gmail.com', name: { first: 'John', last: 'Carney' }, number: 96857489712 },
-        { email: 'Dunlap@gmail.com', name: { first: 'Dick', last: 'Dunlap' }, number: 99857489712 },
-        { email: 'Macdonald@gmail.com', name: { first: 'Dickerson', last: 'Macdonald' }, number: 91857489714 },
-        { email: 'Shaw@gmail.com', name: { first: 'Larsen', last: 'Shaw' }, number: 90857475614 },
-        { email: 'Navarro@gmail.com', name: { first: 'Mini', last: 'Navarro' }, number: 98857489714 },
-        { email: 'Wilson@gmail.com', name: { first: 'Geneva', last: 'Wilson' }, number: 48857489712 },
-        { email: 'Carney@gmail.com', name: { first: 'Jami', last: 'Carney' }, number: 68857489712 },
-        { email: 'Dunlap@gmail.com', name: { first: 'Essie', last: 'Dunlap' }, number: 18857489712 },
-        { email: 'Macdonald@gmail.com', name: { first: 'Thor', last: 'Macdonald' }, number: 88857489712 },
-        { email: 'Navarro@gmail.com', name: { first: 'Mitzi', last: 'Navarro' }, number: 98857689712 },
-        { email: 'Wilson@gmail.com', name: { first: 'Genevieve', last: 'Wilson' }, number: 98837489712 },
-        { email: 'Carney@gmail.com', name: { first: 'John', last: 'Carney' }, number: 96857489712 },
-        { email: 'Dunlap@gmail.com', name: { first: 'Dick', last: 'Dunlap' }, number: 99857489712 }
+        { email: 'Macdonald@gmail.com', firstName: 'Dickerson', lastName: 'Macdonald', contactNumber: '091857489714' },
+        { email: 'Shaw@gmail.com', firstName: 'Larsen', lastName: 'Shaw', contactNumber: '090857475614' },
+        { email: 'Navarro@gmail.com', firstName: 'Mini', lastName: 'Navarro', contactNumber: '098857489714' },
+        { email: 'Wilson@gmail.com', firstName: 'Geneva', lastName: 'Wilson', contactNumber: '048857489712' },
+        { email: 'Carney@gmail.com', firstName: 'Jami', lastName: 'Carney', contactNumber: '068857489712' },
+        { email: 'Dunlap@gmail.com', firstName: 'Essie', lastName: 'Dunlap', contactNumber: '018857489712' },
+        { email: 'Macdonald@gmail.com', firstName: 'Thor', lastName: 'Macdonald', contactNumber: '088857489712' },
+        { email: 'Navarro@gmail.com', firstName: 'Mitzi', lastName: 'Navarro', contactNumber: '098857689712' },
+        { email: 'Wilson@gmail.com', firstName: 'Genevieve', lastName: 'Wilson', contactNumber: '098837489712' },
+        { email: 'Carney@gmail.com', firstName: 'John', lastName: 'Carney', contactNumber: '096857489712' },
+        { email: 'Dunlap@gmail.com', firstName: 'Dick', lastName: 'Dunlap', contactNumber: '099857489712' },
+        { email: 'Macdonald@gmail.com', firstName: 'Dickerson', lastName: 'Macdonald', contactNumber: '091857489714' },
+        { email: 'Shaw@gmail.com', firstName: 'Larsen', lastName: 'Shaw', contactNumber: '090857475614' },
+        { email: 'Navarro@gmail.com', firstName: 'Mini', lastName: 'Navarro', contactNumber: '098857489714' },
+        { email: 'Wilson@gmail.com', firstName: 'Geneva', lastName: 'Wilson', contactNumber: '048857489712' },
+        { email: 'Carney@gmail.com', firstName: 'Jami', lastName: 'Carney', contactNumber: '068857489712' },
+        { email: 'Dunlap@gmail.com', firstName: 'Essie', lastName: 'Dunlap', contactNumber: '018857489712' },
+        { email: 'Macdonald@gmail.com', firstName: 'Thor', lastName: 'Macdonald', contactNumber: '088857489712' },
+        { email: 'Navarro@gmail.com', firstName: 'Mitzi', lastName: 'Navarro', contactNumber: '098857689712' },
+        { email: 'Wilson@gmail.com', firstName: 'Genevieve', lastName: 'Wilson', contactNumber: '098837489712' },
+        { email: 'Carney@gmail.com', firstName: 'John', lastName: 'Carney', contactNumber: '096857489712' },
+        { email: 'Dunlap@gmail.com', firstName: 'Dick', lastName: 'Dunlap', contactNumber: '099857489712' }
       ],
       fields: [
-        { key: 'name', label: 'Full Name', sortable: true, sortDirection: 'desc' },
         { key: 'email', label: 'Email', sortable: true, class: 'text-center' },
-        { key: 'number', label: 'Contact Number', sortable: true, class: 'text-center' }
-        // {
-        //   key: 'isActive',
-        //   label: 'Is Active',
-        //   formatter: (value, key, item) => {
-        //     return value ? 'Yes' : 'No'
-        //   },
-        //   sortable: true,
-        //   sortByFormatted: true,
-        //   filterByFormatted: true
-        // },
-        // { key: 'actions', label: 'Actions' }
+        { key: 'name', label: 'Full Name', sortable: true, sortDirection: 'desc' },
+        { key: 'contactNumber', label: 'Contact Number', sortable: true, class: 'text-center' }
       ],
       totalRows: 1,
       currentPage: 1,
@@ -193,10 +164,6 @@ export default {
       this.infoModal.content = JSON.stringify(item, null, 2)
       this.$root.$emit('bv::show::modal', this.infoModal.id, button)
     },
-    // resetInfoModal () {
-    //   this.infoModal.title = ''
-    //   this.infoModal.content = ''
-    // },
     onFiltered (filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length

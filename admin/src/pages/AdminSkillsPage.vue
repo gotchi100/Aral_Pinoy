@@ -1,10 +1,10 @@
 <template>
-<div class="volunteerlist">
+<div class="skillslist">
   <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
   <b-container fluid>
     <!-- User Interface controls -->
     <h1 style="font-family:'Bebas Neue', cursive;">
-        Officers
+        Skills
     </h1>
     <b-row>
       <b-container class="bv-example-row">
@@ -66,19 +66,19 @@
       @filtered="onFiltered"
       style="background:white"
     >
-      <template #cell(email)="row">
-        <b-link :to="`/view-officer-profile/${row.item._id}`">{{ row.value }}</b-link>
+      <!-- <template #cell(email)="row">
+        <b-link :to="`/officers/${row.item._id}`">{{ row.value }}</b-link>
       </template>
 
       <template #cell(name)="row">
         {{ row.item.firstName }} {{ row.item.lastName }}
-      </template>
+      </template> -->
     </b-table>
   <b-row>
-    <b-col cols="9"></b-col>
+    <b-col cols="10"></b-col>
     <b-col>
-      <b-button to="/add-user" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;">
-          Add an Officer
+      <b-button to="/add-skills" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;">
+          Add a Skill
       </b-button>
     </b-col>
   </b-row>
@@ -109,15 +109,14 @@ export default {
   data () {
     return {
       items: [
-        { _id: '6172cd711ff80470e0fe0dd4', email: 'John@gmail.com', firstName: 'John', lastName: 'John', contactNumber: '+6391857489714' },
-        { _id: '6172cd753b5075450daf5a5c', email: 'Kaarl@gmail.com', firstName: 'Karl', lastName: 'Karl', contactNumber: '+6390857475614' },
-        { _id: '6172cd789f8997dbb37d42ba', email: 'Joshua@gmail.com', firstName: 'Joshua', lastName: 'Joshua', contactNumber: '+6398857489714' },
-        { _id: '6172cd7ca5b93fac5e85f86b', email: 'Christian@gmail.com', firstName: 'Christian', lastName: 'Christian', contactNumber: '+6348857489712' }
+        { _id: '6172cd711ff80470e0fe0dd4', skills: 'Teaches Math', description: 'Knowledgable with basic Math' },
+        { _id: '6172cd753b5075450daf5a5c', skills: 'Teaches English', description: 'Knowledgable with basic English' },
+        { _id: '6172cd789f8997dbb37d42ba', skills: 'Teaches History', description: 'Knowledgable with History of the Philippines' },
+        { _id: '6172cd7ca5b93fac5e85f86b', skills: 'Dancer', description: 'Can teach non-dancer basic moves' }
       ],
       fields: [
-        { key: 'email', label: 'Email', sortable: true, class: 'text-center' },
-        { key: 'name', label: 'Full Name', sortable: true, sortDirection: 'desc' },
-        { key: 'contactNumber', label: 'Contact Number', sortable: true, class: 'text-center' }
+        { key: 'skills', label: 'Skills', sortable: true, class: 'text-center' },
+        { key: 'description', label: 'Description', sortable: true, sortDirection: 'desc' }
       ],
       totalRows: 1,
       currentPage: 1,
@@ -127,12 +126,12 @@ export default {
       sortDesc: false,
       sortDirection: 'asc',
       filter: null,
-      filterOn: [],
-      infoModal: {
-        id: 'info-modal',
-        title: '',
-        content: ''
-      }
+      filterOn: []
+      // infoModal: {
+      //   id: 'info-modal',
+      //   title: '',
+      //   content: ''
+      // }
     }
   },
   computed: {
@@ -150,11 +149,15 @@ export default {
     this.totalRows = this.items.length
   },
   methods: {
-    info (item, index, button) {
-      this.infoModal.title = `Row index: ${index}`
-      this.infoModal.content = JSON.stringify(item, null, 2)
-      this.$root.$emit('bv::show::modal', this.infoModal.id, button)
-    },
+    // info (item, index, button) {
+    //   this.infoModal.title = `Row index: ${index}`
+    //   this.infoModal.content = JSON.stringify(item, null, 2)
+    //   this.$root.$emit('bv::show::modal', this.infoModal.id, button)
+    // },
+    // resetInfoModal () {
+    //   this.infoModal.title = ''
+    //   this.infoModal.content = ''
+    // },
     onFiltered (filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length
@@ -165,10 +168,10 @@ export default {
 </script>
 
 <style scoped>
-.volunteerlist {
+.skillslist {
 position: relative;
 }
-.volunteerlist:before {
+.skillslist:before {
 background-image: url('https://rs.projects-abroad.ie/v1/hero/product-5b5b2f57d7d1b.[1600].jpeg');
 content: ' ';
 display: block;

@@ -1,10 +1,10 @@
 <template>
   <div>
     <div class="login">
-      <b-card class="card" bg-variant="light" style="display: inline-block; height: 650px; width: 450px; border-radius: 20px; margin-top: 40px;">
+      <b-card class="card" bg-variant="light" style="display: inline-block; height: 550px; width: 450px; border-radius: 20px; margin-top: 40px;">
         <b-container fluid>
             <h1 style="font-family:'Bebas Neue', cursive;">
-                Add User
+                Add Officer
             </h1>
           <b-row class="my-1">
             <label class="lname" for="input-small">Last Name</label>
@@ -36,16 +36,25 @@
               <b-form-input v-model="password" type="password"></b-form-input>
             </b-col>
           </b-row>
-          <b-row class="my-1">
-            <label class="cpassword" for="input-small">Confirm Password</label>
-            <b-col>
-              <b-form-input v-model="confirmPassword" type="password"></b-form-input>
-            </b-col>
-          </b-row>
-          <b-button @click="register" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
+          <b-button @click="showModal = !showModal" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
             Register User
           </b-button>
         </b-container>
+        <b-modal v-model="showModal" size="xl">
+          <b-container fluid>
+              <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
+                  Are you sure with all the details?
+              </h1>
+              <b-row>
+                <b-col cols="5"></b-col>
+                <b-col>
+                  <b-button @click="register" type="submit" variant="success">Yes</b-button>
+                  &nbsp;
+                  <b-button type="reset" variant="danger">No</b-button>
+                </b-col>
+              </b-row>
+          </b-container>
+        </b-modal>
       </b-card>
     </div>
   </div>
@@ -65,7 +74,8 @@ export default {
       contactNumber: '',
       email: '',
       password: '',
-      confirmPassword: ''
+      confirmPassword: '',
+      showModal: false
     }
   },
   methods: {

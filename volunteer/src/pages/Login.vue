@@ -18,7 +18,7 @@
               <b-form-input v-model="password" type="password"></b-form-input>
             </b-col>
           </b-row>
-          <label class="forgot" for="input-small">Forgot Password?</label>
+          <label class="signup" for="input-small"><b-link to="/forget-password">Forgot Password?</b-link></label>
           <b-button @click="login" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
             Login
           </b-button>
@@ -36,7 +36,7 @@
               </b-button>
             </p>
           </div>
-          <label class="signup" for="input-small">Don't have an account? <b-link to="register">Sign up here</b-link></label>
+          <label class="signup" for="input-small">Don't have an account? <b-link to="/register">Sign up here</b-link></label>
         </b-container>
       </b-card>
     </div>

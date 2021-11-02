@@ -83,17 +83,34 @@
           </b-card>
         </b-row>
         <b-row>
+            <b-card v-for="(role, index) in roles" :key="index" class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
+            <b-row>
+              <b-col>
+                <b-form-group label="Role:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                  <b-form-input v-model="role.name" disabled placeholder="Enter Specific Role" required></b-form-input>
+                </b-form-group>
+              </b-col>
+              <b-col>
+                <b-form-group label="Number of Volunteers for this Role:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                  <b-form-input v-model="role.max" disabled type="number" placeholder="Enter Number of Volunteers needed for this Role" required></b-form-input>
+                </b-form-group>
+              </b-col>
+              <b-form-group label="Description:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                <b-form-input v-model="role.description" disabled placeholder="Enter Description of the Role" required></b-form-input>
+              </b-form-group>
+            </b-row>
+          </b-card>
           <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
             <b-row>
               <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; text-align: left; font-size:20px; margin-top:15px; margin-bottom:0px;">Roles Needed:</h2>
               <b-col>
                 <b-form-group label="Role:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-input v-model="form.role" placeholder="Enter Specific Role" required></b-form-input>
+                  <b-form-input v-model="form.roleName" placeholder="Enter Specific Role" required></b-form-input>
                 </b-form-group>
               </b-col>
               <b-col>
                 <b-form-group label="Number of Volunteers for this Role:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-input v-model="form.rolenum" type="number" placeholder="Enter Number of Volunteers needed for this Role" required></b-form-input>
+                  <b-form-input v-model="form.roleNumber" type="number" placeholder="Enter Number of Volunteers needed for this Role" required></b-form-input>
                 </b-form-group>
               </b-col>
               <b-form-group label="Skills:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
@@ -112,11 +129,11 @@
 
                     <b-dropdown size="sm" variant="outline-secondary" block menu-class="w-100">
                       <template #button-content>
-                        <b-icon icon="tag-fill"></b-icon> Choose tags
+                        <b-icon icon="tag-fill"></b-icon> Skills Provided
                       </template>
                       <b-dropdown-form @submit.stop.prevent="() => {}">
                         <b-form-group
-                          label="Search tags"
+                          label="Search Skills"
                           label-for="tag-search-input"
                           label-cols-md="auto"
                           class="mb-0"
@@ -126,6 +143,76 @@
                         >
                           <b-form-input
                             v-model="search"
+                            id="tag-search-input"
+                            type="search"
+                            size="sm"
+                            autocomplete="off"
+                            ></b-form-input>
+                        </b-form-group>
+                      </b-dropdown-form>
+                      <b-dropdown-divider></b-dropdown-divider>
+                      <b-dropdown-item-button
+                        v-for="options in availableOptions"
+                        :key="options"
+                        @click="onOptionClick({ options, addTag })"
+                      >
+                        {{ options }}
+                      </b-dropdown-item-button>
+                      <b-dropdown-text v-if="availableOptions.length === 0">
+                        There are no tags available to select
+                      </b-dropdown-text>
+                    </b-dropdown>
+                  </template>
+                </b-form-tags>
+              </b-form-group>
+              <b-form-group label="Description:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                <b-form-input v-model="form.roleDescription" placeholder="Enter Description of the Role" required></b-form-input>
+              </b-form-group>
+            </b-row>
+            <b-row>
+              <b-col cols="9"></b-col>
+              <b-col>
+                <b-button @click="addRole" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 170px;">
+                  Add Another Role
+                </b-button>
+              </b-col>
+            </b-row>
+          </b-card>
+        </b-row>
+        <b-row>
+          <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
+            <b-row>
+              <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; text-align: left; font-size:20px; margin-top:15px; margin-bottom:20px;">Sustainable Development Goals for this Event:</h2>
+              <b-form-group style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                <b-form-tags id="tags-with-dropdown" v-model="values" no-outer-focus class="mb-2" style="text-align:center;">
+                  <template v-slot="{ tags, disabled, addTag, removeTag }" style="display: inline-block; height: 100%; overflow: auto;">
+                    <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
+                      <li v-for="tag in tags" :key="tag" class="list-inline-item">
+                        <b-form-tag
+                          @remove="removeTag(tag)"
+                          :title="tag"
+                          :disabled="disabled"
+                          variant="info"
+                        >{{ tag }}</b-form-tag>
+                      </li>
+                    </ul>
+
+                    <b-dropdown size="sm" variant="outline-secondary" block menu-class="w-100">
+                      <template #button-content>
+                        <b-icon icon="tag-fill"></b-icon> SDGs Provided
+                      </template>
+                      <b-dropdown-form @submit.stop.prevent="() => {}">
+                        <b-form-group
+                          label="Search SDGs"
+                          label-for="tag-search-input"
+                          label-cols-md="auto"
+                          class="mb-0"
+                          label-size="sm"
+                          :description="searchDescs"
+                          :disabled="disabled"
+                        >
+                          <b-form-input
+                            v-model="searcher"
                             id="tag-search-input"
                             type="search"
                             size="sm"
@@ -148,80 +235,44 @@
                   </template>
                 </b-form-tags>
               </b-form-group>
-              <b-form-group label="Description:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                <b-form-input v-model="form.roledes" placeholder="Enter Description of the Role" required></b-form-input>
-              </b-form-group>
-            </b-row>
-            <b-row>
-              <b-col></b-col>
-              <b-col></b-col>
-              <b-col></b-col>
-              <b-col></b-col>
-              <b-col>
-                <b-button pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 170px;">
-                  Add Another Role
-                </b-button>
-              </b-col>
             </b-row>
           </b-card>
         </b-row>
         <b-row>
           <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
-            <b-row>
-              <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; text-align: left; font-size:20px; margin-top:15px; margin-bottom:20px;">Sustainable Development Goals for this Event:</h2>
-              <b-form-group style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                <b-form-tags id="tags-with-dropdown" v-model="value" no-outer-focus class="mb-2" style="text-align:center;">
-                  <template v-slot="{ tags, disabled, addTag, removeTag }" style="display: inline-block; height: 100%; overflow: auto;">
-                    <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
-                      <li v-for="tag in tags" :key="tag" class="list-inline-item">
-                        <b-form-tag
-                          @remove="removeTag(tag)"
-                          :title="tag"
-                          :disabled="disabled"
-                          variant="info"
-                        >{{ tag }}</b-form-tag>
-                      </li>
-                    </ul>
-
-                    <b-dropdown size="sm" variant="outline-secondary" block menu-class="w-100">
-                      <template #button-content>
-                        <b-icon icon="tag-fill"></b-icon> Choose tags
-                      </template>
-                      <b-dropdown-form @submit.stop.prevent="() => {}">
-                        <b-form-group
-                          label="Search tags"
-                          label-for="tag-search-input"
-                          label-cols-md="auto"
-                          class="mb-0"
-                          label-size="sm"
-                          :description="searchDesc"
-                          :disabled="disabled"
-                        >
-                          <b-form-input
-                            v-model="search"
-                            id="tag-search-input"
-                            type="search"
-                            size="sm"
-                            autocomplete="off"
-                            ></b-form-input>
-                        </b-form-group>
-                      </b-dropdown-form>
-                      <b-dropdown-divider></b-dropdown-divider>
-                      <b-dropdown-item-button
-                        v-for="option in availableOptions"
-                        :key="option"
-                        @click="onOptionClick({ option, addTag })"
-                      >
-                        {{ option }}
-                      </b-dropdown-item-button>
-                      <b-dropdown-text v-if="availableOptions.length === 0">
-                        There are no tags available to select
-                      </b-dropdown-text>
-                    </b-dropdown>
-                  </template>
-                </b-form-tags>
-              </b-form-group>
-            </b-row>
+            <b-container fluid>
+              <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">Event Evaluation Questions</h2>
+              <b-card v-for="(role, index) in roles" :key="index" class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1200px; border-radius: 20px; margin-top:20px;">
+                <b-row>
+                  <b-col>
+                    <b-form-input style="width:1000px;" v-model="role.question" disabled placeholder="Enter your Question"></b-form-input>
+                  </b-col>
+                  <b-col>
+                    <b-button>Delete</b-button>
+                  </b-col>
+                </b-row>
+              </b-card>
+              <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1200px; border-radius: 20px; margin-top:20px;">
+                <b-row>
+                  <b-col>
+                    <b-form-input style="width:1000px;" v-model="form.question" placeholder="Enter your Question"></b-form-input>
+                  </b-col>
+                  <b-col>
+                    <b-button>Delete</b-button>
+                  </b-col>
+                </b-row>
+              </b-card>
+              <b-row>
+                <b-col cols="10">
+                </b-col>
+                <b-col>
+                  <b-button style="margin-top:20px;" @click="addRole">Add Row</b-button>
+                </b-col>
+              </b-row>
+            </b-container>
+            <!-- <b-col>
+              <b-button pill variant="danger" to="dashboard" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 125px;">Save</b-button>
+            </b-col> -->
           </b-card>
         </b-row>
       </b-form>
@@ -231,7 +282,7 @@
         <b-col></b-col>
         <b-col></b-col>
         <b-col>
-          <b-button type="submit">Create</b-button>
+          <b-button @click="showModal = !showModal">Create</b-button>
           &nbsp;
           <b-button type="reset" variant="danger">Reset</b-button>
         </b-col>
@@ -240,6 +291,21 @@
         <pre class="m-0">{{ form }}</pre>
       </b-card> -->
       </b-container>
+      <b-modal v-model="showModal" size="xl">
+        <b-container fluid>
+              <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
+                  Are you sure with all the details?
+              </h1>
+              <!-- <b-row>
+                <b-col cols="5"></b-col>
+                <b-col>
+                  <b-button type="submit" variant="success">Yes</b-button>
+                  &nbsp;
+                  <b-button type="reset" variant="danger">No</b-button>
+                </b-col>
+              </b-row> -->
+          </b-container>
+      </b-modal>
     </b-card>
   </div>
 </template>
@@ -259,26 +325,42 @@ export default ({
         e_time: '',
         numvol: '',
         numdon: '',
-        role: '',
-        roledes: '',
+        roleName: '',
+        roleDescription: '',
+        roleNumber: 0,
         food: null,
         file1: null,
         checked: []
       },
+      showModal: false,
       text: {
         eventdes: ''
       },
+      roles: [],
       show: true,
-      options: ['Goal 1: No Poverty', 'Goal 2: Zero Hunger', 'Goal 3: Good Health & Well-Being', 'Goal 4: Quality Education', 'Goal 5: Gender Equality', 'Goal 6: Clean Water & Sanitation', 'Goal 7: Affordable & Clean Energy', 'Goal 8: Decent Work & Ecenomic Growth', 'Goal 9: Industry Innovation & Infastructure', 'Goal 10: Reduced Inequalities', 'Goal 11: Sustainable Cities & Communities', 'Goal 12: Responsible Consumption & Production', 'Goal 13: Climate Action', 'Goal 14: Life Below Water', 'Goal 15: Life on Land', 'Goal 16: Peace, Justice & Strong Instutions', 'Goal 17: Partnerships for the Goals'],
-      choices: ['Teaches at Math', 'Fluent in English', 'Heavy Lifter', 'Playing the guitar'],
+      options: ['Teaches at Math', 'Fluent in English', 'Heavy Lifter', 'Playing the guitar'],
+      choices: ['Goal 1: No Poverty', 'Goal 4: Quality Education', 'Goal 13: Climate Action'],
       search: '',
-      value: []
+      searcher: '',
+      value: [],
+      values: []
     }
   },
   methods: {
     onSubmit (event) {
       event.preventDefault()
       alert(JSON.stringify(this.form))
+    },
+    addRole () {
+      this.roles.push({
+        name: this.form.roleName,
+        description: this.form.roleDescription,
+        max: this.form.roleNumber
+      })
+
+      this.form.roleName = ''
+      this.form.roleDescription = ''
+      this.form.roleNumber = ''
     },
     onReset (event) {
       event.preventDefault()
@@ -306,19 +388,23 @@ export default ({
         this.show = true
       })
     },
-    onOptionClick ({ option, addTag }) {
-      addTag(option)
+    onOptionClick ({ options, addTag }) {
+      addTag(options)
       this.search = ''
     },
     onChoicesClick ({ choices, addTag }) {
       addTag(choices)
-      this.search = ''
+      this.searcher = ''
     }
   },
   computed: {
     criteria () {
       // Compute the search criteria
       return this.search.trim().toLowerCase()
+    },
+    criterias () {
+      // Compute the search criteria
+      return this.searcher.trim().toLowerCase()
     },
     availableOptions () {
       const criteria = this.criteria
@@ -332,17 +418,23 @@ export default ({
       return options
     },
     availableChoices () {
-      const criteria = this.criteria
-      const choices = this.choices.filter(opt => this.value.indexOf(opt) === -1)
-      if (criteria) {
+      const criterias = this.criterias
+      const choices = this.choices.filter(opt => this.values.indexOf(opt) === -1)
+      if (criterias) {
         // Show only options that match criteria
-        return choices.filter(opt => opt.toLowerCase().indexOf(criteria) > -1)
+        return choices.filter(opt => opt.toLowerCase().indexOf(criterias) > -1)
       }
       // Show all options available
       return choices
     },
     searchDesc () {
       if (this.criteria && this.availableOptions.length === 0) {
+        return 'There are no tags matching your search criteria'
+      }
+      return ''
+    },
+    searchDescs () {
+      if (this.criterias && this.availableChoices.length === 0) {
         return 'There are no tags matching your search criteria'
       }
       return ''

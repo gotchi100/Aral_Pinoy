@@ -18,14 +18,13 @@
            <b-row>
             <b-col>
               <b-card
-          title="Card Title"
           img-src="https://picsum.photos/600/300/?image=25"
           img-alt="Image"
           img-top
           tag="article"
           style="max-width: 24rem;"
           class="mb-2"
-        >
+        ><b-link to='/event-page' style="font-size:20px;">Event</b-link>
           <b-card-text>
             Some quick example text to build on the card title and make up the bulk of the card's.
           </b-card-text>
@@ -273,6 +272,15 @@
       </b-container>
     </div>
     <Footer />
+    <transition name="fade">
+    <div id="pagetop" class="fixed right-0 bottom-0" v-show="scY > 300" @click="toTop">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+           stroke="#4a5568"
+           stroke-width="1" stroke-linecap="square" stroke-linejoin="arcs">
+        <path d="M18 15l-6-6-6 6"/>
+      </svg>
+    </div>
+  </transition>
     </div>
 </template>
 
@@ -289,8 +297,13 @@ export default {
       logo,
       slide: 0,
       sliding: null,
-      value: 75
+      value: 75,
+      scTimer: 0,
+      scY: 0
     }
+  },
+  mounted () {
+    window.addEventListener('scroll', this.handleScroll)
   },
   methods: {
     onSlideStart (slide) {
@@ -298,6 +311,20 @@ export default {
     },
     onSlideEnd (slide) {
       this.sliding = false
+    },
+    handleScroll: function () {
+      if (this.scTimer) return
+      this.scTimer = setTimeout(() => {
+        this.scY = window.scrollY
+        clearTimeout(this.scTimer)
+        this.scTimer = 0
+      }, 100)
+    },
+    toTop: function () {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      })
     }
   }
 }
@@ -340,5 +367,12 @@ padding-top: 18px;
   mask-position: bottom;
   mask-repeat: no-repeat;
   mask-size: cover;
+}
+.fixed {
+display: inline;
+position: fixed;
+right: 15px;
+bottom: 15px;
+z-index: 99999;
 }
 </style>
