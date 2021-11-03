@@ -15,6 +15,13 @@ const createUserValidator = Joi.object({
   middleName: Joi.string().trim().max(100),
   lastName: Joi.string().trim().max(100).required()
 })
+const paginationValidator = Joi.object({
+  offset: Joi.number().min(0).default(0),
+  limit: Joi.number().min(1).default(25),
+  'filters.roles': Joi.array().items(Joi.string().valid('admin', 'officer', 'volunteer')).unique()
+}).options({ 
+  stripUnknown: true
+})
 
 router.post(
   '/',
@@ -51,7 +58,7 @@ router.post(
     user.firstName = firstName
     user.middleName = middleName
     user.lastName = lastName
-    user.roles = ['Officer']
+    user.roles = ['officer']
 
     try {
       await user.save()
@@ -74,6 +81,56 @@ router.post(
 
       next(error)
     }
+  }
+)
+
+router.get(
+  '/',
+  function (req, res, next) {
+    const { value: validatedQuery, error } = paginationValidator.validate(req.query)
+
+    if (error !== undefined) {      
+      return res.status(400).json({
+        code: 'BadRequest',
+        status: 400,
+        message: error.message
+      })
+    }
+
+    req.query = validatedQuery
+
+    next()
+  },
+  async function(req, res, next) {
+    const {
+      limit,
+      offset,
+      'filters.roles': roles
+    } = req.query
+
+    const query = {}
+
+    if (Array.isArray(roles)) {
+      query.roles = {
+        $in : roles
+      }
+    }
+
+    const [users, total] = await Promise.all([
+      UserModel.find(query, undefined, { 
+        lean: true,
+        limit,
+        skip: offset
+      }),
+      UserModel.countDocuments(query)
+    ])
+
+    res.json({
+      results: users,
+      total
+    })
+
+    next()
   }
 )
 
