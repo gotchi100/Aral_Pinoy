@@ -4,7 +4,7 @@
   <b-container fluid>
     <!-- User Interface controls -->
     <h1 style="font-family:'Bebas Neue', cursive;">
-        In Kind Donations
+        In-Kind Donations
     </h1>
     <b-row>
       <b-container class="bv-example-row">
@@ -91,66 +91,16 @@
         <pre>{{ infoModal.content }}</pre>
       </b-modal> -->
   <b-row>
-    <b-col></b-col>
-    <b-col></b-col>
-    <b-col></b-col>
-    <b-col></b-col>
-    <b-col></b-col>
-    <b-col></b-col>
-    <b-col></b-col>
-    <b-col></b-col>
-    <b-col></b-col>
+    <b-col cols="8"></b-col>
     <b-col>
-    <div>
-      <b-button v-b-modal.modal-1 >Category</b-button>
-
-      <b-modal id="modal-1" title="Category" size="lg">
-      <div>
-        <label for="tags-basic">Type a new tag and press enter</label>
-        <b-form-tags input-id="tags-basic" v-model="value"></b-form-tags>
-        <br>
-        <p>Category</p>
-        <b-form-input v-model="text" placeholder="Enter your Category"></b-form-input>
-        <br>
-        <b-row>
-        <p>Best Before</p>
-          <b-col><b-form-checkbox></b-form-checkbox></b-col>
-          <b-col><b-form-input v-model="text" placeholder="Best Before" style="width:400px"></b-form-input></b-col>
-        </b-row>
-        <b-row>
-        <p>Expiration Date</p>
-          <b-col><b-form-checkbox></b-form-checkbox></b-col>
-          <b-col><b-form-input v-model="text" placeholder="Expiration" style="width:400px"></b-form-input></b-col>
-        </b-row>
-      </div>
-      </b-modal>
-    </div>
-      <!-- <b-button pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;">
-          Category
-      </b-button> -->
+      <b-button to="/add-donation" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 180px;">
+        Add a Donation
+      </b-button>
     </b-col>
     <b-col>
-    <div>
-      <b-button v-b-modal.modal-2>Add Item</b-button>
-
-      <b-modal id="modal-2" title="Add Item" >
-      <div>
-        <p>Add Item</p>
-        <b-form-input v-model="text" placeholder="Enter your Category Name"></b-form-input>
-        <br>
-        <b-row>
-        <p>Best Before</p>
-          <b-col><b-form-checkbox></b-form-checkbox></b-col>
-          <b-col><b-form-input v-model="text" placeholder="Best Before" style="width:400px"></b-form-input></b-col>
-        </b-row>
-        <b-row>
-        <p>Expiration Date</p>
-          <b-col><b-form-checkbox></b-form-checkbox></b-col>
-          <b-col><b-form-input v-model="text" placeholder="Expiration" style="width:400px"></b-form-input></b-col>
-        </b-row>
-      </div>
-      </b-modal>
-    </div>
+      <b-button to="/category-list" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 180px;">
+        View Categories
+      </b-button>
     </b-col>
     <!-- <b-col>
       <b-button pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;">
@@ -189,28 +139,29 @@ export default {
   data () {
     return {
       items: [
-        { item: 'Unicef Shirt Large', qty: 20, ctgry: 'Clothing', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Unicef Shirt Medium', qty: 20, ctgry: 'Clothing', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Unicef Shirt Small', qty: 40, ctgry: 'Clothing', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Monggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Nissin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' },
-        { item: 'FUnicef Shirt Large', qty: 20, ctgry: 'Clothing', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'FUnicef Shirt Medium', qty: 20, ctgry: 'Clothing', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'FUnicef Shirt Small', qty: 40, ctgry: 'Clothing', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Bonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Zissin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' },
-        { item: 'Bnicef Shirt Large', qty: 20, ctgry: 'Clothing', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Bnicef Shirt Medium', qty: 20, ctgry: 'Clothing', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Bnicef Shirt Small', qty: 40, ctgry: 'Clothing', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Nonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Missin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' },
-        { item: 'Ynicef Shirt Large', qty: 20, ctgry: 'Clothing', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Ynicef Shirt Medium', qty: 20, ctgry: 'Clothing', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Ynicef Shirt Small', qty: 40, ctgry: 'Clothing', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Yonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
-        { item: 'Pissin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' }
+        { date: '9/27/21', item: 'Unicef Shirt Large', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Unicef Shirt Medium', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Unicef Shirt Small', qty: 40, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Monggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Nissin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' },
+        { date: '9/27/21', item: 'FUnicef Shirt Large', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'FUnicef Shirt Medium', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'FUnicef Shirt Small', qty: 40, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Bonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Zissin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' },
+        { date: '9/27/21', item: 'Bnicef Shirt Large', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Bnicef Shirt Medium', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Bnicef Shirt Small', qty: 40, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Nonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Missin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' },
+        { date: '9/27/21', item: 'Ynicef Shirt Large', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Ynicef Shirt Medium', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Ynicef Shirt Small', qty: 40, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Yonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
+        { date: '9/27/21', item: 'Pissin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' }
       ],
       fields: [
+        { key: 'date', label: 'Date', sortable: true, class: 'text-center' },
         { key: 'item', label: 'Item', sortable: true, class: 'text-center' },
         { key: 'qty', label: 'Quantity', sortable: true, class: 'text-center' },
         { key: 'ctgry', label: 'Category', sortable: true, class: 'text-center' },

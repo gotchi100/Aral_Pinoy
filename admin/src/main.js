@@ -8,6 +8,7 @@ import { fas } from '@fortawesome/free-solid-svg-icons'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import Vuex from 'vuex'
+import VModal from 'vue-js-modal'
 
 import App from './App.vue'
 import Login from './pages/Login'
@@ -17,12 +18,27 @@ import MonetaryReport from './pages/MonetaryReport.vue'
 import EventEvalReport from './pages/EventEvalReport.vue'
 import VolunteerReport from './pages/VolunteerReport.vue'
 import AdminProfile from './pages/AdminProfile.vue'
-import Events from './pages/AdminEventList.vue'
+import EventList from './pages/AdminEventList.vue'
+// import EventDetails from './pages/events/EventDetails.vue'
 import Volunteers from './pages/AdminVolunteerList.vue'
 import OfficersList from './pages/AdminOfficerList.vue'
 import InKindList from './pages/AdminInKindList.vue'
 import AddUser from './pages/AdminAddUser.vue'
 import AdminCreateEvent from './pages/AdminCreateEvent.vue'
+import Skills from './pages/AdminSkillsPage.vue'
+import AddSkills from './pages/AdminAddSkill.vue'
+import ViewVolunteerProfile from './pages/AdminVolunteerViewProfile.vue'
+import ViewOfficerProfile from './pages/AdminViewOfficerProfile.vue'
+import CategoryList from './pages/AdminCategoryList.vue'
+import AddCategory from './pages/AdminAddCategory.vue'
+import ForgetPassword from './pages/AdminForgetPassword.vue'
+import EditSDG1 from './pages/AdminEditSDG1.vue'
+import EditSDG4 from './pages/AdminEditSDG4.vue'
+import EditSDG13 from './pages/AdminEditSDG13.vue'
+import Homepage from './pages/AdminEditHomepage.vue'
+import EventPage from './pages/AdminEventPage.vue'
+import VolunteerSuggestion from './pages/events/VolunteerSuggestion.vue'
+import AddDonation from './pages/AdminAddDonation.vue'
 
 import vuexStore from './store'
 
@@ -38,6 +54,7 @@ Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 Vue.use(VueRouter)
 Vue.use(Vuex)
+Vue.use(VModal)
 
 const store = new Vuex.Store(vuexStore)
 
@@ -61,35 +78,35 @@ const routes = [
     }
   },
   {
-    path: '/inkindreport',
+    path: '/inkind-report',
     component: InKindReport,
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/monetaryreport',
+    path: '/monetary-report',
     component: MonetaryReport,
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/eventevalreport',
+    path: '/event-eval-report',
     component: EventEvalReport,
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/volunteerreport',
+    path: '/volunteer-report',
     component: VolunteerReport,
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/adminprofile',
+    path: '/profile',
     component: AdminProfile,
     meta: {
       requiresAuth: true
@@ -97,7 +114,7 @@ const routes = [
   },
   {
     path: '/events',
-    component: Events,
+    component: EventList,
     meta: {
       requiresAuth: true
     }
@@ -117,22 +134,118 @@ const routes = [
     }
   },
   {
-    path: '/inkindlist',
+    path: '/inkind-list',
     component: InKindList,
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/adduser',
+    path: '/add-user',
     component: AddUser,
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/createevent',
+    path: '/create-event',
     component: AdminCreateEvent,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/skills',
+    component: Skills,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/add-skills',
+    component: AddSkills,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/view-volunteer-profile/:id',
+    component: ViewVolunteerProfile,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/view-officer-profile/:id',
+    component: ViewOfficerProfile,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/category-list',
+    component: CategoryList,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/add-category',
+    component: AddCategory,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/forget-password',
+    component: ForgetPassword
+  },
+  {
+    path: '/edit-sdg1',
+    component: EditSDG1,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/edit-sdg4',
+    component: EditSDG4,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/edit-sdg13',
+    component: EditSDG13,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/homepage',
+    component: Homepage,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/event-page/:id',
+    component: EventPage
+  },
+  {
+    path: '/event-page',
+    component: EventPage
+  },
+  {
+    path: '/volunteersuggestion',
+    component: VolunteerSuggestion,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/add-donation',
+    component: AddDonation,
     meta: {
       requiresAuth: true
     }

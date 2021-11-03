@@ -26,30 +26,12 @@
             </b-col>
           </b-row>
           <b-row class="my-1">
-            <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Gender</label>
-            <b-col>
-              <b-form-input v-model="email" :disabled="!isDisabled"></b-form-input>
-            </b-col>
-          </b-row>
-          <b-row class="my-1">
-            <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Home Address</label>
-            <b-col>
-              <b-form-input v-model="email" :disabled="!isDisabled"></b-form-input>
-            </b-col>
-          </b-row>
-          <b-row class="my-1">
-            <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Skills</label>
-            <b-col>
-              <b-form-input v-model="email" :disabled="!isDisabled"></b-form-input>
-            </b-col>
-          </b-row>
-          <b-row class="my-1">
             <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Email Address</label>
             <b-col>
               <b-form-input v-model="email" :disabled="!isDisabled"></b-form-input>
             </b-col>
           </b-row>
-          <b-row class="my-1">
+          <!-- <b-row class="my-1">
             <label class="change" for="input-small" style="font-family:'Bebas Neue', cursive;">Change Password?</label>
           </b-row>
           <b-row class="my-1" v-if="isDisabled">
@@ -69,7 +51,7 @@
           </b-button>
           <b-button pill variant="danger" @click="isDisabled = false" v-show="isDisabled" style="margin: 8px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
                 Save
-          </b-button>
+          </b-button> -->
         </b-container>
       </b-card>
          <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
@@ -258,42 +240,35 @@
 </template>
 
 <script>
-import Footer from '../components/Footer.vue'
+// import Footer from '../components/Footer.vue'
 const logo = require('../assets/aralpinoywords.png')
 
 export default {
-  components: {
-    Footer
-  },
+  // components: {
+  //   Footer
+  // },
   data () {
     return {
       logo,
-      isDisabled: false,
-      firstName: '',
-      lastName: '',
-      contactNumber: '',
-      email: '',
-      password: '',
-      cpassword: '',
       items: [
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
-        { date: '09/27/21', event: 'Zatangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' }
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed' },
+        { date: '09/27/21', event: 'Zatangas Coastal Cleanup', venue: 'Batangas', status: 'Completed' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed' }
       ],
       choices: [
         { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '3,500.50', payee: 'BPI Aral Pinoy Org Inc.' },
@@ -319,8 +294,7 @@ export default {
         { key: 'event', label: 'Event', sortable: true, class: 'text-center' },
         { key: 'date', label: 'Date', sortable: true, class: 'text-center' },
         { key: 'venue', label: 'Venue', sortable: true, class: 'text-center' },
-        { key: 'status', label: 'Status', sortable: true, class: 'text-center' },
-        { key: 'action', label: 'Action', sortable: true, class: 'text-center' }
+        { key: 'status', label: 'Status', sortable: true, class: 'text-center' }
       ],
       fielders: [
         { key: 'event', label: 'Event', sortable: true, class: 'text-center' },
@@ -374,14 +348,6 @@ export default {
       this.currentPage = 1
       this.currentPages = 1
     }
-  },
-  created () {
-    const user = this.$store.getters.user
-
-    this.firstName = user.firstName
-    this.lastName = user.lastName
-    this.contactNumber = user.contactNumber
-    this.email = user.email
   }
 }
 </script>

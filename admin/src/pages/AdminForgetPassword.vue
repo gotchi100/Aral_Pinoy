@@ -4,28 +4,24 @@
       <div class="image" style="padding: 28px;">
         <img :src="logo" style="width: 320px; height: 150px">
       </div>
-      <b-card class="card" bg-variant="light" style="display: inline-block; height: 100%; overflow: auto; width: 400px; border-radius: 20px;">
+      <b-card class="card" bg-variant="light" style="display: inline-block; height: 100%; overflow: auto; width: 600px; border-radius: 20px;">
         <b-container fluid>
           <b-row v-if="errorMessage !== ''" class="my-1">
             <span>{{ errorMessage }}</span>
           </b-row>
-
           <b-row class="my-1">
+            <h4 style="font-family:'Bebas Neue', cursive; color: black; position: relative;">Please enter your email address you'd like your password resent information sent to</h4>
             <label class="email" for="input-small">Email Address</label>
             <b-col>
               <b-form-input v-model="email"></b-form-input>
             </b-col>
           </b-row>
-          <b-row class="my-1">
-            <label class="password" for="input-small">Password</label>
-            <b-col>
-              <b-form-input v-model="password" type="password"></b-form-input>
-            </b-col>
-          </b-row>
-          <b-button @click="login" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
-            Login
+          <b-button pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 150px;">
+            Send
           </b-button>
-          <label class="signup" for="input-small"><b-link to="/forget-password">Forgot Password?</b-link></label>
+          <b-row>
+            <label class="signup" for="input-small"><b-link to="/login">Return to Login</b-link></label>
+          </b-row>
         </b-container>
       </b-card>
     </div>
@@ -33,7 +29,6 @@
 </template>
 
 <script>
-const axios = require('axios').default
 const logo = require('../assets/aralpinoywords.png')
 
 export default {
@@ -44,31 +39,6 @@ export default {
       email: '',
       password: '',
       errorMessage: ''
-    }
-  },
-  methods: {
-    async login () {
-      try {
-        const results = await axios.post('http://localhost:3000/admin/login', {
-          email: this.email,
-          password: this.password
-        })
-
-        const { user, token } = results.data
-
-        this.$store.dispatch('login', {
-          user,
-          token
-        })
-
-        this.$router.push({
-          path: '/dashboard'
-        })
-      } catch (error) {
-        console.log(error.message)
-        const message = error.response.data.error.message
-        this.errorMessage = message
-      }
     }
   }
 }

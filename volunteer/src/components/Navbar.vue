@@ -13,7 +13,7 @@
     </b-navbar-nav>
 
      <b-navbar-nav v-if="$store.getters.isLoggedIn">
-      <b-nav-item style="margin-left: 18px;" class="calendar" to="calendar">Events Calendar</b-nav-item>
+      <b-nav-item style="margin-left: 18px;" class="calendar" to="/calendar">Events Calendar</b-nav-item>
     </b-navbar-nav>
 
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
@@ -23,15 +23,15 @@
 
     <b-navbar-nav class="ml-auto" v-if="!$store.getters.isLoggedIn">
       <b-navbar-nav right>
-        <b-nav-item to="login" style="margin-right: 8px;" class="login">Login</b-nav-item>
-        <b-nav-item to="register" style="margin-right: 10px;" class="register">Register</b-nav-item>
+        <b-nav-item to="/login" style="margin-right: 8px;" class="login">Login</b-nav-item>
+        <b-nav-item to="/register" style="margin-right: 10px;" class="register">Register</b-nav-item>
       </b-navbar-nav>
     </b-navbar-nav>
 
     <b-navbar-nav class="ml-auto" v-else>
       <b-navbar-nav right>
         <b-nav-item-dropdown style="margin-right: 40px; color: black;" class="user" :text="$store.state.user.firstName">
-            <b-dropdown-item to="profile">Profile</b-dropdown-item>
+            <b-dropdown-item to="/profile">Profile</b-dropdown-item>
             <b-dropdown-item @click="logout">Logout</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>

@@ -11,7 +11,13 @@
     </div>
     <div class="featured">
       <b-container>
-        <p>Featured</p>
+        <p>Featured&nbsp;&nbsp;
+          <b-icon
+          @click="showModal = !showModal"
+          :icon="isAboutTextEditable2 ? 'file-check' : 'pencil'"
+          font-scale="0.75"
+        ></b-icon>
+        </p>
         <b-carousel
           id="carousel-1"
           v-model="slide"
@@ -78,13 +84,14 @@
            <b-row>
             <b-col>
               <b-card
+          title="Card Title"
           img-src="https://picsum.photos/600/300/?image=25"
           img-alt="Image"
           img-top
           tag="article"
           style="max-width: 24rem;"
           class="mb-2"
-        ><b-link to='/event-page' style="font-size:20px;">Event</b-link>
+        >
           <b-card-text>
             Some quick example text to build on the card title and make up the bulk of the card's.
           </b-card-text>
@@ -201,7 +208,7 @@
             </b-col>
            </b-row>
         </b-card-group>
-        <p class="more"> <b-link to="events">
+        <p class="more"> <b-link to="/events">
           View More Events</b-link>
           <b-icon icon="chevron-right"></b-icon>
         </p>
@@ -210,49 +217,99 @@
     </div>
     <div class="about">
       <b-container class="bv-example-row">
-        <p id="about">About Us</p>
+        <p id="about">
+          <span>About Us</span>&nbsp;
+          <b-icon
+            @click="isAboutTextEditable = !isAboutTextEditable"
+            :icon="isAboutTextEditable ? 'file-check' : 'pencil'"
+            font-scale="0.75"
+          ></b-icon>
+        </p>
         <b-row>
           <b-col>
             <div class="info">
-              Founded in August 11, 2010 by the organization’s
-              founder and president, Antonio Levy S. Ingles, Jr.,
-              PhD, an educator for 30 years and is currently a full-time
-              faculty member in the De La Salle-College of Saint Benilde,
-              City of Manila, Philippines.
-            </div>
-          </b-col>
-          <b-col>
-            <div class="info">
-              SUPPORT AND HELP THE PROGRAMS, PROJECTS AND
-              ACTIVITIES OF ARALPINOY.ORG INC, A NON-STOCK, NON-PROFIT
-              AND NON-PARTISAN ORGANIZATION REGISTERED UNDER THE LAWS OF
-              THE RP ON AUGUST 11, 2010 WITH
-              SEC CRN CN201012580 AND BIR TIN 007-842-097.<br>
-              FOR ANY HELP, PLEASE NOTIFY US AT<br>
-              INGLES.ANTONIO@GMAIL.COM OR <br>
-              09178661006 <br>
-              MARAMING MARAMING SALAMAT PO!
+              <div v-if="!isAboutTextEditable" style="white-space: pre">
+                {{ aboutText }}
+              </div>
+              <b-form-textarea
+                v-else
+                v-model="aboutText"
+                rows="7"
+                max-rows="7"
+              ></b-form-textarea>
             </div>
           </b-col>
         </b-row>
       </b-container>
+      <b-modal v-model="showModal" size="xl">
+        <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 100%; border-radius: 20px; margin-top: 40px;">
+          <b-container fluid>
+              <h1 style="font-family:'Bebas Neue', cursive;">
+                  Select events to be featured
+              </h1>
+            <b-form-group label="Events:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                <b-form-tags id="tags-with-dropdown" v-model="values" no-outer-focus class="mb-2" style="text-align:center;">
+                  <template v-slot="{ tags, disabled, addTag, removeTag }" style="display: inline-block; height: 100%; overflow: auto;">
+                    <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
+                      <li v-for="tag in tags" :key="tag" class="list-inline-item">
+                        <b-form-tag
+                          @remove="removeTag(tag)"
+                          :title="tag"
+                          :disabled="disabled"
+                          variant="info"
+                        >{{ tag }}</b-form-tag>
+                      </li>
+                    </ul>
+
+                    <b-dropdown size="sm" variant="outline-secondary" block menu-class="w-100">
+                      <template #button-content>
+                        <b-icon icon="tag-fill"></b-icon> Events Provided
+                      </template>
+                      <b-dropdown-form @submit.stop.prevent="() => {}">
+                        <b-form-group
+                          label="Search Events"
+                          label-for="tag-search-input"
+                          label-cols-md="auto"
+                          class="mb-0"
+                          label-size="sm"
+                          :description="searchDesc"
+                          :disabled="disabled"
+                        >
+                          <b-form-input
+                            v-model="search"
+                            id="tag-search-input"
+                            type="search"
+                            size="sm"
+                            autocomplete="off"
+                            ></b-form-input>
+                        </b-form-group>
+                      </b-dropdown-form>
+                      <b-dropdown-divider></b-dropdown-divider>
+                      <b-dropdown-item-button
+                        v-for="options in availableOptions"
+                        :key="options"
+                        @click="onOptionClick({ options, addTag })"
+                      >
+                        {{ options }}
+                      </b-dropdown-item-button>
+                      <b-dropdown-text v-if="availableOptions.length === 0">
+                        There are no tags available to select
+                      </b-dropdown-text>
+                    </b-dropdown>
+                  </template>
+                </b-form-tags>
+            </b-form-group>
+          </b-container>
+        </b-card>
+      </b-modal>
       <br>
     </div>
     <Footer />
-    <transition name="fade">
-    <div id="pagetop" class="fixed right-0 bottom-0" v-show="scY > 300" @click="toTop">
-      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
-           stroke="#4a5568"
-           stroke-width="1" stroke-linecap="square" stroke-linejoin="arcs">
-        <path d="M18 15l-6-6-6 6"/>
-      </svg>
-    </div>
-  </transition>
   </div>
 </template>
 
 <script>
-import Footer from '../components/Footer.vue'
+import Footer from '../components/AdminFooter.vue'
 const logo = require('../assets/aralpinoywords.png')
 
 export default {
@@ -265,12 +322,20 @@ export default {
       slide: 0,
       sliding: null,
       value: 75,
-      scTimer: 0,
-      scY: 0
+      isAboutTextEditable: false,
+      isAboutTextEditable2: false,
+      showModal: false,
+      aboutText: 'Founded in August 11, 2010 by the organization’s founder and president, ' +
+      'Antonio Levy S. Ingles, Jr., PhD, an educator for 30 years\nand is currently a ' +
+      'full-time faculty member in the De La Salle-College of Saint Benilde, City of Manila, Philippines.\n\n' +
+      'SUPPORT AND HELP THE PROGRAMS, PROJECTS AND ACTIVITIES OF ARALPINOY.ORG INC, A NON-STOCK, NON-PROFIT ' +
+      'AND NON-PARTISAN ORGANIZATION\nREGISTERED UNDER THE LAWS OF THE RP ON AUGUST 11, 2010 WITH ' +
+      'SEC CRN CN201012580 AND BIR TIN 007-842-097. FOR ANY HELP, PLEASE NOTIFY US AT \nINGLES.ANTONIO@GMAIL.COM OR ' +
+      '09178661006.\n\nMARAMING SALAMAT PO!',
+      options: ['Batangas Coastal Cleanup', 'Rizal Community Outreach', 'Adventuro Batangas'],
+      search: '',
+      values: []
     }
-  },
-  mounted () {
-    window.addEventListener('scroll', this.handleScroll)
   },
   methods: {
     onSlideStart (slide) {
@@ -279,19 +344,37 @@ export default {
     onSlideEnd (slide) {
       this.sliding = false
     },
-    handleScroll: function () {
-      if (this.scTimer) return
-      this.scTimer = setTimeout(() => {
-        this.scY = window.scrollY
-        clearTimeout(this.scTimer)
-        this.scTimer = 0
-      }, 100)
+    onOptionClick ({ options, addTag }) {
+      addTag(options)
+      this.search = ''
+    }
+  },
+  computed: {
+    criteria () {
+      // Compute the search criteria
+      return this.search.trim().toLowerCase()
     },
-    toTop: function () {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      })
+    availableOptions () {
+      const criteria = this.criteria
+      // Filter out already selected options
+      const options = this.options.filter(opt => this.values.indexOf(opt) === -1)
+      if (criteria) {
+        // Show only options that match criteria
+        return options.filter(opt => opt.toLowerCase().indexOf(criteria) > -1)
+      }
+      // Show all options available
+      return options
+    },
+    searchDesc () {
+      if (this.criteria && this.availableOptions.length === 0) {
+        return 'There are no tags matching your search criteria'
+      }
+      return ''
+    }
+  },
+  watch: {
+    aboutText (val) {
+      console.log(val)
     }
   }
 }
@@ -300,7 +383,6 @@ export default {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
-@import '../css/style.css';
 
 .bg {
 background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
@@ -366,12 +448,5 @@ font-family: 'Bebas Neue', cursive;
   mask-position: bottom;
   mask-repeat: no-repeat;
   mask-size: cover;
-}
-.fixed {
-display: inline;
-position: fixed;
-right: 15px;
-bottom: 15px;
-z-index: 99999;
 }
 </style>
