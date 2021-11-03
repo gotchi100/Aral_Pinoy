@@ -1,6 +1,7 @@
 'use strict'
 
 const mongoose = require('mongoose')
+const argon2 = require('argon2')
 
 const { Schema } = mongoose
 
@@ -30,5 +31,21 @@ const userSchema = new Schema({
     required: true
   }
 })
+
+async function hashPasswordBeforeSave (next) {
+  const user = this
+
+  if (!user.isModified('password')) {
+    return next()
+  }
+
+  const hashedPassword = await argon2.hash('password')
+
+  user.password = hashedPassword
+
+  next()
+}
+
+userSchema.pre('save', hashPasswordBeforeSave)
 
 module.exports = mongoose.model('User', userSchema)

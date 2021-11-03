@@ -3,6 +3,7 @@
 const express = require('express')
 const jwt = require('jsonwebtoken')
 const Joi = require('joi')
+const argon = require('argon2')
 
 const UserModel = require('../models/users')
 const config = require('../config')
@@ -47,12 +48,22 @@ router.post(
     try {
       const user = await UserModel.findOne({
         email,
-        roles: 'Volunteer'
+        roles: 'volunteer'
       }, '+password', {
         lean: true
       })
   
-      if (user === null || user.password !== password) {
+      if (user === null) {
+        return res.status(404).json({
+          code: 'NotFound',
+          status: 404,
+          message: 'Invalid email address or password'
+        })
+      }
+
+      const isPasswordMatching = await argon.verify(user.password, password)
+
+      if (!isPasswordMatching) {
         return res.status(404).json({
           code: 'NotFound',
           status: 404,
@@ -113,7 +124,7 @@ router.post(
     user.firstName = firstName
     user.middleName = middleName
     user.lastName = lastName
-    user.roles = ['Volunteer']
+    user.roles = ['volunteer']
 
     try {
       await user.save()
