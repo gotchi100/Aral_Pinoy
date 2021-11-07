@@ -50,7 +50,7 @@ class AdminController {
 
       delete user.password
   
-      res.send({
+      return res.json({
         user,
         token
       })

@@ -49,7 +49,7 @@ app.use(function (req, res, next) {
   res.status(404).json({
     code: 'NotFound',
     status: 404,
-    message: `The requested URL [${req.originalUrl}] was not found on this server.`
+    message: `The requested URL [${req.method} ${req.originalUrl}] was not found on this server.`
   })
 
   next()
