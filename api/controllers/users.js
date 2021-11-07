@@ -46,7 +46,7 @@ class UsersController {
     }
   }
 
-  static async list(req, res, next) {
+  static async list(req, res) {
     const {
       limit,
       offset,
@@ -70,15 +70,13 @@ class UsersController {
       UserModel.countDocuments(query)
     ])
 
-    res.json({
+    return res.json({
       results: users,
       total
     })
-
-    next()
   }
 
-  static async get(req, res, next) {
+  static async get(req, res) {
     const { id } = req.params
 
     const user = await UserModel.findById(id, undefined, { lean: true })
@@ -91,9 +89,7 @@ class UsersController {
       })
     }
 
-    res.json(user)
-
-    next()
+    return res.json(user)
   }
 }
 
