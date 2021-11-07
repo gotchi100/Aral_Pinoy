@@ -1,31 +1,51 @@
-const mongoose = require('mongoose');
+'use strict'
 
-const { Schema } = mongoose;
+const mongoose = require('mongoose')
+const argon2 = require('argon2')
+
+const { Schema } = mongoose
 
 const userSchema = new Schema({
-    email: {
-        type: String,
-        unique: true,
-        required: true
-    },
-    password: {
-        type: String,
-        required: true
-    },
-    contactNumber: String,
-    firstName: {
-        type: String,
-        required: true
-    },
-    middleName: String,
-    lastName: {
-        type: String,
-        required: true
-    },
-    roles: {
-        type: [String],
-        required: true
-    }
-});
+  email: {
+    type: String,
+    unique: true,
+    required: true
+  },
+  password: {
+    type: String,
+    required: true,
+    select: false
+  },
+  contactNumber: String,
+  firstName: {
+    type: String,
+    required: true
+  },
+  middleName: String,
+  lastName: {
+    type: String,
+    required: true
+  },
+  roles: {
+    type: [String],
+    required: true
+  }
+})
 
-module.exports = mongoose.model('User', userSchema);
+async function hashPasswordBeforeSave (next) {
+  const user = this
+
+  if (!user.isModified('password')) {
+    return next()
+  }
+
+  const hashedPassword = await argon2.hash('password')
+
+  user.password = hashedPassword
+
+  next()
+}
+
+userSchema.pre('save', hashPasswordBeforeSave)
+
+module.exports = mongoose.model('User', userSchema)

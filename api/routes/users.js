@@ -1,71 +1,77 @@
-const express = require('express');
-const expressJwt = require('express-jwt')
+'use strict'
 
-const UserModel = require('../models/users');
+const express = require('express')
+const { Types } = require('mongoose')
+const Joi = require('joi')
 
-const router = express.Router();
+const UsersController = require('../controllers/users')
 
-/* Create a user. */
-router.post(
-  '/',
-  expressJwt({ secret: 'secret', algorithms: ['HS256'] }), 
-  async function(req, res, next) {
-    const {
-      email,
-      password,
-      contactNumber,
-      firstName,
-      middleName,
-      lastName
-    } = req.body;
+const createUserValidator = Joi.object({
+  email: Joi.string().email().trim().lowercase().max(256).required(),
+  password: Joi.string().max(64).required(),
+  contactNumber: Joi.string().trim().max(20),
+  firstName: Joi.string().trim().max(100).required(),
+  middleName: Joi.string().trim().max(100),
+  lastName: Joi.string().trim().max(100).required()
+})
+const paginationValidator = Joi.object({
+  offset: Joi.number().min(0).default(0),
+  limit: Joi.number().min(1).default(25),
+  'filters.roles': Joi.array().items(Joi.string().valid('admin', 'officer', 'volunteer')).unique()
+}).options({ 
+  stripUnknown: true
+})
 
-    const user = new UserModel();
+function validateCreateUserBody(req, res, next) {
+  const { value: validatedBody, error } = createUserValidator.validate(req.body)
 
-    user.email = email;
-    user.password = password;
-    user.contactNumber = contactNumber;
-    user.firstName = firstName;
-    user.middleName = middleName;
-    user.lastName = lastName;
-    user.roles = ['Officer'];
-
-    try {
-      await user.save();
-
-      res.send(user);
-    } catch (error) {
-      res.json({
-        error: {
-          message: error.message
-        }
-      });
-
-      next();
-    }
+  if (error !== undefined) {      
+    return res.status(400).json({
+      code: 'BadRequest',
+      status: 400,
+      message: error.message
+    })
   }
-);
 
-/* Retrieve a user. */
-router.get(
-  '/:id',
-  expressJwt({ secret: 'secret', algorithms: ['HS256'] }),
-  async function(req, res, next) {
-    const { id } = req.params;
+  req.body = validatedBody
 
-    const user = await UserModel.findById(id);
+  next()
+}
 
-    if (user === null) {
-      res.json({
-        error: {
-          message: 'User not found'
-        }
-      });
+function validateListUsersBody(req, res, next) {
+  const { value: validatedQuery, error } = paginationValidator.validate(req.query)
 
-      return next();
-    }
-
-    res.send(user);
+  if (error !== undefined) {      
+    return res.status(400).json({
+      code: 'BadRequest',
+      status: 400,
+      message: error.message
+    })
   }
-);
 
-module.exports = router;
+  req.query = validatedQuery
+
+  next()
+}
+
+function validateGetUserBody(req, res, next) {
+  const { id } = req.params
+
+  if (!Types.ObjectId.isValid(id)) {
+    return res.status(400).json({
+      code: 'BadRequest',
+      status: 400,
+      message: 'ID is invalid'
+    })
+  }
+
+  next()
+}
+
+const router = express.Router()
+
+router.post('/', validateCreateUserBody, UsersController.create)
+router.get('/', validateListUsersBody, UsersController.list)
+router.get('/:id', validateGetUserBody, UsersController.get)
+
+module.exports = router

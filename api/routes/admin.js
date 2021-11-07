@@ -1,65 +1,37 @@
-const express = require('express');
-const jwt = require('jsonwebtoken')
-const expressJwt = require('express-jwt')
+'use strict'
 
-const UserModel = require('../models/users');
+const express = require('express')
+const Joi = require('joi')
 
-const router = express.Router();
+const AdminController = require('../controllers/admin')
 
-router.post('/login', async function (req, res, next) {
-  const {
-    email,
-    password
-  } = req.body
+const loginValidator = Joi.object({
+  email: Joi.string().email().trim().lowercase().required(),
+  password: Joi.string().required(),
+})
 
-  try {
-    const user = await UserModel.findOne({
-      email,
-      roles: {
-          $in: ['Admin','Officer']
-      }
-    });
-  
-    if (user === null) {
-      throw new Error('Invalid email address or password');
-    }
-  
-    if (user.password !== password) {
-      throw new Error('Invalid email address or password');
-    }
+function validateLoginBody (req, res, next) {
+  const { value: validatedBody, error } = loginValidator.validate(req.body)
 
-    const token = jwt.sign({
-      sub : user._id,
-    }, 'secret', {
-      algorithm : 'HS256',
-      expiresIn : '4h'
+  if (error !== undefined) {      
+    return res.status(400).json({
+      code: 'BadRequest',
+      status: 400,
+      message: error.message
     })
-  
-    res.send({
-      user,
-      token
-    });
-  } catch (error) {
-    res.status(400);
-    
-    res.json({
-      error: {
-        message: error.message
-      }
-    });
-
-    next();
   }
-});
 
-router.get(
-  '/protected', 
-  expressJwt({ secret: 'secret', algorithms: ['HS256'] }),
-  function(req, res, next) {
-    res.json({
-      hello : 'world'
-    });
-  }
-);
+  req.body = validatedBody
 
-module.exports = router;
+  next()
+}
+
+const router = express.Router()
+
+router.post(
+  '/login', 
+  validateLoginBody,
+  AdminController.login
+)
+
+module.exports = router
