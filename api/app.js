@@ -10,9 +10,8 @@ const jwtMiddleware = require('express-jwt')
 
 const config = require('./config')
 
-const indexRouter = require('./routes/index')
+const mainRouter = require('./routes/main')
 const usersRouter = require('./routes/users')
-const rolesRouter = require('./routes/roles')
 const adminRouter = require('./routes/admin')
 
 const logger = debug('api:server')
@@ -43,10 +42,18 @@ app.use(
   })
 )
 
-app.use('/', indexRouter)
+app.use('/', mainRouter)
 app.use('/users', usersRouter)
-app.use('/roles', rolesRouter)
 app.use('/admin', adminRouter)
+app.use(function (req, res, next) {
+  res.status(404).json({
+    code: 'NotFound',
+    status: 404,
+    message: `The requested URL [${req.originalUrl}] was not found on this server.`
+  })
+
+  next()
+})
 
 app.use(function (err, req, res, next) {
   if (err.name === 'UnauthorizedError') {

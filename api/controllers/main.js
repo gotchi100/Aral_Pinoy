@@ -1,45 +1,13 @@
 'use strict'
 
-const express = require('express')
-const jwt = require('jsonwebtoken')
-const Joi = require('joi')
 const argon = require('argon2')
+const jwt = require('jsonwebtoken')
 
 const UserModel = require('../models/users')
 const config = require('../config')
 
-const router = express.Router()
-const loginValidator = Joi.object({
-  email: Joi.string().email().trim().lowercase().required(),
-  password: Joi.string().required(),
-})
-const registerValidator = Joi.object({
-  email: Joi.string().email().trim().lowercase().max(256).required(),
-  password: Joi.string().max(64).required(),
-  contactNumber: Joi.string().trim().max(20),
-  firstName: Joi.string().trim().max(100).required(),
-  middleName: Joi.string().trim().max(100),
-  lastName: Joi.string().trim().max(100).required()
-})
-
-router.post(
-  '/login', 
-  function (req, res, next) {
-    const { value: validatedBody, error } = loginValidator.validate(req.body)
-
-    if (error !== undefined) {      
-      return res.status(400).json({
-        code: 'BadRequest',
-        status: 400,
-        message: error.message
-      })
-    }
-
-    req.body = validatedBody
-
-    next()
-  },
-  async function (req, res, next) {
+class MainController {
+  static async login (req, res, next) {
     const {
       email,
       password
@@ -87,26 +55,9 @@ router.post(
     } catch (error) {
       next(error)
     }
-  })
+  }
 
-router.post(
-  '/register',
-  function (req, res, next) {
-    const { value: validatedBody, error } = registerValidator.validate(req.body)
-
-    if (error !== undefined) {      
-      return res.status(400).json({
-        code: 'BadRequest',
-        status: 400,
-        message: error.message
-      })
-    }
-
-    req.body = validatedBody
-
-    next()
-  },
-  async function(req, res, next) {
+  static async register (req, res, next) {
     const {
       email,
       password,
@@ -148,6 +99,6 @@ router.post(
       next(error)
     }
   }
-)
+}
 
-module.exports = router
+module.exports = MainController
