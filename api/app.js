@@ -45,6 +45,15 @@ app.use(
 app.use('/', mainRouter)
 app.use('/users', usersRouter)
 app.use('/admin', adminRouter)
+app.use(function (req, res, next) {
+  res.status(404).json({
+    code: 'NotFound',
+    status: 404,
+    message: `The requested URL [${req.originalUrl}] was not found on this server.`
+  })
+
+  next()
+})
 
 app.use(function (err, req, res, next) {
   if (err.name === 'UnauthorizedError') {
