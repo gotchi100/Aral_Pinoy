@@ -1,5 +1,5 @@
 <template>
-  <div class="volunteerlist">
+  <div class="officerlist">
     <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
       <b-container fluid>
         <!-- User Interface controls -->
@@ -154,10 +154,10 @@ export default {
 </script>
 
 <style scoped>
-.volunteerlist {
+.officerlist {
   position: relative;
 }
-.volunteerlist:before {
+.officerlist:before {
   background-image: url('https://rs.projects-abroad.ie/v1/hero/product-5b5b2f57d7d1b.[1600].jpeg');
   content: ' ';
   display: block;

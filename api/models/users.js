@@ -3,9 +3,7 @@
 const mongoose = require('mongoose')
 const argon2 = require('argon2')
 
-const { Schema } = mongoose
-
-const userSchema = new Schema({
+const userSchema = new mongoose.Schema({
   email: {
     type: String,
     unique: true,
