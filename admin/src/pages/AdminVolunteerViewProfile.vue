@@ -10,25 +10,29 @@
           <b-row class="my-1">
             <label class="name" for="input-small" style="font-family:'Bebas Neue', cursive;">First Name</label>
             <b-col>
-              <b-form-input v-model="name" :disabled="!isDisabled"></b-form-input>
+              <b-skeleton v-if="user === null" type="input"></b-skeleton>
+              <b-form-input v-else v-model="user.firstName" disabled></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="name" for="input-small" style="font-family:'Bebas Neue', cursive;">Last Name</label>
             <b-col>
-              <b-form-input v-model="name" :disabled="!isDisabled"></b-form-input>
+              <b-skeleton v-if="user === null" type="input"></b-skeleton>
+              <b-form-input v-else v-model="user.lastName" disabled></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="cnum" for="input-small" style="font-family:'Bebas Neue', cursive;">Contact Number</label>
             <b-col>
-              <b-form-input v-model="cnum" :disabled="!isDisabled"></b-form-input>
+              <b-skeleton v-if="user === null" type="input"></b-skeleton>
+              <b-form-input v-else v-model="user.contactNumber" disabled></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Email Address</label>
             <b-col>
-              <b-form-input v-model="email" :disabled="!isDisabled"></b-form-input>
+              <b-skeleton v-if="user === null" type="input"></b-skeleton>
+              <b-form-input v-else v-model="user.email" disabled></b-form-input>
             </b-col>
           </b-row>
           <!-- <b-row class="my-1">
@@ -240,16 +244,16 @@
 </template>
 
 <script>
-// import Footer from '../components/Footer.vue'
+import { mapGetters } from 'vuex'
+
 const logo = require('../assets/aralpinoywords.png')
+const axios = require('axios').default
 
 export default {
-  // components: {
-  //   Footer
-  // },
   data () {
     return {
       logo,
+      user: null,
       items: [
         { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed' },
         { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed' },
@@ -318,7 +322,11 @@ export default {
       filterOns: []
     }
   },
+  created () {
+    this.getUser()
+  },
   computed: {
+    ...mapGetters(['token']),
     sortOption () {
       // Create an options list from our fields
       return this.fields
@@ -347,6 +355,17 @@ export default {
       this.totalRows = filteredItems.length
       this.currentPage = 1
       this.currentPages = 1
+    },
+    async getUser () {
+      const { id } = this.$route.params
+
+      const { data } = await axios.get(`http://localhost:3000/users/${id}`, {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }
+      })
+
+      this.user = data
     }
   }
 }
@@ -357,14 +376,14 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
 
 .image {
-padding-top: 50px;
-padding-bottom: 25px;
+  padding-top: 50px;
+  padding-bottom: 25px;
 }
 body {
-background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
-url('https://rs.projects-abroad.ie/v1/hero/product-5b5b2f57d7d1b.[1600].jpeg');
-background-position: center;
-background-repeat: no-repeat;
-background-size: cover;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
+  url('https://rs.projects-abroad.ie/v1/hero/product-5b5b2f57d7d1b.[1600].jpeg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 </style>
