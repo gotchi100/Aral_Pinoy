@@ -20,6 +20,7 @@ import CalendarPage from './pages/EventCalendar'
 import EventDetailsPage from './pages/EventPage'
 import trial from './trial/Profile2.vue'
 import ForgetPassword from './pages/ForgetPassword.vue'
+import GoogleSignInCallbackPage from './pages/GoogleSignIn'
 
 import vuexStore from './store'
 
@@ -42,6 +43,7 @@ const store = new Vuex.Store(vuexStore)
 const routes = [
   { path: '/', component: HomePage },
   { path: '/login', component: LoginPage },
+  { path: '/google-sign-in', component: GoogleSignInCallbackPage },
   { path: '/register', component: RegisterPage },
   { path: '/events', component: EventsPage },
   { path: '/profile', component: ProfilePage },
@@ -56,6 +58,8 @@ const router = new VueRouter({
   routes
 })
 
+const publicPaths = ['/login', '/register', '/google-sign-in']
+
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     // this route requires auth, check if logged in
@@ -66,7 +70,7 @@ router.beforeEach((to, from, next) => {
       next() // go to wherever I'm going
     }
   } else {
-    if ((to.path === '/login' || to.path === '/register') && store.getters.isLoggedIn) {
+    if (publicPaths.includes(to.path) && store.getters.isLoggedIn) {
       next({ path: '/' })
     } else {
       next() // does not require auth, make sure to always call next()!

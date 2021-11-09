@@ -30,7 +30,7 @@
           </div>
           <div class="col-md-12 mb-3">
             <p class="text-center">
-              <b-button pill variant="danger" style="margin: 8px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
+              <b-button @click="googleSignIn" pill variant="danger" style="margin: 8px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
                 <font-awesome-icon style="margin-right: 8px;" :icon="['fab', 'google']" />
                 Sign in with Google
               </b-button>
@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+const axios = require('axios').default
 const logo = require('../assets/aralpinoywords.png')
 
 export default {
@@ -53,7 +53,8 @@ export default {
     return {
       logo,
       email: '',
-      password: ''
+      password: '',
+      googleAccountsApi: null
     }
   },
   methods: {
@@ -79,6 +80,9 @@ export default {
         const message = error.response.data.error.message
         this.errorMessage = message
       }
+    },
+    async googleSignIn () {
+      window.location.href = 'https://accounts.google.com/o/oauth2/v2/auth?scope=openid email profile&include_granted_scopes=true&response_type=code&redirect_uri=http://localhost:3000/google-sign-in&client_id=666385844175-d4bc42f0ckfic58dh994f4sq7tmhbejd.apps.googleusercontent.com'
     }
   }
 }
@@ -86,45 +90,45 @@ export default {
 
 <style scoped>
 .image {
-padding-top: 75px;
-padding-bottom: 25px;
+  padding-top: 75px;
+  padding-bottom: 25px;
 }
 .login {
-background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
-url('https://rs.projects-abroad.ie/v1/hero/product-5b5b2f57d7d1b.[1600].jpeg');
-background-position: center;
-background-repeat: no-repeat;
-background-size: cover;
-display: block;
-position:absolute;
-left:0px;
-top:0px;
-width: 100%;
-height: 100%;
-z-index:-1;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
+  url('https://rs.projects-abroad.ie/v1/hero/product-5b5b2f57d7d1b.[1600].jpeg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: block;
+  position:absolute;
+  left:0px;
+  top:0px;
+  width: 100%;
+  height: 100%;
+  z-index:-1;
 }
 .login-or {
-position: relative;
-color: #aaa;
-margin-top: 10px;
-margin-bottom: 10px;
-padding-top: 10px;
-padding-bottom: 10px;
+  position: relative;
+  color: #aaa;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 .span-or {
-display: block;
-position: absolute;
-left: 50%;
-top: -2px;
-margin-left: -25px;
-background-color: #f8f9fa;
-width: 50px;
-text-align: center;
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: -2px;
+  margin-left: -25px;
+  background-color: #f8f9fa;
+  width: 50px;
+  text-align: center;
 }
 .hr-or {
-height: 1px;
-margin-top: 0px !important;
-margin-bottom: 0px !important;
+  height: 1px;
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
 }
 .email, .password{
   padding: 8px;
