@@ -29,6 +29,12 @@
             </b-col>
           </b-row>
           <b-row class="my-1">
+            <label class="birthdate" for="input-small">Date of Birth</label>
+            <b-col>
+              <b-form-datepicker id="start-datepicker" v-model="values" class="mb-2"></b-form-datepicker>
+            </b-col>
+          </b-row>
+          <b-row class="my-1">
             <label class="cnum" for="input-small">Contact Number</label>
             <b-col>
               <b-form-input v-model="contactNumber"></b-form-input>
@@ -149,6 +155,7 @@
             </b-col>
           </b-row>
          <b-container class="bv-example-row">
+            <span class="text"> By clicking Register, you agree to the <b-link to="/terms-and-conditions">Terms and Conditions</b-link> and <b-link to="/privacy-policy">Privacy Policy</b-link> of AralPinoy Org Inc.</span>
             <b-row>
               <b-col>
                 <b-button @click="updateStep(-1)" pill variant="danger" style="margin-top: 15px; display: inline-block; font-size: 16px; padding: 8px; width: 152px;">
@@ -192,7 +199,8 @@ export default {
       roles: [],
       option: ['Teaches at Math', 'Fluent in English', 'Heavy Lifter', 'Playing the guitar', 'Teaches at English', 'Doing Handicrafts', 'Cleaning'],
       search: '',
-      value: []
+      value: [],
+      values: ''
     }
   },
   methods: {
@@ -283,7 +291,7 @@ margin-top: 0px !important;
 margin-bottom: 0px !important;
 }
 .lname, .fname, .cnum, .email, .password, .cpassword,
-.homeAddress, .gender, .skills {
+.homeAddress, .gender, .skills, .birthdate {
 padding: 8px;
 text-align: left;
 font-size: 14px;
@@ -306,5 +314,10 @@ border: 1px solid #ced4da;
 box-sizing: border-box;
 border-radius: 0.25rem;
 margin-bottom: 0 !important;
+}
+.text {
+font-size: 12px;
+display: block;
+text-align: left;
 }
 </style>

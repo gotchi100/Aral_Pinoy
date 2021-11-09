@@ -141,6 +141,10 @@
               <template #cell(event)="row">
                 <b-link :to="`/events/${row.index}`">{{ row.value }}</b-link>
               </template>
+              <template #cell(action)="row">
+                <b-link v-if="row.item.status === 'Completed'" :to="`/evaluation`">Evaluation</b-link>
+                <b-link v-else :to="`/event-page`">Unjoin</b-link>
+              </template>
             </b-table>
           <b-row>
             <b-col></b-col>
@@ -276,23 +280,23 @@ export default {
       password: '',
       cpassword: '',
       items: [
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
         { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
         { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
         { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
         { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
         { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
         { date: '09/27/21', event: 'Zatangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
         { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
         { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
         { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' }
       ],
       choices: [
