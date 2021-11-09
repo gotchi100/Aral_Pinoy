@@ -2,6 +2,8 @@
 
 const argon = require('argon2')
 const jwt = require('jsonwebtoken')
+const axios = require('axios').default
+const base64 = require('base64-url')
 
 const UserModel = require('../models/users')
 const config = require('../config')
@@ -52,6 +54,70 @@ class MainController {
         user,
         token
       })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  static async googleSignIn (req, res, next) {
+    // TODO: Protect against CSRF
+    // See more at https://developers.google.com/identity/protocols/oauth2/web-server#creatingclient 
+    const { error, code } = req.query
+
+    if (error) {
+      return next(error)
+    }
+
+    try {
+      const tokenResults = await axios.post('https://oauth2.googleapis.com/token', {
+        code,
+        client_id: config.google.oauth.clientId,
+        client_secret: config.google.oauth.clientSecret,
+        redirect_uri: config.google.oauth.redirectUri,
+        grant_type: 'authorization_code'
+      })
+
+      const { access_token } = tokenResults.data
+
+      const userInfoResults = await axios.get('https://openidconnect.googleapis.com/v1/userinfo', {
+        headers: {
+          Authorization: `Bearer ${access_token}`
+        }
+      })
+
+      const googleUser = userInfoResults.data
+
+      let user = await UserModel.findOne({
+        email: googleUser.email,
+        roles: 'volunteer'
+      }, undefined, {
+        lean: true
+      })
+
+      if (user === null) {
+        user = await UserModel.create({
+          email: googleUser.email,
+          firstName: googleUser.given_name,
+          lastName: googleUser.family_name,
+          roles: 'volunteer'
+        })
+
+        user = user.toObject()
+      }
+
+      const token = jwt.sign({
+        sub : user._id,
+      }, config.jwt.secret, {
+        algorithm : 'HS256',
+        expiresIn : '4h'
+      })
+
+      const queryString = new URLSearchParams()
+
+      queryString.set('user', base64.encode(JSON.stringify(user)))
+      queryString.set('token', token)
+
+      return res.redirect(`${config.volunteer.google.oauth.redirectUri}?${queryString.toString()}`)
     } catch (error) {
       next(error)
     }
