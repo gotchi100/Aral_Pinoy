@@ -25,7 +25,12 @@ async function connectDatabase () {
 
 connectDatabase()
 
-const publicRoutes = ['/login', '/register', '/admin/login']
+const publicRoutes = [
+  '/login', 
+  '/google-sign-in',
+  '/register', 
+  '/admin/login'
+]
 
 const app = express()
 
