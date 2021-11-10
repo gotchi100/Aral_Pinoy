@@ -71,11 +71,11 @@
 
       <template #cell(actions)="row">
         <b-button size="sm" @click="info(row.item, row.index, $event.target)" class="mr-1">
-          Info modal
+          Button
         </b-button>
-        <b-button size="sm" @click="row.toggleDetails">
+        <!-- <b-button size="sm" @click="row.toggleDetails">
           {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
-        </b-button>
+        </b-button> -->
       </template>
 
       <template #row-details="row">
@@ -87,9 +87,9 @@
       </template>
     </b-table>
         <!-- Info modal -->
-      <!-- <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
+      <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
         <pre>{{ infoModal.content }}</pre>
-      </b-modal> -->
+      </b-modal>
   <b-row>
     <b-col cols="8"></b-col>
     <!-- <b-col>
@@ -129,33 +129,19 @@ export default {
   data () {
     return {
       items: [
-        { date: '9/27/21', item: 'Unicef Shirt Large', qty: 20, ctgry: 'Apparel', sendto: 'Red Cross' },
-        { date: '9/27/21', item: 'Unicef Shirt Medium', qty: 20, ctgry: 'Apparel', sendto: 'Aral Pinoy Batangas Clean Up' },
-        { date: '9/27/21', item: 'Unicef Shirt Small', qty: 40, ctgry: 'Apparel', sendto: ' Aral Pinoy Manila Clean Up' },
-        { date: '9/27/21', item: 'Monggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', sendto: ' Aral Pinoy Pasig Clean Up' },
-        { date: '9/27/21', item: 'Nissin Cup Noodles', qty: 250, ctgry: 'Food', sendto: ' Aral Pinoy Quezon Clean Up' },
-        { date: '9/27/21', item: 'FUnicef Shirt Large', qty: 20, ctgry: 'Apparel', sendto: 'N/A' },
-        { date: '9/27/21', item: 'FUnicef Shirt Medium', qty: 20, ctgry: 'Apparel', sendto: 'N/A' },
-        { date: '9/27/21', item: 'FUnicef Shirt Small', qty: 40, ctgry: 'Apparel', sendto: 'N/A' },
-        { date: '9/27/21', item: 'Bonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', sendto: 'N/A' },
-        { date: '9/27/21', item: 'Zissin Cup Noodles', qty: 250, ctgry: 'Food', sendto: '10/15/25' },
-        { date: '9/27/21', item: 'Bnicef Shirt Large', qty: 20, ctgry: 'Apparel', sendto: 'N/A' },
-        { date: '9/27/21', item: 'Bnicef Shirt Medium', qty: 20, ctgry: 'Apparel', sendto: 'N/A' },
-        { date: '9/27/21', item: 'Bnicef Shirt Small', qty: 40, ctgry: 'Apparel', sendto: 'N/A' },
-        { date: '9/27/21', item: 'Nonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', sendto: 'N/A' },
-        { date: '9/27/21', item: 'Missin Cup Noodles', qty: 250, ctgry: 'Food', sendto: '10/15/25' },
-        { date: '9/27/21', item: 'Ynicef Shirt Large', qty: 20, ctgry: 'Apparel', sendto: 'N/A' },
-        { date: '9/27/21', item: 'Ynicef Shirt Medium', qty: 20, ctgry: 'Apparel', sendto: 'N/A' },
-        { date: '9/27/21', item: 'Ynicef Shirt Small', qty: 40, ctgry: 'Apparel', sendto: 'N/A' },
-        { date: '9/27/21', item: 'Yonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', sendto: 'N/A' },
-        { date: '9/27/21', item: 'Pissin Cup Noodles', qty: 250, ctgry: 'Food', sendto: '10/15/25' }
+        { date: '9/27/21', item: 'Unicef Shirt Large', qty: 20, ctgry: 'Apparel', organization: 'Red Cross Philippines', event: '' },
+        { date: '9/27/21', item: 'Unicef Shirt Medium', qty: 20, ctgry: 'Apparel', organization: 'Aral Pinoy', event: 'Batangas Clean Up' },
+        { date: '9/27/21', item: 'Unicef Shirt Small', qty: 40, ctgry: 'Apparel', organization: ' Aral Pinoy', event: 'Manila Clean Up' },
+        { date: '9/27/21', item: 'Monggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', organization: ' Aral Pinoy', event: 'Pasig Clean Up' },
+        { date: '9/27/21', item: 'Nissin Cup Noodles', qty: 250, ctgry: 'Food', organization: ' Aral Pinoy', event: 'Quezon Clean Up' }
       ],
       fields: [
         { key: 'date', label: 'Date', sortable: true, class: 'text-center' },
         { key: 'item', label: 'Item', sortable: true, class: 'text-center' },
         { key: 'qty', label: 'Quantity', sortable: true, class: 'text-center' },
         { key: 'ctgry', label: 'Category', sortable: true, class: 'text-center' },
-        { key: 'sendto', label: 'Send to', sortable: true, class: 'text-center' }
+        { key: 'organization', label: 'Organization', sortable: true, class: 'text-center' },
+        { key: 'event', label: 'Event', sortable: true, class: 'text-center' },
         // { key: 'movement', label: 'Movement', sortable: true, class: 'text-center' }
         // {
         //   key: 'isActive',
@@ -167,7 +153,7 @@ export default {
         //   sortByFormatted: true,
         //   filterByFormatted: true
         // },
-        // { key: 'actions', label: 'Actions' }
+        { key: 'actions', label: ' ' }
       ],
       totalRows: 1,
       currentPage: 1,
@@ -205,10 +191,10 @@ export default {
       this.infoModal.content = JSON.stringify(item, null, 2)
       this.$root.$emit('bv::show::modal', this.infoModal.id, button)
     },
-    // resetInfoModal () {
-    //   this.infoModal.title = ''
-    //   this.infoModal.content = ''
-    // },
+    resetInfoModal () {
+      this.infoModal.title = ''
+      this.infoModal.content = ''
+    },
     onFiltered (filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length
