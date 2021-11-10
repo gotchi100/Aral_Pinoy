@@ -445,6 +445,8 @@ export default ({
 </script>
 
 <style scoped>
+@import '../css/style.css';
+
 .createevent {
 position: relative;
 }

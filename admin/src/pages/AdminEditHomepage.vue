@@ -381,6 +381,7 @@ export default {
 </script>
 
 <style scoped>
+@import '../css/style.css';
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
 

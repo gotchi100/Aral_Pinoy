@@ -10,13 +10,13 @@
           <b-row class="my-1">
             <label class="name" for="input-small" style="font-family:'Bebas Neue', cursive;">First Name</label>
             <b-col>
-              <b-form-input v-model="name" :disabled="!isDisabled"></b-form-input>
+              <b-form-input v-model="firstName" :disabled="!isDisabled"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="name" for="input-small" style="font-family:'Bebas Neue', cursive;">Last Name</label>
             <b-col>
-              <b-form-input v-model="name" :disabled="!isDisabled"></b-form-input>
+              <b-form-input v-model="lastName" :disabled="!isDisabled"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
@@ -28,19 +28,19 @@
           <b-row class="my-1">
             <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Gender</label>
             <b-col>
-              <b-form-input v-model="email" :disabled="!isDisabled"></b-form-input>
+              <b-form-input v-model="gender" :disabled="!isDisabled"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Home Address</label>
             <b-col>
-              <b-form-input v-model="email" :disabled="!isDisabled"></b-form-input>
+              <b-form-input v-model="address" :disabled="!isDisabled"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Skills</label>
             <b-col>
-              <b-form-input v-model="email" :disabled="!isDisabled"></b-form-input>
+              <b-form-input v-model="skills" :disabled="!isDisabled"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
@@ -277,6 +277,8 @@ export default {
       lastName: '',
       contactNumber: '',
       email: '',
+      gender: '',
+      address: '',
       password: '',
       cpassword: '',
       items: [

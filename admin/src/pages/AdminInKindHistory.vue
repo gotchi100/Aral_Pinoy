@@ -4,7 +4,7 @@
   <b-container fluid>
     <!-- User Interface controls -->
     <h1 style="font-family:'Bebas Neue', cursive;">
-        In-Kind Donations
+        In-Kind Transaction History
     </h1>
     <b-row>
       <b-container class="bv-example-row">
@@ -91,22 +91,7 @@
         <pre>{{ infoModal.content }}</pre>
       </b-modal> -->
   <b-row>
-    <b-col cols="6"></b-col>
-    <b-col>
-      <b-button to="/donate" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 180px;">
-        Donate item
-      </b-button>
-    </b-col>
-    <b-col>
-      <b-button to="/add-donation" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 180px;">
-        Add a Donation
-      </b-button>
-    </b-col>
-    <b-col>
-      <b-button to="/category-list" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 180px;">
-        View Categories
-      </b-button>
-    </b-col>
+    <b-col cols="8"></b-col>
     <!-- <b-col>
       <b-button pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;">
           Edit an Item
@@ -144,34 +129,34 @@ export default {
   data () {
     return {
       items: [
-        { date: '9/27/21', item: 'Unicef Shirt Large', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Unicef Shirt Medium', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Unicef Shirt Small', qty: 40, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Monggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Nissin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' },
-        { date: '9/27/21', item: 'FUnicef Shirt Large', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'FUnicef Shirt Medium', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'FUnicef Shirt Small', qty: 40, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Bonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Zissin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' },
-        { date: '9/27/21', item: 'Bnicef Shirt Large', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Bnicef Shirt Medium', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Bnicef Shirt Small', qty: 40, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Nonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Missin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' },
-        { date: '9/27/21', item: 'Ynicef Shirt Large', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Ynicef Shirt Medium', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Ynicef Shirt Small', qty: 40, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Yonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Pissin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' }
+        { date: '9/27/21', item: 'Unicef Shirt Large', qty: 20, ctgry: 'Apparel', sendto: 'Red Cross' },
+        { date: '9/27/21', item: 'Unicef Shirt Medium', qty: 20, ctgry: 'Apparel', sendto: 'Aral Pinoy Batangas Clean Up' },
+        { date: '9/27/21', item: 'Unicef Shirt Small', qty: 40, ctgry: 'Apparel', sendto: ' Aral Pinoy Manila Clean Up' },
+        { date: '9/27/21', item: 'Monggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', sendto: ' Aral Pinoy Pasig Clean Up' },
+        { date: '9/27/21', item: 'Nissin Cup Noodles', qty: 250, ctgry: 'Food', sendto: ' Aral Pinoy Quezon Clean Up' },
+        { date: '9/27/21', item: 'FUnicef Shirt Large', qty: 20, ctgry: 'Apparel', sendto: 'N/A' },
+        { date: '9/27/21', item: 'FUnicef Shirt Medium', qty: 20, ctgry: 'Apparel', sendto: 'N/A' },
+        { date: '9/27/21', item: 'FUnicef Shirt Small', qty: 40, ctgry: 'Apparel', sendto: 'N/A' },
+        { date: '9/27/21', item: 'Bonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', sendto: 'N/A' },
+        { date: '9/27/21', item: 'Zissin Cup Noodles', qty: 250, ctgry: 'Food', sendto: '10/15/25' },
+        { date: '9/27/21', item: 'Bnicef Shirt Large', qty: 20, ctgry: 'Apparel', sendto: 'N/A' },
+        { date: '9/27/21', item: 'Bnicef Shirt Medium', qty: 20, ctgry: 'Apparel', sendto: 'N/A' },
+        { date: '9/27/21', item: 'Bnicef Shirt Small', qty: 40, ctgry: 'Apparel', sendto: 'N/A' },
+        { date: '9/27/21', item: 'Nonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', sendto: 'N/A' },
+        { date: '9/27/21', item: 'Missin Cup Noodles', qty: 250, ctgry: 'Food', sendto: '10/15/25' },
+        { date: '9/27/21', item: 'Ynicef Shirt Large', qty: 20, ctgry: 'Apparel', sendto: 'N/A' },
+        { date: '9/27/21', item: 'Ynicef Shirt Medium', qty: 20, ctgry: 'Apparel', sendto: 'N/A' },
+        { date: '9/27/21', item: 'Ynicef Shirt Small', qty: 40, ctgry: 'Apparel', sendto: 'N/A' },
+        { date: '9/27/21', item: 'Yonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', sendto: 'N/A' },
+        { date: '9/27/21', item: 'Pissin Cup Noodles', qty: 250, ctgry: 'Food', sendto: '10/15/25' }
       ],
       fields: [
         { key: 'date', label: 'Date', sortable: true, class: 'text-center' },
         { key: 'item', label: 'Item', sortable: true, class: 'text-center' },
         { key: 'qty', label: 'Quantity', sortable: true, class: 'text-center' },
         { key: 'ctgry', label: 'Category', sortable: true, class: 'text-center' },
-        { key: 'bestbefore', label: 'Best Before', sortable: true, class: 'text-center' },
-        { key: 'expiration', label: 'Expiration Date', sortable: true, class: 'text-center' }
+        { key: 'sendto', label: 'Send to', sortable: true, class: 'text-center' }
+        // { key: 'movement', label: 'Movement', sortable: true, class: 'text-center' }
         // {
         //   key: 'isActive',
         //   label: 'Is Active',

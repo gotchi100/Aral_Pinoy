@@ -26,6 +26,7 @@
         <b-nav-item-dropdown style="margin-left: 18px; color: black;" class="donations" text="Donations">
             <b-dropdown-item to="/inkind-list">In-Kind</b-dropdown-item>
             <b-dropdown-item href="#">Monetary</b-dropdown-item>
+            <b-dropdown-item to="/inkind-history">In-Kind History</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
     </b-navbar-nav>
