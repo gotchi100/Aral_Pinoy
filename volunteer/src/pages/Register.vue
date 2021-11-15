@@ -204,12 +204,29 @@ export default {
     }
   },
   methods: {
-    register () {
-      axios.post('http://localhost:3000/users', {
+    async register () {
+      await axios.post('http://localhost:3000/register', {
         email: this.email,
         password: this.password,
+        contactNumber: this.contactNumber,
         firstName: this.firstName,
         lastName: this.lastName
+      })
+
+      const results = await axios.post('http://localhost:3000/login', {
+        email: this.email,
+        password: this.password
+      })
+
+      const { user, token } = results.data
+
+      this.$store.dispatch('login', {
+        user,
+        token
+      })
+
+      this.$router.push({
+        path: '/'
       })
     },
     updateStep (value) {

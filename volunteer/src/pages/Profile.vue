@@ -10,19 +10,19 @@
           <b-row class="my-1">
             <label class="name" for="input-small" style="font-family:'Bebas Neue', cursive;">First Name</label>
             <b-col>
-              <b-form-input v-model="firstName" :disabled="!isDisabled"></b-form-input>
+              <b-form-input v-model="user.firstName" :disabled="!isDisabled"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="name" for="input-small" style="font-family:'Bebas Neue', cursive;">Last Name</label>
             <b-col>
-              <b-form-input v-model="lastName" :disabled="!isDisabled"></b-form-input>
+              <b-form-input v-model="user.lastName" :disabled="!isDisabled"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="cnum" for="input-small" style="font-family:'Bebas Neue', cursive;">Contact Number</label>
             <b-col>
-              <b-form-input v-model="cnum" :disabled="!isDisabled"></b-form-input>
+              <b-form-input v-model="user.contactNumber" :disabled="!isDisabled"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
@@ -46,7 +46,7 @@
           <b-row class="my-1">
             <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Email Address</label>
             <b-col>
-              <b-form-input v-model="email" :disabled="!isDisabled"></b-form-input>
+              <b-form-input v-model="user.email" :disabled="!isDisabled"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
@@ -65,10 +65,10 @@
             </b-col>
           </b-row>
           <b-button pill variant="danger" @click="isDisabled = true" v-show="!isDisabled" style="margin: 8px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
-                Edit
+            Edit
           </b-button>
           <b-button pill variant="danger" @click="isDisabled = false" v-show="isDisabled" style="margin: 8px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
-                Save
+            Save
           </b-button>
         </b-container>
       </b-card>
@@ -273,6 +273,12 @@ export default {
     return {
       logo,
       isDisabled: false,
+      user: {
+        firstName: '',
+        lastName: '',
+        contactNumber: '',
+        email: ''
+      },
       firstName: '',
       lastName: '',
       contactNumber: '',
@@ -384,10 +390,10 @@ export default {
   created () {
     const user = this.$store.getters.user
 
-    this.firstName = user.firstName
-    this.lastName = user.lastName
-    this.contactNumber = user.contactNumber
-    this.email = user.email
+    this.user.firstName = user.firstName
+    this.user.lastName = user.lastName
+    this.user.contactNumber = user.contactNumber
+    this.user.email = user.email
   }
 }
 </script>
