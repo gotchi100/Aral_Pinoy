@@ -9,19 +9,19 @@
           <b-row class="my-1">
             <label class="lname" for="input-small">Last Name</label>
             <b-col>
-              <b-form-input v-model="lastName"></b-form-input>
+              <b-form-input v-model="user.lastName"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="fname" for="input-small">First Name</label>
             <b-col>
-              <b-form-input v-model="firstName"></b-form-input>
+              <b-form-input v-model="user.firstName"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="gender" for="input-small">Gender</label>
             <b-col>
-              <b-form-select v-model="selected" :options="options" class="mb-3">
+              <b-form-select v-model="user.gender" :options="options" class="mb-3">
                 <template #first>
                   <b-form-select-option :value="null" disabled>-- Please select an option --</b-form-select-option>
                 </template>
@@ -31,19 +31,24 @@
           <b-row class="my-1">
             <label class="birthdate" for="input-small">Date of Birth</label>
             <b-col>
-              <b-form-datepicker id="start-datepicker" v-model="values" class="mb-2"></b-form-datepicker>
+              <b-form-datepicker
+                id="start-datepicker"
+                v-model="user.birthDate"
+                class="mb-2"
+                :max="maxBirthDate"
+              ></b-form-datepicker>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="cnum" for="input-small">Contact Number</label>
             <b-col>
-              <b-form-input v-model="contactNumber"></b-form-input>
+              <b-form-input v-model="user.contactNumber"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="homeAddress" for="input-small">Home Address</label>
             <b-col>
-              <b-form-input v-model="homeAddress"></b-form-input>
+              <b-form-input v-model="user.address.home"></b-form-input>
             </b-col>
           </b-row>
 
@@ -64,13 +69,13 @@
           <b-row class="my-1">
             <label class="email" for="input-small">Email Address</label>
             <b-col>
-              <b-form-input v-model="email"></b-form-input>
+              <b-form-input v-model="user.email"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="password" for="input-small">Password</label>
             <b-col>
-              <b-form-input v-model="password" type="password"></b-form-input>
+              <b-form-input v-model="user.password" type="password"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
@@ -176,8 +181,10 @@
 </template>
 
 <script>
+const _ = require('lodash')
 const axios = require('axios').default
 const logo = require('../assets/aralpinoywords.png')
+const { subYears, startOfDay } = require('date-fns')
 
 export default {
   name: 'Register',
@@ -190,32 +197,36 @@ export default {
         { value: 'Male', text: 'Male' },
         { value: 'Female', text: 'Female' }
       ],
-      firstName: '',
-      lastName: '',
-      contactNumber: '',
-      email: '',
-      password: '',
+      user: {
+        email: '',
+        password: '',
+        firstName: '',
+        lastName: '',
+        gender: null,
+        contactNumber: '',
+        birthDate: subYears(new Date(), 14),
+        address: {
+          home: ''
+        }
+      },
       confirmPassword: '',
-      roles: [],
+      maxBirthDate: subYears(new Date(), 10),
       option: ['Teaches at Math', 'Fluent in English', 'Heavy Lifter', 'Playing the guitar', 'Teaches at English', 'Doing Handicrafts', 'Cleaning'],
       search: '',
-      value: [],
-      values: ''
+      value: []
     }
   },
   methods: {
     async register () {
-      await axios.post('http://localhost:3000/register', {
-        email: this.email,
-        password: this.password,
-        contactNumber: this.contactNumber,
-        firstName: this.firstName,
-        lastName: this.lastName
-      })
+      this.user.birthDate = startOfDay(this.user.birthDate)
+
+      const userData = _.pickBy(this.user, _.identity)
+
+      await axios.post('http://localhost:3000/register', userData)
 
       const results = await axios.post('http://localhost:3000/login', {
-        email: this.email,
-        password: this.password
+        email: this.user.email,
+        password: this.user.password
       })
 
       const { user, token } = results.data
