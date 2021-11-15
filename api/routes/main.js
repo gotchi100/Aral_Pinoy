@@ -4,6 +4,9 @@ const express = require('express')
 const Joi = require('joi')
 
 const MainController = require('../controllers/main')
+const config = require('../config')
+
+let isGoogleSignInConfigProvided = false
 
 const loginValidator = Joi.object({
   email: Joi.string().email().trim().lowercase().required(),
@@ -34,6 +37,32 @@ function validateLoginBody(req, res, next) {
   next()
 }
 
+function checkGoogleSignInConfig(req, res, next) {
+  if (isGoogleSignInConfigProvided) {
+    return next()
+  }
+
+  if (!config.google.oauth.clientId) {
+    return next(new Error('Environment variable `GOOGLE_OAUTH_CLIENT_ID` must be provided'))
+  }
+
+  if (!config.google.oauth.clientSecret) {
+    return next(new Error('Environment variable `GOOGLE_OAUTH_CLIENT_SECRET` must be provided'))
+  }
+  
+  if (!config.google.oauth.redirectUri) {
+    return next(new Error('Environment variable `GOOGLE_OAUTH_REDIRECT_URI` must be provided'))
+  }
+
+  if (!config.volunteer.google.oauth.redirectUri) {
+    return next(new Error('Environment variable `VOLUNTEER_GOOGLE_OAUTH_REDIRECT_URI` must be provided'))
+  }
+
+  isGoogleSignInConfigProvided = true
+
+  next()
+}
+
 function validateRegisterBody(req, res, next) {
   const { value: validatedBody, error } = registerValidator.validate(req.body)
 
@@ -53,6 +82,7 @@ function validateRegisterBody(req, res, next) {
 const router = express.Router()
 
 router.post('/login', validateLoginBody, MainController.login)
+router.get('/google-sign-in', checkGoogleSignInConfig, MainController.googleSignIn)
 router.post('/register', validateRegisterBody, MainController.register)
 
 module.exports = router

@@ -3,6 +3,10 @@
 const {
   MONGODB_URI,
   JWT_SECRET,
+  VOLUNTEER_GOOGLE_OAUTH_REDIRECT_URI,
+  GOOGLE_OAUTH_CLIENT_ID,
+  GOOGLE_OAUTH_CLIENT_SECRET,
+  GOOGLE_OAUTH_REDIRECT_URI
 } = process.env
   
 if (MONGODB_URI === '') {
@@ -19,5 +23,19 @@ module.exports = {
   },
   jwt: {
     secret: JWT_SECRET
+  },
+  volunteer: {
+    google: {
+      oauth: {
+        redirectUri: VOLUNTEER_GOOGLE_OAUTH_REDIRECT_URI
+      }
+    }
+  },
+  google: {
+    oauth: {
+      clientId: GOOGLE_OAUTH_CLIENT_ID,
+      clientSecret: GOOGLE_OAUTH_CLIENT_SECRET,
+      redirectUri: GOOGLE_OAUTH_REDIRECT_URI
+    }
   }
 }
