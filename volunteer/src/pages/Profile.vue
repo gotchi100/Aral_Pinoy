@@ -28,19 +28,19 @@
           <b-row class="my-1">
             <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Gender</label>
             <b-col>
-              <b-form-input v-model="gender" :disabled="!isDisabled"></b-form-input>
+              <b-form-input v-model="user.gender" :disabled="!isDisabled"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Home Address</label>
             <b-col>
-              <b-form-input v-model="address" :disabled="!isDisabled"></b-form-input>
+              <b-form-input v-model="user.address.home" :disabled="!isDisabled"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Skills</label>
             <b-col>
-              <b-form-input v-model="skills" :disabled="!isDisabled"></b-form-input>
+              <b-form-input disabled></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
@@ -277,14 +277,12 @@ export default {
         firstName: '',
         lastName: '',
         contactNumber: '',
-        email: ''
+        email: '',
+        gender: '',
+        address: {
+          home: ''
+        }
       },
-      firstName: '',
-      lastName: '',
-      contactNumber: '',
-      email: '',
-      gender: '',
-      address: '',
       password: '',
       cpassword: '',
       items: [
@@ -394,6 +392,11 @@ export default {
     this.user.lastName = user.lastName
     this.user.contactNumber = user.contactNumber
     this.user.email = user.email
+    this.user.gender = user.gender
+
+    if (user.address !== undefined && user.address.home !== undefined) {
+      this.user.address.home = user.address.home
+    }
   }
 }
 </script>
