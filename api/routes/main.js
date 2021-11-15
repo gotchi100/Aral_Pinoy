@@ -2,6 +2,7 @@
 
 const express = require('express')
 const Joi = require('joi')
+Joi.objectId = require('joi-objectid')(Joi)
 
 const MainController = require('../controllers/main')
 const config = require('../config')
@@ -18,7 +19,13 @@ const registerValidator = Joi.object({
   contactNumber: Joi.string().trim().max(20),
   firstName: Joi.string().trim().max(100).required(),
   middleName: Joi.string().trim().max(100),
-  lastName: Joi.string().trim().max(100).required()
+  lastName: Joi.string().trim().max(100).required(),
+  gender: Joi.string().valid('Male', 'Female'),
+  birthDate: Joi.date().iso(),
+  address: Joi.object({
+    home: Joi.string().trim().max(256)
+  }),
+  skills: Joi.array().items(Joi.objectId()).unique()
 })
 
 function validateLoginBody(req, res, next) {
