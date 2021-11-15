@@ -11,8 +11,9 @@ const jwtMiddleware = require('express-jwt')
 const config = require('./config')
 
 const mainRouter = require('./routes/main')
-const usersRouter = require('./routes/users')
 const adminRouter = require('./routes/admin')
+const usersRouter = require('./routes/users')
+const skillsRouter = require('./routes/skills')
 
 const logger = debug('api:server')
 
@@ -43,8 +44,9 @@ app.use(
 )
 
 app.use('/', mainRouter)
-app.use('/users', usersRouter)
 app.use('/admin', adminRouter)
+app.use('/users', usersRouter)
+app.use('/skills', skillsRouter)
 app.use(function (req, res, next) {
   res.status(404).json({
     code: 'NotFound',
