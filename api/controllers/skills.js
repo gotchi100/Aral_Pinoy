@@ -2,19 +2,46 @@
 
 const SkillModel = require('../models/skills')
 
+const whitespaceRegex = /\s+/g
+
+function sanitize(name) {
+  return name.replace(whitespaceRegex,' ')
+}
+
 class SkillsController {
-  static async create(req, res) {
+  static async create(req, res, next) {
     const {
       name,
       description
     } = req.body
 
-    const skill = await SkillModel.create({
-      name,
-      description
-    })
+    const sanitizedName = sanitize(name)
 
-    return res.status(201).json(skill.toObject())
+    try {
+      const results = await SkillModel.create({
+        name: sanitizedName,
+        norm: sanitizedName.toLowerCase(),
+        description
+      })
+  
+      const skill = results.toObject({ 
+        minimize: true,
+        versionKey: false,
+        useProjection: true
+      })
+  
+      return res.status(201).json(skill)
+    } catch (error) {
+      if (error.code === 11000 && error.keyPattern.norm === 1) {
+        return res.status(400).json({
+          code: 'SkillAlreadyExists',
+          status: 400,
+          message: `Duplicate skill: ${name}`
+        })
+      }
+
+      next(error)
+    }
   }
 
   static async list(req, res, next) {
