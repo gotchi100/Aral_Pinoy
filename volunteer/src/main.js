@@ -44,7 +44,7 @@ Vue.use(VModal)
 const store = new Vuex.Store(vuexStore)
 
 const routes = [
-  { path: '/', component: HomePage },
+  { name: 'Home', path: '/', component: HomePage },
   { path: '/login', component: LoginPage },
   { path: '/google-sign-in', component: GoogleSignInCallbackPage },
   { path: '/register', component: RegisterPage },

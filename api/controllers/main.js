@@ -6,6 +6,7 @@ const axios = require('axios').default
 const base64 = require('base64-url')
 
 const UserModel = require('../models/users')
+const SkillModel = require('../models/skills')
 const config = require('../config')
 
 class MainController {
@@ -20,7 +21,8 @@ class MainController {
         email,
         roles: 'volunteer'
       }, '+password', {
-        lean: true
+        lean: true,
+        populate: 'skills'
       })
   
       if (user === null) {
@@ -130,29 +132,50 @@ class MainController {
       contactNumber,
       firstName,
       middleName,
-      lastName
+      lastName,
+      gender,
+      birthDate,
+      address,
+      skills: skillIds
     } = req.body
 
-    const user = new UserModel()
-
-    user.email = email
-    user.password = password
-    user.contactNumber = contactNumber
-    user.firstName = firstName
-    user.middleName = middleName
-    user.lastName = lastName
-    user.roles = ['volunteer']
-
     try {
-      await user.save()
+      const skills = await SkillModel.find({
+        _id: {
+          $in: skillIds
+        }
+      }, ['_id', 'name', 'description'], {
+        lean: true
+      })
 
-      return res.status(201).json({
+      const userData = {
         email,
+        password,
         contactNumber,
         firstName,
         middleName,
-        lastName
+        lastName,
+        gender,
+        address,
+        roles: ['volunteer'],
+        skills
+      }
+
+      if (birthDate !== undefined) {
+        userData.birthDate = new Date(birthDate)
+      }
+
+      const results = await UserModel.create(userData)
+
+      const user = results.toObject({ 
+        minimize: true,
+        versionKey: false,
+        useProjection: true
       })
+
+      user.skills = skills
+
+      return res.status(201).json(user)
     } catch (error) {
       if (error.code === 11000 && error.keyPattern.email === 1) {
         return res.status(400).json({

@@ -3,6 +3,7 @@
 const express = require('express')
 const { Types } = require('mongoose')
 const Joi = require('joi')
+Joi.objectId = require('joi-objectid')(Joi)
 
 const UsersController = require('../controllers/users')
 
@@ -12,8 +13,15 @@ const createUserValidator = Joi.object({
   contactNumber: Joi.string().trim().max(20),
   firstName: Joi.string().trim().max(100).required(),
   middleName: Joi.string().trim().max(100),
-  lastName: Joi.string().trim().max(100).required()
+  lastName: Joi.string().trim().max(100).required(),
+  gender: Joi.string().valid('Male', 'Female'),
+  birthDate: Joi.date().iso(),
+  address: Joi.object({
+    home: Joi.string().trim().max(256)
+  }),
+  skills: Joi.array().items(Joi.objectId()).unique()
 })
+
 const paginationValidator = Joi.object({
   offset: Joi.number().min(0).default(0),
   limit: Joi.number().min(1).default(25),

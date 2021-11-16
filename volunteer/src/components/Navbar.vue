@@ -5,11 +5,11 @@
     </b-navbar-brand>
 
     <b-navbar-nav>
-      <b-nav-item style="margin-left: 18px;" class="events" href="#events">Events</b-nav-item>
+      <b-nav-item style="margin-left: 18px;" class="events" v-bind="eventNavigationLink">Events</b-nav-item>
     </b-navbar-nav>
 
     <b-navbar-nav>
-      <b-nav-item style="margin-left: 18px;" class="about" href="#about">About Us</b-nav-item>
+      <b-nav-item style="margin-left: 18px;" class="about" v-bind="aboutNavigationLink">About Us</b-nav-item>
     </b-navbar-nav>
 
      <b-navbar-nav v-if="$store.getters.isLoggedIn">
@@ -57,8 +57,33 @@ export default {
         path: '/login'
       })
     }
+  },
+  computed: {
+    eventNavigationLink () {
+      if (this.$route.name !== 'Home') {
+        return {
+          to: '/?scroll=events'
+        }
+      }
+
+      return {
+        href: '#events'
+      }
+    },
+    aboutNavigationLink () {
+      if (this.$route.name !== 'Home') {
+        return {
+          to: '/?scroll=about'
+        }
+      }
+
+      return {
+        href: '#about'
+      }
+    }
   }
 }
+
 </script>
 
 <style scoped>
