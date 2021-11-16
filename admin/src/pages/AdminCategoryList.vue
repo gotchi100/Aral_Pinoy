@@ -102,8 +102,8 @@
       </b-button>
     </b-col> -->
     <b-col>
-      <b-button to="/add-category" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 200px;">
-          Add a category entry
+      <b-button @click="showModal = !showModal" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 200px;">
+          Add a category Entry
       </b-button>
     </b-col>
   </b-row>
@@ -123,7 +123,60 @@
     </b-col>
     <b-col></b-col>
   </b-row>
-
+  <b-modal v-model="showModal" size="xl">
+    <div>
+      <div class="addskill">
+        <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1100px; border-radius: 20px; margin-top: 40px;">
+          <b-container fluid>
+              <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
+                  Add a Category Entry
+              </h1>
+            <b-row class="my-1">
+              <label class="skill" for="input-small">Category Name</label>
+              <b-col>
+                <b-form-input v-model="skill"></b-form-input>
+              </b-col>
+            </b-row>
+            <b-row class="my-1">
+              <b-col>
+                  <b-form-checkbox id="checkbox-1" v-model="status" name="checkbox-1" value="accepted" unchecked-value="not_accepted">
+                      &nbsp; Requires Best Before Date?
+                  </b-form-checkbox>
+              </b-col>
+              <b-col>
+                  <b-form-checkbox id="checkbox-1" v-model="status" name="checkbox-1" value="accepted" unchecked-value="not_accepted">
+                      &nbsp; Requires Expiration Date?
+                  </b-form-checkbox>
+              </b-col>
+            </b-row>
+            <b-row>
+              <b-col cols="5"></b-col>
+              <b-col>
+                <b-button @click="showModaltwo = !showModaltwo" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 150px;">
+                  Add Category
+                </b-button>
+              </b-col>
+            </b-row>
+          </b-container>
+          <b-modal v-model="showModaltwo" size="xl">
+            <b-container fluid>
+                  <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
+                      Are you sure with all the details?
+                  </h1>
+                  <!-- <b-row>
+                    <b-col cols="5"></b-col>
+                    <b-col>
+                      <b-button type="submit" variant="success">Yes</b-button>
+                      &nbsp;
+                      <b-button type="reset" variant="danger">No</b-button>
+                    </b-col>
+                  </b-row> -->
+              </b-container>
+          </b-modal>
+        </b-card>
+      </div>
+    </div>
+  </b-modal>
   </b-container>
 </b-card>
 </div>
@@ -158,7 +211,11 @@ export default {
         id: 'info-modal',
         title: '',
         content: ''
-      }
+      },
+      skill: '',
+      description: '',
+      showModal: false,
+      showModaltwo: false
     }
   },
   computed: {

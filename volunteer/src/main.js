@@ -18,7 +18,6 @@ import EventsPage from './pages/Events'
 import ProfilePage from './pages/Profile'
 import CalendarPage from './pages/EventCalendar'
 import EventDetailsPage from './pages/EventPage'
-import trial from './trial/Profile2.vue'
 import ForgetPassword from './pages/ForgetPassword.vue'
 import GoogleSignInCallbackPage from './pages/GoogleSignIn'
 import EvaluationPage from './pages/Evaluation.vue'
@@ -53,7 +52,6 @@ const routes = [
   // { path: '/home', component: HomePage },
   { path: '/calendar', component: CalendarPage },
   { path: '/event-page', component: EventDetailsPage },
-  { path: '/trial', component: trial },
   { path: '/forget-password', component: ForgetPassword },
   { path: '/evaluation', component: EvaluationPage },
   { path: '/privacy-policy', component: PrivacyPolicyPage },

@@ -4,126 +4,9 @@
   <b-container fluid>
     <!-- User Interface controls -->
     <h1 style="font-family:'Bebas Neue', cursive;">
-        In-Kind Donations Inventory
+        Incoming In-Kind Inventory History
     </h1>
-    <b-link to="/incoming-history">Incoming History</b-link>
-    <b-tabs pills card>
-      <b-tab title="Compiled View" active>
-        <b-card-text>
-          <b-row>
-            <b-container class="bv-example-row">
-              <b-row>
-                <b-col>
-                  <b-col sm="5" md="6" class="my-1">
-                    <b-form-group style="font-size: 15px; font-family:'Bebas Neue', cursive;"
-                      label="Per page"
-                      label-for="per-page-select"
-                      label-cols-sm="6"
-                      label-cols-md="4"
-                      label-cols-lg="3"
-                      label-align-sm="right"
-                      label-size="sm"
-                      class="mb-0"
-                    >
-                      <b-form-select
-                        id="per-page-select"
-                        v-model="perPage"
-                        :options="pageOptions"
-                        size="sm"
-                      ></b-form-select>
-                    </b-form-group>
-                  </b-col>
-                </b-col>
-                <b-col>
-                </b-col>
-                <b-col>
-                  <br>
-                  <b-input-group size="sm">
-                    <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
-                    <b-form-input
-                      id="filter-input"
-                      v-model="filter"
-                      type="search"
-                      placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
-                    ></b-form-input>
-                  </b-input-group>
-                  <br>
-                </b-col>
-              </b-row>
-            </b-container>
-          </b-row>
-          <!-- Main table element -->
-          <b-table
-            :items="items"
-            :fields="fields"
-            :current-page="currentPage"
-            :per-page="perPage"
-            :filter="filter"
-            :filter-included-fields="filterOn"
-            :sort-by.sync="sortBy"
-            :sort-desc.sync="sortDesc"
-            :sort-direction="sortDirection"
-            stacked="md"
-            show-empty
-            small
-            @filtered="onFiltered"
-            style="background:white"
-          >
-            <template #cell(name)="row">
-              {{ row.value.first }} {{ row.value.last }}
-            </template>
-
-            <!-- <template #cell(actions)="row">
-              <b-button size="sm" @click="info(row.item, row.index, $event.target)" class="mr-1">
-                Edit
-              </b-button>
-            </template> -->
-
-            <template #row-details="row">
-              <b-card>
-                <ul>
-                  <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
-                </ul>
-              </b-card>
-            </template>
-          </b-table>
-              <!-- Info modal -->
-            <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
-              <pre>{{ infoModal.content }}</pre>
-            </b-modal>
-          <b-row>
-            <b-col cols="8"></b-col>
-            <b-col>
-              <b-button @click="showModal = !showModal" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 180px;">
-                Add a Donation
-              </b-button>
-            </b-col>
-            <b-col>
-              <b-button to="/category-list" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 180px;">
-                View Categories
-              </b-button>
-            </b-col>
-          </b-row>
-          <b-row>
-            <b-col></b-col>
-            <b-col>
-                <b-col class="my-1">
-                  <b-pagination
-                    v-model="currentPage"
-                    :total-rows="totalRows"
-                    :per-page="perPage"
-                    align="fill"
-                    size="sm"
-                    class="my-0"
-                  ></b-pagination>
-                </b-col>
-            </b-col>
-            <b-col></b-col>
-          </b-row>
-        </b-card-text>
-      </b-tab>
-      <b-tab title="Detailed View">
-        <b-card-text>
+    <b-card-text>
           <b-row>
             <b-container class="bv-example-row">
               <b-row>
@@ -187,12 +70,6 @@
               {{ row.value.first }} {{ row.value.last }}
             </template>
 
-            <template #cell(actions)="row">
-              <b-button size="sm" @click="info2(row.item, row.index, $event.target)" class="mr-1">
-                Edit
-              </b-button>
-            </template>
-
             <template #row-details="row">
               <b-card>
                 <ul>
@@ -205,19 +82,6 @@
             <b-modal :id="infoModal2.id2" :title="infoModal2.title2" ok-only @hide="resetInfoModal2">
               <pre>{{ infoModal2.content2 }}</pre>
             </b-modal>
-          <b-row>
-            <b-col cols="8"></b-col>
-            <b-col>
-              <b-button @click="showModal = !showModal" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 180px;">
-                Add a Donation
-              </b-button>
-            </b-col>
-            <b-col>
-              <b-button to="/category-list" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 180px;">
-                View Categories
-              </b-button>
-            </b-col>
-          </b-row>
           <b-row>
             <b-col></b-col>
             <b-col>
@@ -235,8 +99,6 @@
             <b-col></b-col>
           </b-row>
         </b-card-text>
-      </b-tab>
-    </b-tabs>
   </b-container>
   <b-modal v-model="showModal" size="xl">
     <div>
@@ -398,7 +260,7 @@ export default {
       ],
       fields: [
         { key: 'item', label: 'Item', sortable: true, class: 'text-center' },
-        { key: 'qty', label: 'Quantity', sortable: true, class: 'text-center' },
+        { key: 'qty', label: 'Quantity Recieved', sortable: true, class: 'text-center' },
         { key: 'ctgry', label: 'Category', sortable: true, class: 'text-center' },
         { key: 'actions', label: ' ' }
       ],
@@ -439,6 +301,7 @@ export default {
         { date: '9/27/21', item: 'Pissin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' }
       ],
       fields2: [
+        { key: 'date', label: 'Date Recieved', sortable: true, class: 'text-center' },
         { key: 'item', label: 'Item', sortable: true, class: 'text-center' },
         { key: 'description', label: 'Description', sortable: true, class: 'text-center' },
         { key: 'donor', label: 'Donor', sortable: true, class: 'text-center' },

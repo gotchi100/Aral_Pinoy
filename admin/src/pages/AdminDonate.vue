@@ -4,7 +4,7 @@
       <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 950px; border-radius: 20px; margin-top: 40px;">
         <b-container fluid>
             <h1 style="font-family:'Bebas Neue', cursive;">
-                Send Donation
+                Send an In-kind Donation
             </h1>
           <b-row class="my-1">
           <label class="skill" for="input-small">Item Name</label>

@@ -25,11 +25,9 @@ import InKindList from './pages/AdminInKindList.vue'
 import AddUser from './pages/AdminAddUser.vue'
 import AdminCreateEvent from './pages/AdminCreateEvent.vue'
 import Skills from './pages/AdminSkillsPage.vue'
-import AddSkills from './pages/AdminAddSkill.vue'
 import ViewVolunteerProfile from './pages/AdminVolunteerViewProfile.vue'
 import ViewOfficerProfile from './pages/AdminViewOfficerProfile.vue'
 import CategoryList from './pages/AdminCategoryList.vue'
-import AddCategory from './pages/AdminAddCategory.vue'
 import ForgetPassword from './pages/AdminForgetPassword.vue'
 import EditSDG1 from './pages/AdminEditSDG1.vue'
 import EditSDG4 from './pages/AdminEditSDG4.vue'
@@ -37,9 +35,9 @@ import EditSDG13 from './pages/AdminEditSDG13.vue'
 import Homepage from './pages/AdminEditHomepage.vue'
 import EventPage from './pages/AdminEventPage.vue'
 import VolunteerSuggestion from './pages/events/VolunteerSuggestion.vue'
-import AddDonation from './pages/AdminAddDonation.vue'
 import InKindHistory from './pages/AdminInKindHistory.vue'
 import Donate from './pages/AdminDonate.vue'
+import Incoming from './pages/AdminIncomingHistory.vue'
 
 import vuexStore from './store'
 
@@ -163,13 +161,6 @@ const routes = [
     }
   },
   {
-    path: '/add-skills',
-    component: AddSkills,
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
     path: '/view-volunteer-profile/:id',
     component: ViewVolunteerProfile,
     meta: {
@@ -186,13 +177,6 @@ const routes = [
   {
     path: '/category-list',
     component: CategoryList,
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/add-category',
-    component: AddCategory,
     meta: {
       requiresAuth: true
     }
@@ -245,13 +229,6 @@ const routes = [
     }
   },
   {
-    path: '/add-donation',
-    component: AddDonation,
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
     path: '/inkind-history',
     component: InKindHistory,
     meta: {
@@ -261,6 +238,13 @@ const routes = [
   {
     path: '/donate',
     component: Donate,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/incoming-history',
+    component: Incoming,
     meta: {
       requiresAuth: true
     }

@@ -23,11 +23,19 @@
 
     <b-navbar-nav class="ml-auto">
       <b-navbar-nav right>
-        <b-nav-item-dropdown style="margin-left: 18px; color: black;" class="donations" text="Donations">
-            <b-dropdown-item to="/inkind-list">In-Kind</b-dropdown-item>
-            <b-dropdown-item href="#">Monetary</b-dropdown-item>
-            <b-dropdown-item to="/inkind-history">In-Kind History</b-dropdown-item>
-        </b-nav-item-dropdown>
+        <div>
+          <b-nav-item-dropdown id="dropdown-grouped" style="margin-left: 18px; color: black;" class="donations" text="Donations">
+            <b-dropdown-group id="dropdown-group-1" header="In-Kind" style="font-family: 'Bebas Neue', cursive; color: black;">
+              <b-dropdown-item to="/inkind-list">In-Kind Inventory</b-dropdown-item>
+              <b-dropdown-item to="/inkind-history">In-Kind Donated</b-dropdown-item>
+              <b-dropdown-item to="/donate">Donate an Item</b-dropdown-item>
+            </b-dropdown-group>
+            <b-dropdown-divider></b-dropdown-divider>
+            <b-dropdown-group id="dropdown-group-2" header="Monetary" style="font-family: 'Bebas Neue', cursive; color: black;">
+              <b-dropdown-item-button>Monetary Inventory</b-dropdown-item-button>
+            </b-dropdown-group>
+          </b-nav-item-dropdown>
+        </div>
       </b-navbar-nav>
     </b-navbar-nav>
 
