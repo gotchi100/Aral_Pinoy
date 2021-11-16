@@ -40,7 +40,7 @@
           <b-row class="my-1">
             <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Skills</label>
             <b-col>
-              <b-form-input disabled></b-form-input>
+              <b-form-input :value="skillNames" disabled></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
@@ -279,6 +279,7 @@ export default {
         contactNumber: '',
         email: '',
         gender: '',
+        skills: [],
         address: {
           home: ''
         }
@@ -370,6 +371,15 @@ export default {
         .map(f => {
           return { text: f.label, value: f.key }
         })
+    },
+    skillNames () {
+      const skillNames = []
+
+      for (const skill of this.user.skills) {
+        skillNames.push(skill.name)
+      }
+
+      return skillNames.join(', ')
     }
   },
   mounted () {
@@ -393,6 +403,7 @@ export default {
     this.user.contactNumber = user.contactNumber
     this.user.email = user.email
     this.user.gender = user.gender
+    this.user.skills = user.skills
 
     if (user.address !== undefined && user.address.home !== undefined) {
       this.user.address.home = user.address.home
