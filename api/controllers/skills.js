@@ -17,27 +17,38 @@ class SkillsController {
     return res.status(201).json(skill.toObject())
   }
 
-  static async list(req, res) {
+  static async list(req, res, next) {
     const {
       limit,
       offset,
+      'filters.name': filterName
     } = req.query
 
     const query = {}
 
-    const [skills, total] = await Promise.all([
-      SkillModel.find(query, undefined, { 
-        lean: true,
-        limit,
-        skip: offset
-      }),
-      SkillModel.countDocuments(query)
-    ])
+    if (filterName !== undefined && filterName !== '') {
+      query.$text = {
+        $search: filterName
+      }
+    }
 
-    return res.json({
-      results: skills,
-      total
-    })
+    try {
+      const [skills, total] = await Promise.all([
+        SkillModel.find(query, undefined, { 
+          lean: true,
+          limit,
+          skip: offset
+        }),
+        SkillModel.countDocuments(query)
+      ])
+  
+      return res.json({
+        results: skills,
+        total
+      })
+    } catch (error) {
+      next(error)
+    }
   }
 
   static async get(req, res) {

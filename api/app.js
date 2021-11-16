@@ -29,7 +29,8 @@ const publicRoutes = [
   '/login', 
   '/google-sign-in',
   '/register', 
-  '/admin/login'
+  '/admin/login',
+  '/skills'
 ]
 
 const app = express()
