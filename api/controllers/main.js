@@ -21,7 +21,8 @@ class MainController {
         email,
         roles: 'volunteer'
       }, '+password', {
-        lean: true
+        lean: true,
+        populate: 'skills'
       })
   
       if (user === null) {
