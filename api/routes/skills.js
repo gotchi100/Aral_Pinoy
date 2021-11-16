@@ -10,9 +10,10 @@ const createSkillValidator = Joi.object({
   name: Joi.string().trim().max(50).required(),
   description: Joi.string().trim().max(200),
 })
-const paginationValidator = Joi.object({
+const listSkillsValidator = Joi.object({
   offset: Joi.number().min(0).default(0),
-  limit: Joi.number().min(1).default(25)
+  limit: Joi.number().min(1).default(25),
+  'filters.name': Joi.string().trim().max(100).allow('')
 }).options({ 
   stripUnknown: true
 })
@@ -34,7 +35,7 @@ function validateCreateSkillBody(req, res, next) {
 }
 
 function validateListSkillsBody(req, res, next) {
-  const { value: validatedQuery, error } = paginationValidator.validate(req.query)
+  const { value: validatedQuery, error } = listSkillsValidator.validate(req.query)
 
   if (error !== undefined) {      
     return res.status(400).json({
