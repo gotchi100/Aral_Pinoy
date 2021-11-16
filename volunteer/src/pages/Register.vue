@@ -110,7 +110,7 @@
                   id="tags-with-dropdown"
                   class="mb-2"
                   :value="user.skills"
-                  placeholder="Add skill..."
+                  placeholder=""
                   no-outer-focus
                   disabled
                 >
@@ -133,7 +133,7 @@
             <b-col cols="12">
               <b-dropdown size="sm" variant="outline-secondary" menu-class="w-100" style="width: 100%">
                 <template #button-content>
-                  <b-icon icon="tag-fill"></b-icon> Skills
+                  <b-icon icon="tag-fill"></b-icon> Choose a skill
                 </template>
                 <b-dropdown-form @submit.stop.prevent="() => {}">
                   <b-form-group
@@ -280,7 +280,7 @@ export default {
       this.step += value
     },
     onSkillNameClick (skillToAdd) {
-      if (this.user.skills.findIndex((skill) => skill._id === skillToAdd._id) !== -1) {
+      if (this.user.skills.findIndex((skill) => skill._id === skillToAdd._id) === -1) {
         this.user.skills.push(skillToAdd)
       }
 
