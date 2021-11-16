@@ -28,7 +28,7 @@ class SkillsController {
 
     if (filterName !== undefined && filterName !== '') {
       query.$text = {
-        $search: filterName
+        $search: decodeURIComponent(filterName)
       }
     }
 

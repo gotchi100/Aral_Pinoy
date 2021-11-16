@@ -13,7 +13,7 @@ const createSkillValidator = Joi.object({
 const listSkillsValidator = Joi.object({
   offset: Joi.number().min(0).default(0),
   limit: Joi.number().min(1).default(25),
-  'filters.name': Joi.string().trim().max(50).allow('')
+  'filters.name': Joi.string().trim().max(100).allow('')
 }).options({ 
   stripUnknown: true
 })
