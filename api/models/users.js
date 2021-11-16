@@ -3,6 +3,8 @@
 const mongoose = require('mongoose')
 const argon2 = require('argon2')
 
+const SkillModel = require('./skills')
+
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -12,6 +14,10 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     select: false
+  },
+  roles: {
+    type: [String],
+    required: true
   },
   contactNumber: String,
   firstName: {
@@ -23,9 +29,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  roles: {
-    type: [String],
-    required: true
+  gender: String,
+  birthDate: Date,
+  address: {
+    home: String
+  },
+  skills: {
+    type: [mongoose.Types.ObjectId],
+    ref: SkillModel
   }
 })
 

@@ -9,19 +9,19 @@
           <b-row class="my-1">
             <label class="lname" for="input-small">Last Name</label>
             <b-col>
-              <b-form-input v-model="lastName"></b-form-input>
+              <b-form-input v-model="user.lastName"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="fname" for="input-small">First Name</label>
             <b-col>
-              <b-form-input v-model="firstName"></b-form-input>
+              <b-form-input v-model="user.firstName"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="gender" for="input-small">Gender</label>
             <b-col>
-              <b-form-select v-model="selected" :options="options" class="mb-3">
+              <b-form-select v-model="user.gender" :options="options" class="mb-3">
                 <template #first>
                   <b-form-select-option :value="null" disabled>-- Please select an option --</b-form-select-option>
                 </template>
@@ -29,15 +29,26 @@
             </b-col>
           </b-row>
           <b-row class="my-1">
+            <label class="birthdate" for="input-small">Date of Birth</label>
+            <b-col>
+              <b-form-datepicker
+                id="start-datepicker"
+                v-model="user.birthDate"
+                class="mb-2"
+                :max="maxBirthDate"
+              ></b-form-datepicker>
+            </b-col>
+          </b-row>
+          <b-row class="my-1">
             <label class="cnum" for="input-small">Contact Number</label>
             <b-col>
-              <b-form-input v-model="contactNumber"></b-form-input>
+              <b-form-input v-model="user.contactNumber"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="homeAddress" for="input-small">Home Address</label>
             <b-col>
-              <b-form-input v-model="homeAddress"></b-form-input>
+              <b-form-input v-model="user.address.home"></b-form-input>
             </b-col>
           </b-row>
 
@@ -58,13 +69,13 @@
           <b-row class="my-1">
             <label class="email" for="input-small">Email Address</label>
             <b-col>
-              <b-form-input v-model="email"></b-form-input>
+              <b-form-input v-model="user.email"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="password" for="input-small">Password</label>
             <b-col>
-              <b-form-input v-model="password" type="password"></b-form-input>
+              <b-form-input v-model="user.password" type="password"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
@@ -92,63 +103,76 @@
 
       <b-card v-if="step === 2" class="card" bg-variant="light" style="display: inline-block; max-height:75rem; width: 415px; border-radius: 20px;">
         <b-container fluid>
-          <b-row class="my-1">
-            <b-col>
-               <b-form-group label="Skills:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                <b-form-tags id="tags-with-dropdown" v-model="value" no-outer-focus class="mb-2" style="text-align:center;">
-                    <template v-slot="{ tags, disabled, addTag, removeTag }" style="display: inline-block; height: 100%; overflow: auto;">
+          <b-row>
+            <b-col cols="12">
+              <b-form-group label="Skills:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                <b-form-tags
+                  id="tags-with-dropdown"
+                  class="mb-2"
+                  :value="user.skills"
+                  placeholder="Add skill..."
+                  no-outer-focus
+                  disabled
+                >
+                  <template v-slot="{ tags }">
                     <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
-                        <li v-for="tag in tags" :key="tag" class="list-inline-item">
+                      <li v-for="tag in tags" :key="tag" class="list-inline-item">
                         <b-form-tag
-                            @remove="removeTag(tag)"
-                            :title="tag"
-                            :disabled="disabled"
-                            variant="info"
-                        >{{ tag }}</b-form-tag>
-                        </li>
+                          @remove="removeSkill(JSON.parse(tag))"
+                          variant="info"
+                        >
+                          {{ JSON.parse(tag).name }}
+                        </b-form-tag>
+                      </li>
                     </ul>
-
-                    <b-dropdown size="sm" variant="outline-secondary" block menu-class="w-100">
-                        <template #button-content>
-                        <b-icon icon="tag-fill"></b-icon> Skills Provided
-                        </template>
-                        <b-dropdown-form @submit.stop.prevent="() => {}">
-                        <b-form-group
-                            label="Search Skills"
-                            label-for="tag-search-input"
-                            label-cols-md="auto"
-                            class="mb-0"
-                            label-size="sm"
-                            :description="searchDesc"
-                            :disabled="disabled"
-                        >
-                            <b-form-input
-                            v-model="search"
-                            id="tag-search-input"
-                            type="search"
-                            size="sm"
-                            autocomplete="off"
-                            ></b-form-input>
-                        </b-form-group>
-                        </b-dropdown-form>
-                        <b-dropdown-divider></b-dropdown-divider>
-                        <b-dropdown-item-button
-                        v-for="option in availableOptions"
-                        :key="option"
-                        @click="onOptionClick({ option, addTag })"
-                        >
-                        {{ option }}
-                        </b-dropdown-item-button>
-                        <b-dropdown-text v-if="availableOptions.length === 0">
-                        There are no tags available to select
-                        </b-dropdown-text>
-                    </b-dropdown>
-                    </template>
+                  </template>
                 </b-form-tags>
               </b-form-group>
             </b-col>
+
+            <b-col cols="12">
+              <b-dropdown size="sm" variant="outline-secondary" menu-class="w-100" style="width: 100%">
+                <template #button-content>
+                  <b-icon icon="tag-fill"></b-icon> Skills
+                </template>
+                <b-dropdown-form @submit.stop.prevent="() => {}">
+                  <b-form-group
+                    label="Search Skills"
+                    label-for="tag-search-input"
+                    style="width: 100%"
+                  >
+                      <b-form-input
+                        v-model="skillNameSearch"
+                        id="tag-search-input"
+                        type="search"
+                        autocomplete="off"
+                        @update="onSkillSearchChange"
+                        style="width: 100%"
+                      ></b-form-input>
+                  </b-form-group>
+                </b-dropdown-form>
+
+                <b-dropdown-divider></b-dropdown-divider>
+
+                <b-dropdown-item-button
+                  v-for="skill in skills"
+                  :key="skill._id"
+                  @click="onSkillNameClick(skill)"
+                >
+                  {{ skill.name }}
+                </b-dropdown-item-button>
+
+                <b-dropdown-text v-if="skills.length === 0">
+                  There are no skills available to select
+                </b-dropdown-text>
+              </b-dropdown>
+            </b-col>
           </b-row>
-         <b-container class="bv-example-row">
+
+          <br />
+
+          <b-container class="bv-example-row">
+            <span class="text"> By clicking Register, you agree to the <b-link to="/terms-and-conditions">Terms and Conditions</b-link> and <b-link to="/privacy-policy">Privacy Policy</b-link> of AralPinoy Org Inc.</span>
             <b-row>
               <b-col>
                 <b-button @click="updateStep(-1)" pill variant="danger" style="margin-top: 15px; display: inline-block; font-size: 16px; padding: 8px; width: 152px;">
@@ -169,11 +193,18 @@
 </template>
 
 <script>
+const _ = require('lodash')
 const axios = require('axios').default
 const logo = require('../assets/aralpinoywords.png')
+const { subYears, startOfDay } = require('date-fns')
 
 export default {
   name: 'Register',
+  created () {
+    if (this.skills.length === 0) {
+      this.getSkills()
+    }
+  },
   data () {
     return {
       logo,
@@ -183,56 +214,91 @@ export default {
         { value: 'Male', text: 'Male' },
         { value: 'Female', text: 'Female' }
       ],
-      firstName: '',
-      lastName: '',
-      contactNumber: '',
-      email: '',
-      password: '',
+      user: {
+        email: '',
+        password: '',
+        firstName: '',
+        lastName: '',
+        gender: null,
+        contactNumber: '',
+        birthDate: subYears(new Date(), 14),
+        address: {
+          home: ''
+        },
+        skills: []
+      },
       confirmPassword: '',
-      roles: [],
-      option: ['Teaches at Math', 'Fluent in English', 'Heavy Lifter', 'Playing the guitar', 'Teaches at English', 'Doing Handicrafts', 'Cleaning'],
-      search: '',
-      value: []
+      maxBirthDate: subYears(new Date(), 10),
+      skills: [],
+      skillNameSearch: '',
+      userSkills: []
     }
   },
   methods: {
-    register () {
-      axios.post('http://localhost:3000/users', {
-        email: this.email,
-        password: this.password,
-        firstName: this.firstName,
-        lastName: this.lastName
+    async register () {
+      this.user.birthDate = startOfDay(this.user.birthDate)
+      const skills = this.user.skills.map((skill) => skill._id)
+
+      const userData = _.pickBy({
+        ...this.user,
+        skills
+      }, _.identity)
+
+      await axios.post('http://localhost:3000/register', userData)
+
+      const results = await axios.post('http://localhost:3000/login', {
+        email: this.user.email,
+        password: this.user.password
       })
+
+      const { user, token } = results.data
+
+      this.$store.dispatch('login', {
+        user,
+        token
+      })
+
+      this.$router.push({
+        path: '/'
+      })
+    },
+    async getSkills () {
+      const queryString = new URLSearchParams()
+
+      if (this.skillNameSearch !== '') {
+        queryString.set('filters.name', encodeURI(this.skillNameSearch))
+      }
+
+      const { data } = await axios.get(`http://localhost:3000/skills?${queryString.toString()}`)
+
+      this.skills = data.results
+    },
+    onSkillSearchChange () {
+      this.debounceGetSkills()
     },
     updateStep (value) {
       this.step += value
     },
-    onOptionClick ({ option, addTag }) {
-      addTag(option)
-      this.search = ''
+    onSkillNameClick (skillToAdd) {
+      if (this.user.skills.findIndex((skill) => skill._id === skillToAdd._id) !== -1) {
+        this.user.skills.push(skillToAdd)
+      }
+
+      this.skillNameSearch = ''
+
+      this.getSkills()
+    },
+    removeSkill (skillToRemove) {
+      const index = this.user.skills.findIndex((skill) => skill._id === skillToRemove._id)
+
+      if (index !== -1) {
+        this.user.skills.splice(index, 1)
+      }
     }
   },
   computed: {
-    criteria () {
-      // Compute the search criteria
-      return this.search.trim().toLowerCase()
-    },
-    availableOptions () {
-      const criteria = this.criteria
-      // Filter out already selected options
-      const options = this.option.filter(opt => this.value.indexOf(opt) === -1)
-      if (criteria) {
-        // Show only options that match criteria
-        return options.filter(opt => opt.toLowerCase().indexOf(criteria) > -1)
-      }
-      // Show all options available
-      return options
-    },
-    searchDesc () {
-      if (this.criteria && this.availableOptions.length === 0) {
-        return 'There are no tags matching your search criteria'
-      }
-      return ''
+    debounceGetSkills () {
+      return _.debounce(this.getSkills, 500)
     }
   }
 }
@@ -283,7 +349,7 @@ margin-top: 0px !important;
 margin-bottom: 0px !important;
 }
 .lname, .fname, .cnum, .email, .password, .cpassword,
-.homeAddress, .gender, .skills {
+.homeAddress, .gender, .skills, .birthdate {
 padding: 8px;
 text-align: left;
 font-size: 14px;
@@ -306,5 +372,10 @@ border: 1px solid #ced4da;
 box-sizing: border-box;
 border-radius: 0.25rem;
 margin-bottom: 0 !important;
+}
+.text {
+font-size: 12px;
+display: block;
+text-align: left;
 }
 </style>

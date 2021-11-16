@@ -10,43 +10,43 @@
           <b-row class="my-1">
             <label class="name" for="input-small" style="font-family:'Bebas Neue', cursive;">First Name</label>
             <b-col>
-              <b-form-input v-model="name" :disabled="!isDisabled"></b-form-input>
+              <b-form-input v-model="user.firstName" :disabled="!isDisabled"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="name" for="input-small" style="font-family:'Bebas Neue', cursive;">Last Name</label>
             <b-col>
-              <b-form-input v-model="name" :disabled="!isDisabled"></b-form-input>
+              <b-form-input v-model="user.lastName" :disabled="!isDisabled"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="cnum" for="input-small" style="font-family:'Bebas Neue', cursive;">Contact Number</label>
             <b-col>
-              <b-form-input v-model="cnum" :disabled="!isDisabled"></b-form-input>
+              <b-form-input v-model="user.contactNumber" :disabled="!isDisabled"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Gender</label>
             <b-col>
-              <b-form-input v-model="email" :disabled="!isDisabled"></b-form-input>
+              <b-form-input v-model="user.gender" :disabled="!isDisabled"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Home Address</label>
             <b-col>
-              <b-form-input v-model="email" :disabled="!isDisabled"></b-form-input>
+              <b-form-input v-model="user.address.home" :disabled="!isDisabled"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Skills</label>
             <b-col>
-              <b-form-input v-model="email" :disabled="!isDisabled"></b-form-input>
+              <b-form-input :value="skillNames" disabled></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
             <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Email Address</label>
             <b-col>
-              <b-form-input v-model="email" :disabled="!isDisabled"></b-form-input>
+              <b-form-input v-model="user.email" :disabled="!isDisabled"></b-form-input>
             </b-col>
           </b-row>
           <b-row class="my-1">
@@ -65,10 +65,10 @@
             </b-col>
           </b-row>
           <b-button pill variant="danger" @click="isDisabled = true" v-show="!isDisabled" style="margin: 8px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
-                Edit
+            Edit
           </b-button>
           <b-button pill variant="danger" @click="isDisabled = false" v-show="isDisabled" style="margin: 8px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
-                Save
+            Save
           </b-button>
         </b-container>
       </b-card>
@@ -140,6 +140,10 @@
             >
               <template #cell(event)="row">
                 <b-link :to="`/events/${row.index}`">{{ row.value }}</b-link>
+              </template>
+              <template #cell(action)="row">
+                <b-link v-if="row.item.status === 'Completed'" :to="`/evaluation`">Evaluation</b-link>
+                <b-link v-else :to="`/event-page`">Unjoin</b-link>
               </template>
             </b-table>
           <b-row>
@@ -269,30 +273,37 @@ export default {
     return {
       logo,
       isDisabled: false,
-      firstName: '',
-      lastName: '',
-      contactNumber: '',
-      email: '',
+      user: {
+        firstName: '',
+        lastName: '',
+        contactNumber: '',
+        email: '',
+        gender: '',
+        skills: [],
+        address: {
+          home: ''
+        }
+      },
       password: '',
       cpassword: '',
       items: [
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
         { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
         { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
         { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
         { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
         { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
         { date: '09/27/21', event: 'Zatangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
         { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
         { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Unjoin' },
+        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
         { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' }
       ],
       choices: [
@@ -360,6 +371,15 @@ export default {
         .map(f => {
           return { text: f.label, value: f.key }
         })
+    },
+    skillNames () {
+      const skillNames = []
+
+      for (const skill of this.user.skills) {
+        skillNames.push(skill.name)
+      }
+
+      return skillNames.join(', ')
     }
   },
   mounted () {
@@ -378,10 +398,16 @@ export default {
   created () {
     const user = this.$store.getters.user
 
-    this.firstName = user.firstName
-    this.lastName = user.lastName
-    this.contactNumber = user.contactNumber
-    this.email = user.email
+    this.user.firstName = user.firstName
+    this.user.lastName = user.lastName
+    this.user.contactNumber = user.contactNumber
+    this.user.email = user.email
+    this.user.gender = user.gender
+    this.user.skills = user.skills
+
+    if (user.address !== undefined && user.address.home !== undefined) {
+      this.user.address.home = user.address.home
+    }
   }
 }
 </script>

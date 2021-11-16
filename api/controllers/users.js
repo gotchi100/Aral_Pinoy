@@ -1,6 +1,7 @@
 'use strict'
 
 const UserModel = require('../models/users')
+const SkillModel = require('../models/skills')
 
 class UsersController {
   static async create(req, res, next) {
@@ -10,29 +11,45 @@ class UsersController {
       contactNumber,
       firstName,
       middleName,
-      lastName
+      lastName,
+      gender,
+      birthDate,
+      address,
+      skills: skillIds
     } = req.body
 
-    const user = new UserModel()
-
-    user.email = email
-    user.password = password
-    user.contactNumber = contactNumber
-    user.firstName = firstName
-    user.middleName = middleName
-    user.lastName = lastName
-    user.roles = ['officer']
-
     try {
-      await user.save()
+      const skills = await SkillModel.find({
+        _id: {
+          $in: skillIds
+        }
+      }, ['_id', 'name', 'description'], {
+        lean: true
+      })
 
-      return res.status(201).json({
+      const results = new UserModel({
         email,
+        password,
         contactNumber,
         firstName,
         middleName,
-        lastName
+        lastName,
+        gender,
+        birthDate: new Date(birthDate),
+        address,
+        roles: ['officer'],
+        skills
       })
+
+      const user = results.toObject({ 
+        minimize: true,
+        versionKey: false,
+        useProjection: true
+      })
+
+      user.skills = skills
+
+      return res.status(201).json(user)
     } catch (error) {
       if (error.code === 11000 && error.keyPattern.email === 1) {
         return res.status(400).json({

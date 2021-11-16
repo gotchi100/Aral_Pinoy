@@ -6,6 +6,9 @@
       </div>
       <b-card class="card" bg-variant="light" style="display: inline-block; height: 450px; width: 400px; border-radius: 20px;">
         <b-container fluid>
+          <b-row v-if="errorMessage !== ''" class="my-1">
+            <span>{{ errorMessage }}</span>
+          </b-row>
           <b-row class="my-1">
             <label class="email" for="input-small">Email Address</label>
             <b-col>
@@ -54,7 +57,7 @@ export default {
       logo,
       email: '',
       password: '',
-      googleAccountsApi: null
+      errorMessage: ''
     }
   },
   methods: {

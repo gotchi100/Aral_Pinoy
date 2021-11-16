@@ -76,6 +76,9 @@
             <h4 style="font-family:'Bebas Neue', cursive; color: black; text-align: center; font-size: 20px;">SDG 13: Climate Action</h4>
           </b-card>
           <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1000px; border-radius: 20px; margin-top:40px;">
+            <h3 style="font-family:'Bebas Neue', cursive; color: black; text-align: left; font-size: 50px; margin-bottom: 40px;">Items to be used for the event</h3>
+          </b-card>
+          <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1000px; border-radius: 20px; margin-top:40px;">
             <h3 style="font-family:'Bebas Neue', cursive; color: black; text-align: left; font-size: 50px; margin-bottom: 40px;">Event Documentation</h3>
             <b-form-file v-model="file2" class="mt-3" plain></b-form-file>
           </b-card>

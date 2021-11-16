@@ -240,6 +240,14 @@
         </b-row>
         <b-row>
           <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
+            <b-form-group label="Select items needed for the event:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+              <b-col><b-button>Items</b-button></b-col>
+              <b-col cols="5"></b-col>
+            </b-form-group>
+          </b-card>
+        </b-row>
+        <b-row>
+          <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
             <b-container fluid>
               <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">Event Evaluation Questions</h2>
               <b-card v-for="(role, index) in roles" :key="index" class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1200px; border-radius: 20px; margin-top:20px;">
@@ -445,6 +453,8 @@ export default ({
 </script>
 
 <style scoped>
+@import '../css/style.css';
+
 .createevent {
 position: relative;
 }

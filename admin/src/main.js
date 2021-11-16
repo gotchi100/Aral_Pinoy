@@ -19,7 +19,6 @@ import EventEvalReport from './pages/EventEvalReport.vue'
 import VolunteerReport from './pages/VolunteerReport.vue'
 import AdminProfile from './pages/AdminProfile.vue'
 import EventList from './pages/AdminEventList.vue'
-// import EventDetails from './pages/events/EventDetails.vue'
 import Volunteers from './pages/AdminVolunteerList.vue'
 import OfficersList from './pages/AdminOfficerList.vue'
 import InKindList from './pages/AdminInKindList.vue'
@@ -39,6 +38,8 @@ import Homepage from './pages/AdminEditHomepage.vue'
 import EventPage from './pages/AdminEventPage.vue'
 import VolunteerSuggestion from './pages/events/VolunteerSuggestion.vue'
 import AddDonation from './pages/AdminAddDonation.vue'
+import InKindHistory from './pages/AdminInKindHistory.vue'
+import Donate from './pages/AdminDonate.vue'
 
 import vuexStore from './store'
 
@@ -246,6 +247,20 @@ const routes = [
   {
     path: '/add-donation',
     component: AddDonation,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/inkind-history',
+    component: InKindHistory,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/donate',
+    component: Donate,
     meta: {
       requiresAuth: true
     }

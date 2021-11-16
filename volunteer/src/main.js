@@ -21,6 +21,9 @@ import EventDetailsPage from './pages/EventPage'
 import trial from './trial/Profile2.vue'
 import ForgetPassword from './pages/ForgetPassword.vue'
 import GoogleSignInCallbackPage from './pages/GoogleSignIn'
+import EvaluationPage from './pages/Evaluation.vue'
+import PrivacyPolicyPage from './pages/PrivacyPolicy.vue'
+import TermsConditionPage from './pages/TermsCondition.vue'
 
 import vuexStore from './store'
 
@@ -51,7 +54,10 @@ const routes = [
   { path: '/calendar', component: CalendarPage },
   { path: '/event-page', component: EventDetailsPage },
   { path: '/trial', component: trial },
-  { path: '/forget-password', component: ForgetPassword }
+  { path: '/forget-password', component: ForgetPassword },
+  { path: '/evaluation', component: EvaluationPage },
+  { path: '/privacy-policy', component: PrivacyPolicyPage },
+  { path: '/terms-and-conditions', component: TermsConditionPage }
 ]
 
 const router = new VueRouter({
