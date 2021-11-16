@@ -8,30 +8,57 @@
       <h3 style="font-family:'Bebas Neue', cursive; color: black; position: relative;">User Profile</h3>
         <b-container fluid>
           <b-row class="my-1">
-            <label class="name" for="input-small" style="font-family:'Bebas Neue', cursive;">First Name</label>
+            <label for="input-small" style="font-family:'Bebas Neue', cursive;">First Name</label>
             <b-col>
-              <b-skeleton v-if="user === null" type="input"></b-skeleton>
+              <b-skeleton v-if="isLoadingUser" type="input"></b-skeleton>
               <b-form-input v-else v-model="user.firstName" disabled></b-form-input>
             </b-col>
           </b-row>
+
           <b-row class="my-1">
-            <label class="name" for="input-small" style="font-family:'Bebas Neue', cursive;">Last Name</label>
+            <label for="input-small" style="font-family:'Bebas Neue', cursive;">Last Name</label>
             <b-col>
-              <b-skeleton v-if="user === null" type="input"></b-skeleton>
+              <b-skeleton v-if="isLoadingUser" type="input"></b-skeleton>
               <b-form-input v-else v-model="user.lastName" disabled></b-form-input>
             </b-col>
           </b-row>
+
           <b-row class="my-1">
-            <label class="cnum" for="input-small" style="font-family:'Bebas Neue', cursive;">Contact Number</label>
+            <label for="input-small" style="font-family:'Bebas Neue', cursive;">Contact Number</label>
             <b-col>
-              <b-skeleton v-if="user === null" type="input"></b-skeleton>
+              <b-skeleton v-if="isLoadingUser" type="input"></b-skeleton>
               <b-form-input v-else v-model="user.contactNumber" disabled></b-form-input>
             </b-col>
           </b-row>
+
           <b-row class="my-1">
-            <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Email Address</label>
+            <label for="input-small" style="font-family:'Bebas Neue', cursive;">Gender</label>
             <b-col>
-              <b-skeleton v-if="user === null" type="input"></b-skeleton>
+              <b-skeleton v-if="isLoadingUser" type="input"></b-skeleton>
+              <b-form-input v-else v-model="user.gender" disabled></b-form-input>
+            </b-col>
+          </b-row>
+
+          <b-row class="my-1">
+            <label for="input-small" style="font-family:'Bebas Neue', cursive;">Date of Birth</label>
+            <b-col>
+              <b-skeleton v-if="isLoadingUser" type="input"></b-skeleton>
+              <b-form-input v-else v-model="birthDate" disabled></b-form-input>
+            </b-col>
+          </b-row>
+
+          <b-row class="my-1">
+            <label for="input-small" style="font-family:'Bebas Neue', cursive;">Home Address</label>
+            <b-col>
+              <b-skeleton v-if="isLoadingUser" type="input"></b-skeleton>
+              <b-form-input v-else v-model="homeAddress" disabled></b-form-input>
+            </b-col>
+          </b-row>
+
+          <b-row class="my-1">
+            <label for="input-small" style="font-family:'Bebas Neue', cursive;">Email Address</label>
+            <b-col>
+              <b-skeleton v-if="isLoadingUser" type="input"></b-skeleton>
               <b-form-input v-else v-model="user.email" disabled></b-form-input>
             </b-col>
           </b-row>
@@ -254,6 +281,7 @@ export default {
     return {
       logo,
       user: null,
+      isLoadingUser: false,
       items: [
         { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed' },
         { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed' },
@@ -342,6 +370,32 @@ export default {
         .map(f => {
           return { text: f.label, value: f.key }
         })
+    },
+    birthDate () {
+      if (this.isLoadingUser) {
+        return ''
+      }
+
+      if (!this.user.birthDate) {
+        return ''
+      }
+
+      return new Date(this.user.birthDate).toLocaleString('en-us', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      })
+    },
+    homeAddress () {
+      if (this.isLoadingUser) {
+        return ''
+      }
+
+      if (!this.user.address || !this.user.address.home) {
+        return ''
+      }
+
+      return this.user.address.home
     }
   },
   mounted () {
@@ -357,15 +411,21 @@ export default {
       this.currentPages = 1
     },
     async getUser () {
+      this.isLoadingUser = true
+
       const { id } = this.$route.params
 
-      const { data } = await axios.get(`http://localhost:3000/users/${id}`, {
-        headers: {
-          Authorization: `Bearer ${this.token}`
-        }
-      })
+      try {
+        const { data } = await axios.get(`http://localhost:3000/users/${id}`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`
+          }
+        })
 
-      this.user = data
+        this.user = data
+      } finally {
+        this.isLoadingUser = false
+      }
     }
   }
 }
