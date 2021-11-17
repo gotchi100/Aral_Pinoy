@@ -1,12 +1,12 @@
 <template>
-<div class="inkindlist">
-  <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1400px; border-radius: 20px; margin-top:40px;">
-  <b-container fluid>
-    <!-- User Interface controls -->
-    <h1 style="font-family:'Bebas Neue', cursive;">
-        Incoming In-Kind Inventory History
-    </h1>
-    <b-card-text>
+  <div class="inkindlist">
+    <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1400px; border-radius: 20px; margin-top:40px;">
+      <b-container fluid>
+        <!-- User Interface controls -->
+        <h1 style="font-family:'Bebas Neue', cursive;">
+            Incoming In-Kind Inventory History
+        </h1>
+        <b-card-text>
           <b-row>
             <b-container class="bv-example-row">
               <b-row>
@@ -49,7 +49,7 @@
               </b-row>
             </b-container>
           </b-row>
-          <!-- Main table element -->
+
           <b-table
             :items="items2"
             :fields="fields2"
@@ -78,162 +78,21 @@
               </b-card>
             </template>
           </b-table>
-              <!-- Info modal -->
-            <b-modal :id="infoModal2.id2" :title="infoModal2.title2" ok-only @hide="resetInfoModal2">
-              <pre>{{ infoModal2.content2 }}</pre>
-            </b-modal>
-          <b-row>
-            <b-col></b-col>
-            <b-col>
-                <b-col class="my-1">
-                  <b-pagination
-                    v-model="currentPage2"
-                    :total-rows="totalRows2"
-                    :per-page="perPage2"
-                    align="fill"
-                    size="sm"
-                    class="my-0"
-                  ></b-pagination>
-                </b-col>
+
+          <b-row class="justify-content-md-center">
+            <b-col cols="6" class="my-1">
+              <b-pagination
+                v-model="currentPage2"
+                :total-rows="totalRows2"
+                :per-page="perPage2"
+                align="fill"
+              ></b-pagination>
             </b-col>
-            <b-col></b-col>
           </b-row>
         </b-card-text>
-  </b-container>
-  <b-modal v-model="showModal" size="xl">
-    <div>
-      <div class="addskill">
-        <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1100px; border-radius: 20px; margin-top: 40px;">
-          <b-container fluid>
-              <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
-                  Add an in-kind donation
-              </h1>
-            <b-row class="my-1">
-              <label class="skill" for="input-small">Item Name:</label>
-              <b-col>
-                <b-form-input v-model="skill"></b-form-input>
-              </b-col>
-            </b-row>
-            <b-row class="my-1">
-                <b-col>
-                    <label class="skill" for="input-small">Quantity:</label>
-                      <b-col>
-                          <b-form-input type="number" placeholder="Enter the quantity based on the unit of measurement" required></b-form-input>
-                      </b-col>
-                </b-col>
-                <b-col>
-                    <label class="skill" for="input-small">Unit of Measurement:</label>
-                      <b-col>
-                          <b-form-select v-model="selected" :options="optionz"></b-form-select>
-                      </b-col>
-                </b-col>
-            </b-row>
-            <b-row class="my-1">
-                <b-form-group label="Category:" style="text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-tags id="tags-with-dropdown" v-model="value" no-outer-focus class="mb-2" style="text-align:center;">
-                    <template v-slot="{ tags, disabled, addTag, removeTag }" style="display: inline-block; height: 100%; overflow: auto;">
-                      <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
-                        <li v-for="tag in tags" :key="tag" class="list-inline-item">
-                          <b-form-tag
-                            @remove="removeTag(tag)"
-                            :title="tag"
-                            :disabled="disabled"
-                            variant="info"
-                          >{{ tag }}</b-form-tag>
-                        </li>
-                      </ul>
-
-                      <b-dropdown size="sm" variant="outline-secondary" block menu-class="w-100">
-                        <template #button-content>
-                          <b-icon icon="tag-fill"></b-icon> Category list
-                        </template>
-                        <b-dropdown-form @submit.stop.prevent="() => {}">
-                          <b-form-group
-                            label="Search Categories (ADD A 'ADD/VIEW A CATEGORY ENTRY' BUTTON HERE)"
-                            label-for="tag-search-input"
-                            label-cols-md="auto"
-                            class="mb-0"
-                            label-size="sm"
-                            :description="searchDesc"
-                            :disabled="disabled"
-                          >
-                            <b-form-input
-                              v-model="search"
-                              id="tag-search-input"
-                              type="search"
-                              size="sm"
-                              autocomplete="off"
-                              ></b-form-input>
-                          </b-form-group>
-                        </b-dropdown-form>
-                        <b-dropdown-divider></b-dropdown-divider>
-                        <b-dropdown-item-button
-                          v-for="options in availableOptions"
-                          :key="options"
-                          @click="onOptionClick({ options, addTag })"
-                        >
-                          {{ options }}
-                        </b-dropdown-item-button>
-                        <b-dropdown-text v-if="availableOptions.length === 0">
-                          There are no tags available to select
-                        </b-dropdown-text>
-                      </b-dropdown>
-                    </template>
-                  </b-form-tags>
-                </b-form-group>
-            </b-row>
-            <b-row class="my-1">
-              <b-col>
-                  <label class="skill" for="input-small">Best Before Date:</label>
-                  <b-form-datepicker id="start-datepicker" class="mb-2" required></b-form-datepicker>
-              </b-col>
-              <b-col>
-                  <label class="skill" for="input-small">Expiration Date:</label>
-                  <b-form-datepicker id="start-datepicker" class="mb-2" required></b-form-datepicker>
-              </b-col>
-            </b-row>
-            <b-row class="my-1">
-              <label class="skill" for="input-small">Date Recieved:</label>
-              <b-col>
-                <b-form-datepicker id="start-datepicker" class="mb-2" required></b-form-datepicker>
-              </b-col>
-            </b-row>
-            <b-row class="my-1">
-              <label class="skill" for="input-small">Donor:</label>
-              <b-col>
-                <b-form-input v-model="donor"></b-form-input>
-              </b-col>
-            </b-row>
-            <b-row>
-              <b-col cols="5"></b-col>
-              <b-col>
-                <b-button @click="showModaltwo = !showModaltwo" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 150px;">
-                  Add Donation
-                </b-button>
-              </b-col>
-            </b-row>
-          </b-container>
-          <b-modal v-model="showModaltwo" size="xl">
-            <b-container fluid>
-                  <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
-                      Are you sure with all the details?
-                  </h1>
-                  <!-- <b-row>
-                    <b-col cols="5"></b-col>
-                    <b-col>
-                      <b-button type="submit" variant="success">Yes</b-button>
-                      &nbsp;
-                      <b-button type="reset" variant="danger">No</b-button>
-                    </b-col>
-                  </b-row> -->
-              </b-container>
-          </b-modal>
-        </b-card>
-      </div>
-    </div>
-  </b-modal>
-</b-card>
-</div>
+      </b-container>
+    </b-card>
+  </div>
 </template>
 
 <script>

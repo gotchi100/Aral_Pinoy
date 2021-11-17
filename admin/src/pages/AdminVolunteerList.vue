@@ -144,7 +144,7 @@ export default {
 
 <style scoped>
 .volunteerlist {
-  position: absolute;
+  position: relative;
 }
 .volunteerlist:before {
   background-image: url('https://rs.projects-abroad.ie/v1/hero/product-5b5b2f57d7d1b.[1600].jpeg');

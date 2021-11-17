@@ -4,7 +4,7 @@
   <b-container fluid>
     <!-- User Interface controls -->
     <h1 style="font-family:'Bebas Neue', cursive;">
-        In-Kind Donations Inventory
+      In-Kind Donations Inventory
     </h1>
     <b-link to="/incoming-history">Incoming History</b-link>
     <b-tabs pills card>
@@ -73,12 +73,6 @@
               {{ row.value.first }} {{ row.value.last }}
             </template>
 
-            <!-- <template #cell(actions)="row">
-              <b-button size="sm" @click="info(row.item, row.index, $event.target)" class="mr-1">
-                Edit
-              </b-button>
-            </template> -->
-
             <template #row-details="row">
               <b-card>
                 <ul>
@@ -87,10 +81,6 @@
               </b-card>
             </template>
           </b-table>
-              <!-- Info modal -->
-            <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
-              <pre>{{ infoModal.content }}</pre>
-            </b-modal>
           <b-row>
             <b-col cols="8"></b-col>
             <b-col>
@@ -104,21 +94,15 @@
               </b-button>
             </b-col>
           </b-row>
-          <b-row>
-            <b-col></b-col>
-            <b-col>
-                <b-col class="my-1">
-                  <b-pagination
-                    v-model="currentPage"
-                    :total-rows="totalRows"
-                    :per-page="perPage"
-                    align="fill"
-                    size="sm"
-                    class="my-0"
-                  ></b-pagination>
-                </b-col>
+          <b-row class="justify-content-md-center">
+            <b-col cols="6" class="my-1">
+              <b-pagination
+                v-model="currentPage2"
+                :total-rows="totalRows2"
+                :per-page="perPage2"
+                align="fill"
+              ></b-pagination>
             </b-col>
-            <b-col></b-col>
           </b-row>
         </b-card-text>
       </b-tab>
@@ -187,12 +171,6 @@
               {{ row.value.first }} {{ row.value.last }}
             </template>
 
-            <template #cell(actions)="row">
-              <b-button size="sm" @click="info2(row.item, row.index, $event.target)" class="mr-1">
-                Edit
-              </b-button>
-            </template>
-
             <template #row-details="row">
               <b-card>
                 <ul>
@@ -201,10 +179,6 @@
               </b-card>
             </template>
           </b-table>
-              <!-- Info modal -->
-            <b-modal :id="infoModal2.id2" :title="infoModal2.title2" ok-only @hide="resetInfoModal2">
-              <pre>{{ infoModal2.content2 }}</pre>
-            </b-modal>
           <b-row>
             <b-col cols="8"></b-col>
             <b-col>
@@ -218,27 +192,21 @@
               </b-button>
             </b-col>
           </b-row>
-          <b-row>
-            <b-col></b-col>
-            <b-col>
-                <b-col class="my-1">
-                  <b-pagination
-                    v-model="currentPage2"
-                    :total-rows="totalRows2"
-                    :per-page="perPage2"
-                    align="fill"
-                    size="sm"
-                    class="my-0"
-                  ></b-pagination>
-                </b-col>
+          <b-row class="justify-content-md-center">
+            <b-col cols="6" class="my-1">
+              <b-pagination
+                v-model="currentPage2"
+                :total-rows="totalRows2"
+                :per-page="perPage2"
+                align="fill"
+              ></b-pagination>
             </b-col>
-            <b-col></b-col>
           </b-row>
         </b-card-text>
       </b-tab>
     </b-tabs>
   </b-container>
-  <b-modal v-model="showModal" size="xl">
+  <b-modal v-model="showModal" size="xl" hide-footer>
     <div>
       <div class="addskill">
         <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1100px; border-radius: 20px; margin-top: 40px;">
@@ -356,14 +324,6 @@
                   <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
                       Are you sure with all the details?
                   </h1>
-                  <!-- <b-row>
-                    <b-col cols="5"></b-col>
-                    <b-col>
-                      <b-button type="submit" variant="success">Yes</b-button>
-                      &nbsp;
-                      <b-button type="reset" variant="danger">No</b-button>
-                    </b-col>
-                  </b-row> -->
               </b-container>
           </b-modal>
         </b-card>

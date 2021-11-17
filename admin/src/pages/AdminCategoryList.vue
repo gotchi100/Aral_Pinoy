@@ -96,34 +96,23 @@
       </b-modal>
   <b-row>
     <b-col cols="9"></b-col>
-    <!-- <b-col>
-      <b-button pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 200px;">
-          Edit a category entry
-      </b-button>
-    </b-col> -->
     <b-col>
       <b-button @click="showModal = !showModal" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 200px;">
-          Add a category Entry
+        Add a Category Entry
       </b-button>
     </b-col>
   </b-row>
-  <b-row>
-    <b-col></b-col>
-    <b-col>
-        <b-col class="my-1">
-          <b-pagination
-            v-model="currentPage"
-            :total-rows="totalRows"
-            :per-page="perPage"
-            align="fill"
-            size="sm"
-            class="my-0"
-          ></b-pagination>
-        </b-col>
+  <b-row class="justify-content-md-center">
+    <b-col cols="6" class="my-1">
+      <b-pagination
+        v-model="currentPage"
+        :total-rows="totalRows"
+        :per-page="perPage"
+        align="fill"
+      ></b-pagination>
     </b-col>
-    <b-col></b-col>
   </b-row>
-  <b-modal v-model="showModal" size="xl">
+  <b-modal v-model="showModal" size="xl" hide-footer>
     <div>
       <div class="addskill">
         <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1100px; border-radius: 20px; margin-top: 40px;">

@@ -90,10 +90,6 @@
               </b-card>
             </template>
           </b-table>
-              <!-- Info modal -->
-            <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
-              <pre>{{ infoModal.content }}</pre>
-            </b-modal>
         <b-row>
           <b-col></b-col>
           <b-col>
@@ -195,10 +191,6 @@
               </b-card>
             </template>
           </b-table>
-              <!-- Info modal -->
-            <b-modal :id="infoModal2.id2" :title="infoModal2.title2" ok-only @hide="resetInfoModal2">
-              <pre>{{ infoModal2.content2 }}</pre>
-            </b-modal>
         <b-row>
           <b-col></b-col>
           <b-col>

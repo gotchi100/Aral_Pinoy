@@ -88,7 +88,7 @@
           <b-col></b-col>
         </b-row>
       </b-container>
-      <b-modal v-model="showModal" size="xl">
+      <b-modal v-model="showModal" size="xl" hide-footer>
         <div>
           <div class="addskill">
             <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1100px; border-radius: 20px; margin-top: 40px;">
