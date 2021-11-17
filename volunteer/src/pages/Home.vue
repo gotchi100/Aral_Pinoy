@@ -271,6 +271,18 @@ export default {
   },
   mounted () {
     window.addEventListener('scroll', this.handleScroll)
+
+    const scroll = this.$route.query.scroll
+
+    if (scroll === 'events') {
+      document.getElementById('events').scrollIntoView()
+
+      this.$router.replace({ path: '/' })
+    } else if (scroll === 'about') {
+      document.getElementById('about').scrollIntoView()
+
+      this.$router.replace({ path: '/' })
+    }
   },
   methods: {
     onSlideStart (slide) {
