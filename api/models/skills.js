@@ -7,6 +7,11 @@ const skillSchema = new mongoose.Schema({
     type: String,
     text: true
   },
+  norm: {
+    type: String,
+    unique: true,
+    select: false
+  },
   description: String
 })
 
