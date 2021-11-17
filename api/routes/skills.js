@@ -8,8 +8,9 @@ const SkillsController = require('../controllers/skills')
 
 const createSkillValidator = Joi.object({
   name: Joi.string().trim().max(50).required(),
-  description: Joi.string().trim().max(200),
+  description: Joi.string().trim().empty('').max(200),
 })
+
 const listSkillsValidator = Joi.object({
   offset: Joi.number().min(0).default(0),
   limit: Joi.number().min(1).default(25),
