@@ -9,6 +9,7 @@ import { fab } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import Vuex from 'vuex'
 import VModal from 'vue-js-modal'
+import axios from 'axios'
 
 import App from './App.vue'
 import HomePage from './pages/Home'
@@ -80,6 +81,18 @@ router.beforeEach((to, from, next) => {
       next() // does not require auth, make sure to always call next()!
     }
   }
+})
+
+axios.interceptors.response.use((response) => response, function (error) {
+  if (error.response?.status === 401) {
+    store.dispatch('logout')
+
+    router.push({
+      path: '/login?status=401'
+    })
+  }
+
+  return Promise.reject(error)
 })
 
 new Vue({
