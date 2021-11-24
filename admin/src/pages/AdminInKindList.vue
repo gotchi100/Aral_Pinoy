@@ -6,7 +6,7 @@
     <h1 style="font-family:'Bebas Neue', cursive;">
       In-Kind Donations Inventory
     </h1>
-    <b-link to="/incoming-history">Incoming History</b-link>
+    <!-- <b-link to="/incoming-history">Incoming History (remove)</b-link> -->
     <b-tabs pills card>
       <b-tab title="Compiled View" active>
         <b-card-text>
@@ -85,7 +85,7 @@
             <b-col cols="8"></b-col>
             <b-col>
               <b-button @click="showModal = !showModal" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 180px;">
-                Add a Donation
+                Enter a Transaction
               </b-button>
             </b-col>
             <b-col>
@@ -183,7 +183,7 @@
             <b-col cols="8"></b-col>
             <b-col>
               <b-button @click="showModal = !showModal" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 180px;">
-                Add a Donation
+                Enter a Transaction
               </b-button>
             </b-col>
             <b-col>
@@ -209,11 +209,20 @@
   <b-modal v-model="showModal" size="xl" hide-footer>
     <div>
       <div class="addskill">
-        <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1100px; border-radius: 20px; margin-top: 40px;">
+        <b-row>
+          <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">Enter a Transaction</h1>
+        </b-row>
+        <b-row>
+            <b-col cols="4"></b-col>
+            <b-col>
+              <b-form-select style="align: center; width: 350px;" v-model="chose" :options="choices"></b-form-select>
+            </b-col>
+        </b-row>
+        <b-card v-if="chose==='add-donation'" class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1100px; border-radius: 20px; margin-top: 40px;">
           <b-container fluid>
-              <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
+              <h2 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
                   Add an in-kind donation
-              </h1>
+              </h2>
             <b-row class="my-1">
               <label class="skill" for="input-small">Item Name:</label>
               <b-col>
@@ -327,6 +336,90 @@
               </b-container>
           </b-modal>
         </b-card>
+        <b-card v-else-if="chose==='send-donation'" class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1100px; border-radius: 20px; margin-top: 40px;">
+        <b-container fluid>
+            <h2 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
+                Send an In-kind Donation
+            </h2>
+          <b-row class="my-1">
+          <label class="skill" for="input-small">Item Name</label>
+            <b-col>
+                <b-form-input type="text" placeholder="Select Item" required></b-form-input>
+            </b-col>
+            <label class="skill" for="input-small">Quantity</label>
+            <b-col>
+                <b-form-input type="number" placeholder="Input Quantity" required></b-form-input>
+            </b-col>
+            <label class="skill" for="input-small">Receiver</label>
+            <b-col>
+                <b-form-input type="text" placeholder="Input Receiver" required></b-form-input>
+            </b-col>
+            <label class="skill" for="input-small">Contact Person</label>
+            <b-col>
+                <b-form-input type="text" placeholder="Input Contact Person" required></b-form-input>
+            </b-col>
+            <label class="skill" for="input-small">Contact Number</label>
+            <b-col>
+                <b-form-input type="text" placeholder="Input Contact Number of Contact Person" required></b-form-input>
+            </b-col>
+          </b-row>
+          <b-row>
+              <b-col cols="5"></b-col>
+              <b-col>
+                <b-button @click="showModalthree = !showModalthree" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 150px;">
+                  Donate
+                </b-button>
+              </b-col>
+            </b-row>
+            <b-modal v-model="showModalthree" size="xl">
+            <b-container fluid>
+                  <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
+                      Are you sure with all the details?
+                  </h1>
+              </b-container>
+          </b-modal>
+        </b-container>
+      </b-card>
+      <b-card v-else-if="chose==='shrinkage-donation'" class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1100px; border-radius: 20px; margin-top: 40px;">
+        <b-container fluid>
+            <h2 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
+                Enter Shrinkage
+            </h2>
+          <b-row class="my-1">
+          <label class="skill" for="input-small">Item Name</label>
+            <b-col>
+                <b-form-input type="text" placeholder="Select Item" required></b-form-input>
+            </b-col>
+            <label class="skill" for="input-small">Quantity on Hand</label>
+            <b-col>
+                <b-form-input type="number" placeholder="Input Quantity" required></b-form-input>
+            </b-col>
+            <label class="skill" for="input-small">Quantity Deducted</label>
+            <b-col>
+                <b-form-input type="text" placeholder="Input Receiver" required></b-form-input>
+            </b-col>
+            <label class="skill" for="input-small">Date</label>
+            <b-col>
+                <b-form-datepicker id="start-datepicker" class="mb-2" required></b-form-datepicker>
+            </b-col>
+          </b-row>
+          <b-row>
+              <b-col cols="5"></b-col>
+              <b-col>
+                <b-button @click="showModalfour = !showModalfour" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 150px;">
+                  Submit
+                </b-button>
+              </b-col>
+            </b-row>
+            <b-modal v-model="showModalfour" size="xl">
+            <b-container fluid>
+                  <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
+                      Are you sure with all the details?
+                  </h1>
+              </b-container>
+          </b-modal>
+        </b-container>
+      </b-card>
       </div>
     </div>
   </b-modal>
@@ -424,9 +517,12 @@ export default {
       },
       showModal: false,
       showModaltwo: false,
+      showModalthree: false,
+      showModalfour: false,
       selected: null,
+      chose: 'add-donation',
       optionz: [
-        { value: null, text: 'Please select the unit of measurement' },
+        { value: null, text: 'Select the unit of measurement' },
         { value: 'a', text: 'gal' },
         { value: 'b', text: 'lb' },
         { value: 'c', text: 'ft' },
@@ -436,7 +532,12 @@ export default {
       ],
       options: ['Food', 'Apparel', 'School Supply', 'Material'],
       search: '',
-      value: []
+      value: [],
+      choices: [
+        { value: 'add-donation', text: 'Add a Donation' },
+        { value: 'send-donation', text: 'Send an In-Kind' },
+        { value: 'shrinkage-donation', text: 'Enter a Shrinkage' }
+      ]
     }
   },
   computed: {
