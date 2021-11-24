@@ -9,6 +9,7 @@ import { fab } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import Vuex from 'vuex'
 import VModal from 'vue-js-modal'
+import axios from 'axios'
 
 import App from './App.vue'
 import HomePage from './pages/Home'
@@ -18,7 +19,6 @@ import EventsPage from './pages/Events'
 import ProfilePage from './pages/Profile'
 import CalendarPage from './pages/EventCalendar'
 import EventDetailsPage from './pages/EventPage'
-import trial from './trial/Profile2.vue'
 import ForgetPassword from './pages/ForgetPassword.vue'
 import GoogleSignInCallbackPage from './pages/GoogleSignIn'
 import EvaluationPage from './pages/Evaluation.vue'
@@ -53,7 +53,6 @@ const routes = [
   // { path: '/home', component: HomePage },
   { path: '/calendar', component: CalendarPage },
   { path: '/event-page', component: EventDetailsPage },
-  { path: '/trial', component: trial },
   { path: '/forget-password', component: ForgetPassword },
   { path: '/evaluation', component: EvaluationPage },
   { path: '/privacy-policy', component: PrivacyPolicyPage },
@@ -82,6 +81,18 @@ router.beforeEach((to, from, next) => {
       next() // does not require auth, make sure to always call next()!
     }
   }
+})
+
+axios.interceptors.response.use((response) => response, function (error) {
+  if (error.response?.status === 401) {
+    store.dispatch('logout')
+
+    router.push({
+      path: '/login?status=401'
+    })
+  }
+
+  return Promise.reject(error)
 })
 
 new Vue({

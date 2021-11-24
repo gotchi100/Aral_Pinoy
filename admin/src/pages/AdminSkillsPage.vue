@@ -26,7 +26,6 @@
                       class="w-25"
                       v-model="perPage"
                       :options="pageOptions"
-                      @change="onPerPageChange"
                     ></b-form-select>
                   </b-form-group>
                 </b-col>
@@ -69,7 +68,7 @@
         <b-row>
           <b-col cols="9"></b-col>
           <b-col>
-            <b-button to="/add-skills" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;">
+            <b-button @click="showModal = !showModal" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;">
                 Add a Skill
             </b-button>
           </b-col>
@@ -82,12 +81,53 @@
               :total-rows="total"
               :per-page="perPage"
               align="center"
-              @change="onPaginationChange"
             ></b-pagination>
           </b-col>
           <b-col></b-col>
         </b-row>
       </b-container>
+      <b-modal v-model="showModal" size="xl" hide-footer>
+        <div>
+          <div class="addskill">
+            <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1100px; border-radius: 20px; margin-top: 40px;">
+              <b-container fluid>
+                <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
+                  Add a Skill
+                </h1>
+
+                <b-alert :show="!!errorMessage" variant="danger">
+                  {{ errorMessage }}
+                </b-alert>
+
+                <b-row class="my-1">
+                  <label class="skill" for="input-small">Skill Label</label>
+                  <b-col>
+                    <b-form-input v-model="name"></b-form-input>
+                  </b-col>
+                </b-row>
+
+                <b-row class="my-1">
+                  <label class="description" for="input-small">Skill Description</label>
+                  <b-col>
+                    <b-form-input v-model="description"></b-form-input>
+                  </b-col>
+                </b-row>
+
+                <b-button
+                  pill
+                  variant="danger"
+                  style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;"
+                  :disabled="isAdding"
+                  @click="addSkill"
+                >
+                  <b-spinner v-if="isAdding"></b-spinner>
+                  <span v-else>Add Skill</span>
+                </b-button>
+              </b-container>
+            </b-card>
+          </div>
+        </div>
+      </b-modal>
     </b-card>
   </div>
 </template>
@@ -109,7 +149,12 @@ export default {
       fields: [
         { key: 'name', label: 'Name' },
         { key: 'description', label: 'Description' }
-      ]
+      ],
+      showModal: false,
+      name: '',
+      description: '',
+      isAdding: false,
+      errorMessage: ''
     }
   },
   computed: {
@@ -136,6 +181,30 @@ export default {
       this.total = total
 
       return results
+    },
+    async addSkill () {
+      this.errorMessage = ''
+
+      this.isAdding = true
+
+      try {
+        await axios.post('http://localhost:3000/skills', {
+          name: this.name,
+          description: this.description
+        }, {
+          headers: {
+            authorization: `Bearer ${this.token}`
+          }
+        })
+
+        this.$router.go()
+      } catch (error) {
+        if (error.response?.data?.code === 'SkillAlreadyExists') {
+          this.errorMessage = 'This skill already exists!'
+        }
+      } finally {
+        this.isAdding = false
+      }
     }
   }
 }

@@ -6,9 +6,9 @@
       </div>
       <b-card class="card" bg-variant="light" style="display: inline-block; height: 100%; overflow: auto; width: 400px; border-radius: 20px;">
         <b-container fluid>
-          <b-row v-if="errorMessage !== ''" class="my-1">
-            <span>{{ errorMessage }}</span>
-          </b-row>
+          <b-alert :show="!!errorMessage" variant="danger">
+            {{ errorMessage }}
+          </b-alert>
 
           <b-row class="my-1">
             <label class="email" for="input-small">Email Address</label>
@@ -46,6 +46,25 @@ export default {
       errorMessage: ''
     }
   },
+  computed: {
+    status () {
+      const status = parseInt(this.$route.query.status, 10)
+
+      if (isNaN(status)) {
+        return
+      }
+
+      return status
+    }
+  },
+  created () {
+    if (this.status === 401) {
+      this.$router.replace({
+        path: '/login'
+      })
+      this.errorMessage = 'Your session has expired. Please login again.'
+    }
+  },
   methods: {
     async login () {
       try {
@@ -65,8 +84,8 @@ export default {
           path: '/dashboard'
         })
       } catch (error) {
-        console.log(error.message)
-        const message = error.response.data.error.message
+        const message = error.response?.data?.message
+
         this.errorMessage = message
       }
     }
