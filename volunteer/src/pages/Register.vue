@@ -172,7 +172,7 @@
           <br />
 
           <b-container class="bv-example-row">
-            <span class="text"> By clicking Register, you agree to the <b-link to="/terms-and-conditions">Terms and Conditions</b-link> and <b-link to="/privacy-policy">Privacy Policy</b-link> of AralPinoy Org Inc.</span>
+            <span class="text"> By clicking Register, you agree to the <a href="/#/terms-and-conditions" target="_blank">Terms and Condition</a> and <a href="/#/privacy-policy" target="_blank">Privacy Policy</a> of AralPinoy Org Inc.</span>
             <b-row>
               <b-col>
                 <b-button @click="updateStep(-1)" pill variant="danger" style="margin-top: 15px; display: inline-block; font-size: 16px; padding: 8px; width: 152px;">
