@@ -26,7 +26,6 @@
                       class="w-25"
                       v-model="perPage"
                       :options="pageOptions"
-                      @change="onPerPageChange"
                     ></b-form-select>
                   </b-form-group>
                 </b-col>
@@ -82,7 +81,6 @@
               :total-rows="total"
               :per-page="perPage"
               align="center"
-              @change="onPaginationChange"
             ></b-pagination>
           </b-col>
           <b-col></b-col>
@@ -94,8 +92,12 @@
             <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1100px; border-radius: 20px; margin-top: 40px;">
               <b-container fluid>
                 <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
-                    Add a Skill
+                  Add a Skill
                 </h1>
+
+                <b-alert :show="!!errorMessage" variant="danger">
+                  {{ errorMessage }}
+                </b-alert>
 
                 <b-row class="my-1">
                   <label class="skill" for="input-small">Skill Label</label>
@@ -151,7 +153,8 @@ export default {
       showModal: false,
       name: '',
       description: '',
-      isAdding: false
+      isAdding: false,
+      errorMessage: ''
     }
   },
   computed: {
@@ -180,6 +183,8 @@ export default {
       return results
     },
     async addSkill () {
+      this.errorMessage = ''
+
       this.isAdding = true
 
       try {
@@ -192,9 +197,11 @@ export default {
           }
         })
 
-        this.$router.push({
-          path: '/skills'
-        })
+        this.$router.go()
+      } catch (error) {
+        if (error.response?.data?.code === 'SkillAlreadyExists') {
+          this.errorMessage = 'This skill already exists!'
+        }
       } finally {
         this.isAdding = false
       }
