@@ -3,80 +3,109 @@
     <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
       <b-container class="bv-example-row">
       <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; text-align: center;">Create Event</h2>
-      <b-form @submit="onSubmit" @reset="onReset" v-if="show">
+      <b-form>
         <b-row>
           <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
             <b-row>
               <b-form-group label="Event Name:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                <b-form-input v-model="form.name" placeholder="Enter Event Name" required></b-form-input>
+                <b-form-input v-model="event.name" placeholder="Enter Event Name" required></b-form-input>
               </b-form-group>
             </b-row>
+
             <b-row>
               <b-col>
                 <b-form-group label="Location:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-input v-model="form.location" placeholder="Enter Location of the Event" required></b-form-input>
+                  <b-form-input v-model="event.location.name" placeholder="Enter Location of the Event" required></b-form-input>
                 </b-form-group>
               </b-col>
+            </b-row>
+
+            <b-row>
+              <b-col>
+                <b-form-group label="Start Date:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                  <b-form-datepicker
+                    v-model="startDate.date"
+                    class="mb-2"
+                    :min="new Date()"
+                    required
+                  ></b-form-datepicker>
+                </b-form-group>
+              </b-col>
+
+              <b-col>
+                <b-form-group label="Start Time:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                  <b-form-timepicker v-model="startDate.time" locale="en" required></b-form-timepicker>
+                </b-form-group>
+              </b-col>
+            </b-row>
+
+            <b-row>
+              <b-col>
+                <b-form-group label="End Date:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                  <b-form-datepicker
+                    v-model="endDate.date"
+                    class="mb-2"
+                    required
+                    :min="new Date()"
+                  ></b-form-datepicker>
+                </b-form-group>
+              </b-col>
+
+              <b-col>
+                <b-form-group label="End Time:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                  <b-form-timepicker v-model="endDate.time" locale="en" required></b-form-timepicker>
+                </b-form-group>
+              </b-col>
+            </b-row>
+
+            <!-- <b-row>
               <b-col>
                 <b-form-group label="Contact Person:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
                   <b-form-input v-model="form.contactname" placeholder="Enter the Contact Person for the Event" required></b-form-input>
                 </b-form-group>
               </b-col>
-            </b-row>
-            <b-row>
-              <b-col>
-                <b-form-group label="Date:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-datepicker id="start-datepicker" v-model="form.date" class="mb-2" required></b-form-datepicker>
-                </b-form-group>
-              </b-col>
+
               <b-col>
                 <b-form-group label="Contact Number:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-input v-model="form.contactnum" placeholder="Enter the Contact Person's number" required></b-form-input>
+                  <b-form-input v-model="form.contactname" placeholder="Enter the Contact Person for the Event" required></b-form-input>
                 </b-form-group>
               </b-col>
-            </b-row>
-            <b-row>
-              <b-col>
-                <b-form-group label="Start Time:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-timepicker v-model="form.s_time" locale="en" required></b-form-timepicker>
-                </b-form-group>
-              </b-col>
-              <b-col>
-                <b-form-group label="End Time:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-timepicker v-model="form.e_time" locale="en" required></b-form-timepicker>
-                </b-form-group>
-              </b-col>
-              <b-col>
-              </b-col>
-              <b-col>
-              </b-col>
-            </b-row>
+            </b-row> -->
           </b-card>
         </b-row>
+
         <b-row>
           <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
             <h3 style="font-family:'Bebas Neue', cursive; color: black; position: relative; text-align: left; font-size:20px;">Event Logo</h3>
-            <b-form-file v-model="form.file1" class="mt-3" plain></b-form-file>
+
+            <b-avatar v-if="!!displayLogo" :src="displayLogo" size="250" alt="event logo" square></b-avatar>
+            <br />
+            <b-form-file v-model="event.logo" class="mt-3" plain></b-form-file>
           </b-card>
         </b-row>
+
         <b-row>
           <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
             <b-form-group label="Event Description:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-              <b-form-textarea id="textarea-auto-height" rows="3" max-rows="8" v-model="text.eventdes" placeholder="Enter event description and other important details" required></b-form-textarea>
+              <b-form-textarea id="textarea-auto-height" rows="3" max-rows="8" v-model="event.description" placeholder="Enter event description and other important details" required></b-form-textarea>
             </b-form-group>
           </b-card>
         </b-row>
+
         <b-row>
           <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
             <b-row>
-              <b-col>
-                <b-form-group label="Number of Volunteers:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-input v-model="form.numvol" type="number" placeholder="Enter the required number of volunteers" required></b-form-input>
-                </b-form-group>
-              </b-col>
-              <b-col>
+              <b-col cols="12">
                 <b-form-group label="Donation needed (in PHP):" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-input v-model="form.numdon" type="number" placeholder="Enter the required amount for the Event" required></b-form-input>
+                  <b-form-input
+                    v-model="event.goals.monetaryDonation"
+                    type="number"
+                    step="100"
+                    placeholder="Enter the required amount for the Event"
+                    lazy-formatter
+                    :formatter="validateFloat"
+                    required
+                  ></b-form-input>
                 </b-form-group>
               </b-col>
             </b-row>
@@ -100,7 +129,7 @@
               </b-form-group>
             </b-row>
           </b-card>
-          <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
+          <!-- <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
             <b-row>
               <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; text-align: left; font-size:20px; margin-top:15px; margin-bottom:0px;">Roles Needed:</h2>
               <b-col>
@@ -177,9 +206,9 @@
                 </b-button>
               </b-col>
             </b-row>
-          </b-card>
+          </b-card> -->
         </b-row>
-        <b-row>
+        <!-- <b-row>
           <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
             <b-row>
               <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; text-align: left; font-size:20px; margin-top:15px; margin-bottom:20px;">Sustainable Development Goals for this Event:</h2>
@@ -237,16 +266,18 @@
               </b-form-group>
             </b-row>
           </b-card>
-        </b-row>
-        <b-row>
+        </b-row> -->
+
+        <!-- <b-row>
           <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
             <b-form-group label="Select items needed for the event:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
               <b-col><b-button>Items</b-button></b-col>
               <b-col cols="5"></b-col>
             </b-form-group>
           </b-card>
-        </b-row>
-        <b-row>
+        </b-row> -->
+
+        <!-- <b-row>
           <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
             <b-container fluid>
               <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">Event Evaluation Questions</h2>
@@ -278,11 +309,8 @@
                 </b-col>
               </b-row>
             </b-container>
-            <!-- <b-col>
-              <b-button pill variant="danger" to="dashboard" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 125px;">Save</b-button>
-            </b-col> -->
           </b-card>
-        </b-row>
+        </b-row> -->
       </b-form>
       <b-row style="margin-top:20px; margin-bottom: 20px;">
         <b-col></b-col>
@@ -291,27 +319,22 @@
         <b-col></b-col>
         <b-col>
           <b-button @click="showModal = !showModal">Create</b-button>
-          &nbsp;
-          <b-button type="reset" variant="danger">Reset</b-button>
         </b-col>
       </b-row>
       <!-- <b-card class="mt-3" header="Form Data Result">
         <pre class="m-0">{{ form }}</pre>
       </b-card> -->
       </b-container>
-      <b-modal v-model="showModal" size="xl">
+
+      <b-modal
+        v-model="showModal"
+        size="xl"
+        @ok="createEvent"
+      >
         <b-container fluid>
-              <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
-                  Are you sure with all the details?
-              </h1>
-              <!-- <b-row>
-                <b-col cols="5"></b-col>
-                <b-col>
-                  <b-button type="submit" variant="success">Yes</b-button>
-                  &nbsp;
-                  <b-button type="reset" variant="danger">No</b-button>
-                </b-col>
-              </b-row> -->
+          <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
+              Are you sure with all the details?
+          </h1>
           </b-container>
       </b-modal>
     </b-card>
@@ -319,33 +342,42 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
+const axios = require('axios').default
 
 export default ({
   data () {
     return {
-      form: {
-        name: '',
-        location: '',
-        date: '',
-        contactname: '',
-        contactnum: '',
-        s_time: '',
-        e_time: '',
-        numvol: '',
-        numdon: '',
-        roleName: '',
-        roleDescription: '',
-        roleNumber: 0,
-        food: null,
-        file1: null,
-        checked: []
+      startDate: {
+        date: new Date(),
+        time: '00:00'
       },
+      endDate: {
+        date: new Date(),
+        time: '00:00'
+      },
+      event: {
+        name: '',
+        description: '',
+        location: {
+          name: ''
+        },
+        date: {
+          start: new Date(),
+          end: new Date()
+        },
+        goals: {
+          monetaryDonation: '0.00'
+        },
+        logo: null
+      },
+      displayLogo: '',
       showModal: false,
       text: {
         eventdes: ''
       },
       roles: [],
-      show: true,
       options: ['Teaches at Math', 'Fluent in English', 'Heavy Lifter', 'Playing the guitar'],
       choices: ['Goal 1: No Poverty', 'Goal 4: Quality Education', 'Goal 13: Climate Action'],
       search: '',
@@ -355,9 +387,29 @@ export default ({
     }
   },
   methods: {
-    onSubmit (event) {
-      event.preventDefault()
-      alert(JSON.stringify(this.form))
+    async createEvent () {
+      const form = new FormData()
+
+      form.set('name', this.event.name)
+      form.set('logo', this.event.logo)
+      form.set('description', this.event.description)
+      form.set('location[name]', this.event.location.name)
+      form.set('date[start]', new Date(this.event.date.start).toISOString())
+      form.set('date[end]', new Date(this.event.date.end).toISOString())
+      form.set('goals[monetaryDonation]', parseFloat(this.event.goals.monetaryDonation))
+
+      const results = await axios.post('http://localhost:3000/events', form, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          authorization: `Bearer ${this.token}`
+        }
+      })
+
+      const { _id } = results.data
+
+      this.$router.push({
+        path: `/event-page/${_id}`
+      })
     },
     addRole () {
       this.roles.push({
@@ -370,32 +422,6 @@ export default ({
       this.form.roleDescription = ''
       this.form.roleNumber = ''
     },
-    onReset (event) {
-      event.preventDefault()
-      // Reset our form values
-      this.form.name = ''
-      this.form.food = null
-      this.form.location = ''
-      this.form.date = ''
-      this.form.contactname = ''
-      this.form.contactnum = ''
-      this.form.s_time = ''
-      this.form.e_time = ''
-      this.form.numvol = ''
-      this.form.numdon = ''
-      this.form.role = ''
-      this.form.rolenum = ''
-      this.form.roledes = ''
-      this.form.eventdes = ''
-      this.form.file1 = null
-      this.form.checked = []
-      this.text.eventdes = ''
-      // Trick to reset/clear native browser form validation state
-      this.show = false
-      this.$nextTick(() => {
-        this.show = true
-      })
-    },
     onOptionClick ({ options, addTag }) {
       addTag(options)
       this.search = ''
@@ -403,9 +429,27 @@ export default ({
     onChoicesClick ({ choices, addTag }) {
       addTag(choices)
       this.searcher = ''
+    },
+    setEventStartDate (date, time) {
+      const [year, month, day] = date.split('-')
+      const [hours, minutes] = time.split(':')
+
+      this.event.date.start = new Date(year, month - 1, day, hours, minutes, 0, 0)
+    },
+    setEventEndDate (date, time) {
+      const [year, month, day] = date.split('-')
+      const [hours, minutes] = time.split(':')
+
+      this.event.date.end = new Date(year, month - 1, day, hours, minutes, 0, 0)
+    },
+    validateFloat (value) {
+      const parsedValue = parseFloat(value)
+
+      return isNaN(parsedValue) ? '0.00' : parsedValue.toFixed(2)
     }
   },
   computed: {
+    ...mapGetters(['token']),
     criteria () {
       // Compute the search criteria
       return this.search.trim().toLowerCase()
@@ -447,8 +491,30 @@ export default ({
       }
       return ''
     }
-  }
+  },
+  watch: {
+    'event.logo' (value) {
+      const reader = new FileReader()
 
+      reader.onload = (e) => {
+        this.displayLogo = e.target.result
+      }
+
+      reader.readAsDataURL(value)
+    },
+    'startDate.date' (value) {
+      this.setEventStartDate(value, this.startDate.time)
+    },
+    'startDate.time' (value) {
+      this.setEventStartDate(this.startDate.date, value)
+    },
+    'endDate.date' (value) {
+      this.setEventStartDate(value, this.endDate.time)
+    },
+    'endDate.time' (value) {
+      this.setEventStartDate(this.endDate.date, value)
+    }
+  }
 })
 </script>
 
