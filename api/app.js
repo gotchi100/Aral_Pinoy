@@ -12,6 +12,7 @@ const config = require('./config')
 
 const mainRouter = require('./routes/main')
 const adminRouter = require('./routes/admin')
+const eventsRouter = require('./routes/events')
 const usersRouter = require('./routes/users')
 const skillsRouter = require('./routes/skills')
 
@@ -53,6 +54,7 @@ app.use('/', mainRouter)
 app.use('/admin', adminRouter)
 app.use('/users', usersRouter)
 app.use('/skills', skillsRouter)
+app.use('/events', eventsRouter)
 app.use(function (req, res, next) {
   res.status(404).json({
     code: 'NotFound',

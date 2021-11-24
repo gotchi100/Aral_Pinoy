@@ -1,5 +1,7 @@
 'use strict'
 
+const path = require('path')
+
 const {
   MONGODB_URI,
   JWT_SECRET,
@@ -7,7 +9,8 @@ const {
   VOLUNTEER_GOOGLE_OAUTH_REDIRECT_URI,
   GOOGLE_OAUTH_CLIENT_ID,
   GOOGLE_OAUTH_CLIENT_SECRET,
-  GOOGLE_OAUTH_REDIRECT_URI
+  GOOGLE_OAUTH_REDIRECT_URI,
+  GOOGLE_CLOUD_SERVICE_ACCOUNT_CREDENTIALS
 } = process.env
   
 if (MONGODB_URI === '') {
@@ -38,6 +41,9 @@ module.exports = {
       clientId: GOOGLE_OAUTH_CLIENT_ID,
       clientSecret: GOOGLE_OAUTH_CLIENT_SECRET,
       redirectUri: GOOGLE_OAUTH_REDIRECT_URI
+    },
+    cloud: {
+      serviceAccount: path.resolve(__dirname, GOOGLE_CLOUD_SERVICE_ACCOUNT_CREDENTIALS)
     }
   }
 }
