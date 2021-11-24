@@ -3,6 +3,7 @@
 const {
   MONGODB_URI,
   JWT_SECRET,
+  JWT_EXPIRATION_TIME = '4h',
   VOLUNTEER_GOOGLE_OAUTH_REDIRECT_URI,
   GOOGLE_OAUTH_CLIENT_ID,
   GOOGLE_OAUTH_CLIENT_SECRET,
@@ -22,7 +23,8 @@ module.exports = {
     uri: MONGODB_URI
   },
   jwt: {
-    secret: JWT_SECRET
+    secret: JWT_SECRET,
+    expiresIn: JWT_EXPIRATION_TIME
   },
   volunteer: {
     google: {
