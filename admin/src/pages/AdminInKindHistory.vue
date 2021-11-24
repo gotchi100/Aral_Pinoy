@@ -221,15 +221,15 @@ export default {
     return {
       items: [
         { date: '9/27/21', item: 'Unicef Shirt Large', qty: 20, qtyh: 20, ctgry: 'Apparel', event: 'Batangas Coastal Cleanup', status: 'Pending' },
-        { date: '9/27/21', item: 'Unicef Shirt Medium', qty: 20, qtyh: 20, ctgry: 'Apparel', event: 'Manila Coastal Cleanup', status: 'Outgoing' },
-        { date: '9/27/21', item: 'Unicef Shirt Small', qty: 40, qtyh: 40, ctgry: 'Apparel', event: 'Paranaque Costal Cleanup', status: 'Complete' },
-        { date: '9/27/21', item: 'Monggol Volume 2 Pencil', qty: 300, qtyh: 30, ctgry: 'School Material', event: 'Rizal Tutoring Community', status: 'Complete' },
+        { date: '9/27/21', item: 'Unicef Shirt Medium', qty: 20, qtyh: 20, ctgry: 'Apparel', event: 'Manila Coastal Cleanup', status: 'Pending' },
+        { date: '9/27/21', item: 'Unicef Shirt Small', qty: 40, qtyh: 40, ctgry: 'Apparel', event: 'Paranaque Costal Cleanup', status: 'Pending' },
+        { date: '9/27/21', item: 'Monggol Volume 2 Pencil', qty: 300, qtyh: 30, ctgry: 'School Material', event: 'Rizal Tutoring Community', status: 'Pending' },
         { date: '9/27/21', item: 'Nissin Cup Noodles', qty: 250, qtyh: 25, ctgry: 'Food', event: 'QC Tree Planting', status: 'Void' },
-        { date: '9/27/21', item: 'Unicef Shirt Large', qty: 20, qtyh: 20, ctgry: 'Apparel', event: 'Batangas Coastal Cleanup', status: 'Complete' },
-        { date: '9/27/21', item: 'Unicef Shirt Medium', qty: 20, qtyh: 20, ctgry: 'Apparel', event: 'Manila Coastal Cleanup', status: 'Outgoing' },
+        { date: '9/27/21', item: 'Unicef Shirt Large', qty: 20, qtyh: 20, ctgry: 'Apparel', event: 'Batangas Coastal Cleanup', status: 'Pending' },
+        { date: '9/27/21', item: 'Unicef Shirt Medium', qty: 20, qtyh: 20, ctgry: 'Apparel', event: 'Manila Coastal Cleanup', status: 'Pending' },
         { date: '9/27/21', item: 'Unicef Shirt Small', qty: 40, qtyh: 40, ctgry: 'Apparel', event: 'Paranaque Costal Cleanup', status: 'Complete' },
         { date: '9/27/21', item: 'Monggol Volume 2 Pencil', qty: 300, qtyh: 30, ctgry: 'School Material', event: 'Rizal Tutoring Community', status: 'Complete' },
-        { date: '9/27/21', item: 'Zissin Cup Noodles', qty: 250, qtyh: 25, ctgry: 'Food', event: 'QC Tree Planting', status: 'Void' }
+        { date: '9/27/21', item: 'Zissin Cup Noodles', qty: 250, qtyh: 25, ctgry: 'Food', event: 'QC Tree Planting', status: 'Pending' }
       ],
       fields: [
         { key: 'date', label: 'Date Sent', sortable: true, class: 'text-center' },
@@ -256,12 +256,12 @@ export default {
       },
       items2: [
         { date: '9/27/21', item: 'Unicef Shirt Large', qty: 20, qtyh: 20, ctgry: 'Apparel', organization: 'Red Cross Philippines', status: 'Pending' },
-        { date: '9/27/21', item: 'Unicef Shirt Medium', qty: 20, qtyh: 20, ctgry: 'Apparel', organization: 'PAWS Philippines', status: 'Outgoing' },
-        { date: '9/27/21', item: 'Unicef Shirt Small', qty: 40, qtyh: 40, ctgry: 'Apparel', organization: 'PAWS Philippines', status: 'Complete' },
+        { date: '9/27/21', item: 'Unicef Shirt Medium', qty: 20, qtyh: 20, ctgry: 'Apparel', organization: 'PAWS Philippines', status: 'Pending' },
+        { date: '9/27/21', item: 'Unicef Shirt Small', qty: 40, qtyh: 40, ctgry: 'Apparel', organization: 'PAWS Philippines', status: 'Pending' },
         { date: '9/27/21', item: 'Monggol Volume 2 Pencil', qty: 300, qtyh: 30, ctgry: 'School Material', organization: 'Rizal Foundation Inc.', status: 'Complete' },
         { date: '9/27/21', item: 'Nissin Cup Noodles', qty: 250, qtyh: 25, ctgry: 'Food', organization: 'QC Government', status: 'Void' },
-        { date: '9/27/21', item: 'Unicef Shirt Large', qty: 20, qtyh: 20, ctgry: 'Apparel', organization: 'Red Cross Philippines', status: 'Complete' },
-        { date: '9/27/21', item: 'Unicef Shirt Medium', qty: 20, qtyh: 20, ctgry: 'Apparel', organization: 'PAWS Philippines', status: 'Outgoing' },
+        { date: '9/27/21', item: 'Unicef Shirt Large', qty: 20, qtyh: 20, ctgry: 'Apparel', organization: 'Red Cross Philippines', status: 'Pending' },
+        { date: '9/27/21', item: 'Unicef Shirt Medium', qty: 20, qtyh: 20, ctgry: 'Apparel', organization: 'PAWS Philippines', status: 'Pending' },
         { date: '9/27/21', item: 'Unicef Shirt Small', qty: 40, qtyh: 40, ctgry: 'Apparel', organization: 'PAWS Philippines', status: 'Complete' },
         { date: '9/27/21', item: 'Monggol Volume 2 Pencil', qty: 300, qtyh: 30, ctgry: 'School Material', organization: 'Rizal Foundation Inc.', status: 'Complete' },
         { date: '9/27/21', item: 'Jissin Cup Noodles', qty: 250, qtyh: 25, ctgry: 'Food', organization: 'QC Government', status: 'Pending' }
