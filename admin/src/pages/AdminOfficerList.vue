@@ -27,7 +27,6 @@
                       class="w-25"
                       v-model="perPage"
                       :options="pageOptions"
-                      @change="onPerPageChange"
                     ></b-form-select>
                   </b-form-group>
                 </b-col>
@@ -91,7 +90,6 @@
               :total-rows="total"
               :per-page="perPage"
               align="center"
-              @change="onPaginationChange"
             ></b-pagination>
           </b-col>
           <b-col></b-col>
