@@ -47,7 +47,7 @@ class MainController {
         sub : user._id,
       }, config.jwt.secret, {
         algorithm : 'HS256',
-        expiresIn : '4h'
+        expiresIn : config.jwt.expiresIn
       })
 
       delete user.password
@@ -111,7 +111,7 @@ class MainController {
         sub : user._id,
       }, config.jwt.secret, {
         algorithm : 'HS256',
-        expiresIn : '4h'
+        expiresIn : config.jwt.expiresIn
       })
 
       const queryString = new URLSearchParams()
