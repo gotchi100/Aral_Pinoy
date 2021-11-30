@@ -9,10 +9,15 @@ const cors = require('cors')
 const jwtMiddleware = require('express-jwt')
 
 const config = require('./config')
+const { AppError } = require('./errors')
 
 const mainRouter = require('./routes/main')
 const adminRouter = require('./routes/admin')
 const eventsRouter = require('./routes/events')
+const inkindDonationsRouter = require('./routes/inkind-donations')
+const ikdCategoriesRouter = require('./routes/inkind-donations/categories')
+const ikdTransactionsRouter = require('./routes/inkind-donations/transactions')
+const ikdOutboundTransactionsRouter = require('./routes/inkind-donations/outbound-transactions')
 const usersRouter = require('./routes/users')
 const skillsRouter = require('./routes/skills')
 
@@ -55,6 +60,11 @@ app.use('/admin', adminRouter)
 app.use('/users', usersRouter)
 app.use('/skills', skillsRouter)
 app.use('/events', eventsRouter)
+app.use('/inkind-donations', inkindDonationsRouter)
+app.use('/inkind-donation-categories', ikdCategoriesRouter)
+app.use('/inkind-donation-transactions', ikdTransactionsRouter)
+app.use('/inkind-donation-outbound-transactions', ikdOutboundTransactionsRouter)
+
 app.use(function (req, res, next) {
   res.status(404).json({
     code: 'NotFound',
@@ -75,6 +85,10 @@ app.use(function (err, req, res, next) {
   }
 
   logger(err)
+
+  if (err instanceof AppError) {
+    return res.status(err.status).json(err.toJSON()) 
+  }
 
   res.status(500).json({
     code: 'Internal Server Error',
