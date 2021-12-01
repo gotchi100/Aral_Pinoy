@@ -13,5 +13,8 @@ module.exports = {
   OUTBOUND_RECEIVER_TYPES: {
     ORGANIZATION: 'ORGANIZATION',
     EVENT: 'EVENT'
+  },
+  CATEGORY_CUSTOM_FIELD_DATA_TYPES: {
+    DATE: true
   }
 }

@@ -13,16 +13,7 @@ const schema = new mongoose.Schema({
     select: false
   },
   description: String,
-  customFields: {
-    bestBeforeDate: {
-      type: Boolean,
-      default: false
-    },
-    expirationDate: {
-      type: Boolean,
-      default: false
-    },
-  }
+  customFields: {}
 }, {
   collection: 'inkindDonationCategories',
   validateBeforeSave: false

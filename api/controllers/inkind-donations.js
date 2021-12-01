@@ -4,8 +4,11 @@ const InkindDonationModel = require('../models/inkind-donations')
 const InkindDonationCategoryModel = require('../models/inkind-donations/categories')
 const InkindDonationDonorModel = require('../models/inkind-donations/donors')
 
+const { CATEGORY_CUSTOM_FIELD_DATA_TYPES } = require('../constants/inkind-donations')
+
 const { 
   ConflictError,
+  BadRequestError,
   NotFoundError
 } = require('../errors')
 
@@ -43,8 +46,18 @@ class InkindDonationsController {
       }
 
       for (const { key, value } of categoryCustomFields) {
-        if (categoryResults.customFields[key] === true) {
-          category.customFields[key] = value
+        const field = categoryResults.customFields[key]
+
+        if (field !== undefined) {
+          if (CATEGORY_CUSTOM_FIELD_DATA_TYPES[field.dataType] === true) {
+            const dateValue = new Date(value)
+
+            if (isNaN(dateValue)) {
+              throw new BadRequestError(`Category data type is invalid for "${field.label}": ${value}`)
+            }
+
+            category.customFields[key] = value
+          }
         }
       }
     }

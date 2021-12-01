@@ -6,13 +6,20 @@ const Joi = require('joi')
 
 const IkdCategoriesController = require('../../controllers/inkind-donations/categories')
 
+const categoryCustomFieldSchema = Joi.object({
+  label: Joi.string().trim().max(100).required(),
+  dataType: Joi.string().valid('DATE').required()
+})
+
 const createCategoryValidator = Joi.object({
   name: Joi.string().trim().max(50).required(),
   description: Joi.string().trim().empty('').max(200),
   customFields: Joi.object({
-    bestBeforeDate: Joi.boolean(),
-    expirationDate: Joi.boolean()
+    bestBeforeDate: categoryCustomFieldSchema,
+    expirationDate: categoryCustomFieldSchema
   })
+}).options({
+  stripUnknown: true
 })
 
 const listCategoriesValidator = Joi.object({
