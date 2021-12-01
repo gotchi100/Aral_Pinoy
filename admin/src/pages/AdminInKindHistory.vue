@@ -13,109 +13,7 @@
         <b-row>
           <b-col cols="12">
             <b-tabs pills card>
-              <b-tab title="Aral Pinoy Events" active>
-                <b-row>
-                  <b-col cols="12">
-                    <b-container>
-                      <b-row>
-                        <b-col cols="4">
-                          <b-form-group
-                            style="font-size: 15px; font-family:'Bebas Neue', cursive;"
-                            label="Per page"
-                            label-for="per-page-select"
-                            content-cols="12"
-                          >
-                            <b-form-select
-                              id="per-page-select"
-                              class="w-25"
-                              v-model="eventTransactionPerPage"
-                              :options="pageOptions"
-                            ></b-form-select>
-                          </b-form-group>
-                        </b-col>
-
-                        <!-- TODO: Implement search for inkind donation outbound transactions for organizations -->
-                        <!-- <b-col>
-                          <br>
-                          <b-input-group size="sm">
-                            <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
-                            <b-form-input
-                              id="filter-input"
-                              v-model="filter"
-                              type="search"
-                              placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
-                            ></b-form-input>
-                          </b-input-group>
-                          <br>
-                        </b-col> -->
-                      </b-row>
-                    </b-container>
-                  </b-col>
-                </b-row>
-
-                <b-row class="pt-4">
-                  <b-col cols="12">
-                    <b-table
-                      :items="getEventTransactions"
-                      :fields="eventTransactionFields"
-                      :current-page="eventTransactionCurrentPage"
-                      :per-page="eventTransactionPerPage"
-                      stacked="md"
-                      style="background:white"
-                      show-empty
-                      small
-                      primary-key="_id"
-                    >
-                    <template #cell(date)="row">
-                        {{
-                          new Date(row.value).toLocaleString('en-us', {
-                            dateStyle: 'medium'
-                          })
-                        }}
-                      </template>
-
-                      <template #cell(name)="row">
-                        {{ row.value.first }} {{ row.value.last }}
-                      </template>
-
-                      <template #cell(status)="row">
-                        <b-dropdown v-if="row.value==='PENDING'" :text="row.value" size="sm">
-                          <b-dropdown-item
-                            @click="showTransactionStatusUpdateConfirmModal(row.item._id, 'COMPLETE')"
-                          >
-                            COMPLETE
-                          </b-dropdown-item>
-
-                          <b-dropdown-item
-                            @click="showTransactionStatusUpdateConfirmModal(row.item._id, 'RETURNED')"
-                          >
-                            RETURNED
-                          </b-dropdown-item>
-                        </b-dropdown>
-
-                        <span v-else>
-                          {{ row.value }}
-                        </span>
-                      </template>
-                    </b-table>
-                  </b-col>
-                </b-row>
-
-                 <b-row class="pt-4 justify-content-md-center">
-                    <b-col cols="6" class="my-1">
-                      <b-pagination
-                        v-model="eventCurrentPage"
-                        :total-rows="eventTotal"
-                        :per-page="eventPerPage"
-                        align="fill"
-                        size="sm"
-                        class="my-0"
-                      ></b-pagination>
-                    </b-col>
-                  </b-row>
-              </b-tab>
-
-              <b-tab title="External Organizations">
+              <b-tab title="External Organizations" active>
                 <b-row>
                   <b-col cols="12">
                     <b-container>
@@ -203,12 +101,114 @@
                   </b-col>
                 </b-row>
 
-                 <b-row class="pt-4 justify-content-md-center">
+                <b-row class="pt-4 justify-content-md-center">
                     <b-col cols="6" class="my-1">
                       <b-pagination
                         v-model="orgTransactionCurrentPage"
                         :total-rows="orgTransactionTotal"
                         :per-page="orgTransactionPerPage"
+                        align="fill"
+                        size="sm"
+                        class="my-0"
+                      ></b-pagination>
+                    </b-col>
+                </b-row>
+              </b-tab>
+
+              <b-tab title="Aral Pinoy Events">
+                <b-row>
+                  <b-col cols="12">
+                    <b-container>
+                      <b-row>
+                        <b-col cols="4">
+                          <b-form-group
+                            style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                            label="Per page"
+                            label-for="per-page-select"
+                            content-cols="12"
+                          >
+                            <b-form-select
+                              id="per-page-select"
+                              class="w-25"
+                              v-model="eventTransactionPerPage"
+                              :options="pageOptions"
+                            ></b-form-select>
+                          </b-form-group>
+                        </b-col>
+
+                        <!-- TODO: Implement search for inkind donation outbound transactions for organizations -->
+                        <!-- <b-col>
+                          <br>
+                          <b-input-group size="sm">
+                            <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
+                            <b-form-input
+                              id="filter-input"
+                              v-model="filter"
+                              type="search"
+                              placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
+                            ></b-form-input>
+                          </b-input-group>
+                          <br>
+                        </b-col> -->
+                      </b-row>
+                    </b-container>
+                  </b-col>
+                </b-row>
+
+                <b-row class="pt-4">
+                  <b-col cols="12">
+                    <b-table
+                      :items="getEventTransactions"
+                      :fields="eventTransactionFields"
+                      :current-page="eventTransactionCurrentPage"
+                      :per-page="eventTransactionPerPage"
+                      stacked="md"
+                      style="background:white"
+                      show-empty
+                      small
+                      primary-key="_id"
+                    >
+                      <template #cell(date)="row">
+                        {{
+                          new Date(row.value).toLocaleString('en-us', {
+                            dateStyle: 'medium'
+                          })
+                        }}
+                      </template>
+
+                      <template #cell(name)="row">
+                        {{ row.value.first }} {{ row.value.last }}
+                      </template>
+
+                      <template #cell(status)="row">
+                        <b-dropdown v-if="row.value==='PENDING'" :text="row.value" size="sm">
+                          <b-dropdown-item
+                            @click="showTransactionStatusUpdateConfirmModal(row.item._id, 'COMPLETE')"
+                          >
+                            COMPLETE
+                          </b-dropdown-item>
+
+                          <b-dropdown-item
+                            @click="showTransactionStatusUpdateConfirmModal(row.item._id, 'RETURNED')"
+                          >
+                            RETURNED
+                          </b-dropdown-item>
+                        </b-dropdown>
+
+                        <span v-else>
+                          {{ row.value }}
+                        </span>
+                      </template>
+                    </b-table>
+                  </b-col>
+                </b-row>
+
+                 <b-row class="pt-4 justify-content-md-center">
+                    <b-col cols="6" class="my-1">
+                      <b-pagination
+                        v-model="eventTransactionCurrentPage"
+                        :total-rows="eventTransactionTotal"
+                        :per-page="eventTransactionPerPage"
                         align="fill"
                         size="sm"
                         class="my-0"

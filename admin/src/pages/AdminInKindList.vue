@@ -1,436 +1,688 @@
 <template>
-<div class="inkindlist">
-  <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1400px; border-radius: 20px; margin-top:40px;">
-  <b-container fluid>
-    <!-- User Interface controls -->
-    <h1 style="font-family:'Bebas Neue', cursive;">
-      In-Kind Donations Inventory
-    </h1>
-    <!-- <b-link to="/incoming-history">Incoming History (remove)</b-link> -->
-    <b-tabs pills card>
-      <b-tab title="Compiled View" active>
-        <b-card-text>
-          <b-row>
-            <b-container class="bv-example-row">
-              <b-row>
-                <b-col>
-                  <b-col sm="5" md="6" class="my-1">
-                    <b-form-group style="font-size: 15px; font-family:'Bebas Neue', cursive;"
-                      label="Per page"
-                      label-for="per-page-select"
-                      label-cols-sm="6"
-                      label-cols-md="4"
-                      label-cols-lg="3"
-                      label-align-sm="right"
-                      label-size="sm"
-                      class="mb-0"
-                    >
-                      <b-form-select
-                        id="per-page-select"
-                        v-model="perPage"
-                        :options="pageOptions"
-                        size="sm"
-                      ></b-form-select>
-                    </b-form-group>
-                  </b-col>
-                </b-col>
-                <b-col>
-                </b-col>
-                <b-col>
-                  <br>
-                  <b-input-group size="sm">
-                    <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
-                    <b-form-input
-                      id="filter-input"
-                      v-model="filter"
-                      type="search"
-                      placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
-                    ></b-form-input>
-                  </b-input-group>
-                  <br>
-                </b-col>
-              </b-row>
-            </b-container>
-          </b-row>
-          <!-- Main table element -->
-          <b-table
-            :items="items"
-            :fields="fields"
-            :current-page="currentPage"
-            :per-page="perPage"
-            :filter="filter"
-            :filter-included-fields="filterOn"
-            :sort-by.sync="sortBy"
-            :sort-desc.sync="sortDesc"
-            :sort-direction="sortDirection"
-            stacked="md"
-            show-empty
-            small
-            @filtered="onFiltered"
-            style="background:white"
-          >
-            <template #cell(name)="row">
-              {{ row.value.first }} {{ row.value.last }}
-            </template>
-
-            <template #row-details="row">
-              <b-card>
-                <ul>
-                  <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
-                </ul>
-              </b-card>
-            </template>
-          </b-table>
-          <b-row>
-            <b-col cols="8"></b-col>
-            <b-col>
-              <b-button @click="showModal = !showModal" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 180px;">
-                Enter a Transaction
-              </b-button>
-            </b-col>
-            <b-col>
-              <b-button to="/category-list" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 180px;">
-                View Categories
-              </b-button>
-            </b-col>
-          </b-row>
-          <b-row class="justify-content-md-center">
-            <b-col cols="6" class="my-1">
-              <b-pagination
-                v-model="currentPage2"
-                :total-rows="totalRows2"
-                :per-page="perPage2"
-                align="fill"
-              ></b-pagination>
-            </b-col>
-          </b-row>
-        </b-card-text>
-      </b-tab>
-      <b-tab title="Detailed View">
-        <b-card-text>
-          <b-row>
-            <b-container class="bv-example-row">
-              <b-row>
-                <b-col>
-                  <b-col sm="5" md="6" class="my-1">
-                    <b-form-group style="font-size: 15px; font-family:'Bebas Neue', cursive;"
-                      label="Per page"
-                      label-for="per-page-select"
-                      label-cols-sm="6"
-                      label-cols-md="4"
-                      label-cols-lg="3"
-                      label-align-sm="right"
-                      label-size="sm"
-                      class="mb-0"
-                    >
-                      <b-form-select
-                        id="per-page-select"
-                        v-model="perPage2"
-                        :options="pageOptions2"
-                        size="sm"
-                      ></b-form-select>
-                    </b-form-group>
-                  </b-col>
-                </b-col>
-                <b-col>
-                </b-col>
-                <b-col>
-                  <br>
-                  <b-input-group size="sm">
-                    <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
-                    <b-form-input
-                      id="filter-input"
-                      v-model="filter2"
-                      type="search"
-                      placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
-                    ></b-form-input>
-                  </b-input-group>
-                  <br>
-                </b-col>
-              </b-row>
-            </b-container>
-          </b-row>
-          <!-- Main table element -->
-          <b-table
-            :items="items2"
-            :fields="fields2"
-            :current-page="currentPage2"
-            :per-page="perPage2"
-            :filter="filter2"
-            :filter-included-fields="filterOn2"
-            :sort-by.sync="sortBy2"
-            :sort-desc.sync="sortDesc2"
-            :sort-direction="sortDirection2"
-            stacked="md"
-            show-empty
-            small
-            @filtered="onFiltered2"
-            style="background:white"
-          >
-            <template #cell(name)="row">
-              {{ row.value.first }} {{ row.value.last }}
-            </template>
-
-            <template #row-details="row">
-              <b-card>
-                <ul>
-                  <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
-                </ul>
-              </b-card>
-            </template>
-          </b-table>
-          <b-row>
-            <b-col cols="8"></b-col>
-            <b-col>
-              <b-button @click="showModal = !showModal" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 180px;">
-                Enter a Transaction
-              </b-button>
-            </b-col>
-            <b-col>
-              <b-button to="/category-list" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 180px;">
-                View Categories
-              </b-button>
-            </b-col>
-          </b-row>
-          <b-row class="justify-content-md-center">
-            <b-col cols="6" class="my-1">
-              <b-pagination
-                v-model="currentPage2"
-                :total-rows="totalRows2"
-                :per-page="perPage2"
-                align="fill"
-              ></b-pagination>
-            </b-col>
-          </b-row>
-        </b-card-text>
-      </b-tab>
-    </b-tabs>
-  </b-container>
-  <b-modal v-model="showModal" size="xl" hide-footer>
-    <div>
-      <div class="addskill">
+  <div class="inkindlist">
+    <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1400px; border-radius: 20px; margin-top:40px;">
+      <b-container fluid>
         <b-row>
-          <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">Enter a Transaction</h1>
+          <b-col cols="12">
+            <h1 style="font-family:'Bebas Neue', cursive;">
+              In-Kind Donations Inventory
+            </h1>
+          </b-col>
         </b-row>
-        <b-row>
-            <b-col cols="4"></b-col>
-            <b-col>
-              <b-form-select style="align: center; width: 350px;" v-model="chose" :options="choices"></b-form-select>
-            </b-col>
-        </b-row>
-        <b-card v-if="chose==='add-donation'" class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1100px; border-radius: 20px; margin-top: 40px;">
-          <b-container fluid>
-              <h2 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
-                  Add an in-kind donation
-              </h2>
-            <b-row class="my-1">
-              <label class="skill" for="input-small">Item Name:</label>
-              <b-col>
-                <b-form-input v-model="skill"></b-form-input>
-              </b-col>
-            </b-row>
-            <b-row class="my-1">
-                <b-col>
-                    <label class="skill" for="input-small">Quantity:</label>
-                      <b-col>
-                          <b-form-input type="number" placeholder="Enter the quantity based on the unit of measurement" required></b-form-input>
-                      </b-col>
-                </b-col>
-                <b-col>
-                    <label class="skill" for="input-small">Unit of Measurement:</label>
-                      <b-col>
-                          <b-form-select v-model="selected" :options="optionz"></b-form-select>
-                      </b-col>
-                </b-col>
-            </b-row>
-            <b-row class="my-1">
-                <b-form-group label="Category:" style="text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-tags id="tags-with-dropdown" v-model="value" no-outer-focus class="mb-2" style="text-align:center;">
-                    <template v-slot="{ tags, disabled, addTag, removeTag }" style="display: inline-block; height: 100%; overflow: auto;">
-                      <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
-                        <li v-for="tag in tags" :key="tag" class="list-inline-item">
-                          <b-form-tag
-                            @remove="removeTag(tag)"
-                            :title="tag"
-                            :disabled="disabled"
-                            variant="info"
-                          >{{ tag }}</b-form-tag>
-                        </li>
-                      </ul>
 
-                      <b-dropdown size="sm" variant="outline-secondary" block menu-class="w-100">
-                        <template #button-content>
-                          <b-icon icon="tag-fill"></b-icon> Category list
-                        </template>
-                        <b-dropdown-form @submit.stop.prevent="() => {}">
-                          <b-form-group
-                            label="Search Categories (ADD A 'ADD/VIEW A CATEGORY ENTRY' BUTTON HERE)"
-                            label-for="tag-search-input"
-                            label-cols-md="auto"
-                            class="mb-0"
-                            label-size="sm"
-                            :description="searchDesc"
-                            :disabled="disabled"
-                          >
+        <!-- <b-link to="/incoming-history">Incoming History (remove)</b-link> -->
+        <b-row>
+          <b-col cols="12">
+            <b-tabs pills card>
+              <!-- <b-tab title="Compiled View">
+                <b-card-text>
+                  <b-row>
+                    <b-container class="bv-example-row">
+                      <b-row>
+                        <b-col>
+                          <b-col sm="5" md="6" class="my-1">
+                            <b-form-group style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                              label="Per page"
+                              label-for="per-page-select"
+                              label-cols-sm="6"
+                              label-cols-md="4"
+                              label-cols-lg="3"
+                              label-align-sm="right"
+                              label-size="sm"
+                              class="mb-0"
+                            >
+                              <b-form-select
+                                id="per-page-select"
+                                v-model="perPage"
+                                :options="pageOptions"
+                                size="sm"
+                              ></b-form-select>
+                            </b-form-group>
+                          </b-col>
+                        </b-col>
+                        <b-col>
+                        </b-col>
+                        <b-col>
+                          <br>
+                          <b-input-group size="sm">
+                            <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
                             <b-form-input
-                              v-model="search"
-                              id="tag-search-input"
+                              id="filter-input"
+                              v-model="filter"
                               type="search"
-                              size="sm"
-                              autocomplete="off"
-                              ></b-form-input>
-                          </b-form-group>
-                        </b-dropdown-form>
-                        <b-dropdown-divider></b-dropdown-divider>
-                        <b-dropdown-item-button
-                          v-for="options in availableOptions"
-                          :key="options"
-                          @click="onOptionClick({ options, addTag })"
-                        >
-                          {{ options }}
-                        </b-dropdown-item-button>
-                        <b-dropdown-text v-if="availableOptions.length === 0">
-                          There are no tags available to select
-                        </b-dropdown-text>
-                      </b-dropdown>
+                              placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
+                            ></b-form-input>
+                          </b-input-group>
+                          <br>
+                        </b-col>
+                      </b-row>
+                    </b-container>
+                  </b-row>
+
+                  <b-table
+                    :items="items"
+                    :fields="fields"
+                    :current-page="currentPage"
+                    :per-page="perPage"
+                    :filter="filter"
+                    :filter-included-fields="filterOn"
+                    :sort-by.sync="sortBy"
+                    :sort-desc.sync="sortDesc"
+                    :sort-direction="sortDirection"
+                    stacked="md"
+                    show-empty
+                    small
+                    @filtered="onFiltered"
+                    style="background:white"
+                  >
+                    <template #cell(name)="row">
+                      {{ row.value.first }} {{ row.value.last }}
                     </template>
-                  </b-form-tags>
-                </b-form-group>
-            </b-row>
-            <b-row class="my-1">
-              <b-col>
-                  <label class="skill" for="input-small">Best Before Date:</label>
-                  <b-form-datepicker id="start-datepicker" class="mb-2" required></b-form-datepicker>
-              </b-col>
-              <b-col>
-                  <label class="skill" for="input-small">Expiration Date:</label>
-                  <b-form-datepicker id="start-datepicker" class="mb-2" required></b-form-datepicker>
-              </b-col>
-            </b-row>
-            <b-row class="my-1">
-              <label class="skill" for="input-small">Date Recieved:</label>
-              <b-col>
-                <b-form-datepicker id="start-datepicker" class="mb-2" required></b-form-datepicker>
-              </b-col>
-            </b-row>
-            <b-row class="my-1">
-              <label class="skill" for="input-small">Donor:</label>
-              <b-col>
-                <b-form-input v-model="donor"></b-form-input>
-              </b-col>
-            </b-row>
+
+                    <template #row-details="row">
+                      <b-card>
+                        <ul>
+                          <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
+                        </ul>
+                      </b-card>
+                    </template>
+                  </b-table>
+                  <b-row>
+                    <b-col cols="8"></b-col>
+                    <b-col>
+                      <b-button @click="showModal = !showModal" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 180px;">
+                        Enter a Transaction
+                      </b-button>
+                    </b-col>
+                    <b-col>
+                      <b-button to="/category-list" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 180px;">
+                        View Categories
+                      </b-button>
+                    </b-col>
+                  </b-row>
+                  <b-row class="justify-content-md-center">
+                    <b-col cols="6" class="my-1">
+                      <b-pagination
+                        v-model="currentPage2"
+                        :total-rows="totalRows2"
+                        :per-page="perPage2"
+                        align="fill"
+                      ></b-pagination>
+                    </b-col>
+                  </b-row>
+                </b-card-text>
+              </b-tab> -->
+
+              <b-tab title="Detailed View" active>
+                <b-row>
+                  <b-col cols="12">
+                    <b-container>
+                      <b-row>
+                        <b-col cols="4">
+                          <b-form-group
+                            style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                            label="Per page"
+                            label-for="per-page-select"
+                            content-cols="12"
+                          >
+                            <b-form-select
+                              id="per-page-select"
+                              class="w-25"
+                              v-model="inkindDonationPerPage"
+                              :options="pageOptions"
+                            ></b-form-select>
+                          </b-form-group>
+                        </b-col>
+
+                        <!-- TODO: Implement search for detailed inkind donations -->
+                        <!-- <b-col>
+                          <br>
+                          <b-input-group size="sm">
+                            <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
+                            <b-form-input
+                              id="filter-input"
+                              v-model="filter"
+                              type="search"
+                              placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
+                            ></b-form-input>
+                          </b-input-group>
+                          <br>
+                        </b-col> -->
+                      </b-row>
+                    </b-container>
+                  </b-col>
+                </b-row>
+
+                <b-row class="pt-4">
+                  <b-col cols="12">
+                    <b-table
+                      :items="getInkindDonations"
+                      :fields="inkindDonationFields"
+                      :current-page="inkindDonationCurrentPage"
+                      :per-page="inkindDonationPerPage"
+                      stacked="md"
+                      style="background:white"
+                      show-empty
+                      small
+                      primary-key="_id"
+                    >
+                      <template #cell(bestBeforeDate)="row">
+                        {{
+                          new Date(row.item.category.customFields.bestBeforeDate).toLocaleString('en-us', {
+                            dateStyle: 'medium'
+                          })
+                        }}
+                      </template>
+
+                      <template #cell(expirationDate)="row">
+                        {{
+                          new Date(row.item.category.customFields.expirationDate).toLocaleString('en-us', {
+                            dateStyle: 'medium'
+                          })
+                        }}
+                      </template>
+                    </b-table>
+                  </b-col>
+                </b-row>
+
+                <b-row class="pt-4" align-h="end">
+                  <b-col cols="2">
+                    <b-button
+                      style="font-size: 16px; width: 200px;"
+                      pill
+                      variant="danger"
+                      @click="createItemModal = !createItemModal"
+                    >
+                      Add an Item
+                    </b-button>
+                  </b-col>
+                  <b-col cols="2">
+                    <b-button
+                      style="font-size: 16px; width: 200px;"
+                      pill
+                      variant="danger"
+                      @click="transactionModal = !transactionModal"
+                    >
+                      Create a Transaction
+                    </b-button>
+                  </b-col>
+                  <b-col cols="2">
+                    <b-button
+                      style="font-size: 16px; width: 200px;"
+                      to="/category-list"
+                      pill
+                      variant="danger"
+                    >
+                      View Categories
+                    </b-button>
+                  </b-col>
+                </b-row>
+
+                <b-row class="pt-4 justify-content-md-center">
+                  <b-col cols="6" class="my-1">
+                    <b-pagination
+                      v-model="inkindDonationCurrentPage"
+                      :total-rows="inkindDonationTotal"
+                      :per-page="inkindDonationPerPage"
+                      align="fill"
+                      size="sm"
+                      class="my-0"
+                    ></b-pagination>
+                  </b-col>
+                </b-row>
+              </b-tab>
+            </b-tabs>
+          </b-col>
+        </b-row>
+      </b-container>
+
+      <b-modal v-model="createItemModal" size="xl" hide-footer>
+        <b-card>
+          <b-container fluid>
             <b-row>
-              <b-col cols="5"></b-col>
-              <b-col>
-                <b-button @click="showModaltwo = !showModaltwo" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 150px;">
+              <b-col cols="12">
+                <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
+                  Add an in-kind donation
+                </h1>
+              </b-col>
+            </b-row>
+
+            <b-row class="pt-1">
+              <b-col cols="12" md="6">
+                <label for="item-sku">
+                  Stock Keeping Unit (SKU) <b-icon v-b-tooltip="'Unique identifier of the item'" icon="info-circle" font-scale=".85"></b-icon>
+                </label>
+                <b-form-input v-model="createItemForm.sku" name="item-sku"></b-form-input>
+              </b-col>
+
+              <b-col cols="12" md="6">
+                <label for="item-name">Item Name</label>
+                <b-form-input v-model="createItemForm.name" name="item-name"></b-form-input>
+              </b-col>
+            </b-row>
+
+            <b-row class="pt-3">
+              <b-col cols="12" md="6">
+                <label for="item-quantity">Initial Quantity</label>
+                <b-form-input v-model="createItemForm.quantity" type="number" name="item-quantity"></b-form-input>
+              </b-col>
+
+              <b-col cols="12" md="6">
+                <label for="item-uom">Unit of Measurement</label>
+                <b-form-select
+                  v-model="createItemForm.unit"
+                  style="width: 100%; padding: 0.5rem 0.75rem"
+                  name="item-uom"
+                  :options="unitOptions"
+                  size="lg"
+                ></b-form-select>
+              </b-col>
+            </b-row>
+
+            <b-row class="pt-3">
+              <b-col cols="12">
+                <label for="item-category">Category</label>
+                <b-dropdown
+                  :text="createItemForm.category ? createItemForm.category.name : 'Select a category'"
+                  style="width: 100%"
+                  menu-class="w-100"
+                  variant="outline-primary"
+                  :no-caret="!!createItemForm.category"
+                  no-flip
+                >
+                  <b-dropdown-form>
+                    <b-form-group label="Search Category" label-for="item-category" @submit.stop.prevent>
+                      <b-form-input
+                        id="item-category"
+                        debounce="500"
+                        @update="searchInkindDonationCategories"
+                      ></b-form-input>
+                    </b-form-group>
+                  </b-dropdown-form>
+                  <b-dropdown-divider></b-dropdown-divider>
+                  <b-dropdown-item
+                    v-for="category in categoryOptions"
+                    :key="category._id"
+                    @click="selectCategory(category)"
+                  >
+                    {{ category.name }}
+                  </b-dropdown-item>
+                </b-dropdown>
+              </b-col>
+            </b-row>
+
+            <b-row v-if="createItemForm.categoryCustomFields.length > 0" class="pt-3">
+              <b-col v-for="customField in createItemForm.categoryCustomFields" :key="customField.key">
+                <template v-if="customField.dataType === 'DATE'">
+                  <label :for="customField.key">{{ customField.label }}</label>
+                  <b-form-datepicker :label="customField.key" v-model="customField.value" value-as-date></b-form-datepicker>
+                </template>
+              </b-col>
+            </b-row>
+
+            <b-row class="pt-1">
+              <b-col cols="12">
+                <label for="item-donor">
+                  Donor
+                </label>
+                <b-form-input v-model="createItemForm.donor" name="item-donor"></b-form-input>
+              </b-col>
+            </b-row>
+
+            <b-row class="pt-4 pb-3" align-h="center">
+              <b-col cols="2">
+                <b-button
+                  style="font-size: 16px; padding: 8px; width: 150px;"
+                  pill
+                  variant="danger"
+                  @click="createItemConfirmModal = !createItemConfirmModal"
+                >
                   Add Donation
                 </b-button>
               </b-col>
             </b-row>
           </b-container>
-          <b-modal v-model="showModaltwo" size="xl">
+
+          <b-modal
+            v-model="createItemConfirmModal"
+            @ok="createdInkindDonation"
+            @cancel="createItemConfirmModal = false"
+          >
             <b-container fluid>
-                  <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
-                      Are you sure with all the details?
-                  </h1>
-              </b-container>
+              <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
+                Are you sure with all the details?
+              </h1>
+            </b-container>
           </b-modal>
         </b-card>
-        <b-card v-else-if="chose==='send-donation'" class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1100px; border-radius: 20px; margin-top: 40px;">
-        <b-container fluid>
-            <h2 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
-                Send an In-kind Donation
-            </h2>
-          <b-row class="my-1">
-          <label class="skill" for="input-small">Item Name</label>
-            <b-col>
-                <b-form-input type="text" placeholder="Select Item" required></b-form-input>
-            </b-col>
-            <label class="skill" for="input-small">Quantity</label>
-            <b-col>
-                <b-form-input type="number" placeholder="Input Quantity" required></b-form-input>
-            </b-col>
-            <label class="skill" for="input-small">Receiver</label>
-            <b-col>
-                <b-form-input type="text" placeholder="Input Receiver" required></b-form-input>
-            </b-col>
-            <label class="skill" for="input-small">Contact Person</label>
-            <b-col>
-                <b-form-input type="text" placeholder="Input Contact Person" required></b-form-input>
-            </b-col>
-            <label class="skill" for="input-small">Contact Number</label>
-            <b-col>
-                <b-form-input type="text" placeholder="Input Contact Number of Contact Person" required></b-form-input>
+      </b-modal>
+
+      <b-modal v-model="transactionModal" size="xl" hide-footer>
+        <div>
+          <b-row>
+            <b-col cols="12">
+              <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">Enter a Transaction</h1>
             </b-col>
           </b-row>
+
           <b-row>
-              <b-col cols="5"></b-col>
-              <b-col>
-                <b-button @click="showModalthree = !showModalthree" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 150px;">
-                  Donate
-                </b-button>
-              </b-col>
-            </b-row>
-            <b-modal v-model="showModalthree" size="xl">
-            <b-container fluid>
-                  <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
-                      Are you sure with all the details?
-                  </h1>
-              </b-container>
-          </b-modal>
-        </b-container>
-      </b-card>
-      <b-card v-else-if="chose==='shrinkage-donation'" class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1100px; border-radius: 20px; margin-top: 40px;">
-        <b-container fluid>
-            <h2 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
-                Enter Shrinkage
-            </h2>
-          <b-row class="my-1">
-          <label class="skill" for="input-small">Item Name</label>
-            <b-col>
-                <b-form-input type="text" placeholder="Select Item" required></b-form-input>
-            </b-col>
-            <label class="skill" for="input-small">Quantity on Hand</label>
-            <b-col>
-                <b-form-input type="number" placeholder="Input Quantity" required></b-form-input>
-            </b-col>
-            <label class="skill" for="input-small">Quantity Deducted</label>
-            <b-col>
-                <b-form-input type="text" placeholder="Input Receiver" required></b-form-input>
-            </b-col>
-            <label class="skill" for="input-small">Date</label>
-            <b-col>
-                <b-form-datepicker id="start-datepicker" class="mb-2" required></b-form-datepicker>
+            <b-col cols="12" class="text-center">
+              <b-form-select v-model="transactionChoice" :options="transactionChoices"></b-form-select>
             </b-col>
           </b-row>
-          <b-row>
-              <b-col cols="5"></b-col>
-              <b-col>
-                <b-button @click="showModalfour = !showModalfour" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 150px;">
-                  Submit
-                </b-button>
-              </b-col>
-            </b-row>
-            <b-modal v-model="showModalfour" size="xl">
-            <b-container fluid>
-                  <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
+
+          <b-row v-if="transactionChoice === 'send-donation'" class="pt-3">
+            <b-col cols="12">
+              <b-card>
+                <b-container fluid>
+                  <b-row>
+                    <b-col cols="12">
+                      <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
+                        Send an In-Kind Donation to an Organization
+                      </h1>
+                    </b-col>
+                  </b-row>
+
+                  <b-row class="pt-3">
+                    <b-col cols="12">
+                      <label for="outbound-transaction-receiver-org-name">
+                        Organization Name
+                      </label>
+                      <b-form-input
+                        id="outbound-transaction-receiver-org-name"
+                        v-model="outboundTransactionForm.receiver.organization.name"
+                      ></b-form-input>
+                    </b-col>
+                  </b-row>
+
+                  <b-row class="pt-3">
+                    <b-col cols="12">
+                      <b-form-tags>
+                        <template>
+                          <ul v-if="outboundTransactionForm.receiver.organization.contacts.length > 0" class="list-inline d-inline-block mb-2">
+                            <li v-for="(contact, index) in outboundTransactionForm.receiver.organization.contacts" :key="index" class="list-inline-item">
+                              <b-form-tag class="bg-success" @remove="removeOrgContact(index)">
+                                {{ contact.name }} - {{ contact.contactMethods[0].value }}
+                              </b-form-tag>
+                            </li>
+                          </ul>
+
+                          <b-dropdown
+                            ref="orgContactFormDropdown"
+                            text="Add Contacts"
+                            style="width: 100%"
+                            menu-class="w-100"
+                            variant="outline-primary"
+                            no-flip
+                          >
+                            <b-dropdown-form>
+                              <b-form-group label="Name" label-for="outbound-transaction-receiver-contact-name" @submit.stop.prevent>
+                                <b-form-input
+                                  id="outbound-transaction-receiver-contact-name"
+                                  v-model="orgContactForm.name"
+                                ></b-form-input>
+                              </b-form-group>
+
+                              <b-form-group class="pt-3" label="Contact Method Type" label-for="outbound-transaction-receiver-contact-method-type" @submit.stop.prevent>
+                                <b-input-group>
+                                  <b-form-select
+                                    id="outbound-transaction-receiver-contact-method-type"
+                                    v-model="orgContactForm.contactMethods[0].type"
+                                    style="width: 100%; padding: 0.5rem 0.75rem"
+                                    :options="['EMAIL', 'MOBILE']"
+                                    size="lg"
+                                  ></b-form-select>
+                                </b-input-group>
+                              </b-form-group>
+
+                              <b-form-group class="pt-3" label="Contact Method Value" label-for="outbound-transaction-receiver-contact-method-value" @submit.stop.prevent>
+                                <b-input-group>
+                                  <b-form-input
+                                    id="outbound-transaction-receiver-contact-method-value"
+                                    class="ml-3"
+                                    v-model="orgContactForm.contactMethods[0].value"
+                                  ></b-form-input>
+                                </b-input-group>
+                              </b-form-group>
+
+                              <b-button class="mt-4" variant="success" @click="addOutboundTransactionContact">Submit</b-button>
+                            </b-dropdown-form>
+                          </b-dropdown>
+                        </template>
+                      </b-form-tags>
+                    </b-col>
+                  </b-row>
+
+                  <b-row class="pt-3">
+                    <b-col cols="12">
+                      <label for="inventory-adj-date">
+                        Date
+                      </label>
+                      <b-form-datepicker label="Date" v-model="outboundTransactionForm.date" value-as-date></b-form-datepicker>
+                    </b-col>
+                  </b-row>
+
+                  <b-row class="pt-3">
+                    <b-col cols="12">
+                      <label for="inventory-adj-item-name">Item Name</label>
+                      <b-dropdown
+                        :text="outboundTransactionForm.item ? `${outboundTransactionForm.item.name} - ${outboundTransactionForm.item.sku}` : 'Select an item'"
+                        style="width: 100%"
+                        menu-class="w-100"
+                        variant="outline-primary"
+                        :no-caret="!!outboundTransactionForm.item"
+                        no-flip
+                      >
+                        <b-dropdown-form>
+                          <b-form-group label="Search Item" label-for="inventory-adj-item-search" @submit.stop.prevent>
+                            <b-form-input
+                              id="inventory-adj-item-search"
+                              debounce="500"
+                              @update="searchInkindDonations"
+                            ></b-form-input>
+                          </b-form-group>
+                        </b-dropdown-form>
+                        <b-dropdown-divider></b-dropdown-divider>
+                        <b-dropdown-item
+                          v-for="item in inkindDonationOptions"
+                          :key="item._id"
+                          @click="selectOutboundTransactionItem(item)"
+                        >
+                          {{ item.name }} <span style="color: grey; font-size: 12px">{{ item.sku }}</span>
+                        </b-dropdown-item>
+                      </b-dropdown>
+                    </b-col>
+                  </b-row>
+
+                  <b-row v-if="outboundTransactionForm.item !== null" class="pt-3">
+                    <b-col cols="12" md="4">
+                      <label for="inventory-adj-item-quantity">
+                        Current Quantity
+                      </label>
+                      <b-form-input label="inventory-adj-item-quantity" :value="outboundTransactionForm.item.quantity" disabled></b-form-input>
+                    </b-col>
+
+                    <b-col cols="12" md="4">
+                      <label for="inventory-adj-item-quantity">
+                        How many to donate
+                      </label>
+                      <b-form-input
+                        type="number"
+                        label="inventory-adj-item-quantity"
+                        v-model="outboundTransactionForm.quantity"
+                        lazy-formatter
+                        :formatter="validateOutboundTransactionQuantity"
+                        :min="1"
+                        :max="outboundTransactionForm.item.quantity"
+                      ></b-form-input>
+                    </b-col>
+
+                    <b-col cols="12" md="4">
+                      <label for="inventory-adj-item-quantity">
+                        New Quantity
+                      </label>
+                      <b-form-input
+                        label="inventory-adj-item-quantity"
+                        :value="Number(outboundTransactionForm.item.quantity) - Number(outboundTransactionForm.quantity)"
+                        disabled
+                      ></b-form-input>
+                    </b-col>
+                  </b-row>
+
+                  <b-row class="pt-4 pb-3" align-h="center">
+                    <b-col cols="2">
+                      <b-button
+                        style="font-size: 16px; padding: 8px; width: 150px;"
+                        pill
+                        variant="danger"
+                        @click="outboundTransactionConfirmModal = !outboundTransactionConfirmModal"
+                      >
+                        Send Donation
+                      </b-button>
+                    </b-col>
+                  </b-row>
+                </b-container>
+
+                <b-modal
+                  v-model="outboundTransactionConfirmModal"
+                  @ok="createdInkindDonationOutboundTransaction"
+                  @cancel="outboundTransactionConfirmModal = false"
+                >
+                  <b-container fluid>
+                    <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
                       Are you sure with all the details?
-                  </h1>
-              </b-container>
-          </b-modal>
-        </b-container>
-      </b-card>
-      </div>
-    </div>
-  </b-modal>
-</b-card>
-</div>
+                    </h1>
+                  </b-container>
+                </b-modal>
+              </b-card>
+            </b-col>
+          </b-row>
+
+          <b-row v-if="transactionChoice === 'inventory-adjustment'" class="pt-3">
+            <b-col cols="12">
+              <b-card>
+                <b-container fluid>
+                  <b-row>
+                    <b-col cols="12">
+                      <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
+                        Inventory Adjustment
+                      </h1>
+                    </b-col>
+                  </b-row>
+
+                  <b-row class="pt-3">
+                    <label for="inventory-adj-date">
+                      Date
+                    </label>
+                    <b-form-datepicker label="Date" v-model="inventoryAdjForm.date" value-as-date></b-form-datepicker>
+                  </b-row>
+
+                  <b-row class="pt-3">
+                    <b-col cols="12">
+                      <label for="inventory-adj-item-name">Item Name</label>
+                      <b-dropdown
+                        :text="inventoryAdjForm.item ? `${inventoryAdjForm.item.name} - ${inventoryAdjForm.item.sku}` : 'Select an item'"
+                        style="width: 100%"
+                        menu-class="w-100"
+                        variant="outline-primary"
+                        :no-caret="!!inventoryAdjForm.item"
+                        no-flip
+                      >
+                        <b-dropdown-form>
+                          <b-form-group label="Search Item" label-for="inventory-adj-item-search" @submit.stop.prevent>
+                            <b-form-input
+                              id="inventory-adj-item-search"
+                              debounce="500"
+                              @update="searchInkindDonations"
+                            ></b-form-input>
+                          </b-form-group>
+                        </b-dropdown-form>
+                        <b-dropdown-divider></b-dropdown-divider>
+                        <b-dropdown-item
+                          v-for="item in inkindDonationOptions"
+                          :key="item._id"
+                          @click="selectInventoryAdjItem(item)"
+                        >
+                          {{ item.name }} <span style="color: grey; font-size: 12px">{{ item.sku }}</span>
+                        </b-dropdown-item>
+                      </b-dropdown>
+                    </b-col>
+                  </b-row>
+
+                  <b-row v-if="inventoryAdjForm.item !== null" class="pt-3">
+                    <b-col cols="12" md="4">
+                      <label for="inventory-adj-item-quantity">
+                        Current Quantity
+                      </label>
+                      <b-form-input label="inventory-adj-item-quantity" :value="inventoryAdjForm.item.quantity" disabled></b-form-input>
+                    </b-col>
+
+                    <b-col cols="12" md="4">
+                      <label for="inventory-adj-item-quantity">
+                        New Quantity
+                      </label>
+                      <b-form-input
+                        type="number"
+                        label="inventory-adj-item-quantity"
+                        v-model="inventoryAdjForm.newQuantity"
+                        lazy-formatter
+                        :formatter="validateNumber"
+                        @blur="inventoryAdjForm.quantity = Number(inventoryAdjForm.newQuantity) - Number(inventoryAdjForm.item.quantity)"
+                      ></b-form-input>
+                    </b-col>
+
+                    <b-col cols="12" md="4">
+                      <label for="inventory-adj-item-quantity">
+                        Adjusted Quantity
+                      </label>
+                      <b-form-input label="inventory-adj-item-quantity" :value="inventoryAdjForm.quantity" disabled></b-form-input>
+                    </b-col>
+                  </b-row>
+
+                  <b-row class="pt-4 pb-3" align-h="center">
+                    <b-col cols="2">
+                      <b-button
+                        style="font-size: 16px; padding: 8px; width: 150px;"
+                        pill
+                        variant="danger"
+                        @click="inventoryAdjConfirmModal = !inventoryAdjConfirmModal"
+                      >
+                        Enter adjustment
+                      </b-button>
+                    </b-col>
+                  </b-row>
+                </b-container>
+
+                <b-modal
+                  v-model="inventoryAdjConfirmModal"
+                  @ok="createdInkindDonationTransaction"
+                  @cancel="inventoryAdjConfirmModal = false"
+                >
+                  <b-container fluid>
+                    <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
+                      Are you sure with all the details?
+                    </h1>
+                  </b-container>
+                </b-modal>
+              </b-card>
+            </b-col>
+          </b-row>
+        </div>
+      </b-modal>
+    </b-card>
+  </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+import _ from 'lodash'
+
+const axios = require('axios').default
+
 export default {
   data () {
     return {
+      pageOptions: [5, 10, 20],
       items: [
         { item: 'Unicef Shirt', qty: 80, ctgry: 'Apparel' },
         { item: 'Monggol Pencil', qty: 300, ctgry: 'School Material' },
@@ -458,156 +710,271 @@ export default {
       totalRows: 1,
       currentPage: 1,
       perPage: 5,
-      pageOptions: [5, 10, { value: 100, text: 'Show a lot' }],
-      sortBy: '',
-      sortDesc: false,
-      sortDirection: 'asc',
-      filter: null,
-      filterOn: [],
-      infoModal: {
-        id: 'info-modal',
-        title: '',
-        content: ''
+      inkindDonationFields: [
+        { key: 'sku', label: 'SKU' },
+        { key: 'name', label: 'Item' },
+        { key: 'donor', label: 'Donor' },
+        { key: 'quantity', label: 'Quantity' },
+        { key: 'category.name', label: 'Category' },
+        { key: 'bestBeforeDate', label: 'Best Before' },
+        { key: 'expirationDate', label: 'Expiration Date' }
+      ],
+      inkindDonations: [],
+      inkindDonationTotal: 0,
+      inkindDonationCurrentPage: 1,
+      inkindDonationPerPage: 5,
+      createItemModal: false,
+      createItemConfirmModal: false,
+      createItemForm: {
+        sku: '',
+        name: '',
+        description: '',
+        quantity: 0,
+        unit: 'boxes',
+        donor: '',
+        category: null,
+        categoryCustomFields: []
       },
-      items2: [
-        { date: '9/27/21', item: 'Unicef Shirt', description: 'Large', donor: 'Unicef Philippines', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Unicef Shirt', description: 'Medium', donor: 'Unicef Philippines', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Unicef Shirt', description: 'Small', donor: 'Unicef Philippines', qty: 40, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Monggol Pencil', description: 'Volume 2 ', donor: 'Monggol Philippines Inc.', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Nissin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' },
-        { date: '9/27/21', item: 'FUnicef Shirt Large', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'FUnicef Shirt Medium', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'FUnicef Shirt Small', qty: 40, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Bonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Zissin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' },
-        { date: '9/27/21', item: 'Bnicef Shirt Large', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Bnicef Shirt Medium', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Bnicef Shirt Small', qty: 40, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Nonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Missin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' },
-        { date: '9/27/21', item: 'Ynicef Shirt Large', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Ynicef Shirt Medium', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Ynicef Shirt Small', qty: 40, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Yonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Pissin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' }
+      unitOptions: [
+        { value: 'boxes', text: 'Boxes' },
+        { value: 'pcs', text: 'Pieces' },
+        { value: 'packs', text: 'Packs' },
+        { value: 'bottles', text: 'Bottles' },
+        { value: 'gallons', text: 'Gallons' },
+        { value: 'kg', text: 'Kilograms' },
+        { value: 'L', text: 'Liters' }
       ],
-      fields2: [
-        { key: 'item', label: 'Item', sortable: true, class: 'text-center' },
-        { key: 'description', label: 'Description', sortable: true, class: 'text-center' },
-        { key: 'donor', label: 'Donor', sortable: true, class: 'text-center' },
-        { key: 'qty', label: 'Quantity', sortable: true, class: 'text-center' },
-        { key: 'ctgry', label: 'Category', sortable: true, class: 'text-center' },
-        { key: 'bestbefore', label: 'Best Before', sortable: true, class: 'text-center' },
-        { key: 'expiration', label: 'Expiration Date', sortable: true, class: 'text-center' },
-        { key: 'actions', label: ' ' }
+      categoryOptions: [],
+      transactionModal: false,
+      transactionChoice: 'send-donation',
+      transactionChoices: [
+        { value: 'send-donation', text: 'Send an In-Kind Donation to an Organization' },
+        { value: 'inventory-adjustment', text: 'Inventory Adjustment' }
       ],
-      totalRows2: 1,
-      currentPage2: 1,
-      perPage2: 5,
-      pageOptions2: [5, 10, { value: 100, text: 'Show a lot' }],
-      sortBy2: '',
-      sortDesc2: false,
-      sortDirection2: 'asc',
-      filter2: null,
-      filterOn2: [],
-      infoModal2: {
-        id2: 'info-modal',
-        title2: '',
-        content2: ''
+      inventoryAdjConfirmModal: false,
+      inventoryAdjForm: {
+        item: null,
+        newQuantity: 0,
+        quantity: 0,
+        date: new Date()
       },
-      showModal: false,
-      showModaltwo: false,
-      showModalthree: false,
-      showModalfour: false,
-      selected: null,
-      chose: 'add-donation',
-      optionz: [
-        { value: null, text: 'Select the unit of measurement' },
-        { value: 'a', text: 'gal' },
-        { value: 'b', text: 'lb' },
-        { value: 'c', text: 'ft' },
-        { value: 'd', text: 'box' },
-        { value: 'e', text: 'pc' },
-        { value: 'f', text: 'pack' }
-      ],
-      options: ['Food', 'Apparel', 'School Supply', 'Material'],
-      search: '',
-      value: [],
-      choices: [
-        { value: 'add-donation', text: 'Add a Donation' },
-        { value: 'send-donation', text: 'Send an In-Kind' },
-        { value: 'shrinkage-donation', text: 'Enter a Shrinkage' }
-      ]
+      inkindDonationOptions: [],
+      outboundTransactionConfirmModal: false,
+      outboundTransactionForm: {
+        item: null,
+        quantity: 0,
+        date: new Date(),
+        receiver: {
+          type: 'ORGANIZATION',
+          organization: {
+            name: '',
+            contacts: []
+          }
+        }
+      },
+      orgContactFormDropdown: false,
+      orgContactForm: {
+        name: '',
+        contactMethods: [{
+          type: 'EMAIL',
+          value: ''
+        }]
+      }
     }
   },
   computed: {
-    sortOption () {
-      // Create an options list from our fields
-      return this.fields
-        .filter(f => f.sortable)
-        .map(f => {
-          return { text: f.label, value: f.key }
-        })
-    },
-    criteria () {
-      // Compute the search criteria
-      return this.search.trim().toLowerCase()
-    },
-    availableOptions () {
-      const criteria = this.criteria
-      // Filter out already selected options
-      const options = this.options.filter(opt => this.value.indexOf(opt) === -1)
-      if (criteria) {
-        // Show only options that match criteria
-        return options.filter(opt => opt.toLowerCase().indexOf(criteria) > -1)
-      }
-      // Show all options available
-      return options
-    },
-    searchDesc () {
-      if (this.criteria && this.availableOptions.length === 0) {
-        return 'There are no tags matching your search criteria'
-      }
-      return ''
+    ...mapGetters(['token']),
+    inkindDonationPageOffset () {
+      return (this.inkindDonationCurrentPage - 1) * this.inkindDonationPerPage
     }
+
   },
-  mounted () {
-    // Set the initial number of items
-    this.totalRows = this.items.length
-    this.totalRows2 = this.items.length
+  created () {
+    this.searchInkindDonationCategories()
+    this.searchInkindDonations()
   },
   methods: {
-    info (item, index, button) {
-      this.infoModal.title = `Row index: ${index}`
-      this.infoModal.content = JSON.stringify(item, null, 2)
-      this.$root.$emit('bv::show::modal', this.infoModal.id, button)
+    async getInkindDonations (ctx) {
+      const queryString = new URLSearchParams()
+
+      queryString.set('limit', this.perPage)
+      queryString.set('offset', this.inkindDonationPageOffset)
+
+      const { data } = await axios.get(`http://localhost:3000/inkind-donations?${queryString.toString()}`, {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }
+      })
+
+      const { results, total } = data
+
+      this.inkindDonationTotal = total
+
+      return results
     },
-    info2 (item, index, button) {
-      this.infoModal2.title2 = `Row index: ${index}`
-      this.infoModal2.content2 = JSON.stringify(item, null, 2)
-      this.$root.$emit('bv::show::modal', this.infoModal2.id2, button)
+    async searchInkindDonationCategories (value) {
+      const queryString = new URLSearchParams()
+
+      queryString.set('limit', 5)
+
+      if (value !== undefined && value !== '') {
+        queryString.set('filters.name', value)
+      }
+
+      const { data } = await axios.get(`http://localhost:3000/inkind-donation-categories?${queryString.toString()}`, {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }
+      })
+
+      this.categoryOptions = data.results
     },
-    resetInfoModal () {
-      this.infoModal.title = ''
-      this.infoModal.content = ''
+    selectCategory (category) {
+      this.createItemForm.category = category
+
+      this.createItemForm.categoryCustomFields = []
+
+      if (category.customFields !== undefined) {
+        for (const key of Object.keys(category.customFields)) {
+          this.createItemForm.categoryCustomFields.push({
+            label: category.customFields[key].label,
+            dataType: category.customFields[key].dataType,
+            key,
+            value: undefined
+          })
+        }
+      }
     },
-    resetInfoModal2 () {
-      this.infoModal2.title2 = ''
-      this.infoModal2.content2 = ''
+    async createdInkindDonation () {
+      const {
+        sku,
+        name,
+        description,
+        quantity,
+        unit,
+        donor,
+        category,
+        categoryCustomFields
+      } = this.createItemForm
+
+      const inkindDonation = _.pickBy({
+        sku,
+        name,
+        description,
+        quantity,
+        unit,
+        donor,
+        categoryId: category._id,
+        categoryCustomFields
+      }, _.identity)
+
+      await axios.post('http://localhost:3000/inkind-donations', inkindDonation, {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }
+      })
+
+      this.$router.go()
     },
-    onFiltered (filteredItems) {
-      // Trigger pagination to update the number of buttons/pages due to filtering
-      this.totalRows = filteredItems.length
-      this.currentPage = 1
+    async searchInkindDonations (value) {
+      const queryString = new URLSearchParams()
+
+      queryString.set('limit', 5)
+
+      if (value !== undefined && value !== '') {
+        queryString.set('filters.query', value)
+      }
+
+      const { data } = await axios.get(`http://localhost:3000/inkind-donations?${queryString.toString()}`, {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }
+      })
+
+      this.inkindDonationOptions = data.results
     },
-    onFiltered2 (filteredItems) {
-      // Trigger pagination to update the number of buttons/pages due to filtering
-      this.totalRows2 = filteredItems.length
-      this.currentPage2 = 1
+    selectInventoryAdjItem (item) {
+      this.inventoryAdjForm.item = item
     },
-    onOptionClick ({ options, addTag }) {
-      addTag(options)
-      this.search = ''
+    validateNumber (value) {
+      const parsedNumber = Number(value)
+
+      return isNaN(parsedNumber) ? '0' : parsedNumber
+    },
+    async createdInkindDonationTransaction () {
+      const {
+        item,
+        quantity,
+        date
+      } = this.inventoryAdjForm
+
+      await axios.post('http://localhost:3000/inkind-donation-transactions', {
+        sku: item.sku,
+        quantity,
+        date
+      }, {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }
+      })
+
+      this.$router.go()
+    },
+    async createdInkindDonationOutboundTransaction () {
+      const {
+        item,
+        quantity,
+        date,
+        receiver
+      } = this.outboundTransactionForm
+
+      await axios.post('http://localhost:3000/inkind-donation-outbound-transactions', {
+        sku: item.sku,
+        quantity,
+        date,
+        receiver
+      }, {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }
+      })
+
+      this.$router.push({
+        path: '/inkind-history'
+      })
+    },
+    addOutboundTransactionContact () {
+      if (this.orgContactForm.name !== '' && this.orgContactForm.contactMethods[0].value !== '') {
+        this.outboundTransactionForm.receiver.organization.contacts.push(this.orgContactForm)
+      }
+
+      this.orgContactForm = {
+        name: '',
+        contactMethods: [{
+          type: 'EMAIL',
+          value: ''
+        }]
+      }
+      this.$refs.orgContactFormDropdown.hide(true)
+    },
+    removeOrgContact (index) {
+      this.outboundTransactionForm.receiver.organization.contacts.splice(index, 1)
+    },
+    selectOutboundTransactionItem (item) {
+      this.outboundTransactionForm.item = item
+    },
+    validateOutboundTransactionQuantity (value) {
+      const parsedNumber = Number(value)
+
+      if (isNaN(parsedNumber) || parsedNumber < 0) {
+        return 0
+      }
+
+      if (parsedNumber > this.outboundTransactionForm.item.quantity) {
+        return 0
+      }
+
+      return parsedNumber
     }
   }
 }
