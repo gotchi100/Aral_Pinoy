@@ -208,6 +208,16 @@
                   </b-col>
                   <b-col cols="2">
                     <b-button
+                      to="/incoming-history"
+                      style="font-size: 16px; width: 200px;"
+                      pill
+                      variant="danger"
+                    >
+                      View Transactions
+                    </b-button>
+                  </b-col>
+                  <b-col cols="2">
+                    <b-button
                       style="font-size: 16px; width: 200px;"
                       to="/category-list"
                       pill
@@ -918,7 +928,9 @@ export default {
         }
       })
 
-      this.$router.go()
+      this.$router.push({
+        path: '/incoming-history'
+      })
     },
     async createdInkindDonationOutboundTransaction () {
       const {
