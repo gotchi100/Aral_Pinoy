@@ -64,13 +64,14 @@
             >
               <template #cell(bestBeforeDate)="row">
                 <b-icon
-                  :icon="row.item.customFields.bestBeforeDate ? 'check-circle' : 'circle'"
+                  :icon="hasCustomField(row.item, 'bestBeforeDate') ? 'check-circle' : 'circle'"
                   font-scale="1"
                 ></b-icon>
               </template>
+
               <template #cell(expirationDate)="row">
                 <b-icon
-                  :icon="row.item.customFields.expirationDate ? 'check-circle' : 'circle'"
+                  :icon="hasCustomField(row.item, 'expirationDate') ? 'check-circle' : 'circle'"
                   font-scale="1"
                 ></b-icon>
               </template>
@@ -127,7 +128,7 @@
           <b-row class="pt-3">
             <b-col>
               <b-form-checkbox
-                v-model="addCategoryForm.customFields.bestBeforeDate"
+                v-model="checkBestBeforeDate"
               >
                 &nbsp; Requires Best Before Date?
               </b-form-checkbox>
@@ -135,7 +136,7 @@
 
             <b-col>
               <b-form-checkbox
-                v-model="addCategoryForm.customFields.expirationDate"
+                v-model="checkExpirationDate"
               >
                 &nbsp; Requires Expiration Date?
               </b-form-checkbox>
@@ -191,12 +192,10 @@ export default {
       perPage: 5,
       pageOptions: [5, 10, 20],
       addCategoryForm: {
-        name: '',
-        customFields: {
-          bestBeforeDate: false,
-          expirationDate: false
-        }
+        name: ''
       },
+      checkBestBeforeDate: false,
+      checkExpirationDate: false,
       showAddModal: false,
       showAddConfirmationModal: false
     }
@@ -227,12 +226,23 @@ export default {
       return results
     },
     async addCategory () {
-      const {
-        name,
-        customFields
-      } = this.addCategoryForm
+      const { name } = this.addCategoryForm
 
-      console.log(customFields)
+      const customFields = {}
+
+      if (this.checkBestBeforeDate === true) {
+        customFields.bestBeforeDate = {
+          label: 'Best Before Date',
+          dataType: 'DATE'
+        }
+      }
+
+      if (this.checkExpirationDate === true) {
+        customFields.expirationDate = {
+          label: 'Expiration Date',
+          dataType: 'DATE'
+        }
+      }
 
       await axios.post('http://localhost:3000/inkind-donation-categories', {
         name,
@@ -244,6 +254,13 @@ export default {
       })
 
       this.$router.go()
+    },
+    hasCustomField (category, field) {
+      if (category.customFields === undefined) {
+        return false
+      }
+
+      return category.customFields[field] !== undefined
     }
   }
 }
