@@ -167,19 +167,23 @@
                       primary-key="_id"
                     >
                       <template #cell(bestBeforeDate)="row">
-                        {{
-                          new Date(row.item.category.customFields.bestBeforeDate).toLocaleString('en-us', {
-                            dateStyle: 'medium'
-                          })
-                        }}
+                        <span v-if="row.item.category.customFields">
+                          {{
+                            new Date(row.item.category.customFields.bestBeforeDate).toLocaleString('en-us', {
+                              dateStyle: 'medium'
+                            })
+                          }}
+                        </span>
                       </template>
 
                       <template #cell(expirationDate)="row">
-                        {{
-                          new Date(row.item.category.customFields.expirationDate).toLocaleString('en-us', {
-                            dateStyle: 'medium'
-                          })
-                        }}
+                        <span v-if="row.item.category.customFields">
+                          {{
+                            new Date(row.item.category.customFields.expirationDate).toLocaleString('en-us', {
+                              dateStyle: 'medium'
+                            })
+                          }}
+                        </span>
                       </template>
                     </b-table>
                   </b-col>
