@@ -137,7 +137,6 @@ export default {
         { key: 'item.name', label: 'Item' },
         { key: 'item.category.name', label: 'Category' },
         { key: 'quantity', label: 'Quantity' },
-        { key: 'donor', label: 'Donor' },
         { key: 'status', label: 'Status' }
       ],
       total: 0,
