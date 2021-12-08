@@ -1,339 +1,347 @@
 <template>
-<div class="inkindlist">
-  <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
-  <b-container fluid>
-    <!-- User Interface controls -->
-    <h1 style="font-family:'Bebas Neue', cursive;">
-        In-Kind Transaction History
-    </h1>
-    <b-tabs pills card>
-      <b-tab title="Aral Pinoy Events" active>
-        <b-card-text>
-          <b-row>
-            <b-container class="bv-example-row">
-              <b-row>
-                <b-col>
-                  <b-col sm="5" md="6" class="my-1">
-                    <b-form-group style="font-size: 15px; font-family:'Bebas Neue', cursive;"
-                      label="Per page"
-                      label-for="per-page-select"
-                      label-cols-sm="6"
-                      label-cols-md="4"
-                      label-cols-lg="3"
-                      label-align-sm="right"
-                      label-size="sm"
-                      class="mb-0"
-                    >
-                      <b-form-select
-                        id="per-page-select"
-                        v-model="perPage"
-                        :options="pageOptions"
-                        size="sm"
-                      ></b-form-select>
-                    </b-form-group>
-                  </b-col>
-                </b-col>
-                <b-col>
-                </b-col>
-                <b-col>
-                  <br>
-                  <b-input-group size="sm">
-                    <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
-                    <b-form-input
-                      id="filter-input"
-                      v-model="filter"
-                      type="search"
-                      placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
-                    ></b-form-input>
-                  </b-input-group>
-                  <br>
-                </b-col>
-              </b-row>
-            </b-container>
-          </b-row>
-          <!-- Main table element -->
-          <b-table
-            :items="items"
-            :fields="fields"
-            :current-page="currentPage"
-            :per-page="perPage"
-            :filter="filter"
-            :filter-included-fields="filterOn"
-            :sort-by.sync="sortBy"
-            :sort-desc.sync="sortDesc"
-            :sort-direction="sortDirection"
-            stacked="md"
-            show-empty
-            small
-            @filtered="onFiltered"
-            style="background:white"
-          >
-            <template #cell(name)="row">
-              {{ row.value.first }} {{ row.value.last }}
-            </template>
-
-            <template #cell(status)="row">
-              <b-dropdown id="dropdown-1" :text="row.value" class="m-md-2" size="sm" v-if="row.value==='Pending'">
-                <b-dropdown-item>Complete</b-dropdown-item>
-                <b-dropdown-item>Returned</b-dropdown-item>
-              </b-dropdown>
-              <span v-else>
-                {{row.value}}
-              </span>
-            </template>
-
-            <template #row-details="row">
-              <b-card>
-                <ul>
-                  <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
-                </ul>
-              </b-card>
-            </template>
-          </b-table>
+  <div class="inkindlist">
+    <b-card style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
+      <b-container fluid>
         <b-row>
-          <b-col></b-col>
-          <b-col>
-              <b-col class="my-1">
-                <b-pagination
-                  v-model="currentPage"
-                  :total-rows="totalRows"
-                  :per-page="perPage"
-                  align="fill"
-                  size="sm"
-                  class="my-0"
-                ></b-pagination>
-              </b-col>
+          <b-col cols="12">
+            <h1 style="font-family:'Bebas Neue', cursive;">
+              In-Kind Transaction History
+            </h1>
           </b-col>
-          <b-col></b-col>
         </b-row>
-        </b-card-text>
-      </b-tab>
-      <b-tab title="External Organizations">
-        <b-card-text>
-          <b-row>
-            <b-container class="bv-example-row">
-              <b-row>
-                <b-col>
-                  <b-col sm="5" md="6" class="my-1">
-                    <b-form-group style="font-size: 15px; font-family:'Bebas Neue', cursive;"
-                      label="Per page"
-                      label-for="per-page-select"
-                      label-cols-sm="6"
-                      label-cols-md="4"
-                      label-cols-lg="3"
-                      label-align-sm="right"
-                      label-size="sm"
-                      class="mb-0"
-                    >
-                      <b-form-select
-                        id="per-page-select"
-                        v-model="perPage2"
-                        :options="pageOptions2"
-                        size="sm"
-                      ></b-form-select>
-                    </b-form-group>
-                  </b-col>
-                </b-col>
-                <b-col>
-                </b-col>
-                <b-col>
-                  <br>
-                  <b-input-group size="sm">
-                    <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
-                    <b-form-input
-                      id="filter-input"
-                      v-model="filter2"
-                      type="search"
-                      placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
-                    ></b-form-input>
-                  </b-input-group>
-                  <br>
-                </b-col>
-              </b-row>
-            </b-container>
-          </b-row>
-          <!-- Main table element -->
-          <b-table
-            :items="items2"
-            :fields="fields2"
-            :current-page="currentPage2"
-            :per-page="perPage2"
-            :filter="filter2"
-            :filter-included-fields="filterOn2"
-            :sort-by.sync="sortBy2"
-            :sort-desc.sync="sortDesc2"
-            :sort-direction="sortDirection2"
-            stacked="md"
-            show-empty
-            small
-            @filtered="onFiltered2"
-            style="background:white"
-          >
-            <template #cell(name)="row">
-              {{ row.value.first }} {{ row.value.last }}
-            </template>
 
-            <template #cell(status)="row">
-              <b-dropdown id="dropdown-1" :text="row.value" class="m-md-2" size="sm" v-if="row.value==='Pending'">
-                <b-dropdown-item>Complete</b-dropdown-item>
-                <b-dropdown-item>Returned</b-dropdown-item>
-              </b-dropdown>
-              <span v-else>
-                {{row.value}}
-              </span>
-            </template>
-
-            <template #row-details="row">
-              <b-card>
-                <ul>
-                  <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
-                </ul>
-              </b-card>
-            </template>
-          </b-table>
         <b-row>
-          <b-col></b-col>
-          <b-col>
-              <b-col class="my-1">
-                <b-pagination
-                  v-model="currentPage2"
-                  :total-rows="totalRows2"
-                  :per-page="perPage2"
-                  align="fill"
-                  size="sm"
-                  class="my-0"
-                ></b-pagination>
-              </b-col>
+          <b-col cols="12">
+            <b-tabs pills card>
+              <b-tab title="External Organizations" active>
+                <b-row>
+                  <b-col cols="12">
+                    <b-container>
+                      <b-row>
+                        <b-col cols="4">
+                          <b-form-group
+                            style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                            label="Per page"
+                            label-for="per-page-select"
+                            content-cols="12"
+                          >
+                            <b-form-select
+                              id="per-page-select"
+                              class="w-25"
+                              v-model="orgTransactionPerPage"
+                              :options="pageOptions"
+                            ></b-form-select>
+                          </b-form-group>
+                        </b-col>
+
+                        <!-- TODO: Implement search for inkind donation outbound transactions for organizations -->
+                        <!-- <b-col>
+                          <br>
+                          <b-input-group size="sm">
+                            <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
+                            <b-form-input
+                              id="filter-input"
+                              v-model="filter"
+                              type="search"
+                              placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
+                            ></b-form-input>
+                          </b-input-group>
+                          <br>
+                        </b-col> -->
+                      </b-row>
+                    </b-container>
+                  </b-col>
+                </b-row>
+
+                <b-row class="pt-4">
+                  <b-col cols="12">
+                    <b-table
+                      :items="getOrganizationTransactions"
+                      :fields="orgTransactionFields"
+                      :current-page="orgTransactionCurrentPage"
+                      :per-page="orgTransactionPerPage"
+                      stacked="md"
+                      style="background:white"
+                      show-empty
+                      small
+                      primary-key="_id"
+                    >
+                    <template #cell(date)="row">
+                        {{
+                          new Date(row.value).toLocaleString('en-us', {
+                            dateStyle: 'medium'
+                          })
+                        }}
+                      </template>
+
+                      <template #cell(name)="row">
+                        {{ row.value.first }} {{ row.value.last }}
+                      </template>
+
+                      <template #cell(status)="row">
+                        <b-dropdown v-if="row.value==='PENDING'" :text="row.value" size="sm">
+                         <b-dropdown-item
+                            @click="showTransactionStatusUpdateConfirmModal(row.item._id, 'COMPLETE')"
+                          >
+                            COMPLETE
+                          </b-dropdown-item>
+
+                          <b-dropdown-item
+                            @click="showTransactionStatusUpdateConfirmModal(row.item._id, 'RETURNED')"
+                          >
+                            RETURNED
+                          </b-dropdown-item>
+                        </b-dropdown>
+
+                        <span v-else>
+                          {{ row.value }}
+                        </span>
+                      </template>
+                    </b-table>
+                  </b-col>
+                </b-row>
+
+                <b-row class="pt-4 justify-content-md-center">
+                    <b-col cols="6" class="my-1">
+                      <b-pagination
+                        v-model="orgTransactionCurrentPage"
+                        :total-rows="orgTransactionTotal"
+                        :per-page="orgTransactionPerPage"
+                        align="fill"
+                        size="sm"
+                        class="my-0"
+                      ></b-pagination>
+                    </b-col>
+                </b-row>
+              </b-tab>
+
+              <b-tab title="Aral Pinoy Events">
+                <b-row>
+                  <b-col cols="12">
+                    <b-container>
+                      <b-row>
+                        <b-col cols="4">
+                          <b-form-group
+                            style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                            label="Per page"
+                            label-for="per-page-select"
+                            content-cols="12"
+                          >
+                            <b-form-select
+                              id="per-page-select"
+                              class="w-25"
+                              v-model="eventTransactionPerPage"
+                              :options="pageOptions"
+                            ></b-form-select>
+                          </b-form-group>
+                        </b-col>
+
+                        <!-- TODO: Implement search for inkind donation outbound transactions for organizations -->
+                        <!-- <b-col>
+                          <br>
+                          <b-input-group size="sm">
+                            <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
+                            <b-form-input
+                              id="filter-input"
+                              v-model="filter"
+                              type="search"
+                              placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
+                            ></b-form-input>
+                          </b-input-group>
+                          <br>
+                        </b-col> -->
+                      </b-row>
+                    </b-container>
+                  </b-col>
+                </b-row>
+
+                <b-row class="pt-4">
+                  <b-col cols="12">
+                    <b-table
+                      :items="getEventTransactions"
+                      :fields="eventTransactionFields"
+                      :current-page="eventTransactionCurrentPage"
+                      :per-page="eventTransactionPerPage"
+                      stacked="md"
+                      style="background:white"
+                      show-empty
+                      small
+                      primary-key="_id"
+                    >
+                      <template #cell(date)="row">
+                        {{
+                          new Date(row.value).toLocaleString('en-us', {
+                            dateStyle: 'medium'
+                          })
+                        }}
+                      </template>
+
+                      <template #cell(name)="row">
+                        {{ row.value.first }} {{ row.value.last }}
+                      </template>
+
+                      <template #cell(status)="row">
+                        <b-dropdown v-if="row.value==='PENDING'" :text="row.value" size="sm">
+                          <b-dropdown-item
+                            @click="showTransactionStatusUpdateConfirmModal(row.item._id, 'COMPLETE')"
+                          >
+                            COMPLETE
+                          </b-dropdown-item>
+
+                          <b-dropdown-item
+                            @click="showTransactionStatusUpdateConfirmModal(row.item._id, 'RETURNED')"
+                          >
+                            RETURNED
+                          </b-dropdown-item>
+                        </b-dropdown>
+
+                        <span v-else>
+                          {{ row.value }}
+                        </span>
+                      </template>
+                    </b-table>
+                  </b-col>
+                </b-row>
+
+                 <b-row class="pt-4 justify-content-md-center">
+                    <b-col cols="6" class="my-1">
+                      <b-pagination
+                        v-model="eventTransactionCurrentPage"
+                        :total-rows="eventTransactionTotal"
+                        :per-page="eventTransactionPerPage"
+                        align="fill"
+                        size="sm"
+                        class="my-0"
+                      ></b-pagination>
+                    </b-col>
+                  </b-row>
+              </b-tab>
+            </b-tabs>
           </b-col>
-          <b-col></b-col>
         </b-row>
-        </b-card-text>
-      </b-tab>
-    </b-tabs>
-  </b-container>
-</b-card>
-</div>
+      </b-container>
+    </b-card>
+
+    <b-modal
+      v-model="transactionStatusUpdateConfirmModal"
+      @ok="updateTransactionStatus"
+      @cancel="transactionStatusUpdateConfirmModal = false"
+    >
+      <b-container fluid>
+        <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
+          Are you sure you want to update the transaction?
+        </h1>
+      </b-container>
+    </b-modal>
+  </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
+const axios = require('axios').default
+
 export default {
   data () {
     return {
-      items: [
-        { date: '9/27/21', item: 'Unicef Shirt Large', qty: 20, qtyh: 20, ctgry: 'Apparel', event: 'Batangas Coastal Cleanup', status: 'Pending' },
-        { date: '9/27/21', item: 'Unicef Shirt Medium', qty: 20, qtyh: 20, ctgry: 'Apparel', event: 'Manila Coastal Cleanup', status: 'Pending' },
-        { date: '9/27/21', item: 'Unicef Shirt Small', qty: 40, qtyh: 40, ctgry: 'Apparel', event: 'Paranaque Costal Cleanup', status: 'Pending' },
-        { date: '9/27/21', item: 'Monggol Volume 2 Pencil', qty: 300, qtyh: 30, ctgry: 'School Material', event: 'Rizal Tutoring Community', status: 'Pending' },
-        { date: '9/27/21', item: 'Nissin Cup Noodles', qty: 250, qtyh: 25, ctgry: 'Food', event: 'QC Tree Planting', status: 'Void' },
-        { date: '9/27/21', item: 'Unicef Shirt Large', qty: 20, qtyh: 20, ctgry: 'Apparel', event: 'Batangas Coastal Cleanup', status: 'Pending' },
-        { date: '9/27/21', item: 'Unicef Shirt Medium', qty: 20, qtyh: 20, ctgry: 'Apparel', event: 'Manila Coastal Cleanup', status: 'Pending' },
-        { date: '9/27/21', item: 'Unicef Shirt Small', qty: 40, qtyh: 40, ctgry: 'Apparel', event: 'Paranaque Costal Cleanup', status: 'Complete' },
-        { date: '9/27/21', item: 'Monggol Volume 2 Pencil', qty: 300, qtyh: 30, ctgry: 'School Material', event: 'Rizal Tutoring Community', status: 'Complete' },
-        { date: '9/27/21', item: 'Zissin Cup Noodles', qty: 250, qtyh: 25, ctgry: 'Food', event: 'QC Tree Planting', status: 'Pending' }
+      pageOptions: [5, 10, 20],
+      eventTransactionFields: [
+        { key: 'date', label: 'Date Sent', sortable: true },
+        { key: 'item.name', label: 'Item', sortable: true },
+        { key: 'quantity', label: 'QTY Donated', sortable: true },
+        { key: 'category.name', label: 'Category', sortable: true },
+        { key: 'receiver.event.name', label: 'Event', sortable: true },
+        { key: 'status', label: 'Status', sortable: true }
       ],
-      fields: [
-        { key: 'date', label: 'Date Sent', sortable: true, class: 'text-center' },
-        { key: 'item', label: 'Item', sortable: true, class: 'text-center' },
-        { key: 'qty', label: 'QTY Donated', sortable: true, class: 'text-center' },
-        { key: 'ctgry', label: 'Category', sortable: true, class: 'text-center' },
-        { key: 'event', label: 'Event', sortable: true, class: 'text-center' },
-        { key: 'status', label: 'Status', sortable: true, class: 'text-center' },
-        { key: 'actions', label: ' ' }
+      orgTransactionFields: [
+        { key: 'date', label: 'Date Sent', sortable: true },
+        { key: 'item.name', label: 'Item', sortable: true },
+        { key: 'item.category.name', label: 'Category', sortable: true },
+        { key: 'quantity', label: 'Quantity Donated', sortable: true },
+        { key: 'receiver.organization.name', label: 'Organization', sortable: true },
+        { key: 'status', label: 'Status', sortable: true }
       ],
-      totalRows: 1,
-      currentPage: 1,
-      perPage: 5,
-      pageOptions: [5, 10, { value: 100, text: 'Show a lot' }],
-      sortBy: '',
-      sortDesc: false,
-      sortDirection: 'asc',
-      filter: null,
-      filterOn: [],
-      infoModal: {
-        id: 'info-modal',
-        title: '',
-        content: ''
-      },
-      items2: [
-        { date: '9/27/21', item: 'Unicef Shirt Large', qty: 20, qtyh: 20, ctgry: 'Apparel', organization: 'Red Cross Philippines', status: 'Pending' },
-        { date: '9/27/21', item: 'Unicef Shirt Medium', qty: 20, qtyh: 20, ctgry: 'Apparel', organization: 'PAWS Philippines', status: 'Pending' },
-        { date: '9/27/21', item: 'Unicef Shirt Small', qty: 40, qtyh: 40, ctgry: 'Apparel', organization: 'PAWS Philippines', status: 'Pending' },
-        { date: '9/27/21', item: 'Monggol Volume 2 Pencil', qty: 300, qtyh: 30, ctgry: 'School Material', organization: 'Rizal Foundation Inc.', status: 'Complete' },
-        { date: '9/27/21', item: 'Nissin Cup Noodles', qty: 250, qtyh: 25, ctgry: 'Food', organization: 'QC Government', status: 'Void' },
-        { date: '9/27/21', item: 'Unicef Shirt Large', qty: 20, qtyh: 20, ctgry: 'Apparel', organization: 'Red Cross Philippines', status: 'Pending' },
-        { date: '9/27/21', item: 'Unicef Shirt Medium', qty: 20, qtyh: 20, ctgry: 'Apparel', organization: 'PAWS Philippines', status: 'Pending' },
-        { date: '9/27/21', item: 'Unicef Shirt Small', qty: 40, qtyh: 40, ctgry: 'Apparel', organization: 'PAWS Philippines', status: 'Complete' },
-        { date: '9/27/21', item: 'Monggol Volume 2 Pencil', qty: 300, qtyh: 30, ctgry: 'School Material', organization: 'Rizal Foundation Inc.', status: 'Complete' },
-        { date: '9/27/21', item: 'Jissin Cup Noodles', qty: 250, qtyh: 25, ctgry: 'Food', organization: 'QC Government', status: 'Pending' }
-      ],
-      fields2: [
-        { key: 'date', label: 'Date Sent', sortable: true, class: 'text-center' },
-        { key: 'item', label: 'Item', sortable: true, class: 'text-center' },
-        { key: 'qty', label: 'QTY Donated', sortable: true, class: 'text-center' },
-        { key: 'ctgry', label: 'Category', sortable: true, class: 'text-center' },
-        { key: 'organization', label: 'Organization', sortable: true, class: 'text-center' },
-        { key: 'status', label: 'Status', sortable: true, class: 'text-center' },
-        { key: 'actions', label: ' ' }
-      ],
-      totalRows2: 1,
-      currentPage2: 1,
-      perPage2: 5,
-      pageOptions2: [5, 10, { value: 100, text: 'Show a lot' }],
-      sortBy2: '',
-      sortDesc2: false,
-      sortDirection2: 'asc',
-      filter2: null,
-      filterOn2: [],
-      infoModal2: {
-        id2: 'info-modal2',
-        title2: '',
-        content2: ''
+      eventTransactionTotal: 1,
+      eventTransactionCurrentPage: 1,
+      eventTransactionPerPage: 5,
+      orgTransactionTotal: 0,
+      orgTransactionCurrentPage: 1,
+      orgTransactionPerPage: 5,
+      transactionStatusUpdateConfirmModal: false,
+      transactionStatusForm: {
+        id: '',
+        status: ''
       }
     }
   },
   computed: {
-    sortOption () {
-      // Create an options list from our fields
-      return this.fields
-        .filter(f => f.sortable)
-        .map(f => {
-          return { text: f.label, value: f.key }
-        })
+    ...mapGetters(['token']),
+    eventTransactionPageOffset () {
+      return (this.eventTransactionCurrentPage - 1) * this.eventTransactionPerPage
+    },
+    orgTransactionPageOffset () {
+      return (this.orgTransactionCurrentPage - 1) * this.orgTransactionPerPage
     }
   },
-  mounted () {
-    // Set the initial number of items
-    this.totalRows = this.items.length
-    this.totalRows2 = this.items.length
-  },
   methods: {
-    info (item, index, button) {
-      this.infoModal.title = `Row index: ${index}`
-      this.infoModal.content = JSON.stringify(item, null, 2)
-      this.$root.$emit('bv::show::modal', this.infoModal.id, button)
+    async getEventTransactions (ctx) {
+      const queryString = new URLSearchParams()
+
+      queryString.set('limit', this.eventTransactionPerPage)
+      queryString.set('offset', this.eventTransactionPageOffset)
+      queryString.set('filters.receiverType', 'EVENT')
+
+      const { data } = await axios.get(`http://localhost:3000/inkind-donation-outbound-transactions?${queryString.toString()}`, {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }
+      })
+
+      const { results, total } = data
+
+      this.eventTransactionTotal = total
+
+      return results
     },
-    info2 (item, index, button) {
-      this.infoModal2.title2 = `Row index: ${index}`
-      this.infoModal2.content2 = JSON.stringify(item, null, 2)
-      this.$root.$emit('bv::show::modal', this.infoModal2.id2, button)
+    async getOrganizationTransactions (ctx) {
+      const queryString = new URLSearchParams()
+
+      queryString.set('limit', this.orgTransactionPerPage)
+      queryString.set('offset', this.orgTransactionPageOffset)
+      queryString.set('filters.receiverType', 'ORGANIZATION')
+
+      const { data } = await axios.get(`http://localhost:3000/inkind-donation-outbound-transactions?${queryString.toString()}`, {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }
+      })
+
+      const { results, total } = data
+
+      this.orgTransactionTotal = total
+
+      return results
     },
-    resetInfoModal () {
-      this.infoModal.title = ''
-      this.infoModal.content = ''
+    async showTransactionStatusUpdateConfirmModal (id, status) {
+      this.transactionStatusForm = {
+        id,
+        status
+      }
+
+      this.transactionStatusUpdateConfirmModal = true
     },
-    resetInfoModal2 () {
-      this.infoModal2.title2 = ''
-      this.infoModal2.content2 = ''
-    },
-    onFiltered (filteredItems) {
-      // Trigger pagination to update the number of buttons/pages due to filtering
-      this.totalRows = filteredItems.length
-      this.currentPage = 1
-    },
-    onFiltered2 (filteredItems) {
-      // Trigger pagination to update the number of buttons/pages due to filtering
-      this.totalRows2 = filteredItems.length
-      this.currentPage2 = 1
+    async updateTransactionStatus () {
+      const { id, status } = this.transactionStatusForm
+
+      await axios.put(`http://localhost:3000/inkind-donation-outbound-transactions/${id}/status`, {
+        status
+      }, {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }
+      })
+
+      this.$router.go()
     }
   }
 }
