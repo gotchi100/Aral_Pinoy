@@ -45,6 +45,12 @@ const createEventValidator = Joi.object({
     })
   ).unique(),
   sdgIds: Joi.array().items(Joi.objectId()).unique().required(),
+  ikdItems: Joi.array().items(
+    Joi.object({
+      ikdId: Joi.objectId().required(),
+      quantity: Joi.number().min(1).required()
+    })
+  )
 })
 
 const listEventsValidator = Joi.object({

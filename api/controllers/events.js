@@ -7,6 +7,10 @@ const config = require('../config')
 
 const EventModel = require('../models/events')
 const SdgModel = require('../models/sdgs')
+const InkindDonationModel = require('../models/inkind-donations')
+const IkdOutboundTransactionModel = require('../models/inkind-donations/outbound-transactions')
+
+const { OUTBOUND_RECEIVER_TYPES } = require('../constants/inkind-donations')
 
 const { NotFoundError } = require('../errors')
 
@@ -42,14 +46,19 @@ class EventsController {
       goals,
       location,
       contactPersons,
+      logoFile,
       sdgIds,
-      logoFile
+      ikdItems
     } = event
 
     const sanitizedName = sanitize(name)
-    let sdgs
 
-    if (Array.isArray(sdgIds)) {
+    const eventId = new Types.ObjectId()
+    let logoUrl
+    let sdgs
+    let ikds
+
+    if (Array.isArray(sdgIds) && sdgIds.length > 0) {
       sdgs = []
 
       for (const sdgId of sdgIds) {
@@ -68,13 +77,54 @@ class EventsController {
       }
     }
 
-    const _id = new Types.ObjectId()
-    let logoUrl
+    if (Array.isArray(ikdItems) && ikdItems.length > 0) {
+      ikds = []
+
+      for (const item of ikdItems) {
+        const ikd = await InkindDonationModel.findById(
+          item.ikdId, 
+          ['sku', 'name', 'category.name'], 
+          {
+            lean: true
+          }
+        )
+
+        if (ikd === null) {
+          throw new NotFoundError(`In-kind Donation does not exist: ${item.ikdId}`)
+        }
+
+        const itemToAdd = {
+          sku: ikd.sku,
+          name: ikd.name,
+        }
+
+        if (ikd.category !== undefined) {
+          itemToAdd.category = {
+            name: ikd.category.name
+          }
+        }
+
+        ikds.push({
+          item: itemToAdd,
+          quantity: item.quantity
+        })
+
+        await IkdOutboundTransactionModel.create({
+          quantity: item.quantity,
+          date: date.start,
+          item: itemToAdd,
+          receiver: {
+            type: OUTBOUND_RECEIVER_TYPES.EVENT,
+            event: eventId
+          }
+        })
+      }
+    }
 
     if (logoFile !== undefined) {
       const { originalname, buffer} = logoFile
 
-      const filename = `${_id.toString()}/logo-${Date.now().toString(36)}-${originalname}`
+      const filename = `${eventId.toString()}/logo-${Date.now().toString(36)}-${originalname}`
 
       await EventsController.uploadFile(filename, buffer)
 
@@ -83,7 +133,7 @@ class EventsController {
 
     /** @type {Document} */
     const results = await EventModel.create({
-      _id,
+      _id: eventId,
       name: sanitizedName,
       description,
       date,
@@ -94,7 +144,8 @@ class EventsController {
       },
       contactPersons,
       logoUrl,
-      sdgs
+      sdgs,
+      ikds
     })
 
     return results.toObject({
