@@ -6,55 +6,111 @@
       </div>
       <b-card v-if="step === 0" class="card" bg-variant="light" style="display: inline-block; max-height:75rem; width: 415px; border-radius: 20px;">
         <b-container fluid>
-          <b-row class="my-1">
-            <label class="lname" for="input-small">Last Name</label>
-            <b-col>
-              <b-form-input v-model="user.lastName"></b-form-input>
-            </b-col>
-          </b-row>
-          <b-row class="my-1">
-            <label class="fname" for="input-small">First Name</label>
-            <b-col>
-              <b-form-input v-model="user.firstName"></b-form-input>
-            </b-col>
-          </b-row>
-          <b-row class="my-1">
-            <label class="gender" for="input-small">Gender</label>
-            <b-col>
-              <b-form-select v-model="user.gender" :options="options" class="mb-3">
-                <template #first>
-                  <b-form-select-option :value="null" disabled>-- Please select an option --</b-form-select-option>
-                </template>
-              </b-form-select>
-            </b-col>
-          </b-row>
-          <b-row class="my-1">
-            <label class="birthdate" for="input-small">Date of Birth</label>
-            <b-col>
-              <b-form-datepicker
-                id="start-datepicker"
-                v-model="user.birthDate"
-                class="mb-2"
-                :max="maxBirthDate"
-              ></b-form-datepicker>
-            </b-col>
-          </b-row>
-          <b-row class="my-1">
-            <label class="cnum" for="input-small">Contact Number</label>
-            <b-col>
-              <b-form-input v-model="user.contactNumber"></b-form-input>
-            </b-col>
-          </b-row>
-          <b-row class="my-1">
-            <label class="homeAddress" for="input-small">Home Address</label>
-            <b-col>
-              <b-form-input v-model="user.address.home"></b-form-input>
-            </b-col>
-          </b-row>
+          <validation-observer v-slot="{ invalid }">
+            <b-row class="my-1">
+              <label class="lname" for="input-small">Last Name</label>
+              <b-col>
+                <validation-provider
+                  :rules="{ required: true }"
+                  v-slot="validationContext"
+                >
+                  <b-form-input
+                    v-model="user.lastName"
+                    :state="getValidationState(validationContext)"
+                    aria-describedby="input-user-lastname-feedback"
+                  ></b-form-input>
 
-          <b-button @click="updateStep(1)" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
-            Next
-          </b-button>
+                  <b-form-invalid-feedback id="input-user-lastname-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                </validation-provider>
+              </b-col>
+            </b-row>
+
+            <b-row class="my-1">
+              <label class="fname" for="input-user-firstname">First Name</label>
+              <b-col>
+                <validation-provider
+                  :rules="{ required: true }"
+                  v-slot="validationContext"
+                >
+                  <b-form-input
+                    v-model="user.firstName"
+                    id="input-user-firstname"
+                    :state="getValidationState(validationContext)"
+                    aria-describedby="input-user-firstname-feedback"
+                  ></b-form-input>
+
+                  <b-form-invalid-feedback id="input-user-firstname-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                </validation-provider>
+              </b-col>
+            </b-row>
+
+            <b-row class="my-1">
+              <label class="gender" for="input-small">Gender</label>
+              <b-col>
+                <b-form-select v-model="user.gender" :options="options" class="mb-3"></b-form-select>
+              </b-col>
+            </b-row>
+
+            <b-row class="my-1">
+              <label class="birthdate" for="input-small">Date of Birth</label>
+              <b-col>
+                <b-form-datepicker
+                  id="start-datepicker"
+                  v-model="user.birthDate"
+                  class="mb-2"
+                  :max="maxBirthDate"
+                ></b-form-datepicker>
+              </b-col>
+            </b-row>
+
+            <b-row class="my-1">
+              <label class="cnum" for="input-small">Mobile Number</label>
+              <b-col>
+                <validation-provider
+                  :rules="{
+                    regex: /^(09|\+639)\d{9}$/
+                  }"
+                  v-slot="validationContext"
+                >
+                  <b-form-input
+                    v-model="user.contactNumber"
+                    :state="getValidationState(validationContext)"
+                    aria-describedby="input-user-contactnumber-feedback"
+                  ></b-form-input>
+                  <b-form-invalid-feedback v-if="!!validationContext.errors[0]" id="input-user-contactnumber-feedback">
+                    This field must be a valid Philippine mobile number
+                  </b-form-invalid-feedback>
+                </validation-provider>
+              </b-col>
+            </b-row>
+
+            <b-row class="my-1">
+              <label class="homeAddress" for="input-small">Home Address</label>
+              <b-col>
+                <validation-provider
+                  :rules="{ max: 256 }"
+                  v-slot="validationContext"
+                >
+                  <b-form-input
+                    v-model="user.address.home"
+                    :state="getValidationState(validationContext)"
+                    aria-describedby="input-user-home-address-feedback"
+                  ></b-form-input>
+                  <b-form-invalid-feedback id="input-user-home-address-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                </validation-provider>
+              </b-col>
+            </b-row>
+
+            <b-button
+              pill
+              variant="danger"
+              style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;"
+              :disabled="invalid"
+              @click="updateStep(1)"
+            >
+              Next
+            </b-button>
+          </validation-observer>
 
           <div class="col-md-12">
             <p class="signin">
@@ -66,38 +122,101 @@
 
       <b-card v-if="step === 1" class="card" bg-variant="light" style="display: inline-block; max-height:75rem; width: 415px; border-radius: 20px;">
         <b-container fluid>
-          <b-row class="my-1">
-            <label class="email" for="input-small">Email Address</label>
-            <b-col>
-              <b-form-input v-model="user.email"></b-form-input>
-            </b-col>
-          </b-row>
-          <b-row class="my-1">
-            <label class="password" for="input-small">Password</label>
-            <b-col>
-              <b-form-input v-model="user.password" type="password"></b-form-input>
-            </b-col>
-          </b-row>
-          <b-row class="my-1">
-            <label class="cpassword" for="input-small">Confirm Password</label>
-            <b-col>
-              <b-form-input v-model="confirmPassword" type="password"></b-form-input>
-            </b-col>
-          </b-row>
-          <b-container class="bv-example-row">
+          <validation-observer v-slot="{ invalid }">
+            <b-row class="my-1">
+              <label class="email" for="input-small">Email Address</label>
+              <b-col>
+                <validation-provider
+                  :rules="{
+                    required: true,
+                    email: true,
+                    max: 256
+                  }"
+                  v-slot="validationContext"
+                >
+                  <b-form-input
+                    v-model="user.email"
+                    :state="getValidationState(validationContext)"
+                    aria-describedby="input-user-email-feedback"
+                  ></b-form-input>
+
+                  <b-form-invalid-feedback id="input-user-email-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                </validation-provider>
+              </b-col>
+            </b-row>
+
+            <b-row class="my-1">
+              <label class="password" for="input-small">Password</label>
+              <b-col>
+                <validation-provider
+                  :rules="{
+                    required: true,
+                    min: 8,
+                    max: 64
+                  }"
+                  v-slot="validationContext"
+                >
+                  <b-form-input
+                    v-model="user.password"
+                    type="password"
+                    :state="getValidationState(validationContext)"
+                    aria-describedby="input-user-password-feedback"
+                  ></b-form-input>
+                  <b-form-invalid-feedback id="input-user-password-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                </validation-provider>
+              </b-col>
+            </b-row>
+
+            <b-row class="my-1">
+              <label class="cpassword" for="input-small">Confirm Password</label>
+              <b-col>
+                <validation-provider
+                  :rules="{
+                    required: true,
+                    is: user.password
+                  }"
+                  v-slot="validationContext"
+                >
+                  <b-form-input
+                    v-model="confirmPassword"
+                    type="password"
+                    :state="getValidationState(validationContext)"
+                    aria-describedby="input-user-confirmpassword-feedback"
+                  ></b-form-input>
+
+                  <b-form-invalid-feedback v-if="validationContext.errors[0]" id="input-user-confirmpassword-feedback">
+                    Passwords do not match!
+                  </b-form-invalid-feedback>
+                </validation-provider>
+              </b-col>
+            </b-row>
+
             <b-row>
               <b-col>
-                <b-button @click="updateStep(-1)" pill variant="danger" style="margin-top: 15px; display: inline-block; font-size: 16px; padding: 8px; width: 152px;">
+                <b-button
+                  pill
+                  variant="danger"
+                  style="margin-top: 15px; display: inline-block; font-size: 16px; padding: 8px; width: 152px;"
+                  @click="updateStep(-1)"
+                >
                   Previous
                 </b-button>
               </b-col>
+
               <b-col>
-                <b-button @click="updateStep(1)" pill variant="danger" style="margin-top: 15px; display: inline-block; font-size: 16px; padding: 8px; width: 152px;">
+                <b-button
+                  pill
+                  variant="danger"
+                  style="margin-top: 15px; display: inline-block; font-size: 16px; padding: 8px; width: 152px;"
+                  :disabled="invalid"
+                  @click="updateStep(1)"
+                >
                   Next
                 </b-button>
               </b-col>
             </b-row>
-          </b-container>
+
+          </validation-observer>
         </b-container>
       </b-card>
 
@@ -193,13 +312,40 @@
 </template>
 
 <script>
+import { ValidationObserver, ValidationProvider, extend } from 'vee-validate'
+import { required, min, max, email, is, regex } from 'vee-validate/dist/rules'
+
 const _ = require('lodash')
 const axios = require('axios').default
 const logo = require('../assets/aralpinoywords.png')
+
 const { subYears, startOfDay } = require('date-fns')
+
+extend('required', {
+  ...required,
+  message: 'This field is required'
+})
+extend('min', {
+  ...min,
+  message: 'This field must be greater than or equal to {length} characters'
+})
+extend('max', {
+  ...max,
+  message: 'This field must be less than or equal to {length} characters'
+})
+extend('email', {
+  ...email,
+  message: 'This field must be a valid email'
+})
+extend('is', is)
+extend('regex', regex)
 
 export default {
   name: 'Register',
+  components: {
+    ValidationObserver,
+    ValidationProvider
+  },
   created () {
     if (this.skills.length === 0) {
       this.getSkills()
@@ -209,7 +355,6 @@ export default {
     return {
       logo,
       step: 0,
-      selected: null,
       options: [
         { value: 'Male', text: 'Male' },
         { value: 'Female', text: 'Female' }
@@ -219,7 +364,7 @@ export default {
         password: '',
         firstName: '',
         lastName: '',
-        gender: null,
+        gender: 'Male',
         contactNumber: '',
         birthDate: subYears(new Date(), 14),
         address: {
@@ -235,6 +380,9 @@ export default {
     }
   },
   methods: {
+    getValidationState ({ dirty, validated, valid = null }) {
+      return dirty || validated ? valid : null
+    },
     async register () {
       this.user.birthDate = startOfDay(this.user.birthDate)
       const skills = this.user.skills.map((skill) => skill._id)
