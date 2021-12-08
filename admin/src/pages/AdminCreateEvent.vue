@@ -112,7 +112,7 @@
           </b-card>
         </b-row>
         <b-row>
-            <b-card v-for="(role, index) in roles" :key="index" class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
+          <b-card v-for="(role, index) in roles" :key="index" class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
             <b-row>
               <b-col>
                 <b-form-group label="Role:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
@@ -208,65 +208,31 @@
             </b-row>
           </b-card> -->
         </b-row>
-        <!-- <b-row>
-          <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
-            <b-row>
-              <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; text-align: left; font-size:20px; margin-top:15px; margin-bottom:20px;">Sustainable Development Goals for this Event:</h2>
-              <b-form-group style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                <b-form-tags id="tags-with-dropdown" v-model="values" no-outer-focus class="mb-2" style="text-align:center;">
-                  <template v-slot="{ tags, disabled, addTag, removeTag }" style="display: inline-block; height: 100%; overflow: auto;">
-                    <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
-                      <li v-for="tag in tags" :key="tag" class="list-inline-item">
-                        <b-form-tag
-                          @remove="removeTag(tag)"
-                          :title="tag"
-                          :disabled="disabled"
-                          variant="info"
-                        >{{ tag }}</b-form-tag>
-                      </li>
-                    </ul>
 
-                    <b-dropdown size="sm" variant="outline-secondary" block menu-class="w-100">
-                      <template #button-content>
-                        <b-icon icon="tag-fill"></b-icon> SDGs Provided
-                      </template>
-                      <b-dropdown-form @submit.stop.prevent="() => {}">
-                        <b-form-group
-                          label="Search SDGs"
-                          label-for="tag-search-input"
-                          label-cols-md="auto"
-                          class="mb-0"
-                          label-size="sm"
-                          :description="searchDescs"
-                          :disabled="disabled"
+        <b-row class="pt-4">
+          <b-col cols="12">
+            <b-card style="border-radius: 20px;">
+              <b-form-group
+                label="Sustainable Development Goals"
+                style="font-family:'Bebas Neue', cursive; text-align:left;"
+              >
+                  <b-row class="text-center">
+                    <b-col cols="4" v-for="sdg in sdgOptions" :key="sdg._id">
+                      <b-form-checkbox v-model="event.sdgIds" :value="sdg._id">
+                        &nbsp;
+                        <b-avatar
+                          :src="sdg.imageUrl"
+                          size="150px"
+                          square
                         >
-                          <b-form-input
-                            v-model="searcher"
-                            id="tag-search-input"
-                            type="search"
-                            size="sm"
-                            autocomplete="off"
-                            ></b-form-input>
-                        </b-form-group>
-                      </b-dropdown-form>
-                      <b-dropdown-divider></b-dropdown-divider>
-                      <b-dropdown-item-button
-                        v-for="choices in availableChoices"
-                        :key="choices"
-                        @click="onChoicesClick({ choices, addTag })"
-                      >
-                        {{ choices }}
-                      </b-dropdown-item-button>
-                      <b-dropdown-text v-if="availableChoices.length === 0">
-                        There are no tags available to select
-                      </b-dropdown-text>
-                    </b-dropdown>
-                  </template>
-                </b-form-tags>
+                        </b-avatar>
+                      </b-form-checkbox>
+                    </b-col>
+                  </b-row>
               </b-form-group>
-            </b-row>
-          </b-card>
-        </b-row> -->
+            </b-card>
+          </b-col>
+        </b-row>
 
         <!-- <b-row>
           <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
@@ -312,18 +278,18 @@
           </b-card>
         </b-row> -->
       </b-form>
-      <b-row style="margin-top:20px; margin-bottom: 20px;">
-        <b-col></b-col>
-        <b-col></b-col>
-        <b-col></b-col>
-        <b-col></b-col>
-        <b-col>
-          <b-button @click="showModal = !showModal">Create</b-button>
-        </b-col>
-      </b-row>
-      <!-- <b-card class="mt-3" header="Form Data Result">
-        <pre class="m-0">{{ form }}</pre>
-      </b-card> -->
+
+        <b-row class="pt-4 pb-2">
+          <b-col />
+          <b-col cols="2">
+            <b-button
+              variant="danger"
+              @click="showModal = !showModal"
+            >
+              Create
+            </b-button>
+          </b-col>
+        </b-row>
       </b-container>
 
       <b-modal
@@ -370,7 +336,8 @@ export default ({
         goals: {
           monetaryDonation: '0.00'
         },
-        logo: null
+        logo: null,
+        sdgIds: []
       },
       displayLogo: '',
       showModal: false,
@@ -383,20 +350,33 @@ export default ({
       search: '',
       searcher: '',
       value: [],
-      values: []
+      values: [],
+      sdgOptions: []
     }
+  },
+  created () {
+    this.getSdgs()
   },
   methods: {
     async createEvent () {
       const form = new FormData()
 
       form.set('name', this.event.name)
-      form.set('logo', this.event.logo)
       form.set('description', this.event.description)
       form.set('location[name]', this.event.location.name)
       form.set('date[start]', new Date(this.event.date.start).toISOString())
       form.set('date[end]', new Date(this.event.date.end).toISOString())
       form.set('goals[monetaryDonation]', parseFloat(this.event.goals.monetaryDonation))
+
+      if (this.event.logo !== null) {
+        form.set('logo', this.event.logo)
+      }
+
+      if (this.event.sdgIds.length > 0) {
+        for (const id of this.event.sdgIds) {
+          form.set('sdgIds[]', id)
+        }
+      }
 
       const results = await axios.post('http://localhost:3000/events', form, {
         headers: {
@@ -408,7 +388,7 @@ export default ({
       const { _id } = results.data
 
       this.$router.push({
-        path: `/event-page/${_id}`
+        path: `/events/${_id}`
       })
     },
     addRole () {
@@ -446,6 +426,15 @@ export default ({
       const parsedValue = parseFloat(value)
 
       return isNaN(parsedValue) ? '0.00' : parsedValue.toFixed(2)
+    },
+    async getSdgs () {
+      const { data } = await axios.get('http://localhost:3000/sdgs', {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }
+      })
+
+      this.sdgOptions = data.results
     }
   },
   computed: {
