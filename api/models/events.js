@@ -6,6 +6,26 @@ function setMonetaryDonation(value) {
   return value * 1000
 }
 
+const sdgQuestionSchema = new mongoose.Schema({
+  label: String,
+  type: {
+    type: String
+  }
+}, {
+  _id: false,
+  validateBeforeSave: false
+})
+
+const sdgSchema = new mongoose.Schema({
+  name: String,
+  description: String,
+  imageUrl: String,
+  questions: [sdgQuestionSchema]
+}, {
+  _id: false,
+  validateBeforeSave: false
+})
+
 const contactPersonSchema = new mongoose.Schema({
   name: String,
   contactMethods: {
@@ -54,6 +74,7 @@ const eventSchema = new mongoose.Schema({
   contactPersons: {
     type: [contactPersonSchema]
   },
+  sdgs: [sdgSchema],
 }, {
   id: false,
   validateBeforeSave: false

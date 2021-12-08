@@ -3,8 +3,12 @@
 const { Storage } = require('@google-cloud/storage')
 const { Types } = require('mongoose')
 
-const EventModel = require('../models/events')
 const config = require('../config')
+
+const EventModel = require('../models/events')
+const SdgModel = require('../models/sdgs')
+
+const { NotFoundError } = require('../errors')
 
 /** @typedef {import('mongoose').Document} Document */
 
@@ -30,57 +34,74 @@ class EventsController {
     })
   }
 
-  static async create(req, res, next) {
+  static async create(event) {
     const {
       name,
       description,
       date,
       goals,
       location,
-      contactPersons
-    } = req.body
+      contactPersons,
+      sdgIds,
+      logoFile
+    } = event
 
     const sanitizedName = sanitize(name)
+    let sdgs
 
-    try {
-      const _id = new Types.ObjectId()
-      let logoUrl
+    if (Array.isArray(sdgIds)) {
+      sdgs = []
 
-      if (req.file !== undefined) {
-        const { originalname, buffer} = req.file
+      for (const sdgId of sdgIds) {
+        const sdg = await SdgModel.findById(sdgId)
 
-        const filename = `${_id.toString()}/logo-${Date.now().toString(36)}-${originalname}`
+        if (sdg === null) {
+          throw new NotFoundError(`SDG does not exist: ${sdgId}`)
+        }
 
-        await EventsController.uploadFile(filename, buffer)
-
-        logoUrl = `https://storage.googleapis.com/aral-pinoy-events/${filename}`
+        sdgs.push({
+          name: sdg.name,
+          description: sdg.description,
+          imageUrl: sdg.imageUrl,
+          questions: sdg.questions
+        })
       }
-
-      /** @type {Document} */
-      const results = await EventModel.create({
-        _id,
-        name: sanitizedName,
-        description,
-        date,
-        location,
-        goals: {
-          numVolunteers: 0,
-          monetaryDonation: goals.monetaryDonation
-        },
-        contactPersons,
-        logoUrl
-      })
-  
-      const event = results.toObject({
-        minimize: true,
-        versionKey: false,
-        useProjection: true
-      })
-  
-      return res.status(201).json(event)
-    } catch (error) {
-      next(error)
     }
+
+    const _id = new Types.ObjectId()
+    let logoUrl
+
+    if (logoFile !== undefined) {
+      const { originalname, buffer} = logoFile
+
+      const filename = `${_id.toString()}/logo-${Date.now().toString(36)}-${originalname}`
+
+      await EventsController.uploadFile(filename, buffer)
+
+      logoUrl = `https://storage.googleapis.com/aral-pinoy-events/${filename}`
+    }
+
+    /** @type {Document} */
+    const results = await EventModel.create({
+      _id,
+      name: sanitizedName,
+      description,
+      date,
+      location,
+      goals: {
+        numVolunteers: 0,
+        monetaryDonation: goals.monetaryDonation
+      },
+      contactPersons,
+      logoUrl,
+      sdgs
+    })
+
+    return results.toObject({
+      minimize: true,
+      versionKey: false,
+      useProjection: true
+    })
   }
 
   static async list(req, res, next) {

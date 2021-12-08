@@ -18,8 +18,11 @@ const inkindDonationsRouter = require('./routes/inkind-donations')
 const ikdCategoriesRouter = require('./routes/inkind-donations/categories')
 const ikdTransactionsRouter = require('./routes/inkind-donations/transactions')
 const ikdOutboundTransactionsRouter = require('./routes/inkind-donations/outbound-transactions')
-const usersRouter = require('./routes/users')
+const sdgsRouter = require('./routes/sdgs')
 const skillsRouter = require('./routes/skills')
+const usersRouter = require('./routes/users')
+
+const seedSdgs = require('./db/seeders/sdg')
 
 const logger = debug('api:server')
 
@@ -27,6 +30,8 @@ async function connectDatabase () {
   await mongoose.connect(config.mongodb.uri)
 
   logger('Connected to database')
+
+  await seedSdgs()
 }
 
 connectDatabase()
@@ -60,6 +65,7 @@ app.use('/admin', adminRouter)
 app.use('/users', usersRouter)
 app.use('/skills', skillsRouter)
 app.use('/events', eventsRouter)
+app.use('/sdgs', sdgsRouter)
 app.use('/inkind-donations', inkindDonationsRouter)
 app.use('/inkind-donation-categories', ikdCategoriesRouter)
 app.use('/inkind-donation-transactions', ikdTransactionsRouter)
