@@ -44,6 +44,7 @@ const createEventValidator = Joi.object({
       skills: Joi.array().items(Joi.objectId()).unique()
     })
   ).unique(),
+  sdgIds: Joi.array().items(Joi.objectId()).unique().required(),
 })
 
 const listEventsValidator = Joi.object({
@@ -68,6 +69,19 @@ function validateCreateEventBody(req, res, next) {
   req.body = validatedBody
 
   next()
+}
+
+async function createEvent(req, res, next) {
+  try {
+    const results = await EventsController.create({
+      ...req.body,
+      logoFile: req.file
+    })
+
+    return res.status(201).json(results)
+  } catch (error) {
+    next(error)
+  }
 }
 
 function validateListEventsBody(req, res, next) {
@@ -102,7 +116,7 @@ function validateGetEventBody(req, res, next) {
 
 const router = express.Router()
 
-router.post('/', upload.single('logo'), validateCreateEventBody, EventsController.create)
+router.post('/', upload.single('logo'), validateCreateEventBody, createEvent)
 router.get('/', validateListEventsBody, EventsController.list)
 router.get('/:id', validateGetEventBody, EventsController.get)
 

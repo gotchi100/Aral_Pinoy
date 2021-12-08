@@ -63,12 +63,19 @@
               style="background:white"
             >
               <template #cell(name)="row">
-                <b-link :to="`/event-page/${row.item._id}`">{{ row.value }}</b-link>
+                <b-link :to="`/events/${row.item._id}`">{{ row.value }}</b-link>
               </template>
 
               <template #cell(date)="row">
                 {{
-                  new Date(row.value.start).toLocaleString('en-us', {
+                  new Date(row.item.date.start).toLocaleString('en-us', {
+                    dateStyle: 'medium',
+                    timeStyle: 'short'
+                  })
+                }}
+                -
+                {{
+                  new Date(row.item.date.end).toLocaleString('en-us', {
                     dateStyle: 'medium',
                     timeStyle: 'short'
                   })

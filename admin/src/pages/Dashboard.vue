@@ -7,7 +7,7 @@
            <b-row>
             <b-col>
               <b-card tag="article" style="max-width: 18rem; border-radius: 20px;" class="mb-2">
-              <b-link to='/event-page' style="font-size:20px;">Batangas Coastal Cleanup</b-link><br>
+              <b-link to='/events/1234' style="font-size:20px;">Batangas Coastal Cleanup</b-link><br>
               <b-icon icon="geo-alt"></b-icon><br>
               <b-icon icon="calendar"></b-icon><br>
               <b-icon icon="clock"></b-icon><br>
