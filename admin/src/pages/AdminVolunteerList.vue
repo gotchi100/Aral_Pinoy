@@ -2,7 +2,6 @@
   <div class="volunteerlist">
     <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
       <b-container fluid>
-        <!-- User Interface controls -->
         <b-row>
           <b-col cols="12">
             <h1 style="font-family:'Bebas Neue', cursive;">
@@ -49,7 +48,6 @@
           </b-col>
         </b-row>
 
-        <!-- Main table element -->
         <b-row class="pt-4">
           <b-col cols="12">
             <b-table
