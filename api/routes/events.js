@@ -44,7 +44,7 @@ const createEventValidator = Joi.object({
       skills: Joi.array().items(Joi.objectId()).unique()
     })
   ).unique(),
-  sdgIds: Joi.array().items(Joi.objectId()).unique().required(),
+  sdgIds: Joi.array().items(Joi.objectId()).unique(),
   ikdItems: Joi.array().items(
     Joi.object({
       ikdId: Joi.objectId().required(),
