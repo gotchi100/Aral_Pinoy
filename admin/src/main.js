@@ -120,6 +120,13 @@ const routes = [
     }
   },
   {
+    path: '/events/:id',
+    component: EventPage,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
     path: '/volunteers',
     component: Volunteers,
     meta: {
@@ -213,14 +220,6 @@ const routes = [
     meta: {
       requiresAuth: true
     }
-  },
-  {
-    path: '/event-page/:id',
-    component: EventPage
-  },
-  {
-    path: '/event-page',
-    component: EventPage
   },
   {
     path: '/volunteersuggestion',
