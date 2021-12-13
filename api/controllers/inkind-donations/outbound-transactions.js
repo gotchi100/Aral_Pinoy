@@ -141,7 +141,8 @@ class InkindDonationOutboundTransactionsController {
       'type',
       'quantity',
       'status',
-      'item.sku'
+      'item.sku',
+      'receiver.type'
     ], {
       lean: true
     })
@@ -156,7 +157,11 @@ class InkindDonationOutboundTransactionsController {
 
     if (transaction.status !== TRANSACTION_STATUSES.PENDING) {
       throw new BadRequestError(`Outbound transaction cannot be updated: Status is "${transaction.status}"`)
-    } 
+    }
+
+    if (transaction.receiver.type === OUTBOUND_RECEIVER_TYPES.EVENT) {
+      throw new BadRequestError('Outbound event transactions cannot be updated')
+    }
 
     if (status !== TRANSACTION_STATUSES.RETURNED) {
       const item = await InkindDonationModel.findOne({

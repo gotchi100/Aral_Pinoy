@@ -37,32 +37,34 @@ const contactPersonSchema = new mongoose.Schema({
   validateBeforeSave: false
 })
 
+const ikdSchema = new mongoose.Schema({
+  item: {
+    sku: String,
+    name: String,
+    category: {
+      name: String
+    }
+  },
+  quantity: Number
+}, {
+  _id: false,
+  validateBeforeSave: false
+})
+
 const eventSchema = new mongoose.Schema({
   name: {
     type: String,
     text: true
   },
-  description: {
-    type: String
-  },
-  status: {
-    type: String
-  },
+  description: String,
+  status: String,
   date: {
-    start: {
-      type: Date
-    },
-    end: {
-      type: Date
-    }
+    start: Date,
+    end: Date
   },
-  logoUrl: {
-    type: String
-  },
+  logoUrl: String,
   goals : {
-    numVolunteers: {
-      type: Number
-    },
+    numVolunteers: Number,
     monetaryDonation: {
       type: Number,
       set: setMonetaryDonation
@@ -75,6 +77,7 @@ const eventSchema = new mongoose.Schema({
     type: [contactPersonSchema]
   },
   sdgs: [sdgSchema],
+  ikds: [ikdSchema]
 }, {
   id: false,
   validateBeforeSave: false
