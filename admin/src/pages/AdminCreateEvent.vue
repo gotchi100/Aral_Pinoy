@@ -23,7 +23,7 @@
               </b-row>
 
               <b-row>
-                <b-col>
+                <b-col cols="12">
                   <b-form-group class="pt-2 text-start">
                     <label
                       class="py-1 text-start"
@@ -72,6 +72,63 @@
                   <b-form-group label="End Time:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
                     <b-form-timepicker v-model="endDate.time" locale="en" required></b-form-timepicker>
                   </b-form-group>
+                </b-col>
+              </b-row>
+
+              <b-row>
+                <b-col cols="12">
+                  <b-form-tags>
+                    <template>
+                      <ul v-if="event.contacts.length > 0" class="list-inline d-inline-block mb-2">
+                        <li v-for="(contact, index) in event.contacts" :key="index" class="list-inline-item">
+                          <b-form-tag class="bg-success" @remove="removeEventContact(index)">
+                            {{ contact.name }} - {{ contact.contactMethods[0].value }}
+                          </b-form-tag>
+                        </li>
+                      </ul>
+
+                      <b-dropdown
+                        ref="eventContactFormDropdown"
+                        text="Add Contacts"
+                        style="width: 100%"
+                        menu-class="w-100"
+                        variant="primary"
+                      >
+                        <b-dropdown-form>
+                          <b-form-group label="Name" label-for="event-contact-name" @submit.stop.prevent>
+                            <b-form-input
+                              id="event-contact-name"
+                              v-model="contactForm.name"
+                            ></b-form-input>
+                          </b-form-group>
+
+                          <b-form-group class="pt-3" label="Contact Method Type" label-for="event-contact-method-type" @submit.stop.prevent>
+                            <b-input-group>
+                              <b-form-select
+                                id="event-contact-method-type"
+                                v-model="contactForm.contactMethods[0].type"
+                                style="width: 100%; padding: 0.5rem 0.75rem"
+                                :options="['EMAIL', 'MOBILE']"
+                                size="lg"
+                              ></b-form-select>
+                            </b-input-group>
+                          </b-form-group>
+
+                          <b-form-group class="pt-3" label="Contact Method Value" label-for="event-contact-method-value" @submit.stop.prevent>
+                            <b-input-group>
+                              <b-form-input
+                                id="event-method-value"
+                                class="ml-3"
+                                v-model="contactForm.contactMethods[0].value"
+                              ></b-form-input>
+                            </b-input-group>
+                          </b-form-group>
+
+                          <b-button class="mt-4" variant="success" @click="addEventContact">Submit</b-button>
+                        </b-dropdown-form>
+                      </b-dropdown>
+                    </template>
+                  </b-form-tags>
                 </b-col>
               </b-row>
 
@@ -420,9 +477,17 @@ export default ({
         goals: {
           monetaryDonation: '0.00'
         },
+        contacts: [],
         logo: null,
         sdgIds: [],
         ikdItems: []
+      },
+      contactForm: {
+        name: '',
+        contactMethods: [{
+          type: 'EMAIL',
+          value: ''
+        }]
       },
       displayLogo: '',
       showModal: false,
@@ -471,6 +536,16 @@ export default ({
 
           form.set(`ikdItems[${i}][ikdId]`, ikdItem._id)
           form.set(`ikdItems[${i}][quantity]`, ikdItem.quantity)
+        }
+      }
+
+      if (this.event.contacts.length > 0) {
+        for (let i = 0; i < this.event.contacts.length; i++) {
+          const contact = this.event.contacts[i]
+
+          form.set(`contacts[${i}][name]`, contact.name)
+          form.set(`contacts[${i}][contactMethods][0][type]`, contact.contactMethods[0].type)
+          form.set(`contacts[${i}][contactMethods][0][value]`, contact.contactMethods[0].value)
         }
       }
 
@@ -582,6 +657,24 @@ export default ({
       }
 
       return parsedNumber
+    },
+    addEventContact () {
+      if (this.contactForm.name !== '' && this.contactForm.contactMethods[0].value !== '') {
+        this.event.contacts.push(this.contactForm)
+      }
+
+      this.contactForm = {
+        name: '',
+        contactMethods: [{
+          type: 'EMAIL',
+          value: ''
+        }]
+      }
+
+      this.$refs.eventContactFormDropdown.hide(true)
+    },
+    removeEventContact (index) {
+      this.event.contacts.splice(index, 1)
     }
   },
   computed: {

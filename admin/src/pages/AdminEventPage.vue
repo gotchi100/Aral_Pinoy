@@ -26,41 +26,50 @@
                   <b-container fluid>
                     <b-row>
                       <b-col cols="12" md="6">
-                        <div>
-                          <p class="h4 mb-0">
-                            <b-icon icon="geo-alt" />&nbsp;{{ event.location.name }}
-                          </p>
-                          <p class="h4 mb-0">
-                            <b-icon icon="calendar" />&nbsp;
-                            {{
-                              new Date(event.date.start).toLocaleString('en-us', {
-                                month: 'short',
-                                day: 'numeric',
-                                year: '2-digit',
-                                hour: 'numeric',
-                                minute: '2-digit'
-                              })
-                            }}
-                            -
-                            {{
-                              new Date(event.date.end).toLocaleString('en-us', {
-                                month: 'short',
-                                day: 'numeric',
-                                year: '2-digit',
-                                hour: 'numeric',
-                                minute: '2-digit'
-                              })
-                            }}
-                          </p>
-                        </div>
+                        <p class="h4 mb-0">
+                          <b-icon icon="geo-alt" />&nbsp;{{ event.location.name }}
+                        </p>
                       </b-col>
 
                       <b-col cols="12" md="6">
                         <p class="h4 mb-0">
-                          <b-icon icon="people" /> Antonio Ingles
+                          <b-icon icon="calendar" />&nbsp;
+                          {{
+                            new Date(event.date.start).toLocaleString('en-us', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: '2-digit',
+                              hour: 'numeric',
+                              minute: '2-digit'
+                            })
+                          }}
+                          -
+                          {{
+                            new Date(event.date.end).toLocaleString('en-us', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: '2-digit',
+                              hour: 'numeric',
+                              minute: '2-digit'
+                            })
+                          }}
                         </p>
-                        <p class="h4 mb-0">
-                          <b-icon icon="telephone" /> 0921 123 456
+                      </b-col>
+                    </b-row>
+
+                    <b-row v-if="Array.isArray(event.contacts)" align-h="start">
+                      <b-col cols="12">
+                        <p class="h4">
+                          <b-icon icon="person-lines-fill" />&nbsp;Contacts
+                        </p>
+                      </b-col>
+
+                      <b-col v-for="(contact, index) in event.contacts" :key="index" cols="12" sm="3">
+                        <p class="h6 text-start">
+                          <b-icon
+                            :icon="contact.contactMethods[0].type === 'EMAIL' ? 'envelope' : 'telephone'"
+                          />&nbsp;&nbsp;{{ contact.contactMethods[0].value }}
+                          <span class="text-black-50">&lt;{{ contact.name }}&gt;</span>
                         </p>
                       </b-col>
                     </b-row>
