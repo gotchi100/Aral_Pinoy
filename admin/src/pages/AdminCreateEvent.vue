@@ -95,7 +95,7 @@
             <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
               <h3 style="font-family:'Bebas Neue', cursive; color: black; position: relative; text-align: left; font-size:20px;">Event Logo</h3>
 
-              <b-avatar v-if="!!displayLogo" :src="displayLogo" size="250" alt="event logo" square></b-avatar>
+              <b-img v-if="!!displayLogo" :src="displayLogo" fluid alt="event logo" />
               <br />
               <b-form-file v-model="event.logo" class="mt-3" plain></b-form-file>
             </b-card>
