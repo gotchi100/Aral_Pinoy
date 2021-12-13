@@ -9,13 +9,9 @@ const inkindDonationSchema = new mongoose.Schema({
   },
   skuText: {
     type: String,
-    text: true,
     select: false
   },
-  name: {
-    type: String,
-    text: true
-  },
+  name: String,
   description: String,
   quantity: {
     type: Number,
@@ -30,6 +26,11 @@ const inkindDonationSchema = new mongoose.Schema({
 }, {
   collection: 'inkindDonations',
   validateBeforeSave: false
+})
+
+inkindDonationSchema.index({
+  skuText: 'text',
+  name: 'text'
 })
 
 module.exports = mongoose.model('InkindDonation', inkindDonationSchema)
