@@ -15,6 +15,18 @@ const upload = multer({
   }
 })
 
+const contactMethodSchema = Joi.object({
+  type: Joi.string().valid('MOBILE', 'EMAIL').required(),
+  value: Joi.string().trim().max(255).lowercase().required()
+})
+
+const contactsSchema = Joi.array().items(
+  Joi.object({
+    name: Joi.string().trim().max(255).required(),
+    contactMethods: Joi.array().items(contactMethodSchema)
+  })
+)
+
 const createEventValidator = Joi.object({
   name: Joi.string().trim().max(50).required(),
   description: Joi.string().trim().empty('').max(200),
@@ -28,15 +40,7 @@ const createEventValidator = Joi.object({
   location: Joi.object({
     name: Joi.string().trim().max(500).required()
   }).required(),
-  contactPersons: Joi.array().items(
-    Joi.object({
-      name: Joi.string().trim().max(255).required(),
-      contactMethods: Joi.object({
-        email: Joi.string().email(),
-        mobile: Joi.string()
-      })
-    })
-  ).unique(),
+  contacts: contactsSchema,
   jobs: Joi.array().items(
     Joi.object({
       name: Joi.string().trim().max(255).required(),

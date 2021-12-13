@@ -26,12 +26,17 @@ const sdgSchema = new mongoose.Schema({
   validateBeforeSave: false
 })
 
-const contactPersonSchema = new mongoose.Schema({
+const contactMethodSchema = new mongoose.Schema({
+  type: String,
+  value: String
+}, {
+  _id: false,
+  validateBeforeSave: false
+})
+
+const contactSchema = new mongoose.Schema({
   name: String,
-  contactMethods: {
-    email: String,
-    mobile: String
-  }
+  contactMethods: [contactMethodSchema]
 }, {
   _id: false,
   validateBeforeSave: false
@@ -73,11 +78,18 @@ const eventSchema = new mongoose.Schema({
   location: {
     name: String
   },
-  contactPersons: {
-    type: [contactPersonSchema]
+  contacts: {
+    type: [contactSchema],
+    default: undefined
   },
-  sdgs: [sdgSchema],
-  ikds: [ikdSchema]
+  sdgs: {
+    type: [sdgSchema],
+    default: undefined
+  },
+  ikds: {
+    type: [ikdSchema],
+    default: undefined
+  }
 }, {
   id: false,
   validateBeforeSave: false
