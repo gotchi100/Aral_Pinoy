@@ -45,7 +45,7 @@ class EventsController {
       date,
       goals,
       location,
-      contactPersons,
+      contacts,
       logoFile,
       sdgIds,
       ikdItems
@@ -142,7 +142,7 @@ class EventsController {
         numVolunteers: 0,
         monetaryDonation: goals.monetaryDonation
       },
-      contactPersons,
+      contacts,
       logoUrl,
       sdgs,
       ikds
