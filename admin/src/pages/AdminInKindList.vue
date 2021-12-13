@@ -167,7 +167,7 @@
                       primary-key="_id"
                     >
                       <template #cell(bestBeforeDate)="row">
-                        <span v-if="row.item.category.customFields">
+                        <span v-if="row.item.category !== undefined && row.item.category.customFields">
                           {{
                             new Date(row.item.category.customFields.bestBeforeDate).toLocaleString('en-us', {
                               dateStyle: 'medium'
@@ -177,7 +177,7 @@
                       </template>
 
                       <template #cell(expirationDate)="row">
-                        <span v-if="row.item.category.customFields">
+                        <span v-if="row.item.category !== undefined && row.item.category.customFields">
                           {{
                             new Date(row.item.category.customFields.expirationDate).toLocaleString('en-us', {
                               dateStyle: 'medium'
@@ -272,6 +272,17 @@
               <b-col cols="12" md="6">
                 <label for="item-name">Item Name</label>
                 <b-form-input v-model="createItemForm.name" name="item-name"></b-form-input>
+              </b-col>
+            </b-row>
+
+            <b-row class="pt-1">
+              <b-col cols="12">
+                <b-form-group class="text-start">
+                  <label for="item-description">
+                    Item Description
+                  </label>
+                  <b-form-textarea id="item-description" rows="3" max-rows="8" v-model="createItemForm.description"></b-form-textarea>
+                </b-form-group>
               </b-col>
             </b-row>
 
@@ -871,6 +882,12 @@ export default {
         categoryCustomFields
       } = this.createItemForm
 
+      let categoryId
+
+      if (category !== null) {
+        categoryId = category._id
+      }
+
       const inkindDonation = _.pickBy({
         sku,
         name,
@@ -878,7 +895,7 @@ export default {
         quantity,
         unit,
         donor,
-        categoryId: category._id,
+        categoryId,
         categoryCustomFields
       }, _.identity)
 
