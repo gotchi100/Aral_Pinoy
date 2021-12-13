@@ -47,7 +47,7 @@ async function hashPasswordBeforeSave (next) {
     return next()
   }
 
-  const hashedPassword = await argon2.hash('password')
+  const hashedPassword = await argon2.hash(user.password)
 
   user.password = hashedPassword
 
