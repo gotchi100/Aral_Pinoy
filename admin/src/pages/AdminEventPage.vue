@@ -1,199 +1,288 @@
 <template>
-    <body>
-    <div>
-      <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
-        <b-container fluid>
-          <b-card  class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1000px; border-radius: 20px; margin-top:20px;">
-            <h1 style="font-family:'Bebas Neue', cursive; color: black; text-align: left; font-size: 50px; margin-top:20px;">Batangas Coastal Cleanup</h1>
-            <b-container class="bv-example-row">
-              <b-row>
-                <b-col>
-                  <div>
-                    <p class="h4 mb-0"><b-icon icon="geo-alt"></b-icon> Tali Beach, Batangas</p>
-                    <p class="h4 mb-0"><b-icon icon="calendar"></b-icon> September 27 - October 12, 2021</p>
-                    <p class="h4 mb-0"><b-icon icon="clock"></b-icon> 6:30 AM - 5:30PM</p>
-                  </div>
-                </b-col>
-                <b-col>
-                  <div>
-                    <p class="h4 mb-0"><b-icon icon="people"></b-icon> Antonio Ingles</p>
-                    <p class="h4 mb-0"><b-icon icon="telephone"></b-icon> 0921 123 456</p>
-                  </div>
-                </b-col>
-              </b-row>
-            </b-container>
-            <b-container class="bv-example-row">
-              <b-row>
-                <div class="image">
-                  <img src="https://miro.medium.com/max/6300/1*yBLzf7yS7m_GTfLD6oCvzg.jpeg" style="max-width: 100%; max-height: 100%; display: block;">
-                </div>
-              </b-row>
-              <b-row>
-                <div>
-                  <b-progress height="2rem" style="border-radius:30px;" :max="10000">
-                    <b-progress-bar :value="5000" label="We need Php 5,000.00 more" style="background-color: #4267B2"></b-progress-bar>
-                  </b-progress>
-                </div>
-              </b-row>
-              <br>
-              <b-row>
-                <div @click="showModal = !showModal">
-                  <b-progress height="2rem" style="border-radius:30px;" :max="40">
-                    <b-progress-bar :value="30" label="We need 10 more volunteers" style="background-color: #8F00FF"></b-progress-bar>
-                  </b-progress>
-                </div>
-              </b-row>
-              <b-row>
-                <b-col>
-                  <b-button @click="$modal.show('example-resizable')" pill style="margin-top: 20px; display: inline-block; font-size: 16px; padding: 8px; width: 225px; font-family: 'Noto Sans', cursive; text-transform: uppercase; background-color: #8F00FF">
-                    Volunteer Now
-                  </b-button>
-                  <volunteer-modal /><br><br>
-                  <b-link to="/volunteersuggestion">View Volunteer Suggestion</b-link>
-                </b-col>
-                <b-col>
-                  <b-button @click="$modal.show('example')" pill style="margin-top: 20px; display: inline-block; font-size: 16px; padding: 8px; width: 225px; font-family: 'Noto Sans', cursive; text-transform: uppercase; background-color: #4267B2">
-                    Donate Now
-                  </b-button>
-                  <donation-modal />
-                </b-col>
-              </b-row>
-            </b-container>
-          </b-card>
-          <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1000px; border-radius: 20px; margin-top:40px;">
-            <h3 style="font-family:'Bebas Neue', cursive; color: black; text-align: left; font-size: 50px; margin-bottom: 40px;">Event Description</h3>
-            <p style="text-align:left">
-              Getting to know (the real me); Knowing to get (them work together)
+  <body>
+    <b-card class="my-5" style="display: inline-block; width: 1300px; border-radius: 20px;">
+      <b-container v-if="isLoadingEvent" style="height: 100vh">
+        <b-row class="vh-100" align-h="center">
+          <b-col cols="12" align-self="center">
+            <b-spinner style="width: 10rem; height: 10rem;" />
+          </b-col>
+        </b-row>
+      </b-container>
 
-              Hello, we know that we are in these worrying times. You might have concerns or questions about staying or looking after your safety. We miss out the opportunity to get involved with causes you are passionate about and the communities you want to help. Due to safety measures, iVolunteer Phils. temporarily put on hold on the ground volunteer activities on the website. We are advised to explore virtual volunteering opportunities in the meantime.
-
-              To support you to get or stay involved with initiatives that are important to you, we introduce the Community Service and Spirituality: Webinar - Reflection Hour Series (CSS: WRH) as our way for all of us to reflect why are we volunteering and to discern how can we be inspired more to safely engage with and serve the communities we want to assist during this global pandemic. The one-hour Moment of Reflection will begin at 6 p.m. on Wednesday, August 25, 2021.
-            </p>
-          </b-card>
-          <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1000px; border-radius: 20px; margin-top:40px;">
-            <h3 style="font-family:'Bebas Neue', cursive; color: black; text-align: left; font-size: 50px; margin-bottom: 40px;">Sustainable Development Goals</h3>
-            <b-img center src="https://www.un.org/esa/ffd/ffddialogue/images/E_SDG%20goals_icons-individual-rgb-13.png" style="width: 150px; height:150px;" alt="Center image"></b-img>
-            <h4 style="font-family:'Bebas Neue', cursive; color: black; text-align: center; font-size: 20px;">SDG 13: Climate Action</h4>
-          </b-card>
-          <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1000px; border-radius: 20px; margin-top:40px;">
-            <h3 style="font-family:'Bebas Neue', cursive; color: black; text-align: left; font-size: 50px; margin-bottom: 40px;">Items to be used for the event</h3>
-          </b-card>
-          <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1000px; border-radius: 20px; margin-top:40px;">
-            <h3 style="font-family:'Bebas Neue', cursive; color: black; text-align: left; font-size: 50px; margin-bottom: 40px;">Event Documentation</h3>
-            <b-form-file v-model="file2" class="mt-3" plain></b-form-file>
-          </b-card>
-          <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1000px; border-radius: 20px; margin-top:40px;">
-            <h3 style="font-family:'Bebas Neue', cursive; color: black; text-align: left; font-size: 50px; margin-bottom: 40px;">Event Review</h3>
-            <b-form-textarea id="textarea-auto-height" rows="3" max-rows="8" placeholder="Enter event review" required></b-form-textarea>
-          </b-card>
-        </b-container>
-        <b-modal v-model="showModal" size="xl">
-          <b-container>
-            <b-row>
-              <b-col cols="12">
-                <b-card>
-                  <b-row>
-                    <b-col>
-                      <b-button>Download List</b-button>
-                    </b-col>
-                    <b-col>
-                      <b-input-group size="sm">
-                        <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
-                        <b-form-input
-                          id="filter-input"
-                          v-model="filter"
-                          type="search"
-                          placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
-                        ></b-form-input>
-                      </b-input-group>
-                    </b-col>
-                  </b-row>
-                  <b-table
-                    :items="items"
-                    :fields="fields"
-                    :current-page="currentPage"
-                    :per-page="perPage"
-                    :filter="filter"
-                    :filter-included-fields="filterOn"
-                    :sort-by.sync="sortBy"
-                    :sort-desc.sync="sortDesc"
-                    :sort-direction="sortDirection"
-                    stacked="md"
-                    show-empty
-                    small
-                    @filtered="onFiltered"
-                  ></b-table>
-                <b-col class="my-1">
-                  <b-pagination
-                    v-model="currentPage"
-                    :total-rows="totalRows"
-                    :per-page="perPage"
-                    align="fill"
-                    size="sm"
-                    class="my-0"
-                  ></b-pagination>
+      <b-container v-else fluid>
+        <b-row>
+          <b-col cols="12">
+            <b-card style="border-radius: 20px;">
+              <b-row>
+                <b-col cols="12">
+                  <h1 class="text-start" style="font-family:'Bebas Neue', cursive;">
+                    {{ event.name }}
+                  </h1>
                 </b-col>
-                </b-card>
-              </b-col>
+              </b-row>
 
-              <b-col cols="12">
-                <b-card style="margin-top:20px;">
-                  <b-container>
+              <b-row>
+                <b-col cols="12">
+                  <b-container fluid>
                     <b-row>
-                      <b-col cols="12">
-                        <h2>Role</h2>
-                      </b-col>
-                    </b-row>
-
-                    <b-row>
-                      <b-col cols="12">
-                        <h5>Trash Collector</h5>
-                        <b-progress height="2rem" style="border-radius:30px;" :max="20">
-                          <b-progress-bar :value="14" label="6 volunteers more are needed for this role"></b-progress-bar>
-                        </b-progress>
+                      <b-col cols="12" md="6">
+                        <div>
+                          <p class="h4 mb-0">
+                            <b-icon icon="geo-alt" />&nbsp;{{ event.location.name }}
+                          </p>
+                          <p class="h4 mb-0">
+                            <b-icon icon="calendar" />&nbsp;
+                            {{
+                              new Date(event.date.start).toLocaleString('en-us', {
+                                month: 'short',
+                                day: 'numeric',
+                                year: '2-digit',
+                                hour: 'numeric',
+                                minute: '2-digit'
+                              })
+                            }}
+                            -
+                            {{
+                              new Date(event.date.end).toLocaleString('en-us', {
+                                month: 'short',
+                                day: 'numeric',
+                                year: '2-digit',
+                                hour: 'numeric',
+                                minute: '2-digit'
+                              })
+                            }}
+                          </p>
+                        </div>
                       </b-col>
 
-                      <b-col cols="12">
-                        <h5>Trash Bag Distributor</h5>
-                        <b-progress height="2rem" style="border-radius:30px;" :max="20">
-                          <b-progress-bar :value="12" label="8 volunteers more are needed for this role"></b-progress-bar>
-                        </b-progress>
+                      <b-col cols="12" md="6">
+                        <p class="h4 mb-0">
+                          <b-icon icon="people" /> Antonio Ingles
+                        </p>
+                        <p class="h4 mb-0">
+                          <b-icon icon="telephone" /> 0921 123 456
+                        </p>
                       </b-col>
                     </b-row>
                   </b-container>
-                </b-card>
-              </b-col>
-            </b-row>
-          </b-container>
-        </b-modal>
-      </b-card>
-     <Footer />
-     <transition name="fade">
-    <div id="pagetop" class="fixed right-0 bottom-0" v-show="scY > 300" @click="toTop">
-      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
-           stroke="#4a5568"
-           stroke-width="1" stroke-linecap="square" stroke-linejoin="arcs">
-        <path d="M18 15l-6-6-6 6"/>
-      </svg>
-    </div>
-  </transition>
-    </div>
-    </body>
+                </b-col>
+              </b-row>
+
+              <b-row class="py-4">
+                <b-col cols="12">
+                  <b-container fluid>
+                    <b-row class="pt-3 pb-4">
+                      <b-col cols="12">
+                        <b-img v-if="event.logoUrl !== undefined" :src="event.logoUrl" fluid alt="event logo" />
+
+                        <b-card v-else>
+                          <b-row>
+                            <b-col cols="12">
+                              <h3 style="font-family:'Bebas Neue', cursive;">
+                                No image uploaded
+                              </h3>
+                            </b-col>
+                          </b-row>
+                        </b-card>
+                      </b-col>
+                    </b-row>
+
+                    <b-row>
+                      <div>
+                        <b-progress height="2rem" style="border-radius:30px;" :max="event.goals.monetaryDonation">
+                          <b-progress-bar :value="5000" label="We need Php 5,000.00 more" style="background-color: #4267B2"></b-progress-bar>
+                        </b-progress>
+                      </div>
+                    </b-row>
+                    <br>
+                    <b-row>
+                      <div>
+                        <b-progress height="2rem" style="border-radius:30px;" :max="event.goals.numVolunteers">
+                          <b-progress-bar :value="1000" label="We need 10 more volunteers" style="background-color: #8F00FF"></b-progress-bar>
+                        </b-progress>
+                      </div>
+                    </b-row>
+                  </b-container>
+                </b-col>
+              </b-row>
+            </b-card>
+          </b-col>
+        </b-row>
+
+        <b-row v-if="event.description !== undefined" class="py-4">
+          <b-col cols="12">
+            <b-card style="border-radius: 20px;">
+              <h1 class="text-start" style="font-family:'Bebas Neue', cursive;">
+                Event Description
+              </h1>
+
+              <p class="text-start">
+                {{ event.description }}
+              </p>
+            </b-card>
+          </b-col>
+        </b-row>
+
+        <b-row v-if="Array.isArray(event.sdgs)" class="py-4">
+          <b-col cols="12">
+            <b-card style="border-radius: 20px;">
+              <h1 class="text-start" style="font-family:'Bebas Neue', cursive;">
+                Sustainable Development Goals
+              </h1>
+
+              <b-row>
+                <b-col v-for="(sdg, index) in event.sdgs" :key="index" cols="12" md="3">
+                  <b-avatar :src="sdg.imageUrl" :alt="sdg.name" size="150px" square />
+                  <br />
+                  <strong>{{ sdg.name }}</strong>
+                </b-col>
+              </b-row>
+            </b-card>
+          </b-col>
+        </b-row>
+
+        <b-row v-if="Array.isArray(event.ikds)" class="py-4">
+          <b-col cols="12">
+            <b-card style="border-radius: 20px;">
+              <h1 class="text-start" style="font-family:'Bebas Neue', cursive;">
+                Items to be used for the Event
+              </h1>
+
+              <b-row>
+                <b-col cols="12">
+                  <b-table
+                    :items="event.ikds"
+                    :fields="eventIkdFields"
+                    show-empty
+                    responsive
+                    striped
+                    primary-key="item.sku"
+                  ></b-table>
+                </b-col>
+              </b-row>
+            </b-card>
+          </b-col>
+        </b-row>
+      </b-container>
+    </b-card>
+
+    <b-modal v-model="showModal" size="xl">
+      <b-container>
+        <b-row>
+          <b-col cols="12">
+            <b-card>
+              <b-row>
+                <b-col>
+                  <b-button>Download List</b-button>
+                </b-col>
+                <b-col>
+                  <b-input-group size="sm">
+                    <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
+                    <b-form-input
+                      id="filter-input"
+                      v-model="filter"
+                      type="search"
+                      placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
+                    ></b-form-input>
+                  </b-input-group>
+                </b-col>
+              </b-row>
+              <b-table
+                :items="items"
+                :fields="fields"
+                :current-page="currentPage"
+                :per-page="perPage"
+                :filter="filter"
+                :filter-included-fields="filterOn"
+                :sort-by.sync="sortBy"
+                :sort-desc.sync="sortDesc"
+                :sort-direction="sortDirection"
+                stacked="md"
+                show-empty
+                small
+                @filtered="onFiltered"
+              ></b-table>
+            <b-col class="my-1">
+              <b-pagination
+                v-model="currentPage"
+                :total-rows="totalRows"
+                :per-page="perPage"
+                align="fill"
+                size="sm"
+                class="my-0"
+              ></b-pagination>
+            </b-col>
+            </b-card>
+          </b-col>
+
+          <b-col cols="12">
+            <b-card style="margin-top:20px;">
+              <b-container>
+                <b-row>
+                  <b-col cols="12">
+                    <h2>Role</h2>
+                  </b-col>
+                </b-row>
+
+                <b-row>
+                  <b-col cols="12">
+                    <h5>Trash Collector</h5>
+                    <b-progress height="2rem" style="border-radius:30px;" :max="20">
+                      <b-progress-bar :value="14" label="6 volunteers more are needed for this role"></b-progress-bar>
+                    </b-progress>
+                  </b-col>
+
+                  <b-col cols="12">
+                    <h5>Trash Bag Distributor</h5>
+                    <b-progress height="2rem" style="border-radius:30px;" :max="20">
+                      <b-progress-bar :value="12" label="8 volunteers more are needed for this role"></b-progress-bar>
+                    </b-progress>
+                  </b-col>
+                </b-row>
+              </b-container>
+            </b-card>
+          </b-col>
+        </b-row>
+      </b-container>
+    </b-modal>
+
+    <transition name="fade">
+      <div id="pagetop" class="fixed right-0 bottom-0" v-show="scY > 300" @click="toTop">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="48"
+          height="48"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#4a5568"
+          stroke-width="1"
+          stroke-linecap="square"
+          stroke-linejoin="arcs"
+        >
+          <path d="M18 15l-6-6-6 6" />
+        </svg>
+      </div>
+    </transition>
+  </body>
 </template>
 
 <script>
-import VolunteerModal from '../components/AdminVolunteerModal.vue'
-import DonationModal from '../components/AdminDonationModal.vue'
+import { mapGetters } from 'vuex'
+
+const axios = require('axios').default
 const logo = require('../assets/aralpinoywords.png')
 
 export default {
-  components: {
-    VolunteerModal,
-    DonationModal
-  },
+  name: 'EventPage',
   data () {
     return {
       logo,
+      event: null,
+      eventIkdFields: [
+        { key: 'item.name', label: 'Item' },
+        { key: 'quantity', label: 'Quantity' }
+      ],
+      isLoadingEvent: false,
       sliding: null,
       value: 75,
       canBeShown: false,
@@ -228,7 +317,11 @@ export default {
       ]
     }
   },
+  created () {
+    this.getEvent()
+  },
   computed: {
+    ...mapGetters(['token']),
     sortOption () {
       // Create an options list from our fields
       return this.fields
@@ -243,6 +336,22 @@ export default {
     this.totalRows = this.items.length
   },
   methods: {
+    async getEvent () {
+      this.isLoadingEvent = true
+      const eventId = this.$route.params.id
+
+      try {
+        const { data } = await axios.get(`http://localhost:3000/events/${eventId}`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`
+          }
+        })
+
+        this.event = data
+      } finally {
+        this.isLoadingEvent = false
+      }
+    },
     onSlideStart (slide) {
       this.sliding = true
     },
@@ -281,27 +390,23 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
 
-.image {
-padding-top: 50px;
-padding-bottom: 25px;
-}
 body {
-background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
-url('https://rs.projects-abroad.ie/v1/hero/product-5b5b2f57d7d1b.[1600].jpeg');
-background-position: center;
-background-repeat: no-repeat;
-background-size: cover;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
+  url('https://rs.projects-abroad.ie/v1/hero/product-5b5b2f57d7d1b.[1600].jpeg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
-.h4{
+.h4 {
   font-family: 'Bebas Neue', cursive;
   text-align: left;
   line-height: 1.8;
 }
 .fixed {
-display: inline;
-position: fixed;
-right: 15px;
-bottom: 15px;
-z-index: 99999;
+  display: inline;
+  position: fixed;
+  right: 15px;
+  bottom: 15px;
+  z-index: 99999;
 }
 </style>

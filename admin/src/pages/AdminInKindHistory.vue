@@ -180,24 +180,10 @@
                         {{ row.value.first }} {{ row.value.last }}
                       </template>
 
-                      <template #cell(status)="row">
-                        <b-dropdown v-if="row.value==='PENDING'" :text="row.value" size="sm">
-                          <b-dropdown-item
-                            @click="showTransactionStatusUpdateConfirmModal(row.item._id, 'COMPLETE')"
-                          >
-                            COMPLETE
-                          </b-dropdown-item>
-
-                          <b-dropdown-item
-                            @click="showTransactionStatusUpdateConfirmModal(row.item._id, 'RETURNED')"
-                          >
-                            RETURNED
-                          </b-dropdown-item>
-                        </b-dropdown>
-
-                        <span v-else>
-                          {{ row.value }}
-                        </span>
+                      <template #cell(eventName)="row">
+                        <b-link :to="`/events/${row.item.receiver.event._id}`">
+                          {{ row.item.receiver.event.name }}
+                        </b-link>
                       </template>
                     </b-table>
                   </b-col>
@@ -246,20 +232,20 @@ export default {
     return {
       pageOptions: [5, 10, 20],
       eventTransactionFields: [
-        { key: 'date', label: 'Date Sent', sortable: true },
-        { key: 'item.name', label: 'Item', sortable: true },
-        { key: 'quantity', label: 'QTY Donated', sortable: true },
-        { key: 'category.name', label: 'Category', sortable: true },
-        { key: 'receiver.event.name', label: 'Event', sortable: true },
-        { key: 'status', label: 'Status', sortable: true }
+        { key: 'date', label: 'Date Sent' },
+        { key: 'item.name', label: 'Item' },
+        { key: 'item.category.name', label: 'Category' },
+        { key: 'quantity', label: 'Quantity Donated' },
+        { key: 'eventName', label: 'Event' },
+        { key: 'status', label: 'Status' }
       ],
       orgTransactionFields: [
-        { key: 'date', label: 'Date Sent', sortable: true },
-        { key: 'item.name', label: 'Item', sortable: true },
-        { key: 'item.category.name', label: 'Category', sortable: true },
-        { key: 'quantity', label: 'Quantity Donated', sortable: true },
-        { key: 'receiver.organization.name', label: 'Organization', sortable: true },
-        { key: 'status', label: 'Status', sortable: true }
+        { key: 'date', label: 'Date Sent' },
+        { key: 'item.name', label: 'Item' },
+        { key: 'item.category.name', label: 'Category' },
+        { key: 'quantity', label: 'Quantity Donated' },
+        { key: 'receiver.organization.name', label: 'Organization' },
+        { key: 'status', label: 'Status' }
       ],
       eventTransactionTotal: 1,
       eventTransactionCurrentPage: 1,
