@@ -2,282 +2,363 @@
   <div class="createevent">
     <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
       <b-container class="bv-example-row">
-      <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; text-align: center;">Create Event</h2>
-      <b-form>
-        <b-row>
-          <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
-            <b-row>
-              <b-form-group label="Event Name:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                <b-form-input v-model="event.name" placeholder="Enter Event Name" required></b-form-input>
+        <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; text-align: center;">
+          Create Event
+        </h2>
+
+        <b-form>
+          <b-row>
+            <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
+              <b-row>
+                <b-form-group class="text-start">
+                  <label
+                    class="py-1"
+                    for="input-event-name"
+                    style="font-family: 'Bebas Neue', cursive;"
+                  >
+                    Event Name:
+                  </label>
+                  <b-form-input id="input-event-name" v-model="event.name" placeholder="Enter Event Name" required></b-form-input>
+                </b-form-group>
+              </b-row>
+
+              <b-row>
+                <b-col>
+                  <b-form-group class="pt-2 text-start">
+                    <label
+                      class="py-1 text-start"
+                      for="input-event-location-name"
+                      style="font-family: 'Bebas Neue', cursive;"
+                    >
+                      Location:
+                    </label>
+                    <b-form-input id="input-event-location-name" v-model="event.location.name" placeholder="Enter Location of the Event" required></b-form-input>
+                  </b-form-group>
+                </b-col>
+              </b-row>
+
+              <b-row>
+                <b-col>
+                  <b-form-group label="Start Date:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                    <b-form-datepicker
+                      v-model="startDate.date"
+                      class="mb-2"
+                      :min="new Date()"
+                      required
+                    ></b-form-datepicker>
+                  </b-form-group>
+                </b-col>
+
+                <b-col>
+                  <b-form-group label="Start Time:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                    <b-form-timepicker v-model="startDate.time" locale="en" required></b-form-timepicker>
+                  </b-form-group>
+                </b-col>
+              </b-row>
+
+              <b-row>
+                <b-col>
+                  <b-form-group label="End Date:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                    <b-form-datepicker
+                      v-model="endDate.date"
+                      class="mb-2"
+                      required
+                      :min="new Date()"
+                    ></b-form-datepicker>
+                  </b-form-group>
+                </b-col>
+
+                <b-col>
+                  <b-form-group label="End Time:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                    <b-form-timepicker v-model="endDate.time" locale="en" required></b-form-timepicker>
+                  </b-form-group>
+                </b-col>
+              </b-row>
+
+              <!-- <b-row>
+                <b-col>
+                  <b-form-group label="Contact Person:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                    <b-form-input v-model="form.contactname" placeholder="Enter the Contact Person for the Event" required></b-form-input>
+                  </b-form-group>
+                </b-col>
+
+                <b-col>
+                  <b-form-group label="Contact Number:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                    <b-form-input v-model="form.contactname" placeholder="Enter the Contact Person for the Event" required></b-form-input>
+                  </b-form-group>
+                </b-col>
+              </b-row> -->
+            </b-card>
+          </b-row>
+
+          <b-row>
+            <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
+              <h3 style="font-family:'Bebas Neue', cursive; color: black; position: relative; text-align: left; font-size:20px;">Event Logo</h3>
+
+              <b-img v-if="!!displayLogo" :src="displayLogo" fluid alt="event logo" />
+              <br />
+              <b-form-file v-model="event.logo" class="mt-3" plain></b-form-file>
+            </b-card>
+          </b-row>
+
+          <b-row>
+            <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
+              <b-form-group class="text-start">
+                <label
+                  class="py-1"
+                  for="textarea-event-description"
+                  style="font-family:'Bebas Neue', cursive;"
+                >
+                  Event Description:
+                </label>
+                <b-form-textarea id="textarea-event-description" rows="3" max-rows="8" v-model="event.description" placeholder="Enter event description and other important details" required></b-form-textarea>
               </b-form-group>
-            </b-row>
+            </b-card>
+          </b-row>
 
-            <b-row>
-              <b-col>
-                <b-form-group label="Location:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-input v-model="event.location.name" placeholder="Enter Location of the Event" required></b-form-input>
-                </b-form-group>
-              </b-col>
-            </b-row>
+          <b-row>
+            <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
+              <b-row>
+                <b-col cols="12">
+                  <b-form-group label="Donation needed (in PHP):" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                    <b-form-input
+                      v-model="event.goals.monetaryDonation"
+                      type="number"
+                      step="100"
+                      placeholder="Enter the required amount for the Event"
+                      lazy-formatter
+                      :formatter="validateFloat"
+                      required
+                    ></b-form-input>
+                  </b-form-group>
+                </b-col>
+              </b-row>
+            </b-card>
+          </b-row>
 
-            <b-row>
-              <b-col>
-                <b-form-group label="Start Date:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-datepicker
-                    v-model="startDate.date"
-                    class="mb-2"
-                    :min="new Date()"
-                    required
-                  ></b-form-datepicker>
+          <b-row>
+            <b-card v-for="(role, index) in roles" :key="index" class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
+              <b-row>
+                <b-col>
+                  <b-form-group label="Role:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                    <b-form-input v-model="role.name" disabled placeholder="Enter Specific Role" required></b-form-input>
+                  </b-form-group>
+                </b-col>
+                <b-col>
+                  <b-form-group label="Number of Volunteers for this Role:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                    <b-form-input v-model="role.max" disabled type="number" placeholder="Enter Number of Volunteers needed for this Role" required></b-form-input>
+                  </b-form-group>
+                </b-col>
+                <b-form-group label="Description:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                  <b-form-input v-model="role.description" disabled placeholder="Enter Description of the Role" required></b-form-input>
                 </b-form-group>
-              </b-col>
+              </b-row>
+            </b-card>
+            <!-- <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
+              <b-row>
+                <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; text-align: left; font-size:20px; margin-top:15px; margin-bottom:0px;">Roles Needed:</h2>
+                <b-col>
+                  <b-form-group label="Role:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                    <b-form-input v-model="form.roleName" placeholder="Enter Specific Role" required></b-form-input>
+                  </b-form-group>
+                </b-col>
+                <b-col>
+                  <b-form-group label="Number of Volunteers for this Role:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                    <b-form-input v-model="form.roleNumber" type="number" placeholder="Enter Number of Volunteers needed for this Role" required></b-form-input>
+                  </b-form-group>
+                </b-col>
+                <b-form-group label="Skills:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                  <b-form-tags id="tags-with-dropdown" v-model="value" no-outer-focus class="mb-2" style="text-align:center;">
+                    <template v-slot="{ tags, disabled, addTag, removeTag }" style="display: inline-block; height: 100%; overflow: auto;">
+                      <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
+                        <li v-for="tag in tags" :key="tag" class="list-inline-item">
+                          <b-form-tag
+                            @remove="removeTag(tag)"
+                            :title="tag"
+                            :disabled="disabled"
+                            variant="info"
+                          >{{ tag }}</b-form-tag>
+                        </li>
+                      </ul>
 
-              <b-col>
-                <b-form-group label="Start Time:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-timepicker v-model="startDate.time" locale="en" required></b-form-timepicker>
-                </b-form-group>
-              </b-col>
-            </b-row>
-
-            <b-row>
-              <b-col>
-                <b-form-group label="End Date:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-datepicker
-                    v-model="endDate.date"
-                    class="mb-2"
-                    required
-                    :min="new Date()"
-                  ></b-form-datepicker>
-                </b-form-group>
-              </b-col>
-
-              <b-col>
-                <b-form-group label="End Time:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-timepicker v-model="endDate.time" locale="en" required></b-form-timepicker>
-                </b-form-group>
-              </b-col>
-            </b-row>
-
-            <!-- <b-row>
-              <b-col>
-                <b-form-group label="Contact Person:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-input v-model="form.contactname" placeholder="Enter the Contact Person for the Event" required></b-form-input>
-                </b-form-group>
-              </b-col>
-
-              <b-col>
-                <b-form-group label="Contact Number:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-input v-model="form.contactname" placeholder="Enter the Contact Person for the Event" required></b-form-input>
-                </b-form-group>
-              </b-col>
-            </b-row> -->
-          </b-card>
-        </b-row>
-
-        <b-row>
-          <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
-            <h3 style="font-family:'Bebas Neue', cursive; color: black; position: relative; text-align: left; font-size:20px;">Event Logo</h3>
-
-            <b-avatar v-if="!!displayLogo" :src="displayLogo" size="250" alt="event logo" square></b-avatar>
-            <br />
-            <b-form-file v-model="event.logo" class="mt-3" plain></b-form-file>
-          </b-card>
-        </b-row>
-
-        <b-row>
-          <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
-            <b-form-group label="Event Description:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-              <b-form-textarea id="textarea-auto-height" rows="3" max-rows="8" v-model="event.description" placeholder="Enter event description and other important details" required></b-form-textarea>
-            </b-form-group>
-          </b-card>
-        </b-row>
-
-        <b-row>
-          <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
-            <b-row>
-              <b-col cols="12">
-                <b-form-group label="Donation needed (in PHP):" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-input
-                    v-model="event.goals.monetaryDonation"
-                    type="number"
-                    step="100"
-                    placeholder="Enter the required amount for the Event"
-                    lazy-formatter
-                    :formatter="validateFloat"
-                    required
-                  ></b-form-input>
-                </b-form-group>
-              </b-col>
-            </b-row>
-          </b-card>
-        </b-row>
-        <b-row>
-          <b-card v-for="(role, index) in roles" :key="index" class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
-            <b-row>
-              <b-col>
-                <b-form-group label="Role:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-input v-model="role.name" disabled placeholder="Enter Specific Role" required></b-form-input>
-                </b-form-group>
-              </b-col>
-              <b-col>
-                <b-form-group label="Number of Volunteers for this Role:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-input v-model="role.max" disabled type="number" placeholder="Enter Number of Volunteers needed for this Role" required></b-form-input>
-                </b-form-group>
-              </b-col>
-              <b-form-group label="Description:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                <b-form-input v-model="role.description" disabled placeholder="Enter Description of the Role" required></b-form-input>
-              </b-form-group>
-            </b-row>
-          </b-card>
-          <!-- <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
-            <b-row>
-              <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; text-align: left; font-size:20px; margin-top:15px; margin-bottom:0px;">Roles Needed:</h2>
-              <b-col>
-                <b-form-group label="Role:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-input v-model="form.roleName" placeholder="Enter Specific Role" required></b-form-input>
-                </b-form-group>
-              </b-col>
-              <b-col>
-                <b-form-group label="Number of Volunteers for this Role:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-input v-model="form.roleNumber" type="number" placeholder="Enter Number of Volunteers needed for this Role" required></b-form-input>
-                </b-form-group>
-              </b-col>
-              <b-form-group label="Skills:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                <b-form-tags id="tags-with-dropdown" v-model="value" no-outer-focus class="mb-2" style="text-align:center;">
-                  <template v-slot="{ tags, disabled, addTag, removeTag }" style="display: inline-block; height: 100%; overflow: auto;">
-                    <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
-                      <li v-for="tag in tags" :key="tag" class="list-inline-item">
-                        <b-form-tag
-                          @remove="removeTag(tag)"
-                          :title="tag"
-                          :disabled="disabled"
-                          variant="info"
-                        >{{ tag }}</b-form-tag>
-                      </li>
-                    </ul>
-
-                    <b-dropdown size="sm" variant="outline-secondary" block menu-class="w-100">
-                      <template #button-content>
-                        <b-icon icon="tag-fill"></b-icon> Skills Provided
-                      </template>
-                      <b-dropdown-form @submit.stop.prevent="() => {}">
-                        <b-form-group
-                          label="Search Skills"
-                          label-for="tag-search-input"
-                          label-cols-md="auto"
-                          class="mb-0"
-                          label-size="sm"
-                          :description="searchDesc"
-                          :disabled="disabled"
+                      <b-dropdown size="sm" variant="outline-secondary" block menu-class="w-100">
+                        <template #button-content>
+                          <b-icon icon="tag-fill"></b-icon> Skills Provided
+                        </template>
+                        <b-dropdown-form @submit.stop.prevent="() => {}">
+                          <b-form-group
+                            label="Search Skills"
+                            label-for="tag-search-input"
+                            label-cols-md="auto"
+                            class="mb-0"
+                            label-size="sm"
+                            :description="searchDesc"
+                            :disabled="disabled"
+                          >
+                            <b-form-input
+                              v-model="search"
+                              id="tag-search-input"
+                              type="search"
+                              size="sm"
+                              autocomplete="off"
+                              ></b-form-input>
+                          </b-form-group>
+                        </b-dropdown-form>
+                        <b-dropdown-divider></b-dropdown-divider>
+                        <b-dropdown-item-button
+                          v-for="options in availableOptions"
+                          :key="options"
+                          @click="onOptionClick({ options, addTag })"
                         >
+                          {{ options }}
+                        </b-dropdown-item-button>
+                        <b-dropdown-text v-if="availableOptions.length === 0">
+                          There are no tags available to select
+                        </b-dropdown-text>
+                      </b-dropdown>
+                    </template>
+                  </b-form-tags>
+                </b-form-group>
+                <b-form-group label="Description:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                  <b-form-input v-model="form.roleDescription" placeholder="Enter Description of the Role" required></b-form-input>
+                </b-form-group>
+              </b-row>
+              <b-row>
+                <b-col cols="9"></b-col>
+                <b-col>
+                  <b-button @click="addRole" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 170px;">
+                    Add Another Role
+                  </b-button>
+                </b-col>
+              </b-row>
+            </b-card> -->
+          </b-row>
+
+          <b-row class="pt-4">
+            <b-col cols="12">
+              <b-card style="border-radius: 20px;">
+                <h5 class="text-start" style="font-family:'Bebas Neue', cursive;">
+                  Sustainable Development Goals
+                </h5>
+                <b-row class="text-center">
+                  <b-col cols="4" v-for="sdg in sdgOptions" :key="sdg._id">
+                    <b-form-checkbox v-model="event.sdgIds" :value="sdg._id">
+                      &nbsp;
+                      <b-avatar
+                        :src="sdg.imageUrl"
+                        size="150px"
+                        square
+                      >
+                      </b-avatar>
+                    </b-form-checkbox>
+                  </b-col>
+                </b-row>
+              </b-card>
+            </b-col>
+          </b-row>
+
+          <b-row class="pt-4">
+            <b-col cols="12">
+              <b-card style="border-radius: 20px;">
+                <h5 class="text-start" style="font-family:'Bebas Neue', cursive;">
+                  Items Needed for Event
+                </h5>
+
+                <b-row class="pt-2">
+                  <b-col cols="12">
+                      <b-table
+                        :items="event.ikdItems"
+                        :fields="ikdFields"
+                        show-empty
+                        responsive
+                        striped
+                        primary-key="_id"
+                      >
+                        <template #cell(quantity)="{ item }">
                           <b-form-input
-                            v-model="search"
-                            id="tag-search-input"
-                            type="search"
-                            size="sm"
-                            autocomplete="off"
-                            ></b-form-input>
+                            class="text-center"
+                            type="number"
+                            style="width: 10%; display: inline"
+                            v-model="item['quantity']"
+                            :formatter="(value) => validateItemQuantity(value, item.maxQuantity)"
+                          /> / {{ item.maxQuantity }}
+                        </template>
+
+                        <template #cell(actions)="{ item }">
+                          <b-icon
+                            @click="removeIkdItem(item._id)"
+                            icon="trash"
+                          />
+                        </template>
+                      </b-table>
+                  </b-col>
+
+                  <b-col cols="12">
+                    <b-dropdown
+                      text="Add Item"
+                      style="width: 100%"
+                      menu-class="w-100"
+                      variant="primary"
+                    >
+                      <b-dropdown-form>
+                        <b-form-group label="Search Item" label-for="item-search" @submit.stop.prevent>
+                          <b-form-input
+                            id="item-search"
+                            debounce="500"
+                            @update="searchInkindDonations"
+                          ></b-form-input>
                         </b-form-group>
                       </b-dropdown-form>
                       <b-dropdown-divider></b-dropdown-divider>
-                      <b-dropdown-item-button
-                        v-for="options in availableOptions"
-                        :key="options"
-                        @click="onOptionClick({ options, addTag })"
+                      <b-dropdown-item
+                        v-for="item in ikdOptions"
+                        :key="item._id"
+                        @click="selectIkdItem(item)"
                       >
-                        {{ options }}
-                      </b-dropdown-item-button>
-                      <b-dropdown-text v-if="availableOptions.length === 0">
-                        There are no tags available to select
-                      </b-dropdown-text>
+                        {{ item.quantity }} - {{ item.name }} <span style="color: grey; font-size: 12px">{{ item.sku }}</span>
+                      </b-dropdown-item>
                     </b-dropdown>
-                  </template>
-                </b-form-tags>
-              </b-form-group>
-              <b-form-group label="Description:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                <b-form-input v-model="form.roleDescription" placeholder="Enter Description of the Role" required></b-form-input>
-              </b-form-group>
-            </b-row>
-            <b-row>
-              <b-col cols="9"></b-col>
-              <b-col>
-                <b-button @click="addRole" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 170px;">
-                  Add Another Role
-                </b-button>
-              </b-col>
-            </b-row>
-          </b-card> -->
-        </b-row>
+                  </b-col>
+                </b-row>
+              </b-card>
+            </b-col>
+          </b-row>
 
-        <b-row class="pt-4">
-          <b-col cols="12">
-            <b-card style="border-radius: 20px;">
-              <b-form-group
-                label="Sustainable Development Goals"
-                style="font-family:'Bebas Neue', cursive; text-align:left;"
-              >
-                  <b-row class="text-center">
-                    <b-col cols="4" v-for="sdg in sdgOptions" :key="sdg._id">
-                      <b-form-checkbox v-model="event.sdgIds" :value="sdg._id">
-                        &nbsp;
-                        <b-avatar
-                          :src="sdg.imageUrl"
-                          size="150px"
-                          square
-                        >
-                        </b-avatar>
-                      </b-form-checkbox>
+          <!-- <b-row>
+            <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
+              <b-container fluid>
+                <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">Event Evaluation Questions</h2>
+                <b-card v-for="(role, index) in roles" :key="index" class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1200px; border-radius: 20px; margin-top:20px;">
+                  <b-row>
+                    <b-col>
+                      <b-form-input style="width:1000px;" v-model="role.question" disabled placeholder="Enter your Question"></b-form-input>
+                    </b-col>
+                    <b-col>
+                      <b-button>Delete</b-button>
                     </b-col>
                   </b-row>
-              </b-form-group>
+                </b-card>
+                <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1200px; border-radius: 20px; margin-top:20px;">
+                  <b-row>
+                    <b-col>
+                      <b-form-input style="width:1000px;" v-model="form.question" placeholder="Enter your Question"></b-form-input>
+                    </b-col>
+                    <b-col>
+                      <b-button>Delete</b-button>
+                    </b-col>
+                  </b-row>
+                </b-card>
+                <b-row>
+                  <b-col cols="10">
+                  </b-col>
+                  <b-col>
+                    <b-button style="margin-top:20px;" @click="addRole">Add Row</b-button>
+                  </b-col>
+                </b-row>
+              </b-container>
             </b-card>
-          </b-col>
-        </b-row>
-
-        <!-- <b-row>
-          <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
-            <b-form-group label="Select items needed for the event:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-              <b-col><b-button>Items</b-button></b-col>
-              <b-col cols="5"></b-col>
-            </b-form-group>
-          </b-card>
-        </b-row> -->
-
-        <!-- <b-row>
-          <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
-            <b-container fluid>
-              <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">Event Evaluation Questions</h2>
-              <b-card v-for="(role, index) in roles" :key="index" class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1200px; border-radius: 20px; margin-top:20px;">
-                <b-row>
-                  <b-col>
-                    <b-form-input style="width:1000px;" v-model="role.question" disabled placeholder="Enter your Question"></b-form-input>
-                  </b-col>
-                  <b-col>
-                    <b-button>Delete</b-button>
-                  </b-col>
-                </b-row>
-              </b-card>
-              <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1200px; border-radius: 20px; margin-top:20px;">
-                <b-row>
-                  <b-col>
-                    <b-form-input style="width:1000px;" v-model="form.question" placeholder="Enter your Question"></b-form-input>
-                  </b-col>
-                  <b-col>
-                    <b-button>Delete</b-button>
-                  </b-col>
-                </b-row>
-              </b-card>
-              <b-row>
-                <b-col cols="10">
-                </b-col>
-                <b-col>
-                  <b-button style="margin-top:20px;" @click="addRole">Add Row</b-button>
-                </b-col>
-              </b-row>
-            </b-container>
-          </b-card>
-        </b-row> -->
-      </b-form>
+          </b-row> -->
+        </b-form>
 
         <b-row class="pt-4 pb-2">
           <b-col />
@@ -312,15 +393,18 @@ import { mapGetters } from 'vuex'
 
 const axios = require('axios').default
 
+const today = new Date()
+const midnightToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0, 0)
+
 export default ({
   data () {
     return {
       startDate: {
-        date: new Date(),
+        date: today,
         time: '00:00'
       },
       endDate: {
-        date: new Date(),
+        date: today,
         time: '00:00'
       },
       event: {
@@ -330,28 +414,31 @@ export default ({
           name: ''
         },
         date: {
-          start: new Date(),
-          end: new Date()
+          start: midnightToday,
+          end: midnightToday
         },
         goals: {
           monetaryDonation: '0.00'
         },
         logo: null,
-        sdgIds: []
+        sdgIds: [],
+        ikdItems: []
       },
       displayLogo: '',
       showModal: false,
-      text: {
-        eventdes: ''
-      },
       roles: [],
       options: ['Teaches at Math', 'Fluent in English', 'Heavy Lifter', 'Playing the guitar'],
-      choices: ['Goal 1: No Poverty', 'Goal 4: Quality Education', 'Goal 13: Climate Action'],
       search: '',
       searcher: '',
       value: [],
       values: [],
-      sdgOptions: []
+      sdgOptions: [],
+      ikdFields: [
+        { key: 'name', label: 'Item' },
+        { key: 'quantity', label: 'Quantity' },
+        { key: 'actions', label: 'Actions' }
+      ],
+      ikdOptions: []
     }
   },
   created () {
@@ -375,6 +462,15 @@ export default ({
       if (this.event.sdgIds.length > 0) {
         for (const id of this.event.sdgIds) {
           form.set('sdgIds[]', id)
+        }
+      }
+
+      if (this.event.ikdItems.length > 0) {
+        for (let i = 0; i < this.event.ikdItems.length; i++) {
+          const ikdItem = this.event.ikdItems[i]
+
+          form.set(`ikdItems[${i}][ikdId]`, ikdItem._id)
+          form.set(`ikdItems[${i}][quantity]`, ikdItem.quantity)
         }
       }
 
@@ -406,21 +502,19 @@ export default ({
       addTag(options)
       this.search = ''
     },
-    onChoicesClick ({ choices, addTag }) {
-      addTag(choices)
-      this.searcher = ''
-    },
     setEventStartDate (date, time) {
       const [year, month, day] = date.split('-')
       const [hours, minutes] = time.split(':')
 
       this.event.date.start = new Date(year, month - 1, day, hours, minutes, 0, 0)
+      console.log('START: ', this.event.date.start)
     },
     setEventEndDate (date, time) {
       const [year, month, day] = date.split('-')
       const [hours, minutes] = time.split(':')
 
       this.event.date.end = new Date(year, month - 1, day, hours, minutes, 0, 0)
+      console.log('END: ', this.event.date.end)
     },
     validateFloat (value) {
       const parsedValue = parseFloat(value)
@@ -435,6 +529,59 @@ export default ({
       })
 
       this.sdgOptions = data.results
+    },
+    async searchInkindDonations (value) {
+      const queryString = new URLSearchParams()
+
+      queryString.set('limit', 10)
+
+      if (value !== undefined && value !== '') {
+        queryString.set('filters.query', value)
+      }
+
+      const { data } = await axios.get(`http://localhost:3000/inkind-donations?${queryString.toString()}`, {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }
+      })
+
+      this.ikdOptions = data.results.filter((item) => item.quantity > 0)
+    },
+    selectIkdItem (item) {
+      const itemIndex = this.event.ikdItems.findIndex((ikd) => ikd._id === item._id)
+
+      if (itemIndex !== -1) {
+        return
+      }
+
+      this.event.ikdItems.push({
+        _id: item._id,
+        name: item.name,
+        quantity: 1,
+        maxQuantity: item.quantity
+      })
+    },
+    removeIkdItem (itemId) {
+      const itemIndex = this.event.ikdItems.findIndex((ikd) => ikd._id === itemId)
+
+      if (itemIndex === -1) {
+        return
+      }
+
+      this.event.ikdItems.splice(itemIndex, 1)
+    },
+    validateItemQuantity (value, maxQuantity) {
+      const parsedNumber = Number(value)
+
+      if (isNaN(parsedNumber) || parsedNumber < 1) {
+        return 1
+      }
+
+      if (parsedNumber > maxQuantity) {
+        return 1
+      }
+
+      return parsedNumber
     }
   },
   computed: {
@@ -458,24 +605,8 @@ export default ({
       // Show all options available
       return options
     },
-    availableChoices () {
-      const criterias = this.criterias
-      const choices = this.choices.filter(opt => this.values.indexOf(opt) === -1)
-      if (criterias) {
-        // Show only options that match criteria
-        return choices.filter(opt => opt.toLowerCase().indexOf(criterias) > -1)
-      }
-      // Show all options available
-      return choices
-    },
     searchDesc () {
       if (this.criteria && this.availableOptions.length === 0) {
-        return 'There are no tags matching your search criteria'
-      }
-      return ''
-    },
-    searchDescs () {
-      if (this.criterias && this.availableChoices.length === 0) {
         return 'There are no tags matching your search criteria'
       }
       return ''
@@ -498,10 +629,10 @@ export default ({
       this.setEventStartDate(this.startDate.date, value)
     },
     'endDate.date' (value) {
-      this.setEventStartDate(value, this.endDate.time)
+      this.setEventEndDate(value, this.endDate.time)
     },
     'endDate.time' (value) {
-      this.setEventStartDate(this.endDate.date, value)
+      this.setEventEndDate(this.endDate.date, value)
     }
   }
 })
