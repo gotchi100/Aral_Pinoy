@@ -40,20 +40,35 @@ const userSchema = new mongoose.Schema({
   }
 })
 
-async function hashPasswordBeforeSave (next) {
+async function hashPasswordBeforeSave () {
   const user = this
 
   if (!user.isModified('password')) {
-    return next()
+    return
   }
 
   const hashedPassword = await argon2.hash(user.password)
 
   user.password = hashedPassword
+}
 
-  next()
+async function hashPasswordBeforeUpdate () {
+  if (this._update.$set === undefined) {
+    return
+  }
+
+  const password = this._update.$set.password
+
+  if (password === undefined) {
+    return
+  }
+
+  const hashedPassword = await argon2.hash(password)
+
+  this._update.$set.password = hashedPassword
 }
 
 userSchema.pre('save', hashPasswordBeforeSave)
+userSchema.pre('updateOne', hashPasswordBeforeUpdate)
 
 module.exports = mongoose.model('User', userSchema)
