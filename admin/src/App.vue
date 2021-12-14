@@ -1,7 +1,7 @@
 <template>
   <div id="app">
 
-    <AdminNavbar v-if="$route.path !== '/login' && $route.path !== '/forget-password' " />
+    <AdminNavbar v-if="$route.path !== '/login' && $route.path !== '/forgot-password' " />
     <Navbar v-else />
 
     <router-view></router-view>
