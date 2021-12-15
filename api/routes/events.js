@@ -27,8 +27,19 @@ const contactsSchema = Joi.array().items(
   })
 )
 
+const jobsSchema = Joi.array().items(
+  Joi.object({
+    name: Joi.string().trim().max(255).required(),
+    description: Joi.string().trim().empty('').max(200),
+    requirements: Joi.object({
+      max: Joi.number().min(1).default(1)
+    }).required(),
+    skillIds: Joi.array().items(Joi.objectId()).unique()
+  })
+)
+
 const createEventValidator = Joi.object({
-  name: Joi.string().trim().max(50).required(),
+  name: Joi.string().trim().max(255).required(),
   description: Joi.string().trim().empty('').max(200),
   date: Joi.object({
     start: Joi.string().isoDate().required(),
@@ -41,13 +52,7 @@ const createEventValidator = Joi.object({
     name: Joi.string().trim().max(500).required()
   }).required(),
   contacts: contactsSchema,
-  jobs: Joi.array().items(
-    Joi.object({
-      name: Joi.string().trim().max(255).required(),
-      maxVolunteers: Joi.number().min(1).default(1),
-      skills: Joi.array().items(Joi.objectId()).unique()
-    })
-  ).unique(),
+  jobs: jobsSchema,
   sdgIds: Joi.array().items(Joi.objectId()).unique(),
   ikdItems: Joi.array().items(
     Joi.object({

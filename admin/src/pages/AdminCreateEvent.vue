@@ -193,104 +193,6 @@
             </b-card>
           </b-row>
 
-          <b-row>
-            <b-card v-for="(role, index) in roles" :key="index" class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
-              <b-row>
-                <b-col>
-                  <b-form-group label="Role:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                    <b-form-input v-model="role.name" disabled placeholder="Enter Specific Role" required></b-form-input>
-                  </b-form-group>
-                </b-col>
-                <b-col>
-                  <b-form-group label="Number of Volunteers for this Role:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                    <b-form-input v-model="role.max" disabled type="number" placeholder="Enter Number of Volunteers needed for this Role" required></b-form-input>
-                  </b-form-group>
-                </b-col>
-                <b-form-group label="Description:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-input v-model="role.description" disabled placeholder="Enter Description of the Role" required></b-form-input>
-                </b-form-group>
-              </b-row>
-            </b-card>
-            <!-- <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
-              <b-row>
-                <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; text-align: left; font-size:20px; margin-top:15px; margin-bottom:0px;">Roles Needed:</h2>
-                <b-col>
-                  <b-form-group label="Role:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                    <b-form-input v-model="form.roleName" placeholder="Enter Specific Role" required></b-form-input>
-                  </b-form-group>
-                </b-col>
-                <b-col>
-                  <b-form-group label="Number of Volunteers for this Role:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                    <b-form-input v-model="form.roleNumber" type="number" placeholder="Enter Number of Volunteers needed for this Role" required></b-form-input>
-                  </b-form-group>
-                </b-col>
-                <b-form-group label="Skills:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-tags id="tags-with-dropdown" v-model="value" no-outer-focus class="mb-2" style="text-align:center;">
-                    <template v-slot="{ tags, disabled, addTag, removeTag }" style="display: inline-block; height: 100%; overflow: auto;">
-                      <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
-                        <li v-for="tag in tags" :key="tag" class="list-inline-item">
-                          <b-form-tag
-                            @remove="removeTag(tag)"
-                            :title="tag"
-                            :disabled="disabled"
-                            variant="info"
-                          >{{ tag }}</b-form-tag>
-                        </li>
-                      </ul>
-
-                      <b-dropdown size="sm" variant="outline-secondary" block menu-class="w-100">
-                        <template #button-content>
-                          <b-icon icon="tag-fill"></b-icon> Skills Provided
-                        </template>
-                        <b-dropdown-form @submit.stop.prevent="() => {}">
-                          <b-form-group
-                            label="Search Skills"
-                            label-for="tag-search-input"
-                            label-cols-md="auto"
-                            class="mb-0"
-                            label-size="sm"
-                            :description="searchDesc"
-                            :disabled="disabled"
-                          >
-                            <b-form-input
-                              v-model="search"
-                              id="tag-search-input"
-                              type="search"
-                              size="sm"
-                              autocomplete="off"
-                              ></b-form-input>
-                          </b-form-group>
-                        </b-dropdown-form>
-                        <b-dropdown-divider></b-dropdown-divider>
-                        <b-dropdown-item-button
-                          v-for="options in availableOptions"
-                          :key="options"
-                          @click="onOptionClick({ options, addTag })"
-                        >
-                          {{ options }}
-                        </b-dropdown-item-button>
-                        <b-dropdown-text v-if="availableOptions.length === 0">
-                          There are no tags available to select
-                        </b-dropdown-text>
-                      </b-dropdown>
-                    </template>
-                  </b-form-tags>
-                </b-form-group>
-                <b-form-group label="Description:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                  <b-form-input v-model="form.roleDescription" placeholder="Enter Description of the Role" required></b-form-input>
-                </b-form-group>
-              </b-row>
-              <b-row>
-                <b-col cols="9"></b-col>
-                <b-col>
-                  <b-button @click="addRole" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 170px;">
-                    Add Another Role
-                  </b-button>
-                </b-col>
-              </b-row>
-            </b-card> -->
-          </b-row>
-
           <b-row class="pt-4">
             <b-col cols="12">
               <b-card style="border-radius: 20px;">
@@ -308,6 +210,177 @@
                       >
                       </b-avatar>
                     </b-form-checkbox>
+                  </b-col>
+                </b-row>
+              </b-card>
+            </b-col>
+          </b-row>
+
+          <b-row class="pt-4">
+            <b-col cols="12">
+              <b-card style="border-radius: 20px;">
+                <h5 class="text-start" style="font-family:'Bebas Neue', cursive;">
+                  Roles
+                </h5>
+
+                <b-row class="pt-2">
+                  <b-col cols="12">
+                      <b-table
+                        :items="event.jobs"
+                        :fields="jobFields"
+                        show-empty
+                        responsive
+                        striped
+                        primary-key="name"
+                      >
+                        <template #cell(skills)="{ item }">
+                          <template v-if="item.skills.length > 0">
+                            <b-form-tag
+                              v-for="jobSkill in item.skills"
+                              :key="jobSkill._id"
+                              class="bg-success"
+                              disabled
+                            >
+                              {{ jobSkill.name }}
+                            </b-form-tag>
+                          </template>
+                        </template>
+
+                        <template #cell(actions)="{ index }">
+                          <b-button variant="danger" @click="removeEventJob(index)">
+                            <b-icon icon="trash" />
+                          </b-button>
+                        </template>
+                      </b-table>
+                  </b-col>
+
+                  <b-col cols="12">
+                    <b-button
+                      class="w-100 mb-3"
+                      :disabled="showJobForm"
+                      @click="showJobForm = true"
+                    >
+                      Add Role
+                    </b-button>
+
+                    <b-collapse v-model="showJobForm">
+                      <b-card>
+                        <b-container>
+                          <b-row>
+                            <b-col cols="12">
+                              <b-form-group class="text-start">
+                                <label
+                                  class="py-1"
+                                  for="input-job-name"
+                                  style="font-family: 'Bebas Neue', cursive;"
+                                >
+                                  Role Name:
+                                </label>
+                                <b-form-input
+                                  id="input-job-name"
+                                  v-model="jobForm.name"
+                                  placeholder="Ex: Trash Collector"
+                                ></b-form-input>
+                              </b-form-group>
+                            </b-col>
+
+                            <b-col class="pt-2" cols="12">
+                              <b-form-group class="text-start">
+                                <label
+                                  class="py-1"
+                                  for="textarea-job-description"
+                                  style="font-family: 'Bebas Neue', cursive;"
+                                >
+                                  Role Description:
+                                </label>
+                                <b-form-textarea
+                                  id="textarea-job-description"
+                                  rows="3"
+                                  max-rows="8"
+                                  v-model="jobForm.description"
+                                  placeholder="Ex: Picks up and remove waste from locations and takes the waste to a designated location for proper disposal"
+                                  required
+                                ></b-form-textarea>
+                              </b-form-group>
+                            </b-col>
+
+                            <b-col class="pt-2" cols="12">
+                              <b-form-group
+                                label="Number of Volunteers Needed"
+                                style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;"
+                              >
+                                <b-form-input
+                                  v-model="jobForm.requirements.max"
+                                  type="number"
+                                  step="1"
+                                  lazy-formatter
+                                  :formatter="validatePositive"
+                                  required
+                                ></b-form-input>
+                              </b-form-group>
+                            </b-col>
+
+                            <b-col class="pt-2" cols="12">
+                              <b-form-tags>
+                                <template>
+                                  <ul v-if="jobForm.skills.length > 0" class="list-inline d-inline-block mb-2">
+                                    <li v-for="(jobSkill, index) in jobForm.skills" :key="index" class="list-inline-item">
+                                      <b-form-tag class="bg-success" @remove="removeJobSkill(index)">
+                                        {{ jobSkill.name }}
+                                      </b-form-tag>
+                                    </li>
+                                  </ul>
+                                </template>
+
+                                <b-dropdown
+                                  text="Add Skill"
+                                  style="width: 100%"
+                                  menu-class="w-100"
+                                  variant="primary"
+                                >
+                                  <b-dropdown-form>
+                                    <b-form-group label="Search Skill" label-for="skill-search" @submit.stop.prevent>
+                                      <b-form-input
+                                        id="skill-search"
+                                        debounce="500"
+                                        @update="searchSkills"
+                                      ></b-form-input>
+                                    </b-form-group>
+                                  </b-dropdown-form>
+                                  <b-dropdown-divider></b-dropdown-divider>
+                                  <b-dropdown-item
+                                    v-for="skill in skillOptions"
+                                    :key="skill._id"
+                                    @click="selectJobSkill(skill)"
+                                  >
+                                    {{ skill.name }} <span style="color: grey; font-size: 12px">{{ skill.description }}</span>
+                                  </b-dropdown-item>
+                                </b-dropdown>
+                              </b-form-tags>
+                            </b-col>
+
+                            <b-col cols="12" md="6">
+                              <b-button
+                                class="w-50 mt-3"
+                                @click="showJobForm = false"
+                              >
+                                Cancel
+                              </b-button>
+                            </b-col>
+
+                            <b-col cols="12" md="6">
+                              <b-button
+                                class="w-50 mt-3"
+                                variant="success"
+                                @click="addEventJob"
+                              >
+                                Submit
+                              </b-button>
+                            </b-col>
+                          </b-row>
+                        </b-container>
+                      </b-card>
+                    </b-collapse>
                   </b-col>
                 </b-row>
               </b-card>
@@ -341,11 +414,10 @@
                           /> / {{ item.maxQuantity }}
                         </template>
 
-                        <template #cell(actions)="{ item }">
-                          <b-icon
-                            @click="removeIkdItem(item._id)"
-                            icon="trash"
-                          />
+                        <template #cell(actions)="{ index }">
+                          <b-button variant="danger" @click="removeIkdItem(index)">
+                            <b-icon icon="trash" />
+                          </b-button>
                         </template>
                       </b-table>
                   </b-col>
@@ -480,7 +552,8 @@ export default ({
         contacts: [],
         logo: null,
         sdgIds: [],
-        ikdItems: []
+        ikdItems: [],
+        jobs: []
       },
       contactForm: {
         name: '',
@@ -503,7 +576,24 @@ export default ({
         { key: 'quantity', label: 'Quantity' },
         { key: 'actions', label: 'Actions' }
       ],
-      ikdOptions: []
+      ikdOptions: [],
+      jobFields: [
+        { key: 'name', label: 'Title' },
+        { key: 'description', label: 'Description' },
+        { key: 'requirements.max', label: 'Number of Volunteers Needed' },
+        { key: 'skills', label: 'Skills' },
+        { key: 'actions', label: 'Actions' }
+      ],
+      showJobForm: false,
+      jobForm: {
+        name: '',
+        description: '',
+        requirements: {
+          max: 1
+        },
+        skills: []
+      },
+      skillOptions: []
     }
   },
   created () {
@@ -536,6 +626,22 @@ export default ({
 
           form.set(`ikdItems[${i}][ikdId]`, ikdItem._id)
           form.set(`ikdItems[${i}][quantity]`, ikdItem.quantity)
+        }
+      }
+
+      if (this.event.jobs.length > 0) {
+        for (let i = 0; i < this.event.jobs.length; i++) {
+          const job = this.event.jobs[i]
+
+          form.set(`jobs[${i}][name]`, job.name)
+          form.set(`jobs[${i}][description]`, job.description)
+          form.set(`jobs[${i}][requirements][max]`, job.requirements.max)
+
+          for (let j = 0; j < job.skills.length; j++) {
+            const skill = job.skills[j]
+
+            form.set(`jobs[${i}][skillIds][${j}]`, skill._id)
+          }
         }
       }
 
@@ -582,19 +688,22 @@ export default ({
       const [hours, minutes] = time.split(':')
 
       this.event.date.start = new Date(year, month - 1, day, hours, minutes, 0, 0)
-      console.log('START: ', this.event.date.start)
     },
     setEventEndDate (date, time) {
       const [year, month, day] = date.split('-')
       const [hours, minutes] = time.split(':')
 
       this.event.date.end = new Date(year, month - 1, day, hours, minutes, 0, 0)
-      console.log('END: ', this.event.date.end)
     },
     validateFloat (value) {
       const parsedValue = parseFloat(value)
 
       return isNaN(parsedValue) ? '0.00' : parsedValue.toFixed(2)
+    },
+    validatePositive (value) {
+      const parsedValue = parseInt(value)
+
+      return isNaN(parsedValue) || parsedValue <= 0 ? 1 : parsedValue
     },
     async getSdgs () {
       const { data } = await axios.get('http://localhost:3000/sdgs', {
@@ -636,14 +745,8 @@ export default ({
         maxQuantity: item.quantity
       })
     },
-    removeIkdItem (itemId) {
-      const itemIndex = this.event.ikdItems.findIndex((ikd) => ikd._id === itemId)
-
-      if (itemIndex === -1) {
-        return
-      }
-
-      this.event.ikdItems.splice(itemIndex, 1)
+    removeIkdItem (index) {
+      this.event.ikdItems.splice(index, 1)
     },
     validateItemQuantity (value, maxQuantity) {
       const parsedNumber = Number(value)
@@ -675,6 +778,68 @@ export default ({
     },
     removeEventContact (index) {
       this.event.contacts.splice(index, 1)
+    },
+    async searchSkills (value) {
+      const queryString = new URLSearchParams()
+
+      queryString.set('limit', 10)
+
+      if (value !== undefined && value !== '') {
+        queryString.set('filters.name', value)
+      }
+
+      const { data } = await axios.get(`http://localhost:3000/skills?${queryString.toString()}`, {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }
+      })
+
+      this.skillOptions = data.results
+    },
+    selectJobSkill (skill) {
+      const skillIndex = this.jobForm.skills.findIndex((jobSkill) => jobSkill._id === skill._id)
+
+      if (skillIndex !== -1) {
+        return
+      }
+
+      this.jobForm.skills.push({
+        _id: skill._id,
+        name: skill.name,
+        description: skill.description
+      })
+    },
+    removeJobSkill (index) {
+      this.jobForm.skills.splice(index, 1)
+    },
+    addEventJob () {
+      const {
+        name,
+        description,
+        requirements,
+        skills
+      } = this.jobForm
+
+      this.event.jobs.push({
+        name,
+        description,
+        requirements,
+        skills
+      })
+
+      this.showJobForm = false
+
+      this.jobForm = {
+        name: '',
+        description: '',
+        requirements: {
+          max: 1
+        },
+        skills: []
+      }
+    },
+    removeEventJob (index) {
+      this.event.jobs.splice(index, 1)
     }
   },
   computed: {
