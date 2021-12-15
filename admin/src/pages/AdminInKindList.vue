@@ -217,7 +217,7 @@
                       pill
                       variant="danger"
                     >
-                      View Transactions
+                      View Adjustments
                     </b-button>
                   </b-col>
                   <b-col cols="2">
@@ -599,7 +599,12 @@
                     <label for="inventory-adj-date">
                       Date
                     </label>
-                    <b-form-datepicker label="Date" v-model="inventoryAdjForm.date" value-as-date></b-form-datepicker>
+                    <b-form-datepicker
+                      label="Date"
+                      v-model="inventoryAdjForm.date"
+                      value-as-date
+                      :max="new Date()"
+                    ></b-form-datepicker>
                   </b-row>
 
                   <b-row class="pt-3">
@@ -672,7 +677,7 @@
                         variant="danger"
                         @click="inventoryAdjConfirmModal = !inventoryAdjConfirmModal"
                       >
-                        Enter adjustment
+                        Submit
                       </b-button>
                     </b-col>
                   </b-row>
