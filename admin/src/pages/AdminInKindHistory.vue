@@ -78,6 +78,32 @@
                         {{ row.value.first }} {{ row.value.last }}
                       </template>
 
+                      <template #cell(contact)="row">
+                        <template v-if="checkOrganizationContacts(row.item.receiver.organization.contacts)">
+                          <span v-if="row.item.receiver.organization.contacts.length === 1">
+                            {{row.item.receiver.organization.contacts[0].name}} &lt;{{row.item.receiver.organization.contacts[0].contactMethods[0].value}}&gt;
+                          </span>
+
+                          <b-dropdown
+                            v-else
+                            text="See List"
+                            style="width: 100%"
+                            menu-class="w-100"
+                            variant="outline-primary"
+                          >
+                            <b-dropdown-item
+                              v-for="(contact, index) in row.item.receiver.organization.contacts"
+                              :key="index"
+                              disabled
+                            >
+                              <span style="color: black">
+                                {{contact.name}} &lt;{{contact.contactMethods[0].value}}&gt;
+                              </span>
+                            </b-dropdown-item>
+                          </b-dropdown>
+                        </template>
+                      </template>
+
                       <template #cell(status)="row">
                         <b-dropdown v-if="row.value==='PENDING'" :text="row.value" size="sm">
                          <b-dropdown-item
@@ -245,6 +271,7 @@ export default {
         { key: 'item.category.name', label: 'Category' },
         { key: 'quantity', label: 'Quantity Donated' },
         { key: 'receiver.organization.name', label: 'Organization' },
+        { key: 'contact', label: 'Contacts' },
         { key: 'status', label: 'Status' }
       ],
       eventTransactionTotal: 1,
@@ -328,6 +355,13 @@ export default {
       })
 
       this.$router.go()
+    },
+    checkOrganizationContacts (contacts) {
+      if (!Array.isArray(contacts)) {
+        return false
+      }
+
+      return contacts.length > 0
     }
   }
 }

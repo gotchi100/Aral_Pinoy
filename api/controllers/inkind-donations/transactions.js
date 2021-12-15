@@ -29,7 +29,22 @@ class InkindDonationTransactionsController {
       throw new NotFoundError(`In-Kind Donation does not exist: ${sku}`)
     }
     
+    const itemUpdateResults = await InkindDonationModel.updateOne({
+      sku,
+      __v : item.__v
+    }, {
+      $inc: {
+        quantity,
+        __v : 1
+      }
+    })
+
+    if (itemUpdateResults.matchedCount === 0) {
+      throw new ConflictError('In-kind donation was recently updated, please try again')
+    }
+    
     const createdTransaction = await InkindDonationTransactionModel.create({
+      status: TRANSACTION_STATUSES.COMPLETE,
       item: {
         sku,
         name: item.name,

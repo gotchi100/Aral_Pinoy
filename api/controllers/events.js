@@ -12,7 +12,10 @@ const IkdOutboundTransactionModel = require('../models/inkind-donations/outbound
 
 const { OUTBOUND_RECEIVER_TYPES } = require('../constants/inkind-donations')
 
-const { NotFoundError } = require('../errors')
+const { 
+  NotFoundError,
+  ConflictError
+} = require('../errors')
 
 /** @typedef {import('mongoose').Document} Document */
 
@@ -58,6 +61,16 @@ class EventsController {
     let sdgs
     let ikds
 
+    if (logoFile !== undefined) {
+      const { originalname, buffer} = logoFile
+
+      const filename = `${eventId.toString()}/logo-${Date.now().toString(36)}-${originalname}`
+
+      await EventsController.uploadFile(filename, buffer)
+
+      logoUrl = `https://storage.googleapis.com/aral-pinoy-events/${filename}`
+    }
+
     if (Array.isArray(sdgIds) && sdgIds.length > 0) {
       sdgs = []
 
@@ -83,7 +96,7 @@ class EventsController {
       for (const item of ikdItems) {
         const ikd = await InkindDonationModel.findById(
           item.ikdId, 
-          ['sku', 'name', 'category.name'], 
+          ['sku', 'name', 'category.name', '__v'], 
           {
             lean: true
           }
@@ -109,6 +122,20 @@ class EventsController {
           quantity: item.quantity
         })
 
+        const itemUpdateResults = await InkindDonationModel.updateOne({
+          _id: new Types.ObjectId(item.ikdId), 
+          __v : ikd.__v
+        }, {
+          $inc: {
+            quantity: -(item.quantity),
+            __v : 1
+          }
+        })
+    
+        if (itemUpdateResults.matchedCount === 0) {
+          throw new ConflictError('In-kind donation was recently updated, please try again')
+        }
+
         await IkdOutboundTransactionModel.create({
           quantity: item.quantity,
           date: date.start,
@@ -119,16 +146,6 @@ class EventsController {
           }
         })
       }
-    }
-
-    if (logoFile !== undefined) {
-      const { originalname, buffer} = logoFile
-
-      const filename = `${eventId.toString()}/logo-${Date.now().toString(36)}-${originalname}`
-
-      await EventsController.uploadFile(filename, buffer)
-
-      logoUrl = `https://storage.googleapis.com/aral-pinoy-events/${filename}`
     }
 
     /** @type {Document} */
