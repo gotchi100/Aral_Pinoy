@@ -14,6 +14,7 @@ const { AppError } = require('./errors')
 const mainRouter = require('./routes/main')
 const adminRouter = require('./routes/admin')
 const eventsRouter = require('./routes/events')
+const forgotPasswordRouter = require('./routes/forgot-password')
 const inkindDonationsRouter = require('./routes/inkind-donations')
 const ikdCategoriesRouter = require('./routes/inkind-donations/categories')
 const ikdTransactionsRouter = require('./routes/inkind-donations/transactions')
@@ -39,7 +40,9 @@ connectDatabase()
 const publicRoutes = [
   '/login', 
   '/google-sign-in',
-  '/register', 
+  '/register',
+  '/forgot-password',
+  /^\/forgot-password\/[a-zA-Z0-9-_]/,
   '/admin/login',
   '/skills'
 ]
@@ -65,6 +68,7 @@ app.use('/admin', adminRouter)
 app.use('/users', usersRouter)
 app.use('/skills', skillsRouter)
 app.use('/events', eventsRouter)
+app.use('/forgot-password', forgotPasswordRouter)
 app.use('/sdgs', sdgsRouter)
 app.use('/inkind-donations', inkindDonationsRouter)
 app.use('/inkind-donation-categories', ikdCategoriesRouter)

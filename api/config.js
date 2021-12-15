@@ -6,11 +6,17 @@ const {
   MONGODB_URI,
   JWT_SECRET,
   JWT_EXPIRATION_TIME = '4h',
+  ADMIN_DOMAIN_NAME,
+  VOLUNTEER_DOMAIN_NAME,
   VOLUNTEER_GOOGLE_OAUTH_REDIRECT_URI,
   GOOGLE_OAUTH_CLIENT_ID,
   GOOGLE_OAUTH_CLIENT_SECRET,
   GOOGLE_OAUTH_REDIRECT_URI,
-  GOOGLE_CLOUD_SERVICE_ACCOUNT_CREDENTIALS
+  GOOGLE_CLOUD_SERVICE_ACCOUNT_CREDENTIALS,
+  SMTP_GMAIL_AUTH_USER,
+  SMTP_GMAIL_AUTH_PASS,
+  SMTP_SENDGRID_AUTH_USER,
+  SMTP_SENDGRID_AUTH_PASS,
 } = process.env
   
 if (MONGODB_URI === '') {
@@ -29,7 +35,11 @@ module.exports = {
     secret: JWT_SECRET,
     expiresIn: JWT_EXPIRATION_TIME
   },
+  admin: {
+    domainName: ADMIN_DOMAIN_NAME,
+  },
   volunteer: {
+    domainName: VOLUNTEER_DOMAIN_NAME,
     google: {
       oauth: {
         redirectUri: VOLUNTEER_GOOGLE_OAUTH_REDIRECT_URI
@@ -44,6 +54,20 @@ module.exports = {
     },
     cloud: {
       serviceAccount: path.resolve(__dirname, GOOGLE_CLOUD_SERVICE_ACCOUNT_CREDENTIALS)
+    }
+  },
+  smtp: {
+    gmail: {
+      auth: {
+        user: SMTP_GMAIL_AUTH_USER,
+        pass: SMTP_GMAIL_AUTH_PASS
+      }
+    },
+    sendgrid: {
+      auth: {
+        user: SMTP_SENDGRID_AUTH_USER,
+        pass: SMTP_SENDGRID_AUTH_PASS
+      }
     }
   }
 }
