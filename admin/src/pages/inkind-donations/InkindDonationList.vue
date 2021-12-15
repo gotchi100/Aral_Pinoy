@@ -1,101 +1,103 @@
 <template>
-  <div class="inkindlist">
-    <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1400px; border-radius: 20px; margin-top:40px;">
-      <b-container fluid>
-        <b-row>
-          <b-col cols="12">
-            <h1 style="font-family:'Bebas Neue', cursive;">
-              In-Kind Donations Inventory
-            </h1>
-          </b-col>
-        </b-row>
+  <div>
+    <b-container class="py-5">
+      <b-row>
+        <b-col cols="12">
+          <b-card class="card" style="border-radius: 20px;">
+            <b-container fluid>
+              <b-row>
+                <b-col cols="12">
+                  <h1 style="font-family:'Bebas Neue', cursive;">
+                    In-Kind Donations Inventory
+                  </h1>
+                </b-col>
+              </b-row>
 
-        <!-- <b-link to="/incoming-history">Incoming History (remove)</b-link> -->
-        <b-row>
-          <b-col cols="12">
-            <b-tabs pills card>
-              <!-- <b-tab title="Compiled View">
-                <b-card-text>
-                  <b-row>
-                    <b-container class="bv-example-row">
-                      <b-row>
-                        <b-col>
-                          <b-col sm="5" md="6" class="my-1">
-                            <b-form-group style="font-size: 15px; font-family:'Bebas Neue', cursive;"
-                              label="Per page"
-                              label-for="per-page-select"
-                              label-cols-sm="6"
-                              label-cols-md="4"
-                              label-cols-lg="3"
-                              label-align-sm="right"
-                              label-size="sm"
-                              class="mb-0"
-                            >
-                              <b-form-select
-                                id="per-page-select"
-                                v-model="perPage"
-                                :options="pageOptions"
-                                size="sm"
-                              ></b-form-select>
-                            </b-form-group>
-                          </b-col>
-                        </b-col>
-                        <b-col>
-                        </b-col>
-                        <b-col>
-                          <br>
-                          <b-input-group size="sm">
-                            <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
-                            <b-form-input
-                              id="filter-input"
-                              v-model="filter"
-                              type="search"
-                              placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
-                            ></b-form-input>
-                          </b-input-group>
-                          <br>
-                        </b-col>
-                      </b-row>
-                    </b-container>
-                  </b-row>
+              <b-row>
+                <b-col cols="12">
+                  <b-tabs pills card>
+                    <!-- <b-tab title="Compiled View">
+                      <b-card-text>
+                        <b-row>
+                          <b-container class="bv-example-row">
+                            <b-row>
+                              <b-col>
+                                <b-col sm="5" md="6" class="my-1">
+                                  <b-form-group style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                                    label="Per page"
+                                    label-for="per-page-select"
+                                    label-cols-sm="6"
+                                    label-cols-md="4"
+                                    label-cols-lg="3"
+                                    label-align-sm="right"
+                                    label-size="sm"
+                                    class="mb-0"
+                                  >
+                                    <b-form-select
+                                      id="per-page-select"
+                                      v-model="perPage"
+                                      :options="pageOptions"
+                                      size="sm"
+                                    ></b-form-select>
+                                  </b-form-group>
+                                </b-col>
+                              </b-col>
+                              <b-col>
+                              </b-col>
+                              <b-col>
+                                <br>
+                                <b-input-group size="sm">
+                                  <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
+                                  <b-form-input
+                                    id="filter-input"
+                                    v-model="filter"
+                                    type="search"
+                                    placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
+                                  ></b-form-input>
+                                </b-input-group>
+                                <br>
+                              </b-col>
+                            </b-row>
+                          </b-container>
+                        </b-row>
 
-                  <b-table
-                    :items="items"
-                    :fields="fields"
-                    :current-page="currentPage"
-                    :per-page="perPage"
-                    :filter="filter"
-                    :filter-included-fields="filterOn"
-                    :sort-by.sync="sortBy"
-                    :sort-desc.sync="sortDesc"
-                    :sort-direction="sortDirection"
-                    stacked="md"
-                    show-empty
-                    small
-                    @filtered="onFiltered"
-                    style="background:white"
-                  >
-                    <template #cell(name)="row">
-                      {{ row.value.first }} {{ row.value.last }}
-                    </template>
+                        <b-table
+                          :items="items"
+                          :fields="fields"
+                          :current-page="currentPage"
+                          :per-page="perPage"
+                          :filter="filter"
+                          :filter-included-fields="filterOn"
+                          :sort-by.sync="sortBy"
+                          :sort-desc.sync="sortDesc"
+                          :sort-direction="sortDirection"
+                          stacked="md"
+                          show-empty
+                          small
+                          @filtered="onFiltered"
+                          style="background:white"
+                        >
+                          <template #cell(name)="row">
+                            {{ row.value.first }} {{ row.value.last }}
+                          </template>
 
-                    <template #row-details="row">
-                      <b-card>
-                        <ul>
-                          <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
-                        </ul>
-                      </b-card>
-                    </template>
-                  </b-table>
-                  <b-row>
-                    <b-col cols="8"></b-col>
-                    <b-col>
-                      <b-button @click="showModal = !showModal" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 180px;">
-                        Enter a Transaction
-                      </b-button>
+                          <template #row-details="row">
+                            <b-card>
+                              <ul>
+                                <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
+                              </ul>
+                            </b-card>
+                          </template>
+                        </b-table>
+                        <b-row>
+                          <b-col cols="8"></b-col>
+                          <b-col>
+                            <b-button @click="showModal = !showModal" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 180px;">
+                              Enter a Transaction
+                            </b-button>
                     </b-col>
                     <b-col>
-                      <b-button to="/category-list" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 180px;">
+                      <b-button to="/inkind-donations/categories" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 180px;">
                         View Categories
                       </b-button>
                     </b-col>
@@ -212,7 +214,7 @@
                   </b-col>
                   <b-col cols="2">
                     <b-button
-                      to="/incoming-history"
+                      to="/inkind-donations/adjustments"
                       style="font-size: 16px; width: 200px;"
                       pill
                       variant="danger"
@@ -223,7 +225,7 @@
                   <b-col cols="2">
                     <b-button
                       style="font-size: 16px; width: 200px;"
-                      to="/category-list"
+                      to="/inkind-donations/categories"
                       pill
                       variant="danger"
                     >
@@ -700,6 +702,9 @@
         </div>
       </b-modal>
     </b-card>
+        </b-col>
+      </b-row>
+    </b-container>
   </div>
 </template>
 
@@ -955,7 +960,7 @@ export default {
       })
 
       this.$router.push({
-        path: '/incoming-history'
+        path: '/inkind-donations/adjustments'
       })
     },
     async createdInkindDonationOutboundTransaction () {
@@ -978,7 +983,7 @@ export default {
       })
 
       this.$router.push({
-        path: '/inkind-history'
+        path: '/inkind-donations/outbound'
       })
     },
     addOutboundTransactionContact () {
@@ -1017,23 +1022,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.inkindlist {
-position: relative;
-}
-.inkindlist:before {
-background-image: url('https://rs.projects-abroad.ie/v1/hero/product-5b5b2f57d7d1b.[1600].jpeg');
-content: ' ';
-display: block;
-position: absolute;
-left: 0;
-top: 0;
-width: 100%;
-height: 100%;
-opacity: 0.4;
-background-repeat: no-repeat;
-background-size: cover;
-padding-top: 695px;
-}
-</style>

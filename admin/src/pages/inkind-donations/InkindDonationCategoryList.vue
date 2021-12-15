@@ -1,111 +1,117 @@
 <template>
-  <div class="categorylist">
-    <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
-      <b-container fluid>
-        <b-row>
-          <b-col cols="12">
-            <h1 style="font-family:'Bebas Neue', cursive;">
-              Categories
-            </h1>
-          </b-col>
-        </b-row>
-
-        <b-row>
-          <b-col cols="12">
-            <b-container>
+  <div>
+    <b-container class="py-5">
+      <b-row>
+        <b-col cols="12">
+          <b-card class="card" style="border-radius: 20px;">
+            <b-container fluid>
               <b-row>
-                <b-col cols="4">
-                  <b-form-group
-                    style="font-size: 15px; font-family:'Bebas Neue', cursive;"
-                    label="Per page"
-                    label-for="per-page-select"
-                    content-cols="12"
-                  >
-                    <b-form-select
-                      id="per-page-select"
-                      class="w-25"
-                      v-model="perPage"
-                      :options="pageOptions"
-                    ></b-form-select>
-                  </b-form-group>
+                <b-col cols="12">
+                  <h1 style="font-family:'Bebas Neue', cursive;">
+                    Categories
+                  </h1>
                 </b-col>
+              </b-row>
 
-                <!-- TODO: Implement search for inkind-categories -->
-                <!-- <b-col>
-                  <br>
-                  <b-input-group size="sm">
-                    <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
-                    <b-form-input
-                      id="filter-input"
-                      v-model="filter"
-                      type="search"
-                      placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
-                    ></b-form-input>
-                  </b-input-group>
-                  <br>
-                </b-col> -->
+              <b-row>
+                <b-col cols="12">
+                  <b-container>
+                    <b-row>
+                      <b-col cols="4">
+                        <b-form-group
+                          style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                          label="Per page"
+                          label-for="per-page-select"
+                          content-cols="12"
+                        >
+                          <b-form-select
+                            id="per-page-select"
+                            class="w-25"
+                            v-model="perPage"
+                            :options="pageOptions"
+                          ></b-form-select>
+                        </b-form-group>
+                      </b-col>
+
+                      <!-- TODO: Implement search for inkind-categories -->
+                      <!-- <b-col>
+                        <br>
+                        <b-input-group size="sm">
+                          <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
+                          <b-form-input
+                            id="filter-input"
+                            v-model="filter"
+                            type="search"
+                            placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
+                          ></b-form-input>
+                        </b-input-group>
+                        <br>
+                      </b-col> -->
+                    </b-row>
+                  </b-container>
+                </b-col>
+              </b-row>
+
+              <b-row class="pt-4">
+                <b-col cols="12">
+                  <b-table
+                    :items="getInkindCategories"
+                    :fields="fields"
+                    :current-page="currentPage"
+                    :per-page="perPage"
+                    stacked="md"
+                    style="background:white"
+                    show-empty
+                    small
+                    primary-key="_id"
+                  >
+                    <template #cell(bestBeforeDate)="row">
+                      <b-icon
+                        :icon="hasCustomField(row.item, 'bestBeforeDate') ? 'check-circle' : 'circle'"
+                        font-scale="1"
+                      ></b-icon>
+                    </template>
+
+                    <template #cell(expirationDate)="row">
+                      <b-icon
+                        :icon="hasCustomField(row.item, 'expirationDate') ? 'check-circle' : 'circle'"
+                        font-scale="1"
+                      ></b-icon>
+                    </template>
+                  </b-table>
+                </b-col>
+              </b-row>
+
+              <b-row class="pt-4" align-h="end">
+                <b-col cols="4">
+                  <b-button
+                    style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 200px;"
+                    pill
+                    variant="danger"
+                    @click="showAddModal = !showAddModal"
+                  >
+                    Add a Category Entry
+                  </b-button>
+                </b-col>
+              </b-row>
+
+              <b-row class="pt-4 justify-content-md-center">
+                <b-col cols="6" class="my-1">
+                  <b-pagination
+                    v-model="currentPage"
+                    :total-rows="total"
+                    :per-page="perPage"
+                    align="fill"
+                    size="sm"
+                    class="my-0"
+                  ></b-pagination>
+                </b-col>
               </b-row>
             </b-container>
-          </b-col>
-        </b-row>
-
-        <b-row class="pt-4">
-          <b-col cols="12">
-            <b-table
-              :items="getInkindCategories"
-              :fields="fields"
-              :current-page="currentPage"
-              :per-page="perPage"
-              stacked="md"
-              style="background:white"
-              show-empty
-              small
-              primary-key="_id"
-            >
-              <template #cell(bestBeforeDate)="row">
-                <b-icon
-                  :icon="hasCustomField(row.item, 'bestBeforeDate') ? 'check-circle' : 'circle'"
-                  font-scale="1"
-                ></b-icon>
-              </template>
-
-              <template #cell(expirationDate)="row">
-                <b-icon
-                  :icon="hasCustomField(row.item, 'expirationDate') ? 'check-circle' : 'circle'"
-                  font-scale="1"
-                ></b-icon>
-              </template>
-            </b-table>
-          </b-col>
-        </b-row>
-
-        <b-row class="pt-4" align-h="end">
-          <b-col cols="4">
-            <b-button
-              style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 200px;"
-              pill
-              variant="danger"
-              @click="showAddModal = !showAddModal"
-            >
-              Add a Category Entry
-            </b-button>
-          </b-col>
-        </b-row>
-
-        <b-row class="pt-4 justify-content-md-center">
-          <b-col cols="6" class="my-1">
-            <b-pagination
-              v-model="currentPage"
-              :total-rows="total"
-              :per-page="perPage"
-              align="fill"
-              size="sm"
-              class="my-0"
-            ></b-pagination>
-          </b-col>
-        </b-row>
-      </b-container>
-    </b-card>
+          </b-card>
+        </b-col>
+      </b-row>
+    </b-container>
 
     <b-modal v-model="showAddModal" size="xl" hide-footer>
       <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1100px; border-radius: 20px; margin-top: 40px;">
@@ -265,23 +271,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.categorylist {
-position: relative;
-}
-.categorylist:before {
-background-image: url('https://rs.projects-abroad.ie/v1/hero/product-5b5b2f57d7d1b.[1600].jpeg');
-content: ' ';
-display: block;
-position: absolute;
-left: 0;
-top: 0;
-width: 100%;
-height: 100%;
-opacity: 0.4;
-background-repeat: no-repeat;
-background-size: cover;
-padding-top: 695px;
-}
-</style>

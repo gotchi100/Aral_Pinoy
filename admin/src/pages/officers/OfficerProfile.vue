@@ -1,8 +1,9 @@
 <template>
-  <div class="AdminProfile">
+  <div>
     <div class="image" style="padding: 28px;">
         <img :src="logo" style="width: 320px; height: 150px">
     </div>
+
     <b-container fluid>
       <b-row class="justify-content-md-center">
         <b-col cols="8">
@@ -94,7 +95,7 @@
 <script>
 import { mapGetters } from 'vuex'
 
-const logo = require('../assets/aralpinoywords.png')
+const logo = require('../../assets/aralpinoywords.png')
 const axios = require('axios').default
 
 export default {
@@ -158,26 +159,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.AdminProfile {
-  position: relative;
-}
-.image {
-  position: relative;
-}
-.AdminProfile:before {
-  background-image: url('https://rs.projects-abroad.ie/v1/hero/product-5b5b2f57d7d1b.[1600].jpeg');
-  content: ' ';
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0.4;
-  background-repeat: no-repeat;
-  background-size: cover;
-  padding-top: 695px;
-}
-</style>

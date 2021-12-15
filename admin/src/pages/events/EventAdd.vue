@@ -1,149 +1,152 @@
 <template>
-  <div class="createevent">
-    <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
-      <b-container class="bv-example-row">
-        <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; text-align: center;">
-          Create Event
-        </h2>
+  <div>
+    <b-container class="py-5">
+      <b-row>
+        <b-col cols="12">
+          <b-card style="border-radius: 20px;">
+            <b-container class="bv-example-row">
+              <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; text-align: center;">
+                Create Event
+              </h2>
 
-        <b-form>
-          <b-row>
-            <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
-              <b-row>
-                <b-form-group class="text-start">
-                  <label
-                    class="py-1"
-                    for="input-event-name"
-                    style="font-family: 'Bebas Neue', cursive;"
-                  >
-                    Event Name:
-                  </label>
-                  <b-form-input id="input-event-name" v-model="event.name" placeholder="Enter Event Name" required></b-form-input>
-                </b-form-group>
-              </b-row>
+              <b-form>
+                <b-row>
+                  <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
+                    <b-row>
+                      <b-form-group class="text-start">
+                        <label
+                          class="py-1"
+                          for="input-event-name"
+                          style="font-family: 'Bebas Neue', cursive;"
+                        >
+                          Event Name:
+                        </label>
+                        <b-form-input id="input-event-name" v-model="event.name" placeholder="Enter Event Name" required></b-form-input>
+                      </b-form-group>
+                    </b-row>
 
-              <b-row>
-                <b-col cols="12">
-                  <b-form-group class="pt-2 text-start">
-                    <label
-                      class="py-1 text-start"
-                      for="input-event-location-name"
-                      style="font-family: 'Bebas Neue', cursive;"
-                    >
-                      Location:
-                    </label>
-                    <b-form-input id="input-event-location-name" v-model="event.location.name" placeholder="Enter Location of the Event" required></b-form-input>
-                  </b-form-group>
-                </b-col>
-              </b-row>
+                    <b-row>
+                      <b-col cols="12">
+                        <b-form-group class="pt-2 text-start">
+                          <label
+                            class="py-1 text-start"
+                            for="input-event-location-name"
+                            style="font-family: 'Bebas Neue', cursive;"
+                          >
+                            Location:
+                          </label>
+                          <b-form-input id="input-event-location-name" v-model="event.location.name" placeholder="Enter Location of the Event" required></b-form-input>
+                        </b-form-group>
+                      </b-col>
+                    </b-row>
 
-              <b-row>
-                <b-col>
-                  <b-form-group label="Start Date:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                    <b-form-datepicker
-                      v-model="startDate.date"
-                      class="mb-2"
-                      :min="new Date()"
-                      required
-                    ></b-form-datepicker>
-                  </b-form-group>
-                </b-col>
+                    <b-row>
+                      <b-col>
+                        <b-form-group label="Start Date:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                          <b-form-datepicker
+                            v-model="startDate.date"
+                            class="mb-2"
+                            :min="new Date()"
+                            required
+                          ></b-form-datepicker>
+                        </b-form-group>
+                      </b-col>
 
-                <b-col>
-                  <b-form-group label="Start Time:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                    <b-form-timepicker v-model="startDate.time" locale="en" required></b-form-timepicker>
-                  </b-form-group>
-                </b-col>
-              </b-row>
+                      <b-col>
+                        <b-form-group label="Start Time:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                          <b-form-timepicker v-model="startDate.time" locale="en" required></b-form-timepicker>
+                        </b-form-group>
+                      </b-col>
+                    </b-row>
 
-              <b-row>
-                <b-col>
-                  <b-form-group label="End Date:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                    <b-form-datepicker
-                      v-model="endDate.date"
-                      class="mb-2"
-                      required
-                      :min="new Date()"
-                    ></b-form-datepicker>
-                  </b-form-group>
-                </b-col>
+                    <b-row>
+                      <b-col>
+                        <b-form-group label="End Date:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                          <b-form-datepicker
+                            v-model="endDate.date"
+                            class="mb-2"
+                            required
+                            :min="new Date()"
+                          ></b-form-datepicker>
+                        </b-form-group>
+                      </b-col>
 
-                <b-col>
-                  <b-form-group label="End Time:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                    <b-form-timepicker v-model="endDate.time" locale="en" required></b-form-timepicker>
-                  </b-form-group>
-                </b-col>
-              </b-row>
+                      <b-col>
+                        <b-form-group label="End Time:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                          <b-form-timepicker v-model="endDate.time" locale="en" required></b-form-timepicker>
+                        </b-form-group>
+                      </b-col>
+                    </b-row>
 
-              <b-row>
-                <b-col cols="12">
-                  <b-form-tags>
-                    <template>
-                      <ul v-if="event.contacts.length > 0" class="list-inline d-inline-block mb-2">
-                        <li v-for="(contact, index) in event.contacts" :key="index" class="list-inline-item">
-                          <b-form-tag class="bg-success" @remove="removeEventContact(index)">
-                            {{ contact.name }} - {{ contact.contactMethods[0].value }}
-                          </b-form-tag>
-                        </li>
-                      </ul>
+                    <b-row>
+                      <b-col cols="12">
+                        <b-form-tags>
+                          <template>
+                            <ul v-if="event.contacts.length > 0" class="list-inline d-inline-block mb-2">
+                              <li v-for="(contact, index) in event.contacts" :key="index" class="list-inline-item">
+                                <b-form-tag class="bg-success" @remove="removeEventContact(index)">
+                                  {{ contact.name }} - {{ contact.contactMethods[0].value }}
+                                </b-form-tag>
+                              </li>
+                            </ul>
 
-                      <b-dropdown
-                        ref="eventContactFormDropdown"
-                        text="Add Contacts"
-                        style="width: 100%"
-                        menu-class="w-100"
-                        variant="primary"
-                      >
-                        <b-dropdown-form>
-                          <b-form-group label="Name" label-for="event-contact-name" @submit.stop.prevent>
-                            <b-form-input
-                              id="event-contact-name"
-                              v-model="contactForm.name"
-                            ></b-form-input>
-                          </b-form-group>
+                            <b-dropdown
+                              ref="eventContactFormDropdown"
+                              text="Add Contacts"
+                              style="width: 100%"
+                              menu-class="w-100"
+                              variant="primary"
+                            >
+                              <b-dropdown-form>
+                                <b-form-group label="Name" label-for="event-contact-name" @submit.stop.prevent>
+                                  <b-form-input
+                                    id="event-contact-name"
+                                    v-model="contactForm.name"
+                                  ></b-form-input>
+                                </b-form-group>
 
-                          <b-form-group class="pt-3" label="Contact Method Type" label-for="event-contact-method-type" @submit.stop.prevent>
-                            <b-input-group>
-                              <b-form-select
-                                id="event-contact-method-type"
-                                v-model="contactForm.contactMethods[0].type"
-                                style="width: 100%; padding: 0.5rem 0.75rem"
-                                :options="['EMAIL', 'MOBILE']"
-                                size="lg"
-                              ></b-form-select>
-                            </b-input-group>
-                          </b-form-group>
+                                <b-form-group class="pt-3" label="Contact Method Type" label-for="event-contact-method-type" @submit.stop.prevent>
+                                  <b-input-group>
+                                    <b-form-select
+                                      id="event-contact-method-type"
+                                      v-model="contactForm.contactMethods[0].type"
+                                      style="width: 100%; padding: 0.5rem 0.75rem"
+                                      :options="['EMAIL', 'MOBILE']"
+                                      size="lg"
+                                    ></b-form-select>
+                                  </b-input-group>
+                                </b-form-group>
 
-                          <b-form-group class="pt-3" label="Contact Method Value" label-for="event-contact-method-value" @submit.stop.prevent>
-                            <b-input-group>
-                              <b-form-input
-                                id="event-method-value"
-                                class="ml-3"
-                                v-model="contactForm.contactMethods[0].value"
-                              ></b-form-input>
-                            </b-input-group>
-                          </b-form-group>
+                                <b-form-group class="pt-3" label="Contact Method Value" label-for="event-contact-method-value" @submit.stop.prevent>
+                                  <b-input-group>
+                                    <b-form-input
+                                      id="event-method-value"
+                                      class="ml-3"
+                                      v-model="contactForm.contactMethods[0].value"
+                                    ></b-form-input>
+                                  </b-input-group>
+                                </b-form-group>
 
-                          <b-button class="mt-4" variant="success" @click="addEventContact">Submit</b-button>
-                        </b-dropdown-form>
-                      </b-dropdown>
-                    </template>
-                  </b-form-tags>
-                </b-col>
-              </b-row>
+                                <b-button class="mt-4" variant="success" @click="addEventContact">Submit</b-button>
+                              </b-dropdown-form>
+                            </b-dropdown>
+                          </template>
+                        </b-form-tags>
+                      </b-col>
+                    </b-row>
 
-              <!-- <b-row>
-                <b-col>
-                  <b-form-group label="Contact Person:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                    <b-form-input v-model="form.contactname" placeholder="Enter the Contact Person for the Event" required></b-form-input>
-                  </b-form-group>
-                </b-col>
+                    <!-- <b-row>
+                      <b-col>
+                        <b-form-group label="Contact Person:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                          <b-form-input v-model="form.contactname" placeholder="Enter the Contact Person for the Event" required></b-form-input>
+                        </b-form-group>
+                      </b-col>
 
-                <b-col>
-                  <b-form-group label="Contact Number:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                    <b-form-input v-model="form.contactname" placeholder="Enter the Contact Person for the Event" required></b-form-input>
-                  </b-form-group>
-                </b-col>
+                      <b-col>
+                        <b-form-group label="Contact Number:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                          <b-form-input v-model="form.contactname" placeholder="Enter the Contact Person for the Event" required></b-form-input>
+                        </b-form-group>
+                      </b-col>
               </b-row> -->
             </b-card>
           </b-row>
@@ -514,6 +517,9 @@
           </b-container>
       </b-modal>
     </b-card>
+        </b-col>
+      </b-row>
+    </b-container>
   </div>
 </template>
 
@@ -895,36 +901,3 @@ export default ({
   }
 })
 </script>
-
-<style scoped>
-@import '../css/style.css';
-
-.createevent {
-position: relative;
-}
-.createevent:before {
-background-image: url('https://rs.projects-abroad.ie/v1/hero/product-5b5b2f57d7d1b.[1600].jpeg');
-content: ' ';
-display: block;
-position: absolute;
-left: 0;
-top: 0;
-width: 100%;
-height: 100%;
-opacity: 0.4;
-background-repeat: no-repeat;
-background-size: cover;
-padding-top: 695px;
-}
-table , tr,td {
-  border: 1px solid black;
-  padding: 10px;
-  width: 50%;
-}
-button.newItem {
-  padding: 5px;
-  margin: 14px 0 0 0;
-  font-weight: bold;
-  font-size: 16px;
-}
-</style>

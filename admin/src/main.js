@@ -11,35 +11,49 @@ import Vuex from 'vuex'
 import VModal from 'vue-js-modal'
 import axios from 'axios'
 
-import App from './App.vue'
+import App from './App'
 import Login from './pages/Login'
-import Dashboard from './pages/Dashboard.vue'
-import InKindReport from './pages/InKindReport.vue'
-import MonetaryReport from './pages/MonetaryReport.vue'
-import EventEvalReport from './pages/EventEvalReport.vue'
-import VolunteerReport from './pages/VolunteerReport.vue'
-import AdminProfile from './pages/AdminProfile.vue'
-import EventList from './pages/AdminEventList.vue'
-import Volunteers from './pages/AdminVolunteerList.vue'
-import OfficersList from './pages/AdminOfficerList.vue'
-import InKindList from './pages/AdminInKindList.vue'
-import AddUser from './pages/AdminAddUser.vue'
-import AdminCreateEvent from './pages/AdminCreateEvent.vue'
-import Skills from './pages/AdminSkillsPage.vue'
-import ViewVolunteerProfile from './pages/AdminVolunteerViewProfile.vue'
-import ViewOfficerProfile from './pages/AdminViewOfficerProfile.vue'
-import CategoryList from './pages/AdminCategoryList.vue'
+import Dashboard from './pages/Dashboard'
+import Profile from './pages/Profile'
+import EditHomepage from './pages/EditHomepage'
 import ForgotPassword from './pages/ForgotPassword.vue'
 import ResetPassword from './pages/ResetPassword.vue'
+
 import EditSDG1 from './pages/AdminEditSDG1.vue'
 import EditSDG4 from './pages/AdminEditSDG4.vue'
 import EditSDG13 from './pages/AdminEditSDG13.vue'
-import Homepage from './pages/AdminEditHomepage.vue'
-import EventPage from './pages/AdminEventPage.vue'
+
+// /volunteers
+import VolunteerList from './pages/volunteers/VolunteerList'
+import VolunteerProfile from './pages/volunteers/VolunteerProfile'
+
+// /officers
+import OfficerList from './pages/officers/OfficerList'
+import OfficerProfile from './pages/officers/OfficerProfile'
+import OfficerAdd from './pages/officers/OfficerAdd'
+
+// /events
+import EventList from './pages/events/EventList'
+import EventDetails from './pages/events/EventDetails'
+import EventAdd from './pages/events/EventAdd'
+
+// /inkind-donations
+import InkindDonationList from './pages/inkind-donations/InkindDonationList'
+import InkindDonationAdjustmentList from './pages/inkind-donations/InkindDonationAdjustmentList'
+import InkindDonationCategoryList from './pages/inkind-donations/InkindDonationCategoryList'
+import InkindDonationOutboundList from './pages/inkind-donations/InkindDonationOutboundList'
+
+// /skills
+import Skills from './pages/skills/SkillList'
+
+// /reports
+import ReportInkindDonations from './pages/reports/ReportInkindDonations'
+import ReportMonetaryDonations from './pages/reports/ReportMonetaryDonations'
+import ReportEvents from './pages/reports/ReportEvents'
+import ReportVolunteers from './pages/reports/ReportVolunteers'
+
 import VolunteerSuggestion from './pages/events/VolunteerSuggestion.vue'
-import InKindHistory from './pages/AdminInKindHistory.vue'
 import Donate from './pages/AdminDonate.vue'
-import Incoming from './pages/AdminIncomingHistory.vue'
 
 import vuexStore from './store'
 
@@ -79,39 +93,26 @@ const routes = [
     }
   },
   {
-    path: '/inkind-report',
-    component: InKindReport,
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/monetary-report',
-    component: MonetaryReport,
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/event-eval-report',
-    component: EventEvalReport,
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/volunteer-report',
-    component: VolunteerReport,
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
     path: '/profile',
-    component: AdminProfile,
+    component: Profile,
     meta: {
       requiresAuth: true
     }
+  },
+  {
+    path: '/edit-homepage',
+    component: EditHomepage,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/forgot-password',
+    component: ForgotPassword
+  },
+  {
+    path: '/reset-password',
+    component: ResetPassword
   },
   {
     path: '/events',
@@ -121,43 +122,78 @@ const routes = [
     }
   },
   {
+    path: '/events/add',
+    component: EventAdd,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
     path: '/events/:id',
-    component: EventPage,
+    component: EventDetails,
     meta: {
       requiresAuth: true
     }
   },
   {
     path: '/volunteers',
-    component: Volunteers,
+    component: VolunteerList,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/volunteers/:id',
+    component: VolunteerProfile,
     meta: {
       requiresAuth: true
     }
   },
   {
     path: '/officers',
-    component: OfficersList,
+    component: OfficerList,
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/inkind-list',
-    component: InKindList,
+    path: '/officers/add',
+    component: OfficerAdd,
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/add-user',
-    component: AddUser,
+    path: '/officers/:id',
+    component: OfficerProfile,
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/create-event',
-    component: AdminCreateEvent,
+    path: '/inkind-donations',
+    component: InkindDonationList,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/inkind-donations/adjustments',
+    component: InkindDonationAdjustmentList,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/inkind-donations/categories',
+    component: InkindDonationCategoryList,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/inkind-donations/outbound',
+    component: InkindDonationOutboundList,
     meta: {
       requiresAuth: true
     }
@@ -170,33 +206,32 @@ const routes = [
     }
   },
   {
-    path: '/view-volunteer-profile/:id',
-    component: ViewVolunteerProfile,
+    path: '/reports/inkind-donations',
+    component: ReportInkindDonations,
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/view-officer-profile/:id',
-    component: ViewOfficerProfile,
+    path: '/reports/monetary-donations',
+    component: ReportMonetaryDonations,
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/category-list',
-    component: CategoryList,
+    path: '/reports/events',
+    component: ReportEvents,
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/forgot-password',
-    component: ForgotPassword
-  },
-  {
-    path: '/reset-password',
-    component: ResetPassword
+    path: '/reports/volunteers',
+    component: ReportVolunteers,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/edit-sdg1',
@@ -220,13 +255,6 @@ const routes = [
     }
   },
   {
-    path: '/homepage',
-    component: Homepage,
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
     path: '/volunteersuggestion',
     component: VolunteerSuggestion,
     meta: {
@@ -234,22 +262,8 @@ const routes = [
     }
   },
   {
-    path: '/inkind-history',
-    component: InKindHistory,
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
     path: '/donate',
     component: Donate,
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/incoming-history',
-    component: Incoming,
     meta: {
       requiresAuth: true
     }
