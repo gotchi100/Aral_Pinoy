@@ -69,26 +69,6 @@
                   })
                 }}
               </template>
-
-              <template #cell(status)="row">
-                <b-dropdown v-if="row.value==='PENDING'" :text="row.value" size="sm">
-                  <b-dropdown-item
-                    @click="showTransactionStatusUpdateConfirmModal(row.item._id, 'COMPLETE')"
-                  >
-                    COMPLETE
-                  </b-dropdown-item>
-
-                  <b-dropdown-item
-                    @click="showTransactionStatusUpdateConfirmModal(row.item._id, 'RETURNED')"
-                  >
-                    RETURNED
-                  </b-dropdown-item>
-                </b-dropdown>
-
-                <span v-else>
-                  {{ row.value }}
-                </span>
-              </template>
             </b-table>
           </b-col>
         </b-row>
@@ -107,18 +87,6 @@
         </b-row>
       </b-container>
     </b-card>
-
-    <b-modal
-      v-model="transactionStatusUpdateConfirmModal"
-      @ok="updateTransactionStatus"
-      @cancel="transactionStatusUpdateConfirmModal = false"
-    >
-      <b-container fluid>
-        <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
-          Are you sure you want to update the transaction?
-        </h1>
-      </b-container>
-    </b-modal>
   </div>
 </template>
 
@@ -136,17 +104,11 @@ export default {
         { key: 'item.sku', label: 'SKU' },
         { key: 'item.name', label: 'Item' },
         { key: 'item.category.name', label: 'Category' },
-        { key: 'quantity', label: 'Quantity' },
-        { key: 'status', label: 'Status' }
+        { key: 'quantity', label: 'Quantity' }
       ],
       total: 0,
       currentPage: 1,
-      perPage: 5,
-      transactionStatusUpdateConfirmModal: false,
-      transactionStatusForm: {
-        id: '',
-        status: ''
-      }
+      perPage: 5
     }
   },
   computed: {
@@ -173,27 +135,6 @@ export default {
       this.total = total
 
       return results
-    },
-    async showTransactionStatusUpdateConfirmModal (id, status) {
-      this.transactionStatusForm = {
-        id,
-        status
-      }
-
-      this.transactionStatusUpdateConfirmModal = true
-    },
-    async updateTransactionStatus () {
-      const { id, status } = this.transactionStatusForm
-
-      await axios.put(`http://localhost:3000/inkind-donation-transactions/${id}/status`, {
-        status
-      }, {
-        headers: {
-          Authorization: `Bearer ${this.token}`
-        }
-      })
-
-      this.$router.go()
     }
   }
 }
