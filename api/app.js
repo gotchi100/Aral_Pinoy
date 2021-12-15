@@ -11,9 +11,6 @@ const jwtMiddleware = require('express-jwt')
 const config = require('./config')
 const { AppError } = require('./errors')
 
-const GmailTransporter = require('./mail/transporters/gmail')
-global.gmailTransporter = new GmailTransporter()
-
 const mainRouter = require('./routes/main')
 const adminRouter = require('./routes/admin')
 const eventsRouter = require('./routes/events')
@@ -25,7 +22,6 @@ const ikdOutboundTransactionsRouter = require('./routes/inkind-donations/outboun
 const sdgsRouter = require('./routes/sdgs')
 const skillsRouter = require('./routes/skills')
 const usersRouter = require('./routes/users')
-
 
 const seedSdgs = require('./db/seeders/sdg')
 
