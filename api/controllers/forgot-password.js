@@ -5,6 +5,8 @@ const { addHours } = require('date-fns')
 const UserModel = require('../models/users')
 const ForgotPasswordTokenModel = require('../models/forgot-password-tokens')
 
+const SendgridMailController = require('../controllers/mail/sendgrid')
+
 const { 
   BadRequestError,
   NotFoundError,
@@ -12,11 +14,6 @@ const {
 } = require('../errors')
 
 const config = require('../config')
-
-/** @typedef {import('../mail/transporters/gmail')} GmailTransporter */
-
-/** @type {GmailTransporter} */
-const gmailTransporter = global.gmailTransporter
 
 class ForgotPasswordController {
   static async create (email, origin) {
@@ -69,7 +66,7 @@ class ForgotPasswordController {
 
     queryString.set('token', token._id)
 
-    await gmailTransporter.sendResetPasswordRequest(email, `${domainName}/#/reset-password?${queryString.toString()}`)
+    await SendgridMailController.sendResetPasswordRequest(email, `${domainName}/#/reset-password?${queryString.toString()}`)
   }
 
   static async resetPassword (id, password) {
@@ -102,7 +99,7 @@ class ForgotPasswordController {
       _id: id
     })
 
-    await gmailTransporter.sendResetPasswordSuccess(token.email)
+    await SendgridMailController.sendResetPasswordSuccess(token.email)
   }
 }
 

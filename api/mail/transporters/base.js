@@ -20,29 +20,6 @@ class BaseTransporter {
       },
       viewPath: path.resolve(__dirname, '../templates')
     }))
-
-    this.from = auth.user
-  }
-
-  async sendResetPasswordRequest(to, url) {
-    await this.transporter.sendMail({
-      from: this.from,
-      to,
-      subject: 'Reset your password',
-      template: 'reset-password-request',
-      context: {
-        url
-      }
-    })
-  }
-
-  async sendResetPasswordSuccess(to) {
-    await this.transporter.sendMail({
-      from: this.from,
-      to,
-      subject: 'Password has been reset',
-      template: 'reset-password-success'
-    })
   }
 }
 
