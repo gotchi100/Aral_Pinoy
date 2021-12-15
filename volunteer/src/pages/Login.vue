@@ -30,7 +30,7 @@
               <b-row class="my-3">
                 <b-col cols="12">
                   <label class="signup" for="input-small">
-                    <b-link to="/forget-password">Forgot Password?</b-link>
+                    <b-link to="/forgot-password">Forgot Password?</b-link>
                   </label>
                 </b-col>
               </b-row>

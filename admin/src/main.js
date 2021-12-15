@@ -29,7 +29,8 @@ import Skills from './pages/AdminSkillsPage.vue'
 import ViewVolunteerProfile from './pages/AdminVolunteerViewProfile.vue'
 import ViewOfficerProfile from './pages/AdminViewOfficerProfile.vue'
 import CategoryList from './pages/AdminCategoryList.vue'
-import ForgetPassword from './pages/AdminForgetPassword.vue'
+import ForgotPassword from './pages/ForgotPassword.vue'
+import ResetPassword from './pages/ResetPassword.vue'
 import EditSDG1 from './pages/AdminEditSDG1.vue'
 import EditSDG4 from './pages/AdminEditSDG4.vue'
 import EditSDG13 from './pages/AdminEditSDG13.vue'
@@ -190,8 +191,12 @@ const routes = [
     }
   },
   {
-    path: '/forget-password',
-    component: ForgetPassword
+    path: '/forgot-password',
+    component: ForgotPassword
+  },
+  {
+    path: '/reset-password',
+    component: ResetPassword
   },
   {
     path: '/edit-sdg1',

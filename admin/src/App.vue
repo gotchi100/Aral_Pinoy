@@ -1,8 +1,6 @@
 <template>
   <div id="app">
-
-    <AdminNavbar v-if="$route.path !== '/login' && $route.path !== '/forget-password' " />
-    <Navbar v-else />
+    <Navbar />
 
     <router-view></router-view>
   </div>
@@ -10,13 +8,11 @@
 
 <script>
 import Navbar from './components/Navbar.vue'
-import AdminNavbar from './components/AdminNavbar.vue'
 
 export default {
   name: 'App',
   components: {
-    Navbar,
-    AdminNavbar
+    Navbar
   }
 }
 </script>
