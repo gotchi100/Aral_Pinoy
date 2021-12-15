@@ -25,6 +25,14 @@ class BadRequestError extends AppError {
 
 exports.BadRequestError = BadRequestError
 
+class UnauthorizedError extends AppError {
+  constructor(message) {
+    super(message, 401, 'Unauthorized')
+  }
+}
+
+exports.UnauthorizedError = UnauthorizedError
+
 class NotFoundError extends AppError {
   constructor(message) {
     super(message, 404, 'Not Found')

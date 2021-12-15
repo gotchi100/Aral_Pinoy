@@ -19,7 +19,8 @@ import EventsPage from './pages/Events'
 import ProfilePage from './pages/Profile'
 import CalendarPage from './pages/EventCalendar'
 import EventDetailsPage from './pages/EventPage'
-import ForgetPassword from './pages/ForgetPassword.vue'
+import ForgotPassword from './pages/ForgotPassword.vue'
+import ResetPassword from './pages/ResetPassword.vue'
 import GoogleSignInCallbackPage from './pages/GoogleSignIn'
 import EvaluationPage from './pages/Evaluation.vue'
 import PrivacyPolicyPage from './pages/PrivacyPolicy.vue'
@@ -53,7 +54,8 @@ const routes = [
   // { path: '/home', component: HomePage },
   { path: '/calendar', component: CalendarPage },
   { path: '/event-page', component: EventDetailsPage },
-  { path: '/forget-password', component: ForgetPassword },
+  { path: '/forgot-password', component: ForgotPassword },
+  { path: '/reset-password', component: ResetPassword },
   { path: '/evaluation', component: EvaluationPage },
   { path: '/privacy-policy', component: PrivacyPolicyPage },
   { path: '/terms-and-conditions', component: TermsConditionPage }
@@ -63,7 +65,7 @@ const router = new VueRouter({
   routes
 })
 
-const publicPaths = ['/login', '/register', '/google-sign-in']
+const publicPaths = ['/login', '/register', '/google-sign-in', '/forgot-password', '/reset-password']
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {

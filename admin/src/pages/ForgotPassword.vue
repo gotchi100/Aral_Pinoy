@@ -6,19 +6,29 @@
       </div>
       <b-card class="card" bg-variant="light" style="display: inline-block; height: 100%; overflow: auto; width: 600px; border-radius: 20px;">
         <b-container fluid>
-          <b-row v-if="errorMessage !== ''" class="my-1">
-            <span>{{ errorMessage }}</span>
-          </b-row>
+          <b-alert :show="message.text !== ''" :variant="message.error ? 'danger' : 'success'">
+            {{ message.text }}
+          </b-alert>
+
           <b-row class="my-1">
             <h4 style="font-family:'Bebas Neue', cursive; color: black; position: relative;">Please enter your email address you'd like your password resent information sent to</h4>
             <label class="email" for="input-small">Email Address</label>
             <b-col>
-              <b-form-input v-model="email"></b-form-input>
+              <b-form-input v-model="email" placeholder="Ex: juandelacruz@gmail.com"></b-form-input>
             </b-col>
           </b-row>
-          <b-button pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 150px;">
-            Send
+
+          <b-button
+            pill
+            variant="danger"
+            style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;"
+            :disabled="isLoading"
+            @click="requestPasswordReset"
+          >
+            <b-spinner v-if="isLoading"></b-spinner>
+            <span v-else>Send</span>
           </b-button>
+
           <b-row>
             <label class="signup" for="input-small"><b-link to="/login">Return to Login</b-link></label>
           </b-row>
@@ -29,16 +39,57 @@
 </template>
 
 <script>
+const axios = require('axios').default
+
 const logo = require('../assets/aralpinoywords.png')
 
 export default {
-  name: 'Login',
+  name: 'ForgotPassword',
   data () {
     return {
       logo,
       email: '',
-      password: '',
-      errorMessage: ''
+      message: {
+        error: false,
+        text: ''
+      },
+      isLoading: false
+    }
+  },
+  methods: {
+    resetMessage () {
+      this.message = {
+        error: false,
+        text: ''
+      }
+    },
+    async requestPasswordReset () {
+      this.isLoading = true
+
+      this.resetMessage()
+
+      try {
+        await axios.post('http://localhost:3000/forgot-password', {
+          email: this.email,
+          origin: 'admin'
+        })
+
+        this.email = ''
+
+        this.message = {
+          error: false,
+          text: 'Password reset has been requested! Please check your inbox or spam folder for our email.'
+        }
+      } catch (error) {
+        const message = error.response?.data?.message
+
+        this.message = {
+          error: true,
+          text: message
+        }
+      } finally {
+        this.isLoading = false
+      }
     }
   }
 }
@@ -88,7 +139,7 @@ height: 1px;
 margin-top: 0px !important;
 margin-bottom: 0px !important;
 }
-.email, .password{
+.email {
   padding: 8px;
   text-align: left;
   font-size: 16px;
