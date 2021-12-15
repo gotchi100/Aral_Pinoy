@@ -6,6 +6,8 @@ const { Types } = require('mongoose')
 const config = require('../config')
 
 const EventModel = require('../models/events')
+const EventJobModel = require('../models/event-jobs')
+const SkillModel = require('../models/skills')
 const SdgModel = require('../models/sdgs')
 const InkindDonationModel = require('../models/inkind-donations')
 const IkdOutboundTransactionModel = require('../models/inkind-donations/outbound-transactions')
@@ -51,7 +53,8 @@ class EventsController {
       contacts,
       logoFile,
       sdgIds,
-      ikdItems
+      ikdItems,
+      jobs: eventJobs
     } = event
 
     const sanitizedName = sanitize(name)
@@ -60,6 +63,8 @@ class EventsController {
     let logoUrl
     let sdgs
     let ikds
+    let jobs
+    let numVolunteers = 0
 
     if (logoFile !== undefined) {
       const { originalname, buffer} = logoFile
@@ -69,25 +74,6 @@ class EventsController {
       await EventsController.uploadFile(filename, buffer)
 
       logoUrl = `https://storage.googleapis.com/aral-pinoy-events/${filename}`
-    }
-
-    if (Array.isArray(sdgIds) && sdgIds.length > 0) {
-      sdgs = []
-
-      for (const sdgId of sdgIds) {
-        const sdg = await SdgModel.findById(sdgId)
-
-        if (sdg === null) {
-          throw new NotFoundError(`SDG does not exist: ${sdgId}`)
-        }
-
-        sdgs.push({
-          name: sdg.name,
-          description: sdg.description,
-          imageUrl: sdg.imageUrl,
-          questions: sdg.questions
-        })
-      }
     }
 
     if (Array.isArray(ikdItems) && ikdItems.length > 0) {
@@ -148,6 +134,76 @@ class EventsController {
       }
     }
 
+    if (Array.isArray(sdgIds) && sdgIds.length > 0) {
+      sdgs = []
+
+      for (const sdgId of sdgIds) {
+        const sdg = await SdgModel.findById(sdgId)
+
+        if (sdg === null) {
+          throw new NotFoundError(`SDG does not exist: ${sdgId}`)
+        }
+
+        sdgs.push({
+          name: sdg.name,
+          description: sdg.description,
+          imageUrl: sdg.imageUrl,
+          questions: sdg.questions
+        })
+      }
+    }
+
+    if (Array.isArray(eventJobs) && eventJobs.length > 0) {
+      jobs = []
+
+      for (const job of eventJobs) {
+        const jobSkills = []
+        const skillIds = []
+
+        for (const skillId of job.skillIds) {
+          const skill = await SkillModel.findById(skillId, ['name', 'norm', 'description'], {
+            lean: true
+          })
+
+          if (skill === null) {
+            throw new NotFoundError(`Skill does not exist: ${skillId}`)
+          }
+
+          jobSkills.push({
+            name: skill.name,
+            norm: skill.norm,
+            description: skill.description,
+          })
+          skillIds.push(skill._id)
+        }
+        
+        const sanitizedJobName = sanitize(job.name)
+        const jobNorm = sanitizedJobName.toLowerCase()
+
+        await EventJobModel.updateOne({
+          norm: jobNorm
+        }, {
+          $setOnInsert: {
+            name: sanitizedJobName,
+            norm: jobNorm,
+            description: job.description,
+            skills: skillIds
+          }
+        }, {
+          upsert: true
+        })
+
+        numVolunteers += job.requirements.max
+
+        jobs.push({
+          name: sanitizedJobName,
+          description: job.description,
+          requirements: job.requirements,
+          skills: jobSkills
+        })
+      }
+    }
+
     /** @type {Document} */
     const results = await EventModel.create({
       _id: eventId,
@@ -156,13 +212,14 @@ class EventsController {
       date,
       location,
       goals: {
-        numVolunteers: 0,
+        numVolunteers,
         monetaryDonation: goals.monetaryDonation
       },
       contacts,
       logoUrl,
       sdgs,
-      ikds
+      ikds,
+      jobs
     })
 
     return results.toObject({

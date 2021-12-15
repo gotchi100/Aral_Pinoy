@@ -56,7 +56,36 @@ const ikdSchema = new mongoose.Schema({
   validateBeforeSave: false
 })
 
-const eventSchema = new mongoose.Schema({
+const skillSchema = new mongoose.Schema({
+  name: String,
+  norm: String,
+  description: String,
+}, {
+  _id: false,
+  validateBeforeSave: false
+})
+
+const jobRequirementsSchema = new mongoose.Schema({
+  max: Number
+}, {
+  _id: false,
+  validateBeforeSave: false
+})
+
+const jobSchema = new mongoose.Schema({
+  name: String,
+  description: String,
+  requirements: jobRequirementsSchema,
+  skills: {
+    type: [skillSchema],
+    default: []
+  }
+}, {
+  _id: false,
+  validateBeforeSave: false
+})
+
+const schema = new mongoose.Schema({
   name: {
     type: String,
     text: true
@@ -89,10 +118,14 @@ const eventSchema = new mongoose.Schema({
   ikds: {
     type: [ikdSchema],
     default: undefined
+  },
+  jobs: {
+    type: [jobSchema],
+    default: undefined
   }
 }, {
   id: false,
   validateBeforeSave: false
 })
 
-module.exports = mongoose.model('Event', eventSchema)
+module.exports = mongoose.model('Event', schema)
