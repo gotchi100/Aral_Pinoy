@@ -526,7 +526,7 @@ export default ({
 
       if (this.event.sdgIds.length > 0) {
         for (const id of this.event.sdgIds) {
-          form.set('sdgIds[]', id)
+          form.append('sdgIds[]', id)
         }
       }
 
