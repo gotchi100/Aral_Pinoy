@@ -1,9 +1,10 @@
 <template>
-  <div class="AdminProfile">
-    <div class="image" style="padding: 28px;">
+  <div>
+    <div class="py-5">
       <img :src="logo" style="width: 320px; height: 150px">
     </div>
-    <b-container fluid>
+
+    <b-container fluid class="pb-5">
       <b-row class="justify-content-md-center">
         <b-col cols="12" md="8">
           <b-card bg-variant="light">
@@ -155,26 +156,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.AdminProfile {
-position: relative;
-}
-.image {
-position: relative;
-}
-.AdminProfile:before {
-background-image: url('https://rs.projects-abroad.ie/v1/hero/product-5b5b2f57d7d1b.[1600].jpeg');
-content: ' ';
-display: block;
-position: absolute;
-left: 0;
-top: 0;
-width: 100%;
-height: 100%;
-opacity: 0.4;
-background-repeat: no-repeat;
-background-size: cover;
-padding-top: 695px;
-}
-</style>

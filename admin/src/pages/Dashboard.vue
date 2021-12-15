@@ -1,312 +1,333 @@
 <template>
-  <div class="dashboard">
-   <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
-      <b-container fluid>
-        <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">Upcoming Events</h2>
-        <b-card-group columns>
-           <b-row>
-            <b-col>
-              <b-card tag="article" style="max-width: 18rem; border-radius: 20px;" class="mb-2">
-              <b-link to='/events/1234' style="font-size:20px;">Batangas Coastal Cleanup</b-link><br>
-              <b-icon icon="geo-alt"></b-icon><br>
-              <b-icon icon="calendar"></b-icon><br>
-              <b-icon icon="clock"></b-icon><br>
-              <b-progress :value="value" class="mb-3"></b-progress>
-              <b-progress :value="value" class="mb-3"></b-progress>
-              </b-card>
-            </b-col>
-            <b-col>
-              <b-card title="Batangas Coastal Cleanup" tag="article" style="max-width: 18rem; border-radius: 20px;" class="mb-2">
-              <b-icon icon="geo-alt"></b-icon><br>
-              <b-icon icon="calendar"></b-icon><br>
-              <b-icon icon="clock"></b-icon><br>
-              <b-progress :value="value" class="mb-3"></b-progress>
-              <b-progress :value="value" class="mb-3"></b-progress>
-              </b-card>
-            </b-col>
-            <b-col>
-              <b-card title="Batangas Coastal Cleanup" tag="article" style="max-width: 18rem; border-radius: 20px;" class="mb-2">
-              <b-icon icon="geo-alt"></b-icon><br>
-              <b-icon icon="calendar"></b-icon><br>
-              <b-icon icon="clock"></b-icon><br>
-              <b-progress :value="value" class="mb-3"></b-progress>
-              <b-progress :value="value" class="mb-3"></b-progress>
-              </b-card>
-            </b-col>
-            <b-col>
-              <b-card title="Batangas Coastal Cleanup" tag="article" style="max-width: 18rem; border-radius: 20px;" class="mb-2">
-              <b-icon icon="geo-alt"></b-icon><br>
-              <b-icon icon="calendar"></b-icon><br>
-              <b-icon icon="clock"></b-icon><br>
-              <b-progress :value="value" class="mb-3"></b-progress>
-              <b-progress :value="value" class="mb-3"></b-progress>
-              </b-card>
-            </b-col>
-            <b-col>
-              <b-card title="Batangas Coastal Cleanup" tag="article" style="max-width: 18rem; border-radius: 20px;" class="mb-2">
-              <b-icon icon="geo-alt"></b-icon><br>
-              <b-icon icon="calendar"></b-icon><br>
-              <b-icon icon="clock"></b-icon><br>
-              <b-progress :value="value" class="mb-3"></b-progress>
-              <b-progress :value="value" class="mb-3"></b-progress>
-              </b-card>
-            </b-col>
-           </b-row>
-        </b-card-group>
-      </b-container>
-   </b-card>
-   <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
-     <b-container fluid>
-        <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">SDG Campaign</h2>
-        <b-row>
-          <b-col>
-            <b-card style="margin-left:100px; margin-bottom:20px; width: 250px; height:250px;" img-src="https://cdn.iconscout.com/icon/free/png-256/chart-growth-1913955-1624750.png" img-alt="Card image" img-top>
-              <b-row>
-                <label for="input-small" style="font-family:'Bebas Neue', cursive;">No Poverty</label>
-              </b-row>
-              <b-row>
-                <b-button to="/edit-sdg1"  v-if="isDisabled">SDG #1</b-button>
-              </b-row>
-            </b-card>
-          </b-col>
-          <b-col>
-            <b-card style="margin-left:50px; margin-right:50px; margin-bottom:20px; width: 250px; height:250px;" img-src="https://cdn.iconscout.com/icon/free/png-256/chart-growth-1913955-1624750.png" img-alt="Card image" img-top>
-              <b-row>
-                <label for="input-small" style="font-family:'Bebas Neue', cursive;">Quality Education</label>
-              </b-row>
-              <b-row>
-                <b-button to="/edit-sdg4"  v-if="isDisabled">SDG #4</b-button>
-              </b-row>
-            </b-card>
-          </b-col>
-          <b-col>
-            <b-card style="margin-right:100px; margin-bottom:20px; width: 250px; height:250px;" img-src="https://cdn.iconscout.com/icon/free/png-256/chart-growth-1913955-1624750.png" img-alt="Card image" img-top>
-              <b-row>
-                <label for="input-small" style="font-family:'Bebas Neue', cursive;">Climate Action</label>
-              </b-row>
-              <b-row>
-                <b-button to="/edit-sdg13"  v-if="isDisabled">SDG #13</b-button>
-              </b-row>
-            </b-card>
-            </b-col>
-        </b-row>
-        <b-row>
-          <b-col cols="10"></b-col>
-          <b-col>
-              <b-button style="margin-top:60px;" @click="isDisabled = true"  pill variant="danger" v-show="!isDisabled">Edit SDG</b-button>
-              <b-button style="margin-top:60px;" @click="isDisabled = false"  pill variant="danger" v-show="isDisabled">Cancel</b-button>
-          </b-col>
-        </b-row>
-      </b-container>
-   </b-card>
-   <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
-     <b-container fluid>
-        <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">Income & Expense Report</h2>
-        <b-img center src="https://www.syncfusion.com/blogs/wp-content/uploads/2021/02/Stacked-column-chart-showing-the-past-years%E2%80%99-income-and-expense-details-along-with-categories..jpg" style="width: 592px; height:390px;" alt="Center image"></b-img>
-        <h4>Sample Data Visualization</h4>
-      </b-container>
-   </b-card>
-   <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
-     <b-container fluid>
-        <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">Latest Donations Collected</h2>
-        <b-col>
-          <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1200px; border-radius: 20px; margin-top:40px;">
+  <div>
+   <b-container class="py-5">
+     <b-row class="pb-5">
+       <b-col cols="12">
+         <b-card style="border-radius: 20px;">
           <b-container fluid>
-            <!-- User Interface controls -->
-            <h3 style="font-family:'Bebas Neue', cursive;">
-                In-Kind Donations
-            </h3>
-            <b-row>
-              <b-container class="bv-example-row">
-                <b-row>
-                  <b-col>
-                    <b-col sm="5" md="6" class="my-1">
-                      <b-form-group style="font-size: 15px; font-family:'Bebas Neue', cursive;"
-                        label="Per page"
-                        label-for="per-page-select"
-                        label-cols-sm="6"
-                        label-cols-md="4"
-                        label-cols-lg="3"
-                        label-align-sm="right"
-                        label-size="sm"
-                        class="mb-0"
-                      >
-                        <b-form-select
-                          id="per-page-select"
-                          v-model="perPage"
-                          :options="pageOptions"
-                          size="sm"
-                        ></b-form-select>
-                      </b-form-group>
-                    </b-col>
-                  </b-col>
-                  <b-col>
-                  </b-col>
-                  <b-col>
-                    <br>
-                    <b-input-group size="sm">
-                      <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
-                      <b-form-input
-                        id="filter-input"
-                        v-model="filter"
-                        type="search"
-                        placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
-                      ></b-form-input>
-                    </b-input-group>
-                    <br>
-                  </b-col>
-                </b-row>
-              </b-container>
-            </b-row>
+            <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">Upcoming Events</h2>
+            <b-card-group columns>
+              <b-row>
+                <b-col>
+                  <b-card tag="article" style="max-width: 18rem; border-radius: 20px;" class="mb-2">
+                  <b-link to='/events/1234' style="font-size:20px;">Batangas Coastal Cleanup</b-link><br>
+                  <b-icon icon="geo-alt"></b-icon><br>
+                  <b-icon icon="calendar"></b-icon><br>
+                  <b-icon icon="clock"></b-icon><br>
+                  <b-progress :value="value" class="mb-3"></b-progress>
+                  <b-progress :value="value" class="mb-3"></b-progress>
+                  </b-card>
+                </b-col>
+                <b-col>
+                  <b-card title="Batangas Coastal Cleanup" tag="article" style="max-width: 18rem; border-radius: 20px;" class="mb-2">
+                  <b-icon icon="geo-alt"></b-icon><br>
+                  <b-icon icon="calendar"></b-icon><br>
+                  <b-icon icon="clock"></b-icon><br>
+                  <b-progress :value="value" class="mb-3"></b-progress>
+                  <b-progress :value="value" class="mb-3"></b-progress>
+                  </b-card>
+                </b-col>
+                <b-col>
+                  <b-card title="Batangas Coastal Cleanup" tag="article" style="max-width: 18rem; border-radius: 20px;" class="mb-2">
+                  <b-icon icon="geo-alt"></b-icon><br>
+                  <b-icon icon="calendar"></b-icon><br>
+                  <b-icon icon="clock"></b-icon><br>
+                  <b-progress :value="value" class="mb-3"></b-progress>
+                  <b-progress :value="value" class="mb-3"></b-progress>
+                  </b-card>
+                </b-col>
+                <b-col>
+                  <b-card title="Batangas Coastal Cleanup" tag="article" style="max-width: 18rem; border-radius: 20px;" class="mb-2">
+                  <b-icon icon="geo-alt"></b-icon><br>
+                  <b-icon icon="calendar"></b-icon><br>
+                  <b-icon icon="clock"></b-icon><br>
+                  <b-progress :value="value" class="mb-3"></b-progress>
+                  <b-progress :value="value" class="mb-3"></b-progress>
+                  </b-card>
+                </b-col>
+                <b-col>
+                  <b-card title="Batangas Coastal Cleanup" tag="article" style="max-width: 18rem; border-radius: 20px;" class="mb-2">
+                  <b-icon icon="geo-alt"></b-icon><br>
+                  <b-icon icon="calendar"></b-icon><br>
+                  <b-icon icon="clock"></b-icon><br>
+                  <b-progress :value="value" class="mb-3"></b-progress>
+                  <b-progress :value="value" class="mb-3"></b-progress>
+                  </b-card>
+                </b-col>
+              </b-row>
+            </b-card-group>
+          </b-container>
+      </b-card>
+       </b-col>
+     </b-row>
 
-            <!-- Main table element -->
-            <b-table
-              :items="items"
-              :fields="fields"
-              :current-page="currentPage"
-              :per-page="perPage"
-              :filter="filter"
-              :filter-included-fields="filterOn"
-              :sort-by.sync="sortBy"
-              :sort-desc.sync="sortDesc"
-              :sort-direction="sortDirection"
-              stacked="md"
-              show-empty
-              small
-              @filtered="onFiltered"
-              style="background:white"
-            >
-              <template #cell(event)="row">
-                <b-link :to="`/events/${row.index}`">{{ row.value }}</b-link>
-              </template>
-            </b-table>
-          <b-row>
-            <b-col></b-col>
-            <b-col>
-                <b-col class="my-1">
-                  <b-pagination
-                    v-model="currentPage"
-                    :total-rows="totalRows"
+     <b-row class="pb-5">
+       <b-col cols="12">
+         <b-card style="border-radius: 20px;">
+          <b-container fluid>
+              <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">SDG Campaign</h2>
+              <b-row>
+                <b-col>
+                  <b-card style="margin-left:100px; margin-bottom:20px; width: 250px; height:250px;" img-src="https://cdn.iconscout.com/icon/free/png-256/chart-growth-1913955-1624750.png" img-alt="Card image" img-top>
+                    <b-row>
+                      <label for="input-small" style="font-family:'Bebas Neue', cursive;">No Poverty</label>
+                    </b-row>
+                    <b-row>
+                      <b-button to="/edit-sdg1"  v-if="isDisabled">SDG #1</b-button>
+                    </b-row>
+                  </b-card>
+                </b-col>
+                <b-col>
+                  <b-card style="margin-left:50px; margin-right:50px; margin-bottom:20px; width: 250px; height:250px;" img-src="https://cdn.iconscout.com/icon/free/png-256/chart-growth-1913955-1624750.png" img-alt="Card image" img-top>
+                    <b-row>
+                      <label for="input-small" style="font-family:'Bebas Neue', cursive;">Quality Education</label>
+                    </b-row>
+                    <b-row>
+                      <b-button to="/edit-sdg4"  v-if="isDisabled">SDG #4</b-button>
+                    </b-row>
+                  </b-card>
+                </b-col>
+                <b-col>
+                  <b-card style="margin-right:100px; margin-bottom:20px; width: 250px; height:250px;" img-src="https://cdn.iconscout.com/icon/free/png-256/chart-growth-1913955-1624750.png" img-alt="Card image" img-top>
+                    <b-row>
+                      <label for="input-small" style="font-family:'Bebas Neue', cursive;">Climate Action</label>
+                    </b-row>
+                    <b-row>
+                      <b-button to="/edit-sdg13"  v-if="isDisabled">SDG #13</b-button>
+                    </b-row>
+                  </b-card>
+                  </b-col>
+              </b-row>
+              <b-row>
+                <b-col cols="10"></b-col>
+                <b-col>
+                    <b-button style="margin-top:60px;" @click="isDisabled = true"  pill variant="danger" v-show="!isDisabled">Edit SDG</b-button>
+                    <b-button style="margin-top:60px;" @click="isDisabled = false"  pill variant="danger" v-show="isDisabled">Cancel</b-button>
+                </b-col>
+              </b-row>
+            </b-container>
+        </b-card>
+       </b-col>
+     </b-row>
+
+     <b-row class="pb-5">
+       <b-col cols="12">
+         <b-card style="border-radius: 20px;">
+          <b-container fluid>
+              <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">Income & Expense Report</h2>
+              <b-img center src="https://www.syncfusion.com/blogs/wp-content/uploads/2021/02/Stacked-column-chart-showing-the-past-years%E2%80%99-income-and-expense-details-along-with-categories..jpg" style="width: 592px; height:390px;" alt="Center image"></b-img>
+              <h4>Sample Data Visualization</h4>
+            </b-container>
+        </b-card>
+       </b-col>
+     </b-row>
+
+     <b-row>
+       <b-col cols="12">
+         <b-card style="border-radius: 20px;">
+          <b-container fluid>
+              <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">Latest Donations Collected</h2>
+              <b-col>
+                <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1200px; border-radius: 20px; margin-top:40px;">
+                <b-container fluid>
+                  <!-- User Interface controls -->
+                  <h3 style="font-family:'Bebas Neue', cursive;">
+                      In-Kind Donations
+                  </h3>
+                  <b-row>
+                    <b-container class="bv-example-row">
+                      <b-row>
+                        <b-col>
+                          <b-col sm="5" md="6" class="my-1">
+                            <b-form-group style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                              label="Per page"
+                              label-for="per-page-select"
+                              label-cols-sm="6"
+                              label-cols-md="4"
+                              label-cols-lg="3"
+                              label-align-sm="right"
+                              label-size="sm"
+                              class="mb-0"
+                            >
+                              <b-form-select
+                                id="per-page-select"
+                                v-model="perPage"
+                                :options="pageOptions"
+                                size="sm"
+                              ></b-form-select>
+                            </b-form-group>
+                          </b-col>
+                        </b-col>
+                        <b-col>
+                        </b-col>
+                        <b-col>
+                          <br>
+                          <b-input-group size="sm">
+                            <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
+                            <b-form-input
+                              id="filter-input"
+                              v-model="filter"
+                              type="search"
+                              placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
+                            ></b-form-input>
+                          </b-input-group>
+                          <br>
+                        </b-col>
+                      </b-row>
+                    </b-container>
+                  </b-row>
+
+                  <!-- Main table element -->
+                  <b-table
+                    :items="items"
+                    :fields="fields"
+                    :current-page="currentPage"
                     :per-page="perPage"
-                    align="fill"
-                    size="sm"
-                    class="my-0"
-                  ></b-pagination>
-                </b-col>
-            </b-col>
-            <b-col></b-col>
-          </b-row>
-          <b-row>
-            <b-col cols="9"></b-col>
-              <b-col>
-                <b-button to="/inkind-list" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 250px;">
-                  View More In-Kind Donations
-                </b-button>
-            </b-col>
-          </b-row>
-          </b-container>
-        </b-card>
-        </b-col>
-        <b-col>
-          <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1200px; border-radius: 20px; margin-top:40px;">
-          <b-container fluid>
-            <!-- User Interface controls -->
-            <h3 style="font-family:'Bebas Neue', cursive;">
-                Monetary Donations
-            </h3>
-            <b-row>
-              <b-container class="bv-example-row">
+                    :filter="filter"
+                    :filter-included-fields="filterOn"
+                    :sort-by.sync="sortBy"
+                    :sort-desc.sync="sortDesc"
+                    :sort-direction="sortDirection"
+                    stacked="md"
+                    show-empty
+                    small
+                    @filtered="onFiltered"
+                    style="background:white"
+                  >
+                    <template #cell(event)="row">
+                      <b-link :to="`/events/${row.index}`">{{ row.value }}</b-link>
+                    </template>
+                  </b-table>
                 <b-row>
+                  <b-col></b-col>
                   <b-col>
-                    <b-col sm="5" md="6" class="my-1">
-                      <b-form-group style="font-size: 15px; font-family:'Bebas Neue', cursive;"
-                        label="Per page"
-                        label-for="per-page-select"
-                        label-cols-sm="6"
-                        label-cols-md="4"
-                        label-cols-lg="3"
-                        label-align-sm="right"
-                        label-size="sm"
-                        class="mb-0"
-                      >
-                        <b-form-select
-                          id="per-page-select"
-                          v-model="perPages"
-                          :options="pageOptionss"
+                      <b-col class="my-1">
+                        <b-pagination
+                          v-model="currentPage"
+                          :total-rows="totalRows"
+                          :per-page="perPage"
+                          align="fill"
                           size="sm"
-                        ></b-form-select>
-                      </b-form-group>
-                    </b-col>
+                          class="my-0"
+                        ></b-pagination>
+                      </b-col>
                   </b-col>
-                  <b-col>
-                  </b-col>
-                  <b-col>
-                    <br>
-                    <b-input-group size="sm">
-                      <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
-                      <b-form-input
-                        id="filter-input"
-                        v-model="filters"
-                        type="search"
-                        placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
-                      ></b-form-input>
-                    </b-input-group>
-                    <br>
+                  <b-col></b-col>
+                </b-row>
+                <b-row>
+                  <b-col cols="9"></b-col>
+                    <b-col>
+                      <b-button to="/inkind-donations" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 250px;">
+                        View More In-Kind Donations
+                      </b-button>
                   </b-col>
                 </b-row>
-              </b-container>
-            </b-row>
-
-            <!-- Main table element -->
-            <b-table
-              :items="choices"
-              :fields="fielders"
-              :current-page="currentPages"
-              :per-page="perPages"
-              :filter="filters"
-              :filter-included-fielders="filterOns"
-              :sort-by.sync="sortBy"
-              :sort-desc.sync="sortDesc"
-              :sort-direction="sortDirection"
-              stacked="md"
-              show-empty
-              small
-              @filtered="onFiltered"
-              style="background:white"
-            >
-              <template #cell(event)="row">
-                <b-link :to="`/events/${row.index}`">{{ row.value }}</b-link>
-              </template>
-            </b-table>
-          <b-row>
-            <b-col></b-col>
-            <b-col>
-                <b-col class="my-1">
-                  <b-pagination
-                    v-model="currentPages"
-                    :total-rows="totalRows"
-                    :per-page="perPages"
-                    align="fill"
-                    size="sm"
-                    class="my-0"
-                  ></b-pagination>
-                </b-col>
-            </b-col>
-            <b-col></b-col>
-          </b-row>
-          <b-row>
-            <b-col cols="9"></b-col>
+                </b-container>
+              </b-card>
+              </b-col>
               <b-col>
-                <b-button to="/monetary-list" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 250px;">
-                  View More Monetary Donations
-                </b-button>
-            </b-col>
-          </b-row>
-          </b-container>
+                <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1200px; border-radius: 20px; margin-top:40px;">
+                <b-container fluid>
+                  <!-- User Interface controls -->
+                  <h3 style="font-family:'Bebas Neue', cursive;">
+                      Monetary Donations
+                  </h3>
+                  <b-row>
+                    <b-container class="bv-example-row">
+                      <b-row>
+                        <b-col>
+                          <b-col sm="5" md="6" class="my-1">
+                            <b-form-group style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                              label="Per page"
+                              label-for="per-page-select"
+                              label-cols-sm="6"
+                              label-cols-md="4"
+                              label-cols-lg="3"
+                              label-align-sm="right"
+                              label-size="sm"
+                              class="mb-0"
+                            >
+                              <b-form-select
+                                id="per-page-select"
+                                v-model="perPages"
+                                :options="pageOptionss"
+                                size="sm"
+                              ></b-form-select>
+                            </b-form-group>
+                          </b-col>
+                        </b-col>
+                        <b-col>
+                        </b-col>
+                        <b-col>
+                          <br>
+                          <b-input-group size="sm">
+                            <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
+                            <b-form-input
+                              id="filter-input"
+                              v-model="filters"
+                              type="search"
+                              placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
+                            ></b-form-input>
+                          </b-input-group>
+                          <br>
+                        </b-col>
+                      </b-row>
+                    </b-container>
+                  </b-row>
+
+                  <!-- Main table element -->
+                  <b-table
+                    :items="choices"
+                    :fields="fielders"
+                    :current-page="currentPages"
+                    :per-page="perPages"
+                    :filter="filters"
+                    :filter-included-fielders="filterOns"
+                    :sort-by.sync="sortBy"
+                    :sort-desc.sync="sortDesc"
+                    :sort-direction="sortDirection"
+                    stacked="md"
+                    show-empty
+                    small
+                    @filtered="onFiltered"
+                    style="background:white"
+                  >
+                    <template #cell(event)="row">
+                      <b-link :to="`/events/${row.index}`">{{ row.value }}</b-link>
+                    </template>
+                  </b-table>
+                <b-row>
+                  <b-col></b-col>
+                  <b-col>
+                      <b-col class="my-1">
+                        <b-pagination
+                          v-model="currentPages"
+                          :total-rows="totalRows"
+                          :per-page="perPages"
+                          align="fill"
+                          size="sm"
+                          class="my-0"
+                        ></b-pagination>
+                      </b-col>
+                  </b-col>
+                  <b-col></b-col>
+                </b-row>
+                <b-row>
+                  <b-col cols="9"></b-col>
+                    <b-col>
+                      <b-button to="/monetary-list" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 250px;">
+                        View More Monetary Donations
+                      </b-button>
+                  </b-col>
+                </b-row>
+                </b-container>
+              </b-card>
+              </b-col>
+            </b-container>
         </b-card>
-        </b-col>
-      </b-container>
-   </b-card>
+       </b-col>
+     </b-row>
+   </b-container>
   </div>
 </template>
 
@@ -424,23 +445,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.dashboard {
-position: relative;
-}
-.dashboard:before {
-background-image: url('https://rs.projects-abroad.ie/v1/hero/product-5b5b2f57d7d1b.[1600].jpeg');
-content: ' ';
-display: block;
-position: absolute;
-left: 0;
-top: 0;
-width: 100%;
-height: 100%;
-opacity: 0.4;
-background-repeat: no-repeat;
-background-size: cover;
-padding-top: 695px;
-}
-</style>
