@@ -3,21 +3,27 @@
 const BaseTransporter = require('./base')
 const config = require('../../config')
 
-class GmailTransporter extends BaseTransporter {
+class SendgridTransporter extends BaseTransporter {
   constructor() {
-    const { user, pass } = config.smtp.gmail.auth
+    const { user, pass } = config.smtp.sendgrid.auth
     
-    super('smtp.gmail.com', 587, {
+    super('smtp.sendgrid.net', 587, {
       user,
       pass
     })
+  }
 
-    this.from = user
+  get noReplyFromAddress() {
+    return 'noreply@aralpinoy.xyz'
+  }
+
+  get supportFromAddress() {
+    return 'support@aralpinoy.xyz'
   }
 
   sendResetPasswordRequest(to, url) {
     return this.transporter.sendMail({
-      from: this.from,
+      from: this.noReplyFromAddress,
       to,
       subject: 'Reset your password',
       template: 'reset-password-request',
@@ -29,12 +35,13 @@ class GmailTransporter extends BaseTransporter {
 
   sendResetPasswordSuccess(to) {
     return this.transporter.sendMail({
-      from: this.from,
+      from: this.supportFromAddress,
       to,
+      replyTo: 'aralpinoycapstone@gmail.com',
       subject: 'Password has been reset',
       template: 'reset-password-success'
     })
   }
 }
 
-module.exports = GmailTransporter
+module.exports = SendgridTransporter

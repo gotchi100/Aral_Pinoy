@@ -14,7 +14,9 @@ const {
   GOOGLE_OAUTH_REDIRECT_URI,
   GOOGLE_CLOUD_SERVICE_ACCOUNT_CREDENTIALS,
   SMTP_GMAIL_AUTH_USER,
-  SMTP_GMAIL_AUTH_PASS
+  SMTP_GMAIL_AUTH_PASS,
+  SMTP_SENDGRID_AUTH_USER,
+  SMTP_SENDGRID_AUTH_PASS,
 } = process.env
   
 if (MONGODB_URI === '') {
@@ -59,6 +61,12 @@ module.exports = {
       auth: {
         user: SMTP_GMAIL_AUTH_USER,
         pass: SMTP_GMAIL_AUTH_PASS
+      }
+    },
+    sendgrid: {
+      auth: {
+        user: SMTP_SENDGRID_AUTH_USER,
+        pass: SMTP_SENDGRID_AUTH_PASS
       }
     }
   }
