@@ -200,3 +200,4 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/node,visualstudiocode,macos,windows
 
 service-account-key.json
+google-oauth2-token.json

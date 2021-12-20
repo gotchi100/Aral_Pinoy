@@ -49,15 +49,15 @@ function checkGoogleSignInConfig(req, res, next) {
     return next()
   }
 
-  if (!config.google.oauth.clientId) {
+  if (!config.google.oauth.volunteer.clientId) {
     return next(new Error('Environment variable `GOOGLE_OAUTH_CLIENT_ID` must be provided'))
   }
 
-  if (!config.google.oauth.clientSecret) {
+  if (!config.google.oauth.volunteer.clientSecret) {
     return next(new Error('Environment variable `GOOGLE_OAUTH_CLIENT_SECRET` must be provided'))
   }
   
-  if (!config.google.oauth.redirectUri) {
+  if (!config.google.oauth.volunteer.redirectUri) {
     return next(new Error('Environment variable `GOOGLE_OAUTH_REDIRECT_URI` must be provided'))
   }
 

@@ -42,8 +42,8 @@ const createEventValidator = Joi.object({
   name: Joi.string().trim().max(255).required(),
   description: Joi.string().trim().empty('').max(200),
   date: Joi.object({
-    start: Joi.string().isoDate().required(),
-    end: Joi.string().isoDate().required(),
+    start: Joi.date().iso().required(),
+    end: Joi.date().iso().greater(Joi.ref('start')).required(),
   }).required(),
   goals: Joi.object({
     monetaryDonation: Joi.number().default(0).min(0).precision(2)
@@ -129,10 +129,22 @@ function validateGetEventBody(req, res, next) {
   next()
 }
 
+async function getEvent(req, res, next) {
+  const { id } = req.params
+
+  try {
+    const event = await EventsController.get(id)
+
+    return res.status(200).json(event)
+  } catch (error) {
+    next(error)
+  }
+}
+
 const router = express.Router()
 
 router.post('/', upload.single('logo'), validateCreateEventBody, createEvent)
 router.get('/', validateListEventsBody, EventsController.list)
-router.get('/:id', validateGetEventBody, EventsController.get)
+router.get('/:id', validateGetEventBody, getEvent)
 
 module.exports = router

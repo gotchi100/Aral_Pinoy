@@ -11,6 +11,9 @@ const SkillModel = require('../models/skills')
 const SdgModel = require('../models/sdgs')
 const InkindDonationModel = require('../models/inkind-donations')
 const IkdOutboundTransactionModel = require('../models/inkind-donations/outbound-transactions')
+const UserModel = require('../models/users')
+
+const GoogleCalendarController = require('./google/calendar')
 
 const { OUTBOUND_RECEIVER_TYPES } = require('../constants/inkind-donations')
 
@@ -222,10 +225,48 @@ class EventsController {
       jobs
     })
 
-    return results.toObject({
+    const eventDocument = results.toObject({
       minimize: true,
       versionKey: false,
       useProjection: true
+    })
+
+    await EventsController.createGoogleEvent(eventDocument).catch((error) => console.dir(error, { depth: null }))
+
+    return eventDocument
+  }
+
+  static async createGoogleEvent(event) {
+    const {
+      _id,
+      name,
+      description,
+      location,
+      date
+    } = event
+
+    const adminsAndOfficers = await UserModel.find({
+      roles: {
+        $in: ['admin','officer']
+      }
+    }, ['email'], {
+      lean: true
+    })
+
+    const attendees = adminsAndOfficers.map((user) => ({
+      email: user.email
+    }))
+
+    await GoogleCalendarController.createEvent({
+      summary: name,
+      address: location.name,
+      description,
+      attendees,
+      startDate: date.start,
+      endDate: date.end,
+      metadata: {
+        eventId: _id.toString()
+      }
     })
   }
 
@@ -263,22 +304,16 @@ class EventsController {
     }
   }
 
-  static async get(req, res) {
-    const { id } = req.params
-
+  static async get(id) {
     const event = await EventModel.findById(id, undefined, {
       lean: true
     })
 
     if (event === null) {
-      return res.status(404).json({
-        code: 'NotFound',
-        status: 404,
-        message: 'Event not found'
-      })
+      throw new NotFoundError(`Event does not exist: ${id}`)
     }
 
-    return res.json(event)
+    return event
   }
 }
 
