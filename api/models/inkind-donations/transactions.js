@@ -14,6 +14,7 @@ const schema = new mongoose.Schema({
       name: String
     },
   },
+  reason: String,
   quantity: Number,
   date: Date
 }, {

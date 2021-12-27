@@ -16,7 +16,8 @@ class InkindDonationTransactionsController {
     const {
       sku,
       quantity,
-      date
+      date,
+      reason
     } = transaction
     
     const item = await InkindDonationModel.findOne({
@@ -50,6 +51,7 @@ class InkindDonationTransactionsController {
         name: item.name,
         category: item.category
       },
+      reason,
       quantity,
       date: new Date(date),
     })

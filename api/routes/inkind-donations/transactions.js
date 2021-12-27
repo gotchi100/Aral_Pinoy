@@ -11,6 +11,7 @@ const createTransactionValidator = Joi.object({
   sku: Joi.string().trim().max(100).uppercase().required(),
   quantity: Joi.number().integer().required(),
   date: Joi.string().isoDate().required(),
+  reason: Joi.string().required()
 }).options({
   stripUnknown: true
 })
