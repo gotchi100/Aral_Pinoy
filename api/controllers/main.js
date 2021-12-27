@@ -73,9 +73,9 @@ class MainController {
     try {
       const tokenResults = await axios.post('https://oauth2.googleapis.com/token', {
         code,
-        client_id: config.google.oauth.clientId,
-        client_secret: config.google.oauth.clientSecret,
-        redirect_uri: config.google.oauth.redirectUri,
+        client_id: config.google.oauth.volunteer.clientId,
+        client_secret: config.google.oauth.volunteer.clientSecret,
+        redirect_uri: config.google.oauth.volunteer.redirectUri,
         grant_type: 'authorization_code'
       })
 
