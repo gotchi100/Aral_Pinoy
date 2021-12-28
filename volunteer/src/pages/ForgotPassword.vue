@@ -46,9 +46,8 @@
 </template>
 
 <script>
-const axios = require('axios').default
-
 const logo = require('../assets/aralpinoywords.png')
+const { apiClient } = require('../axios')
 
 export default {
   name: 'ForgotPassword',
@@ -76,7 +75,7 @@ export default {
       this.resetMessage()
 
       try {
-        await axios.post('http://localhost:3000/forgot-password', {
+        await apiClient.post('/forgot-password', {
           email: this.email,
           origin: 'volunteer'
         })

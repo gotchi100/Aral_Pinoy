@@ -316,8 +316,8 @@ import { ValidationObserver, ValidationProvider, extend } from 'vee-validate'
 import { required, min, max, email, is, regex } from 'vee-validate/dist/rules'
 
 const _ = require('lodash')
-const axios = require('axios').default
 const logo = require('../assets/aralpinoywords.png')
+const { apiClient } = require('../axios')
 
 const { subYears, startOfDay } = require('date-fns')
 
@@ -392,9 +392,9 @@ export default {
         skills
       }, _.identity)
 
-      await axios.post('http://localhost:3000/register', userData)
+      await apiClient.post('/register', userData)
 
-      const results = await axios.post('http://localhost:3000/login', {
+      const results = await apiClient.post('/login', {
         email: this.user.email,
         password: this.user.password
       })
@@ -417,7 +417,7 @@ export default {
         queryString.set('filters.name', encodeURI(this.skillNameSearch))
       }
 
-      const { data } = await axios.get(`http://localhost:3000/skills?${queryString.toString()}`)
+      const { data } = await apiClient.get(`/skills?${queryString.toString()}`)
 
       this.skills = data.results
     },
