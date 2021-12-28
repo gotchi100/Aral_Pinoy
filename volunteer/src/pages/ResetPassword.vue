@@ -88,7 +88,7 @@
 import { ValidationObserver, ValidationProvider, extend } from 'vee-validate'
 import { required, min, max, is } from 'vee-validate/dist/rules'
 
-const axios = require('axios').default
+const { apiClient } = require('../axios')
 
 const logo = require('../assets/aralpinoywords.png')
 
@@ -139,7 +139,7 @@ export default {
       const { token } = this.$route.query
 
       try {
-        await axios.put(`http://localhost:3000/forgot-password/${token}`, {
+        await apiClient.put(`/forgot-password/${token}`, {
           password: this.password
         })
 
