@@ -72,6 +72,10 @@
                         })
                       }}
                     </template>
+
+                    <template #cell(sumQuantity)="{ item }">
+                      {{ item.item.quantity + item.quantity }}
+                    </template>
                   </b-table>
                 </b-col>
               </b-row>
@@ -110,7 +114,10 @@ export default {
         { key: 'item.sku', label: 'SKU' },
         { key: 'item.name', label: 'Item' },
         { key: 'item.category.name', label: 'Category' },
-        { key: 'quantity', label: 'Quantity' }
+        { key: 'reason', label: 'Reason' },
+        { key: 'item.quantity', label: 'Previous Quantity' },
+        { key: 'quantity', label: 'Adjustment' },
+        { key: 'sumQuantity', label: 'New Quantity' }
       ],
       total: 0,
       currentPage: 1,

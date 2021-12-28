@@ -598,15 +598,32 @@
                   </b-row>
 
                   <b-row class="pt-3">
-                    <label for="inventory-adj-date">
-                      Date
-                    </label>
-                    <b-form-datepicker
-                      label="Date"
-                      v-model="inventoryAdjForm.date"
-                      value-as-date
-                      :max="new Date()"
-                    ></b-form-datepicker>
+                    <b-col cols="12">
+                      <label for="inventory-adj-date">
+                        Date
+                      </label>
+                      <b-form-datepicker
+                        label="Date"
+                        v-model="inventoryAdjForm.date"
+                        value-as-date
+                        :max="new Date()"
+                      ></b-form-datepicker>
+                    </b-col>
+                  </b-row>
+
+                  <b-row class="pt-3">
+                    <b-col cols="12">
+                      <label for="inventory-adj-reason">
+                        Reason
+                      </label>
+                      <b-form-input id="inventory-adj-reason" v-model="inventoryAdjForm.reason" list="inventory-adj-reason-list"></b-form-input>
+
+                      <datalist id="inventory-adj-reason-list">
+                        <option v-for="(choice, index) in reasonChoices" :key="index">
+                          {{ choice }}
+                        </option>
+                      </datalist>
+                    </b-col>
                   </b-row>
 
                   <b-row class="pt-3">
@@ -786,12 +803,23 @@ export default {
         { value: 'send-donation', text: 'Send an In-Kind Donation to an Organization' },
         { value: 'inventory-adjustment', text: 'Inventory Adjustment' }
       ],
+      reasonChoices: [
+        'Arrival of New Items',
+        'Stolen Items',
+        'Missing Items',
+        'Recovered Items',
+        'Damaged/Defective Items',
+        'Outdated/Expired Items',
+        'Returned to Donor/Supplier',
+        'Inventory Error'
+      ],
       inventoryAdjConfirmModal: false,
       inventoryAdjForm: {
         item: null,
         newQuantity: 0,
         quantity: 0,
-        date: new Date()
+        date: new Date(),
+        reason: null
       },
       inkindDonationOptions: [],
       outboundTransactionConfirmModal: false,
@@ -946,13 +974,15 @@ export default {
       const {
         item,
         quantity,
-        date
+        date,
+        reason
       } = this.inventoryAdjForm
 
       await axios.post('http://localhost:3000/inkind-donation-transactions', {
         sku: item.sku,
         quantity,
-        date
+        date,
+        reason
       }, {
         headers: {
           Authorization: `Bearer ${this.token}`
