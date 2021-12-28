@@ -270,7 +270,7 @@
 import { mapGetters } from 'vuex'
 
 const logo = require('../../assets/aralpinoywords.png')
-const axios = require('axios').default
+const { apiClient } = require('../../axios')
 
 export default {
   name: 'VolunteerProfile',
@@ -413,7 +413,7 @@ export default {
       const { id } = this.$route.params
 
       try {
-        const { data } = await axios.get(`http://localhost:3000/users/${id}`, {
+        const { data } = await apiClient.get(`/users/${id}`, {
           headers: {
             Authorization: `Bearer ${this.token}`
           }

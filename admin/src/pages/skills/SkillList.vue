@@ -141,7 +141,7 @@
 <script>
 import { mapGetters } from 'vuex'
 
-const axios = require('axios').default
+const { apiClient } = require('../../axios')
 
 export default {
   name: 'SkillList',
@@ -176,7 +176,7 @@ export default {
       queryString.set('limit', this.perPage)
       queryString.set('offset', this.pageOffset)
 
-      const { data } = await axios.get(`http://localhost:3000/skills?${queryString.toString()}`, {
+      const { data } = await apiClient.get(`/skills?${queryString.toString()}`, {
         headers: {
           Authorization: `Bearer ${this.token}`
         }
@@ -194,7 +194,7 @@ export default {
       this.isAdding = true
 
       try {
-        await axios.post('http://localhost:3000/skills', {
+        await apiClient.post('/skills', {
           name: this.name,
           description: this.description
         }, {

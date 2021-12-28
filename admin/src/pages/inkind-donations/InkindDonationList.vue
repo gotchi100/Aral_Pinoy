@@ -729,7 +729,7 @@
 import { mapGetters } from 'vuex'
 import _ from 'lodash'
 
-const axios = require('axios').default
+const { apiClient } = require('../../axios')
 
 export default {
   data () {
@@ -863,7 +863,7 @@ export default {
       queryString.set('limit', this.perPage)
       queryString.set('offset', this.inkindDonationPageOffset)
 
-      const { data } = await axios.get(`http://localhost:3000/inkind-donations?${queryString.toString()}`, {
+      const { data } = await apiClient.get(`/inkind-donations?${queryString.toString()}`, {
         headers: {
           Authorization: `Bearer ${this.token}`
         }
@@ -884,7 +884,7 @@ export default {
         queryString.set('filters.name', value)
       }
 
-      const { data } = await axios.get(`http://localhost:3000/inkind-donation-categories?${queryString.toString()}`, {
+      const { data } = await apiClient.get(`/inkind-donation-categories?${queryString.toString()}`, {
         headers: {
           Authorization: `Bearer ${this.token}`
         }
@@ -937,7 +937,7 @@ export default {
         categoryCustomFields
       }, _.identity)
 
-      await axios.post('http://localhost:3000/inkind-donations', inkindDonation, {
+      await apiClient.post('/inkind-donations', inkindDonation, {
         headers: {
           Authorization: `Bearer ${this.token}`
         }
@@ -954,7 +954,7 @@ export default {
         queryString.set('filters.query', value)
       }
 
-      const { data } = await axios.get(`http://localhost:3000/inkind-donations?${queryString.toString()}`, {
+      const { data } = await apiClient.get(`/inkind-donations?${queryString.toString()}`, {
         headers: {
           Authorization: `Bearer ${this.token}`
         }
@@ -978,7 +978,7 @@ export default {
         reason
       } = this.inventoryAdjForm
 
-      await axios.post('http://localhost:3000/inkind-donation-transactions', {
+      await apiClient.post('/inkind-donation-transactions', {
         sku: item.sku,
         quantity,
         date,
@@ -1001,7 +1001,7 @@ export default {
         receiver
       } = this.outboundTransactionForm
 
-      await axios.post('http://localhost:3000/inkind-donation-outbound-transactions', {
+      await apiClient.post('/inkind-donation-outbound-transactions', {
         sku: item.sku,
         quantity,
         date,

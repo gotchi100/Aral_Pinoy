@@ -257,7 +257,7 @@
 <script>
 import { mapGetters } from 'vuex'
 
-const axios = require('axios').default
+const { apiClient } = require('../../axios')
 
 export default {
   data () {
@@ -310,7 +310,7 @@ export default {
       queryString.set('offset', this.eventTransactionPageOffset)
       queryString.set('filters.receiverType', 'EVENT')
 
-      const { data } = await axios.get(`http://localhost:3000/inkind-donation-outbound-transactions?${queryString.toString()}`, {
+      const { data } = await apiClient.get(`/inkind-donation-outbound-transactions?${queryString.toString()}`, {
         headers: {
           Authorization: `Bearer ${this.token}`
         }
@@ -329,7 +329,7 @@ export default {
       queryString.set('offset', this.orgTransactionPageOffset)
       queryString.set('filters.receiverType', 'ORGANIZATION')
 
-      const { data } = await axios.get(`http://localhost:3000/inkind-donation-outbound-transactions?${queryString.toString()}`, {
+      const { data } = await apiClient.get(`/inkind-donation-outbound-transactions?${queryString.toString()}`, {
         headers: {
           Authorization: `Bearer ${this.token}`
         }
@@ -352,7 +352,7 @@ export default {
     async updateTransactionStatus () {
       const { id, status } = this.transactionStatusForm
 
-      await axios.put(`http://localhost:3000/inkind-donation-outbound-transactions/${id}/status`, {
+      await apiClient.put(`/inkind-donation-outbound-transactions/${id}/status`, {
         status
       }, {
         headers: {

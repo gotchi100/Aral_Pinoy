@@ -97,7 +97,7 @@
 <script>
 import { mapGetters } from 'vuex'
 
-const axios = require('axios').default
+const { apiClient } = require('../../axios')
 
 export default {
   name: 'VolunteerList',
@@ -128,7 +128,7 @@ export default {
       queryString.set('limit', this.perPage)
       queryString.set('offset', this.pageOffset)
 
-      const { data } = await axios.get(`http://localhost:3000/users?filters.roles[]=volunteer&${queryString.toString()}`, {
+      const { data } = await apiClient.get(`/users?filters.roles[]=volunteer&${queryString.toString()}`, {
         headers: {
           Authorization: `Bearer ${this.token}`
         }

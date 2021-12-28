@@ -72,8 +72,8 @@
 </template>
 
 <script>
-const axios = require('axios').default
 const logo = require('../../assets/aralpinoywords.png')
+const { apiClient } = require('../../axios')
 
 export default {
   name: 'Register',
@@ -92,7 +92,7 @@ export default {
   methods: {
     async register () {
       const token = this.$store.getters.token
-      await axios.post('http://localhost:3000/users', {
+      await apiClient.post('/users', {
         email: this.email,
         password: this.password,
         firstName: this.firstName,

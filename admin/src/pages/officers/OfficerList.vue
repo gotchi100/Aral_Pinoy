@@ -106,7 +106,7 @@
 <script>
 import { mapGetters } from 'vuex'
 
-const axios = require('axios').default
+const { apiClient } = require('../../axios')
 
 export default {
   name: 'OfficerList',
@@ -139,7 +139,7 @@ export default {
       queryString.append('filters.roles', 'admin')
       queryString.append('filters.roles', 'officer')
 
-      const { data } = await axios.get(`http://localhost:3000/users?${queryString.toString()}`, {
+      const { data } = await apiClient.get(`/users?${queryString.toString()}`, {
         headers: {
           Authorization: `Bearer ${this.token}`
         }

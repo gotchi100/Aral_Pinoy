@@ -87,8 +87,9 @@
 </template>
 
 <script>
-const axios = require('axios').default
 const logo = require('../assets/aralpinoywords.png')
+const config = require('../../config')
+const { apiClient } = require('../axios')
 
 export default {
   name: 'Login',
@@ -123,7 +124,7 @@ export default {
   methods: {
     async login () {
       try {
-        const results = await axios.post('http://localhost:3000/login', {
+        const results = await apiClient.post('/login', {
           email: this.email,
           password: this.password
         })
@@ -145,7 +146,7 @@ export default {
       }
     },
     async googleSignIn () {
-      window.location.href = 'https://accounts.google.com/o/oauth2/v2/auth?scope=openid email profile&include_granted_scopes=true&response_type=code&redirect_uri=http://localhost:3000/google-sign-in&client_id=666385844175-d4bc42f0ckfic58dh994f4sq7tmhbejd.apps.googleusercontent.com'
+      window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?scope=openid email profile&include_granted_scopes=true&response_type=code&redirect_uri=${config.google.oauth.apiRedirectUri}&client_id=666385844175-d4bc42f0ckfic58dh994f4sq7tmhbejd.apps.googleusercontent.com`
     }
   }
 }

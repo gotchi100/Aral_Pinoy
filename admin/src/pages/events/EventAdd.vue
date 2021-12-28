@@ -609,7 +609,7 @@
 <script>
 import { mapGetters } from 'vuex'
 
-const axios = require('axios').default
+const { apiClient } = require('../../axios')
 
 const today = new Date()
 const midnightToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0, 0)
@@ -762,7 +762,7 @@ export default ({
         }
       }
 
-      const results = await axios.post('http://localhost:3000/events', form, {
+      const results = await apiClient.post('/events', form, {
         headers: {
           'Content-Type': 'multipart/form-data',
           authorization: `Bearer ${this.token}`
@@ -813,7 +813,7 @@ export default ({
       return isNaN(parsedValue) || parsedValue <= 0 ? 1 : parsedValue
     },
     async getSdgs () {
-      const { data } = await axios.get('http://localhost:3000/sdgs', {
+      const { data } = await apiClient.get('/sdgs', {
         headers: {
           Authorization: `Bearer ${this.token}`
         }
@@ -830,7 +830,7 @@ export default ({
         queryString.set('filters.query', value)
       }
 
-      const { data } = await axios.get(`http://localhost:3000/inkind-donations?${queryString.toString()}`, {
+      const { data } = await apiClient.get(`/inkind-donations?${queryString.toString()}`, {
         headers: {
           Authorization: `Bearer ${this.token}`
         }
@@ -895,7 +895,7 @@ export default ({
         queryString.set('filters.name', value)
       }
 
-      const { data } = await axios.get(`http://localhost:3000/skills?${queryString.toString()}`, {
+      const { data } = await apiClient.get(`/skills?${queryString.toString()}`, {
         headers: {
           Authorization: `Bearer ${this.token}`
         }

@@ -51,8 +51,8 @@
 </template>
 
 <script>
-const axios = require('axios').default
 const logo = require('../assets/aralpinoywords.png')
+const { apiClient } = require('../axios')
 
 export default {
   name: 'Login',
@@ -86,7 +86,7 @@ export default {
   methods: {
     async login () {
       try {
-        const results = await axios.post('http://localhost:3000/admin/login', {
+        const results = await apiClient.post('/admin/login', {
           email: this.email,
           password: this.password
         })
