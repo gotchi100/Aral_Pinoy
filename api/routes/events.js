@@ -38,6 +38,13 @@ const jobsSchema = Joi.array().items(
   })
 )
 
+const questionsSchema = Joi.array().items(
+  Joi.object({
+    label: Joi.string().trim().max(255).required(),
+    type: Joi.string().valid('matrix').required()
+  })
+)
+
 const createEventValidator = Joi.object({
   name: Joi.string().trim().max(255).required(),
   description: Joi.string().trim().empty('').max(200),
@@ -59,7 +66,8 @@ const createEventValidator = Joi.object({
       ikdId: Joi.objectId().required(),
       quantity: Joi.number().min(1).required()
     })
-  )
+  ),
+  questions: questionsSchema
 })
 
 const listEventsValidator = Joi.object({

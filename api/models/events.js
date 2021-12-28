@@ -85,6 +85,16 @@ const jobSchema = new mongoose.Schema({
   validateBeforeSave: false
 })
 
+const questionSchema = new mongoose.Schema({
+  label: String,
+  type: {
+    type: String
+  }
+}, {
+  _id: false,
+  validateBeforeSave: false
+})
+
 const schema = new mongoose.Schema({
   name: {
     type: String,
@@ -121,6 +131,10 @@ const schema = new mongoose.Schema({
   },
   jobs: {
     type: [jobSchema],
+    default: undefined
+  },
+  questions: {
+    type: [questionSchema],
     default: undefined
   }
 }, {

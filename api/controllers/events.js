@@ -57,7 +57,8 @@ class EventsController {
       logoFile,
       sdgIds,
       ikdItems,
-      jobs: eventJobs
+      jobs: eventJobs,
+      questions: eventQuestions
     } = event
 
     const sanitizedName = sanitize(name)
@@ -67,6 +68,7 @@ class EventsController {
     let sdgs
     let ikds
     let jobs
+    let questions
     let numVolunteers = 0
 
     if (logoFile !== undefined) {
@@ -207,6 +209,17 @@ class EventsController {
       }
     }
 
+    if (Array.isArray(eventQuestions) && eventQuestions.length > 0) {
+      questions = []
+      
+      for (const question of eventQuestions) {
+        questions.push({
+          label: question.label,
+          type: question.type
+        })
+      }
+    }
+
     /** @type {Document} */
     const results = await EventModel.create({
       _id: eventId,
@@ -222,7 +235,8 @@ class EventsController {
       logoUrl,
       sdgs,
       ikds,
-      jobs
+      jobs,
+      questions
     })
 
     const eventDocument = results.toObject({
