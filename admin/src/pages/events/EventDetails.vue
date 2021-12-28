@@ -288,8 +288,8 @@
 <script>
 import { mapGetters } from 'vuex'
 
-const axios = require('axios').default
 const logo = require('../../assets/aralpinoywords.png')
+const { apiClient } = require('../../axios')
 
 export default {
   name: 'EventDetails',
@@ -360,7 +360,7 @@ export default {
       const eventId = this.$route.params.id
 
       try {
-        const { data } = await axios.get(`http://localhost:3000/events/${eventId}`, {
+        const { data } = await apiClient.get(`/events/${eventId}`, {
           headers: {
             Authorization: `Bearer ${this.token}`
           }

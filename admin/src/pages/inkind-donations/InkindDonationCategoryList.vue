@@ -182,7 +182,7 @@
 <script>
 import { mapGetters } from 'vuex'
 
-const axios = require('axios').default
+const { apiClient } = require('../../axios')
 
 export default {
   data () {
@@ -219,7 +219,7 @@ export default {
       queryString.set('limit', this.perPage)
       queryString.set('offset', this.pageOffset)
 
-      const { data } = await axios.get(`http://localhost:3000/inkind-donation-categories?${queryString.toString()}`, {
+      const { data } = await apiClient.get(`/inkind-donation-categories?${queryString.toString()}`, {
         headers: {
           Authorization: `Bearer ${this.token}`
         }
@@ -250,7 +250,7 @@ export default {
         }
       }
 
-      await axios.post('http://localhost:3000/inkind-donation-categories', {
+      await apiClient.post('/inkind-donation-categories', {
         name,
         customFields
       }, {

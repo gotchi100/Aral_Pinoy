@@ -123,7 +123,7 @@
 <script>
 import { mapGetters } from 'vuex'
 
-const axios = require('axios').default
+const { apiClient } = require('../../axios')
 
 export default {
   data () {
@@ -154,7 +154,7 @@ export default {
       queryString.set('limit', this.perPage)
       queryString.set('offset', this.pageOffset)
 
-      const { data } = await axios.get(`http://localhost:3000/events?${queryString.toString()}`, {
+      const { data } = await apiClient.get(`/events?${queryString.toString()}`, {
         headers: {
           Authorization: `Bearer ${this.token}`
         }
