@@ -394,6 +394,89 @@
             <b-col cols="12">
               <b-card style="border-radius: 20px;">
                 <h5 class="text-start" style="font-family:'Bebas Neue', cursive;">
+                  Questionnaire
+                </h5>
+
+                <b-row class="pt-2">
+                  <b-col cols="12">
+                    <b-table
+                      :items="event.questions"
+                      :fields="questionFields"
+                      show-empty
+                      responsive
+                      striped
+                      primary-key="label"
+                    >
+                      <template #cell(actions)="{ index }">
+                        <b-button variant="danger" @click="removeEventQuestion(index)">
+                          <b-icon icon="trash" />
+                        </b-button>
+                      </template>
+                    </b-table>
+                  </b-col>
+
+                  <b-col cols="12">
+                    <b-button
+                      class="w-100 mb-3"
+                      :disabled="showQuestionForm"
+                      @click="showQuestionForm = true"
+                    >
+                      Add Question
+                    </b-button>
+
+                    <b-collapse v-model="showQuestionForm">
+                      <b-card>
+                        <b-container>
+                          <b-row>
+                            <b-col cols="12">
+                              <b-form-group class="text-start">
+                                <label
+                                  class="py-1"
+                                  for="input-job-name"
+                                  style="font-family: 'Bebas Neue', cursive;"
+                                >
+                                  Question:
+                                </label>
+                                <b-form-input
+                                  id="input-job-name"
+                                  v-model="questionForm.label"
+                                  placeholder="Ex: How satisfied are you with the event?"
+                                ></b-form-input>
+                              </b-form-group>
+                            </b-col>
+
+                            <b-col cols="12" md="6">
+                              <b-button
+                                class="w-50 mt-3"
+                                @click="showQuestionForm = false"
+                              >
+                                Cancel
+                              </b-button>
+                            </b-col>
+
+                            <b-col cols="12" md="6">
+                              <b-button
+                                class="w-50 mt-3"
+                                variant="success"
+                                @click="addEventQuestion"
+                              >
+                                Submit
+                              </b-button>
+                            </b-col>
+                          </b-row>
+                        </b-container>
+                      </b-card>
+                    </b-collapse>
+                  </b-col>
+                </b-row>
+              </b-card>
+            </b-col>
+          </b-row>
+
+          <b-row class="pt-4">
+            <b-col cols="12">
+              <b-card style="border-radius: 20px;">
+                <h5 class="text-start" style="font-family:'Bebas Neue', cursive;">
                   Items Needed for Event
                 </h5>
 
@@ -559,7 +642,8 @@ export default ({
         logo: null,
         sdgIds: [],
         ikdItems: [],
-        jobs: []
+        jobs: [],
+        questions: []
       },
       contactForm: {
         name: '',
@@ -598,6 +682,14 @@ export default ({
           max: 1
         },
         skills: []
+      },
+      questionFields: [
+        { key: 'label', label: 'Question' },
+        { key: 'actions', label: 'Actions' }
+      ],
+      showQuestionForm: false,
+      questionForm: {
+        label: ''
       },
       skillOptions: []
     }
@@ -658,6 +750,15 @@ export default ({
           form.set(`contacts[${i}][name]`, contact.name)
           form.set(`contacts[${i}][contactMethods][0][type]`, contact.contactMethods[0].type)
           form.set(`contacts[${i}][contactMethods][0][value]`, contact.contactMethods[0].value)
+        }
+      }
+
+      if (this.event.questions.length > 0) {
+        for (let i = 0; i < this.event.questions.length; i++) {
+          const question = this.event.questions[i]
+
+          form.set(`questions[${i}][label]`, question.label)
+          form.set(`questions[${i}][type]`, question.type)
         }
       }
 
@@ -846,35 +947,29 @@ export default ({
     },
     removeEventJob (index) {
       this.event.jobs.splice(index, 1)
+    },
+    addEventQuestion () {
+      const { label } = this.questionForm
+
+      if (label !== undefined && label.trim() !== '') {
+        this.event.questions.push({
+          label,
+          type: 'matrix'
+        })
+      }
+
+      this.showQuestionForm = false
+
+      this.questionForm = {
+        label: ''
+      }
+    },
+    removeEventQuestion (index) {
+      this.event.questions.splice(index, 1)
     }
   },
   computed: {
-    ...mapGetters(['token']),
-    criteria () {
-      // Compute the search criteria
-      return this.search.trim().toLowerCase()
-    },
-    criterias () {
-      // Compute the search criteria
-      return this.searcher.trim().toLowerCase()
-    },
-    availableOptions () {
-      const criteria = this.criteria
-      // Filter out already selected options
-      const options = this.options.filter(opt => this.value.indexOf(opt) === -1)
-      if (criteria) {
-        // Show only options that match criteria
-        return options.filter(opt => opt.toLowerCase().indexOf(criteria) > -1)
-      }
-      // Show all options available
-      return options
-    },
-    searchDesc () {
-      if (this.criteria && this.availableOptions.length === 0) {
-        return 'There are no tags matching your search criteria'
-      }
-      return ''
-    }
+    ...mapGetters(['token'])
   },
   watch: {
     'event.logo' (value) {
