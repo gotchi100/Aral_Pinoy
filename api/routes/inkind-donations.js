@@ -23,6 +23,7 @@ const createInkindDonationValidator = Joi.object({
       value: Joi.string().trim().max(255).required(),
     })
   ),
+  group: Joi.string().trim().max(255),
 }).options({
   stripUnknown: true
 })
@@ -30,6 +31,7 @@ const createInkindDonationValidator = Joi.object({
 const listInkindDonationsValidator = Joi.object({
   offset: Joi.number().min(0).default(0),
   limit: Joi.number().min(1).default(25),
+  grouped: Joi.boolean().default(false),
   'filters.query': Joi.string().trim().max(255)
 }).options({ 
   stripUnknown: true

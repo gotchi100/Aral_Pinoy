@@ -23,6 +23,7 @@ const inkindDonationSchema = new mongoose.Schema({
     name: String,
     customFields: {}
   },
+  group: String
 }, {
   collection: 'inkindDonations',
   validateBeforeSave: false
