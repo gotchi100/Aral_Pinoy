@@ -32,7 +32,7 @@
               </b-dropdown-group>
               <b-dropdown-divider></b-dropdown-divider>
               <b-dropdown-group id="dropdown-group-2" header="Monetary" style="font-family: 'Bebas Neue', cursive; color: black;">
-                <b-dropdown-item-button>Monetary Inventory</b-dropdown-item-button>
+                <b-dropdown-item to="/monetary-donations/monetarylist">Monetary Inventory</b-dropdown-item>
               </b-dropdown-group>
             </b-nav-item-dropdown>
           </div>
