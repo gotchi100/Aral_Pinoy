@@ -244,8 +244,54 @@
                   <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1100px; border-radius: 20px; margin-top: 40px;">
                     <b-container fluid>
                       <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
-                        Put Donation Reciept here
+                        <b-row>
+                          <b-col>Donation Detail</b-col>
+                          <b-col></b-col>
+                          <b-col>
+                            <img :src="logo" style="margin-left: 25px; width: 200px; height: 60px">
+                          </b-col>
+                        </b-row>
                       </h1>
+                      <hr style="height:20px;">
+                          <b-row>
+                            <b-col class="text-center">Reference Number</b-col>
+                            <b-col>
+                              <b-form-input v-model="name"></b-form-input>
+                            </b-col>
+                          </b-row>
+                          <b-row>
+                            <b-col class="text-center">Sent To</b-col>
+                            <b-col>
+                              <b-form-input v-model="name"></b-form-input>
+                            </b-col>
+                          </b-row>
+                      <hr style="height:20px;">
+                          <b-row>
+                            <b-col class="text-center">Date Received</b-col>
+                            <b-col>
+                              <b-form-input v-model="name"></b-form-input>
+                            </b-col>
+                          </b-row>
+                          <b-row>
+                            <b-col class="text-center">Donated By</b-col>
+                            <b-col>
+                              <b-form-input v-model="name"></b-form-input>
+                            </b-col>
+                          </b-row>
+                      <hr style="height:20px;">
+                          <b-row>
+                            <b-col class="text-center">Amount</b-col>
+                            <b-col>
+                              <b-form-input v-model="name"></b-form-input>
+                            </b-col>
+                          </b-row>
+                      <hr style="height:20px;">
+                          <b-row>
+                            <b-col></b-col>
+                            <b-col class="text-center">Thank you for the donation!</b-col>
+                            <b-col>
+                            </b-col>
+                          </b-row>
                     </b-container>
                   </b-card>
                 </div>
@@ -272,12 +318,13 @@
 
 <script>
 import { mapGetters } from 'vuex'
-
 const { apiClient } = require('../../axios')
+const logo = require('../../assets/aralpinoywords.png')
 
 export default {
   data () {
     return {
+      logo,
       pageOptions: [5, 10, 20],
       eventTransactionFields: [
         { key: 'date', label: 'Transaction Date' },
