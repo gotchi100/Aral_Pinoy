@@ -140,7 +140,7 @@ class InkindDonationsController {
             $group: {
               _id: '$group',
               quantity: {
-                $count: {}
+                $sum: '$quantity'
               }
             }
           },
