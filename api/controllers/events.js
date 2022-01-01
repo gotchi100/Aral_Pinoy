@@ -69,7 +69,7 @@ class EventsController {
     let ikds
     let jobs
     let questions
-    let numVolunteers = 0
+    let targetVolunteers = 0
 
     if (logoFile !== undefined) {
       const { originalname, buffer} = logoFile
@@ -200,7 +200,7 @@ class EventsController {
           upsert: true
         })
 
-        numVolunteers += job.requirements.max
+        targetVolunteers += job.requirements.max
 
         jobs.push({
           name: sanitizedJobName,
@@ -230,8 +230,14 @@ class EventsController {
       date,
       location,
       goals: {
-        numVolunteers,
-        monetaryDonation: goals.monetaryDonation
+        numVolunteers: {
+          current: 0,
+          target: targetVolunteers
+        },
+        monetaryDonation: {
+          current: 0,
+          target: goals.monetaryDonation
+        }
       },
       contacts,
       logoUrl,
@@ -286,12 +292,16 @@ class EventsController {
     })
   }
 
-  static async list(req, res, next) {
+  static async list(options = {}) {
     const {
       limit,
       offset,
-      'filters.name': filterName
-    } = req.query
+      filters = {}
+    } = options
+
+    const {
+      name: filterName
+    } = filters
 
     const query = {}
 
@@ -301,35 +311,28 @@ class EventsController {
       }
     }
 
-    try {
-      const [events, total] = await Promise.all([
-        EventModel.find(query, undefined, { 
-          lean: true,
-          limit,
-          skip: offset,
-        }),
-        EventModel.countDocuments(query)
-      ])
-  
-      return res.json({
-        results: events,
-        total
-      })
-    } catch (error) {
-      next(error)
+    const [events, total] = await Promise.all([
+      EventModel.find(query, undefined, { 
+        limit,
+        skip: offset,
+      }),
+      EventModel.countDocuments(query)
+    ])
+
+    return {
+      results: events,
+      total
     }
   }
 
   static async get(id) {
-    const event = await EventModel.findById(id, undefined, {
-      lean: true
-    })
+    const event = await EventModel.findById(id, undefined)
 
     if (event === null) {
       throw new NotFoundError(`Event does not exist: ${id}`)
     }
 
-    return event
+    return event.toObject()
   }
 }
 

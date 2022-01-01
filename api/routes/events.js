@@ -123,6 +123,31 @@ function validateListEventsBody(req, res, next) {
   next()
 }
 
+async function listEvents(req, res, next) {
+  const {
+    limit,
+    offset,
+    'filters.name': filterName
+  } = req.query
+
+  try {
+    const { results, total } = await EventsController.list({
+      limit,
+      offset,
+      filters: {
+        name: filterName
+      }
+    })
+
+    return res.status(200).json({
+      results,
+      total
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 function validateGetEventBody(req, res, next) {
   const { id } = req.params
 
@@ -152,7 +177,7 @@ async function getEvent(req, res, next) {
 const router = express.Router()
 
 router.post('/', upload.single('logo'), validateCreateEventBody, createEvent)
-router.get('/', validateListEventsBody, EventsController.list)
+router.get('/', validateListEventsBody, listEvents)
 router.get('/:id', validateGetEventBody, getEvent)
 
 module.exports = router
