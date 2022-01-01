@@ -3,6 +3,7 @@
 const InkindDonationModel = require('../models/inkind-donations')
 const InkindDonationCategoryModel = require('../models/inkind-donations/categories')
 const InkindDonationDonorModel = require('../models/inkind-donations/donors')
+const InkindDonationGroupModel = require('../models/inkind-donations/groups')
 
 const { CATEGORY_CUSTOM_FIELD_DATA_TYPES } = require('../constants/inkind-donations')
 
@@ -28,7 +29,8 @@ class InkindDonationsController {
       unit,
       donor,
       categoryId,
-      categoryCustomFields = []
+      categoryCustomFields = [],
+      group
     } = inkindDonation
 
     let category
@@ -78,6 +80,22 @@ class InkindDonationsController {
       })
     }
 
+    if (group !== undefined) {
+      const groupName = sanitize(group)
+      const groupNorm = groupName.toLowerCase()
+
+      await InkindDonationGroupModel.updateOne({
+        norm: groupNorm
+      }, {
+        $setOnInsert: {
+          name: groupName,
+          norm: groupNorm
+        }
+      } , {
+        upsert: true
+      })
+    }
+
     try {
       const results = await InkindDonationModel.create({
         sku,
@@ -87,7 +105,8 @@ class InkindDonationsController {
         quantity,
         donor,
         unit,
-        category
+        category,
+        group
       })
       
       return results.toObject({ 
@@ -108,28 +127,94 @@ class InkindDonationsController {
     const {
       limit,
       offset,
+      grouped,
       'filters.query': filterQuery
     } = query
 
-    const dbQuery = {}
+    let results, total
 
-    if (filterQuery !== undefined && filterQuery !== '') {
-      dbQuery.$text = {
-        $search: decodeURIComponent(filterQuery)
+    if (grouped) {
+      const aggregationResults = await Promise.all([
+        InkindDonationModel.aggregate([
+          {
+            $group: {
+              _id: '$group',
+              quantity: {
+                $sum: '$quantity'
+              }
+            }
+          },
+          { 
+            $addFields: {
+              fieldType: { 
+                $type: '$_id'
+              } 
+            } 
+          },
+          {
+            $sort: {
+              fieldType: -1,
+              _id: 1,
+            }
+          },
+          {
+            $project: {
+              fieldType: 0
+            }
+          },
+          {
+            $project: {
+              _id: {
+                $ifNull: ['$_id', 'Ungrouped Items'],
+              },
+              quantity: 1
+            }
+          },
+          {
+            $skip: offset
+          },
+          {
+            $limit: limit
+          }
+        ]),
+        InkindDonationModel.aggregate([ 
+          {
+            $group: {
+              _id: '$group',
+              quantity: {
+                $count: {}
+              }
+            }
+          },
+          {
+            $count: 'count'
+          }
+        ])
+      ])
+
+      results = aggregationResults[0]
+      total = aggregationResults[1][0].count
+    } else {
+      const matchQuery = {}
+
+      if (filterQuery !== undefined && filterQuery !== '') {
+        matchQuery.$text = {
+          $search: decodeURIComponent(filterQuery)
+        }
       }
+
+      [results, total] = await Promise.all([
+        InkindDonationModel.find(matchQuery, undefined, { 
+          lean: true,
+          limit,
+          skip: offset
+        }),
+        InkindDonationModel.countDocuments(matchQuery)
+      ])
     }
 
-    const [inkindDonations, total] = await Promise.all([
-      InkindDonationModel.find(dbQuery, undefined, { 
-        lean: true,
-        limit,
-        skip: offset
-      }),
-      InkindDonationModel.countDocuments(dbQuery)
-    ])
-
     return {
-      results: inkindDonations,
+      results,
       total
     }
   }
