@@ -165,21 +165,23 @@ class EventsController {
         const jobSkills = []
         const skillIds = []
 
-        for (const skillId of job.skillIds) {
-          const skill = await SkillModel.findById(skillId, ['name', 'norm', 'description'], {
-            lean: true
-          })
-
-          if (skill === null) {
-            throw new NotFoundError(`Skill does not exist: ${skillId}`)
+        if (Array.isArray(job.skillIds)) {
+          for (const skillId of job.skillIds) {
+            const skill = await SkillModel.findById(skillId, ['name', 'norm', 'description'], {
+              lean: true
+            })
+  
+            if (skill === null) {
+              throw new NotFoundError(`Skill does not exist: ${skillId}`)
+            }
+  
+            jobSkills.push({
+              name: skill.name,
+              norm: skill.norm,
+              description: skill.description,
+            })
+            skillIds.push(skill._id)
           }
-
-          jobSkills.push({
-            name: skill.name,
-            norm: skill.norm,
-            description: skill.description,
-          })
-          skillIds.push(skill._id)
         }
         
         const sanitizedJobName = sanitize(job.name)
