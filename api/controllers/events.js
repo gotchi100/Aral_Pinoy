@@ -15,6 +15,7 @@ const UserModel = require('../models/users')
 
 const GoogleCalendarController = require('./google/calendar')
 
+const { STATUSES } = require('../constants/events')
 const { OUTBOUND_RECEIVER_TYPES } = require('../constants/inkind-donations')
 
 const { 
@@ -333,6 +334,29 @@ class EventsController {
     }
 
     return event.toObject()
+  }
+
+  static async updateStatus(id, status) {
+    const event = await EventModel.findById(id, ['__v', 'status'])
+
+    if (event === null) {
+      throw new NotFoundError(`Event does not exist: ${id}`)
+    }
+
+    if (event.status === STATUSES.ENDED || event.status === STATUSES.CANCELED) {
+      throw new ConflictError(`Unable to update event: Status is ${event.status}`)
+    }
+
+    const eventUpdateResults = await EventModel.updateOne({
+      _id: new Types.ObjectId(id),
+      __v : event.__v
+    }, {
+      status
+    })
+
+    if (eventUpdateResults.matchedCount === 0) {
+      throw new ConflictError('Event was recently updated, please try again')
+    }
   }
 }
 
