@@ -281,15 +281,13 @@ class EventsController {
     }))
 
     await GoogleCalendarController.createEvent({
+      id: _id.toString(),
       summary: name,
       address: location.name,
       description,
       attendees,
       startDate: date.start,
       endDate: date.end,
-      metadata: {
-        eventId: _id.toString()
-      }
     })
   }
 
@@ -356,6 +354,10 @@ class EventsController {
 
     if (eventUpdateResults.matchedCount === 0) {
       throw new ConflictError('Event was recently updated, please try again')
+    }
+
+    if (status === STATUSES.CANCELED) {
+      await GoogleCalendarController.updateEventStatus(id, status).catch((error) => console.dir(error, { depth: null }))
     }
   }
 }
