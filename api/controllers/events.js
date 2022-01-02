@@ -34,6 +34,11 @@ const eventsBucket = storage.bucket('aral-pinoy-events')
 
 const whitespaceRegex = /\s+/g
 
+const SORT_ORDER_MAPPING = {
+  asc : 1,
+  desc: -1
+}
+
 function sanitize(name) {
   return name.replace(whitespaceRegex,' ')
 }
@@ -295,14 +300,20 @@ class EventsController {
     const {
       limit,
       offset,
-      filters = {}
+      filters = {},
+      sort
     } = options
 
     const {
-      name: filterName
+      name: filterName,
+      status: filterStatus
     } = filters
 
     const query = {}
+    const queryOptions = {
+      limit,
+      skip: offset
+    }
 
     if (filterName !== undefined && filterName !== '') {
       query.$text = {
@@ -310,11 +321,26 @@ class EventsController {
       }
     }
 
+    if (filterStatus !== undefined) {
+      if (filterStatus === 'UPCOMING') {
+        query.status = {
+          $exists: false
+        }
+      } else {
+        query.status = filterStatus
+      }
+    }
+
+    if (sort !== undefined) {
+      const { field, order } = sort
+
+      queryOptions.sort = {
+        [field]: SORT_ORDER_MAPPING[order]
+      }
+    }
+
     const [events, total] = await Promise.all([
-      EventModel.find(query, undefined, { 
-        limit,
-        skip: offset,
-      }),
+      EventModel.find(query, undefined, queryOptions),
       EventModel.countDocuments(query)
     ])
 
