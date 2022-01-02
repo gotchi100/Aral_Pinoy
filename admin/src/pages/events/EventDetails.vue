@@ -21,14 +21,29 @@
                 <b-col cols="12">
                   <b-card style="border-radius: 20px;">
                     <b-row>
-                      <b-col cols="12">
+                      <b-col cols="12" md="6">
                         <h1 class="text-start" style="font-family:'Bebas Neue', cursive;">
                           {{ event.name }}
                         </h1>
                       </b-col>
+
+                      <b-col v-if="event.status === undefined" class="text-end" cols="12" md="6">
+                        <b-dropdown
+                          text="Update Status"
+                          variant="primary"
+                          no-flip
+                        >
+                          <b-dropdown-item @click="cancelEventModal = true">
+                            <strong style="color: red">CANCEL</strong>
+                          </b-dropdown-item>
+                          <b-dropdown-item @click="endEventModal = true">
+                            <strong style="color: blue">END</strong>
+                          </b-dropdown-item>
+                        </b-dropdown>
+                      </b-col>
                     </b-row>
 
-                    <b-row>
+                    <b-row class="pt-3">
                       <b-col cols="12">
                         <b-container fluid>
                           <b-row>
@@ -60,6 +75,12 @@
                                     minute: '2-digit'
                                   })
                                 }}
+                              </p>
+                            </b-col>
+
+                            <b-col cols="12" md="6">
+                              <p class="h4 mb-0">
+                                Status: <i>{{ event.status !== undefined ? event.status : '-' }}</i>
                               </p>
                             </b-col>
                           </b-row>
@@ -103,7 +124,7 @@
                             </b-col>
                           </b-row>
 
-                          <b-row>
+                          <b-row v-if="event.goals.monetaryDonation.target !== 0">
                             <b-col cols="12">
                               <b-progress height="2rem" style="border-radius:30px;" :max="event.goals.monetaryDonation.target">
                                 <b-progress-bar
@@ -121,7 +142,7 @@
                             </b-col>
                           </b-row>
 
-                          <b-row class="pt-4">
+                          <b-row v-if="event.goals.numVolunteers.target !== 0" class="pt-4">
                             <b-col cols="12">
                               <b-progress height="2rem" style="border-radius:30px;" :max="event.goals.numVolunteers.target">
                                 <b-progress-bar
@@ -336,6 +357,64 @@
         </b-row>
       </b-container>
     </b-modal>
+
+    <b-modal v-model="endEventModal" size="md">
+      <b-container>
+        <b-row>
+          <b-col cols="12">
+            <h1 class="text-center">
+              Are you sure you want to <strong style="color: blue">END</strong> the event?
+            </h1>
+          </b-col>
+        </b-row>
+      </b-container>
+
+      <template #modal-footer>
+        <b-container>
+          <b-row>
+            <b-col class="text-center" cols="12">
+              <b-button
+                variant="success"
+                size="sm"
+                class="float-right"
+                @click="updateStatus('ENDED')"
+              >
+                CONFIRM
+              </b-button>
+            </b-col>
+          </b-row>
+        </b-container>
+      </template>
+    </b-modal>
+
+    <b-modal v-model="cancelEventModal" size="md">
+      <b-container>
+        <b-row>
+          <b-col cols="12">
+            <h1 class="text-center">
+              Are you sure you want to <strong style="color: red">CANCEL</strong> the event?
+            </h1>
+          </b-col>
+        </b-row>
+      </b-container>
+
+      <template #modal-footer>
+        <b-container>
+          <b-row>
+            <b-col class="text-center" cols="12">
+              <b-button
+                variant="success"
+                size="sm"
+                class="float-right"
+                @click="updateStatus('CANCELED')"
+              >
+                CONFIRM
+              </b-button>
+            </b-col>
+          </b-row>
+        </b-container>
+      </template>
+    </b-modal>
   </div>
 </template>
 
@@ -379,7 +458,9 @@ export default {
       eventIkdFields: [
         { key: 'item.name', label: 'Item' },
         { key: 'quantity', label: 'Quantity' }
-      ]
+      ],
+      endEventModal: false,
+      cancelEventModal: false
     }
   },
   created () {
@@ -387,6 +468,9 @@ export default {
   },
   computed: {
     ...mapGetters(['token']),
+    eventId () {
+      return this.$route.params.id
+    },
     monetaryDonationReached () {
       if (this.event === null) {
         return false
@@ -505,7 +589,7 @@ export default {
   methods: {
     async getEvent () {
       this.isLoadingEvent = true
-      const eventId = this.$route.params.id
+      const eventId = this.eventId
 
       try {
         const { data } = await apiClient.get(`/events/${eventId}`, {
@@ -515,6 +599,27 @@ export default {
         })
 
         this.event = data
+      } finally {
+        this.isLoadingEvent = false
+      }
+    },
+    async updateStatus (status) {
+      this.isLoadingEvent = true
+      this.endEventModal = false
+      this.cancelEventModal = false
+
+      const eventId = this.eventId
+
+      try {
+        await apiClient.patch(`/events/${eventId}/status`, {
+          status
+        }, {
+          headers: {
+            Authorization: `Bearer ${this.token}`
+          }
+        })
+
+        this.event.status = status
       } finally {
         this.isLoadingEvent = false
       }
