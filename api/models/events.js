@@ -2,10 +2,6 @@
 
 const mongoose = require('mongoose')
 
-function setMonetaryDonation(value) {
-  return value * 1000
-}
-
 const sdgQuestionSchema = new mongoose.Schema({
   label: String,
   type: {
@@ -95,6 +91,14 @@ const questionSchema = new mongoose.Schema({
   validateBeforeSave: false
 })
 
+function getMonetaryDonation(value) {
+  return value / 1000
+}
+
+function setMonetaryDonation(value) {
+  return value * 1000
+}
+
 const schema = new mongoose.Schema({
   name: {
     type: String,
@@ -108,10 +112,25 @@ const schema = new mongoose.Schema({
   },
   logoUrl: String,
   goals : {
-    numVolunteers: Number,
+    numVolunteers: {
+      current: {
+        type: Number,
+        default: 0
+      },
+      target: Number,
+    },
     monetaryDonation: {
-      type: Number,
-      set: setMonetaryDonation
+      current: {
+        type: Number,
+        default: 0,
+        get: getMonetaryDonation,
+        set: setMonetaryDonation
+      },
+      target: {
+        type: Number,
+        get: getMonetaryDonation,
+        set: setMonetaryDonation
+      }
     }
   },
   location: {
@@ -139,7 +158,13 @@ const schema = new mongoose.Schema({
   }
 }, {
   id: false,
-  validateBeforeSave: false
+  validateBeforeSave: false,
+  toObject: {
+    getters: true
+  },
+  toJSON: {
+    getters: true
+  }
 })
 
 module.exports = mongoose.model('Event', schema)
