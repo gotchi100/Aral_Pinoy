@@ -49,7 +49,18 @@ const publicRoutes = [
   '/forgot-password',
   /^\/forgot-password\/[a-zA-Z0-9-_]/,
   '/admin/login',
-  '/skills'
+  {
+    url: '/skills',
+    methods: ['GET']
+  },
+  {
+    url: '/events',
+    methods: ['GET']
+  },
+  {
+    url: /^\/events\/[0-9a-fA-F]{24}/,
+    methods: ['GET']
+  }
 ]
 
 const app = express()
