@@ -18,6 +18,7 @@ const adminRouter = require('./routes/admin')
 const eventsRouter = require('./routes/events')
 const forgotPasswordRouter = require('./routes/forgot-password')
 const googleOAuthRouter = require('./routes/google-oauth')
+const eventVolunteersRouter = require('./routes/events/volunteers')
 const inkindDonationsRouter = require('./routes/inkind-donations')
 const ikdCategoriesRouter = require('./routes/inkind-donations/categories')
 const ikdGroupsRouter = require('./routes/inkind-donations/groups')
@@ -49,7 +50,18 @@ const publicRoutes = [
   '/forgot-password',
   /^\/forgot-password\/[a-zA-Z0-9-_]/,
   '/admin/login',
-  '/skills'
+  {
+    url: '/skills',
+    methods: ['GET']
+  },
+  {
+    url: '/events',
+    methods: ['GET']
+  },
+  {
+    url: /^\/events\/[0-9a-fA-F]{24}/,
+    methods: ['GET']
+  }
 ]
 
 const app = express()
@@ -72,10 +84,13 @@ app.use('/', mainRouter)
 app.use('/admin', adminRouter)
 app.use('/users', usersRouter)
 app.use('/skills', skillsRouter)
-app.use('/events', eventsRouter)
 app.use('/forgot-password', forgotPasswordRouter)
 app.use('/google-oauth', googleOAuthRouter)
 app.use('/sdgs', sdgsRouter)
+
+app.use('/events', eventsRouter)
+app.use('/event-volunteers', eventVolunteersRouter)
+
 app.use('/inkind-donations', inkindDonationsRouter)
 app.use('/inkind-donation-categories', ikdCategoriesRouter)
 app.use('/inkind-donation-groups', ikdGroupsRouter)
