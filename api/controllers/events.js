@@ -211,7 +211,10 @@ class EventsController {
         jobs.push({
           name: sanitizedJobName,
           description: job.description,
-          requirements: job.requirements,
+          slots: {
+            current: 0,
+            max: job.requirements.max
+          },
           skills: jobSkills
         })
       }
@@ -375,7 +378,12 @@ class EventsController {
       _id: new Types.ObjectId(id),
       __v : event.__v
     }, {
-      status
+      $set: {
+        status
+      },
+      $inc: {
+        __v: 1
+      }
     })
 
     if (eventUpdateResults.matchedCount === 0) {
