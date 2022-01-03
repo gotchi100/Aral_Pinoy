@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="background-color: white">
     <div class="wp-block-cover is-style-bottom-wave">
       <div class="bg">
         <div class="wp-block-cover__inner-container">

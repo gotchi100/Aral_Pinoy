@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="background-color: white">
     <div class="wp-block-cover is-style-bottom-wave">
 
       <div class="bg">
@@ -416,56 +416,56 @@ export default {
 @import '../css/style.css';
 
 .bg {
-background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
-url('https://miro.medium.com/max/6300/1*yBLzf7yS7m_GTfLD6oCvzg.jpeg');
-background-position: center;
-background-repeat: no-repeat;
-background-size: cover;
-display: block;
-position:relative;
-left:0px;
-top:0px;
-width: 100%;
-height: 50%;
-z-index:-1;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
+  url('https://miro.medium.com/max/6300/1*yBLzf7yS7m_GTfLD6oCvzg.jpeg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: block;
+  position:relative;
+  left:0px;
+  top:0px;
+  width: 100%;
+  height: 50%;
+  z-index:-1;
 }
 .image {
-padding-top: 45px;
-padding-bottom: 45px;
+  padding-top: 45px;
+  padding-bottom: 45px;
 }
 .featured p {
-font-size: 50px;
-text-align: left;
-padding-top: 18px;
+  font-size: 50px;
+  text-align: left;
+  padding-top: 18px;
 }
 .events {
   background: #04AC6B;
 }
 .text {
-color: white;
-font-family: 'Bebas Neue', cursive;
-font-size: 50px;
-text-align: left;
-padding-top: 18px;
+  color: white;
+  font-family: 'Bebas Neue', cursive;
+  font-size: 50px;
+  text-align: left;
+  padding-top: 18px;
 }
 .more {
-color: white;
-font-family: 'Bebas Neue', cursive;
-font-size: 50px;
-text-align: right;
-padding-top: 18px;
+  color: white;
+  font-family: 'Bebas Neue', cursive;
+  font-size: 50px;
+  text-align: right;
+  padding-top: 18px;
 }
 .about {
-height: 420px;
+  height: 420px;
 }
 .about p {
-font-size: 50px;
-text-align: left;
-padding-top: 18px;
+  font-size: 50px;
+  text-align: left;
+  padding-top: 18px;
 }
 p {
-color: black;
-font-family: 'Bebas Neue', cursive;
+  color: black;
+  font-family: 'Bebas Neue', cursive;
 }
 .info {
   font-family: 'Noto Sans', sans-serif;
@@ -480,10 +480,10 @@ font-family: 'Bebas Neue', cursive;
   mask-size: cover;
 }
 .fixed {
-display: inline;
-position: fixed;
-right: 15px;
-bottom: 15px;
-z-index: 99999;
+  display: inline;
+  position: fixed;
+  right: 15px;
+  bottom: 15px;
+  z-index: 99999;
 }
 </style>

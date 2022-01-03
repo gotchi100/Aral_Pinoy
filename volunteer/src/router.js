@@ -5,7 +5,6 @@ import LoginPage from './pages/Login'
 import RegisterPage from './pages/Register'
 import ProfilePage from './pages/Profile'
 import CalendarPage from './pages/EventCalendar'
-import EventDetailsPage from './pages/EventPage'
 import ForgotPassword from './pages/ForgotPassword.vue'
 import ResetPassword from './pages/ResetPassword.vue'
 import GoogleSignInCallbackPage from './pages/GoogleSignIn'
@@ -13,6 +12,7 @@ import EvaluationPage from './pages/Evaluation.vue'
 import PrivacyPolicyPage from './pages/PrivacyPolicy.vue'
 import TermsConditionPage from './pages/TermsCondition.vue'
 
+// /events
 import EventList from './pages/events/EventList'
 
 const routes = [
@@ -20,15 +20,15 @@ const routes = [
   { path: '/login', component: LoginPage },
   { path: '/google-sign-in', component: GoogleSignInCallbackPage },
   { path: '/register', component: RegisterPage },
-  { name: 'Events', path: '/events', component: EventList },
   { path: '/profile', component: ProfilePage },
   { path: '/calendar', component: CalendarPage },
-  { path: '/event-page', component: EventDetailsPage },
   { path: '/forgot-password', component: ForgotPassword },
   { path: '/reset-password', component: ResetPassword },
   { path: '/evaluation', component: EvaluationPage },
   { path: '/privacy-policy', component: PrivacyPolicyPage },
-  { path: '/terms-and-conditions', component: TermsConditionPage }
+  { path: '/terms-and-conditions', component: TermsConditionPage },
+
+  { name: 'Events', path: '/events', component: EventList }
 ]
 
 const router = new VueRouter({
