@@ -449,7 +449,7 @@ export default {
       eventJobFields: [
         { key: 'name', label: 'Title' },
         { key: 'description', label: 'Description' },
-        { key: 'requirements.max', label: 'Number of Volunteers Needed' },
+        { key: 'slots.max', label: 'Number of Volunteers Needed' },
         { key: 'skills', label: 'Skills' }
       ],
       eventQuestionFields: [
@@ -562,7 +562,7 @@ export default {
         return `We have reached our goal! (${current} / ${target} have volunteered)`
       }
 
-      const volunteerNoun = target - current === 1 ? 'volunteer' : 'volunteers'
+      const volunteerNoun = current === 1 ? 'volunteer' : 'volunteers'
 
       return `${current} ${volunteerNoun}`
     },

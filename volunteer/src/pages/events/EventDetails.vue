@@ -121,13 +121,13 @@
                                 <b-progress-bar
                                   variant="success"
                                   :value="event.goals.monetaryDonation.current"
-                                  :label="monetaryDonationCurrentLabel"
+                                  :label="getMonetaryDonationCurrentLabel(event.goals.monetaryDonation.current, event.goals.monetaryDonation.target)"
                                 ></b-progress-bar>
 
                                 <b-progress-bar
                                   variant="danger"
                                   :value="monetaryDonationReached ? 0 : event.goals.monetaryDonation.target"
-                                  :label="monetaryDonationTargetLabel"
+                                  :label="getMonetaryDonationTargetLabel(event.goals.monetaryDonation.current, event.goals.monetaryDonation.target)"
                                 ></b-progress-bar>
                               </b-progress>
                             </b-col>
@@ -139,13 +139,13 @@
                                 <b-progress-bar
                                   variant="success"
                                   :value="event.goals.numVolunteers.current"
-                                  :label="volunteerGoalCurrentLabel"
+                                  :label="getVolunteerGoalCurrentLabel(event.goals.numVolunteers.current, event.goals.numVolunteers.target)"
                                 ></b-progress-bar>
 
                                 <b-progress-bar
                                   variant="danger"
                                   :value="volunteerGoalReached ? 0 : event.goals.numVolunteers.target"
-                                  :label="volunteerGoalTargetLabel"
+                                  :label="getVolunteerGoalTargetLabel(event.goals.numVolunteers.current, event.goals.numVolunteers.target)"
                                 ></b-progress-bar>
                               </b-progress>
                             </b-col>
@@ -165,9 +165,14 @@
                                       <b-button
                                         variant="primary"
                                         style="width: 100%"
-                                        :disabled="volunteerGoalReached"
+                                        :disabled="volunteerGoalReached || hasAlreadyVolunteered"
+                                        @click="volunteerModal = true"
                                       >
-                                        VOLUNTEER
+                                        {{
+                                          hasAlreadyVolunteered
+                                          ? 'You have already volunteered'
+                                          : 'VOLUNTEER'
+                                        }}
                                       </b-button>
                                     </b-col>
 
@@ -233,6 +238,81 @@
         </b-col>
       </b-row>
     </b-container>
+
+    <b-modal
+      v-if="event !== null && Array.isArray(event.jobs)"
+      v-model="volunteerModal"
+      size="xl"
+      hide-footer
+    >
+      <b-container>
+        <b-row>
+          <b-col cols="12">
+            <b-card style="margin-top:20px;">
+              <b-container>
+                <b-row class="pb-3">
+                  <b-col cols="12">
+                    <h2>Roles</h2>
+                  </b-col>
+                </b-row>
+
+                <b-row class="pb-5" v-for="job in event.jobs" :key="job.name">
+                  <b-col cols="12">
+                    <h5>{{ job.name }}</h5>
+
+                    <b-row align-v="center" align-h="center">
+                      <b-col cols="10">
+                        <b-progress height="2rem" :max="job.slots.max">
+                          <b-progress-bar
+                            variant="success"
+                            :value="job.slots.current"
+                            :label="getVolunteerGoalCurrentLabel(job.slots.current, job.slots.max)"
+                          ></b-progress-bar>
+
+                          <b-progress-bar
+                            variant="danger"
+                            :value="job.slots.max"
+                            :label="getVolunteerGoalTargetLabel(job.slots.current, job.slots.max)"
+                          ></b-progress-bar>
+                        </b-progress>
+                      </b-col>
+
+                      <b-col cols="2">
+                        <b-button
+                          variant="success"
+                          :disabled="job.slots.current >= job.slots.max"
+                          @click="selectEventJob(job.name)"
+                        >
+                          JOIN THIS ROLE
+                        </b-button>
+                      </b-col>
+                    </b-row>
+                  </b-col>
+                </b-row>
+              </b-container>
+            </b-card>
+          </b-col>
+        </b-row>
+      </b-container>
+    </b-modal>
+
+    <b-modal
+      v-model="confirmEventVolunteerModal"
+      @ok="createEventVolunteer(eventJobName)"
+      @cancel="eventJobName = null"
+    >
+      <b-container>
+        <b-row>
+          <b-col cols="12">
+            <h5>
+              Please confirm your registration:
+              <br /><br />
+              Role: <strong>{{ eventJobName }}</strong>
+            </h5>
+          </b-col>
+        </b-row>
+      </b-container>
+    </b-modal>
   </div>
 </template>
 
@@ -248,20 +328,19 @@ export default {
     return {
       logo,
       event: null,
+      eventVolunteer: null,
       isLoadingEvent: false,
-      eventJobFields: [
-        { key: 'name', label: 'Title' },
-        { key: 'description', label: 'Description' },
-        { key: 'requirements.max', label: 'Number of Volunteers Needed' },
-        { key: 'skills', label: 'Skills' }
-      ]
+      volunteerModal: false,
+      confirmEventVolunteerModal: false,
+      eventJobName: null
     }
   },
-  created () {
+  async created () {
+    await this.getEventVolunteer()
     this.getEvent()
   },
   computed: {
-    ...mapGetters(['token']),
+    ...mapGetters(['user', 'token']),
     eventId () {
       return this.$route.params.id
     },
@@ -271,6 +350,9 @@ export default {
       }
 
       return this.event.goals.numVolunteers.target !== 0 || this.event.goals.monetaryDonation.target !== 0
+    },
+    hasAlreadyVolunteered () {
+      return this.eventVolunteer !== null
     },
     monetaryDonationReached () {
       if (this.event === null) {
@@ -284,16 +366,89 @@ export default {
 
       return current >= target
     },
-    monetaryDonationCurrentLabel () {
+    volunteerGoalReached () {
       if (this.event === null) {
-        return ''
+        return false
       }
 
       const {
         current,
         target
-      } = this.event.goals.monetaryDonation
+      } = this.event.goals.numVolunteers
 
+      return current >= target
+    }
+  },
+  methods: {
+    async getEvent () {
+      this.isLoadingEvent = true
+      const eventId = this.eventId
+
+      try {
+        const { data } = await apiClient.get(`/events/${eventId}`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`
+          }
+        })
+
+        this.event = data
+      } finally {
+        this.isLoadingEvent = false
+      }
+    },
+    async getEventVolunteer () {
+      if (this.user === null) {
+        return
+      }
+
+      const userId = this.user._id
+      const eventId = this.eventId
+
+      const queryString = new URLSearchParams()
+
+      queryString.set('filters.userId', userId)
+      queryString.set('filters.eventId', eventId)
+
+      const { data } = await apiClient.get(`/event-volunteers?${queryString.toString()}`, {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }
+      })
+
+      if (data.total === 0) {
+        return
+      }
+
+      this.eventVolunteer = data.results[0]
+    },
+    async createEventVolunteer (eventJobName) {
+      if (this.user === null) {
+        return this.$router.push({ path: '/login' })
+      }
+
+      const userId = this.user._id
+      const eventId = this.eventId
+
+      await apiClient.post('/event-volunteers', {
+        userId,
+        eventId,
+        eventJobName
+      }, {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }
+      })
+
+      this.$router.go()
+    },
+    selectEventJob (jobName) {
+      this.eventJobName = jobName
+
+      if (this.eventJobName) {
+        this.confirmEventVolunteerModal = true
+      }
+    },
+    getMonetaryDonationCurrentLabel (current, target) {
       if (current >= target) {
         const currentCurrency = new Intl.NumberFormat('en-US', {
           style: 'currency',
@@ -315,16 +470,7 @@ export default {
 
       return currency
     },
-    monetaryDonationTargetLabel () {
-      if (this.event === null) {
-        return ''
-      }
-
-      const {
-        current,
-        target
-      } = this.event.goals.monetaryDonation
-
+    getMonetaryDonationTargetLabel (current, target) {
       if (current >= target) {
         return ''
       }
@@ -337,46 +483,16 @@ export default {
 
       return `We still need ${currency} to reach our goal!`
     },
-    volunteerGoalReached () {
-      if (this.event === null) {
-        return false
-      }
-
-      const {
-        current,
-        target
-      } = this.event.goals.numVolunteers
-
-      return current >= target
-    },
-    volunteerGoalCurrentLabel () {
-      if (this.event === null) {
-        return ''
-      }
-
-      const {
-        current,
-        target
-      } = this.event.goals.numVolunteers
-
+    getVolunteerGoalCurrentLabel (current, target) {
       if (current >= target) {
         return `We have reached our goal! (${current} / ${target} have volunteered)`
       }
 
-      const volunteerNoun = target - current === 1 ? 'volunteer' : 'volunteers'
+      const volunteerNoun = current === 1 ? 'volunteer' : 'volunteers'
 
       return `${current} ${volunteerNoun}`
     },
-    volunteerGoalTargetLabel () {
-      if (this.event === null) {
-        return ''
-      }
-
-      const {
-        current,
-        target
-      } = this.event.goals.numVolunteers
-
+    getVolunteerGoalTargetLabel (current, target) {
       if (current >= target) {
         return ''
       }
@@ -385,24 +501,6 @@ export default {
       const volunteerNoun = difference === 1 ? 'volunteer' : 'volunteers'
 
       return `We still need ${difference} ${volunteerNoun}!`
-    }
-  },
-  methods: {
-    async getEvent () {
-      this.isLoadingEvent = true
-      const eventId = this.eventId
-
-      try {
-        const { data } = await apiClient.get(`/events/${eventId}`, {
-          headers: {
-            Authorization: `Bearer ${this.token}`
-          }
-        })
-
-        this.event = data
-      } finally {
-        this.isLoadingEvent = false
-      }
     }
   }
 }
