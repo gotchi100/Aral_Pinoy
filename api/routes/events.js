@@ -49,7 +49,7 @@ const questionsSchema = Joi.array().items(
 
 const createEventValidator = Joi.object({
   name: Joi.string().trim().max(255).required(),
-  description: Joi.string().trim().empty('').max(200),
+  description: Joi.string().trim().empty('').max(5000),
   date: Joi.object({
     start: Joi.date().iso().required(),
     end: Joi.date().iso().greater(Joi.ref('start')).required(),
@@ -104,7 +104,10 @@ async function createEvent(req, res, next) {
 const listEventsValidator = Joi.object({
   offset: Joi.number().min(0).default(0),
   limit: Joi.number().min(1).default(25),
-  'filters.name': Joi.string().trim().max(100).allow('')
+  'filters.name': Joi.string().trim().max(100).allow(''),
+  'filters.status': Joi.string().valid('UPCOMING', 'ENDED', 'CANCELED'),
+  'sort.field': Joi.string().valid('date.start'),
+  'sort.order': Joi.string().valid('asc', 'desc')
 }).options({ 
   stripUnknown: true
 })
@@ -129,16 +132,30 @@ async function listEvents(req, res, next) {
   const {
     limit,
     offset,
-    'filters.name': filterName
+    'filters.name': filterName,
+    'filters.status': filterStatus,
+    'sort.field': sortField,
+    'sort.order': sortOrder
   } = req.query
+
+  let sort
+
+  if (sortField !== undefined && sortOrder !== undefined) {
+    sort = {
+      field: sortField,
+      order: sortOrder
+    }
+  }
 
   try {
     const { results, total } = await EventsController.list({
       limit,
       offset,
       filters: {
-        name: filterName
-      }
+        name: filterName,
+        status: filterStatus
+      },
+      sort
     })
 
     return res.status(200).json({
