@@ -61,17 +61,16 @@ const skillSchema = new mongoose.Schema({
   validateBeforeSave: false
 })
 
-const jobRequirementsSchema = new mongoose.Schema({
-  max: Number
-}, {
-  _id: false,
-  validateBeforeSave: false
-})
-
 const jobSchema = new mongoose.Schema({
   name: String,
   description: String,
-  requirements: jobRequirementsSchema,
+  slots: {
+    current: {
+      type: Number,
+      default: 0
+    },
+    max: Number
+  },
   skills: {
     type: [skillSchema],
     default: []
