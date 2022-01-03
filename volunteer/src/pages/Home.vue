@@ -1,6 +1,7 @@
 <template>
-  <div>
-    <div class="wp-block-cover alignfull has-background-dim-40 has-background-dim is-style-bottom-wave">
+  <div style="background-color: white">
+    <div class="wp-block-cover is-style-bottom-wave">
+
       <div class="bg">
       <div class="wp-block-cover__inner-container">
           <div class="image">
@@ -9,11 +10,14 @@
         </div>
       </div>
     </div>
+
     <div class="featured">
       <b-container>
         <p>Featured</p>
+
         <b-carousel
           id="carousel-1"
+          class="mb-5"
           v-model="slide"
           :interval="4000"
           controls
@@ -61,153 +65,144 @@
               a tincidunt eget, convallis vel est. Ut pellentesque ut lacus vel interdum.
           </p>
           </b-carousel-slide>
-      </b-carousel>
-      <p class="mt-4">
-      Slide #: {{ slide }}<br>
-      Sliding: {{ sliding }}
-      </p>
+        </b-carousel>
+
+        <!-- <p class="mt-4">
+          Slide #: {{ slide }}<br>
+          Sliding: {{ sliding }}
+        </p> -->
       </b-container>
     </div>
-    <div class="wp-block-cover alignfull has-background-dim-40 has-background-dim is-style-bottom-wave">
-    <div class="events">
-      <b-container>
-        <p class="text" id="events">
-          Events
-        </p>
-        <b-card-group columns>
-           <b-row>
-            <b-col>
-              <b-card
-          img-src="https://picsum.photos/600/300/?image=25"
-          img-alt="Image"
-          img-top
-          tag="article"
-          style="max-width: 24rem;"
-          class="mb-2"
-        ><b-link to='/event-page' style="font-size:20px;">Batangas Coastal Clean Up</b-link>
-          <b-card-text>
-            Some quick example text to build on the card title and make up the bulk of the card's.
-          </b-card-text>
-           <b-icon icon="geo-alt"></b-icon><br>
-           <b-icon icon="calendar"></b-icon><br>
-           <b-icon icon="clock"></b-icon><br>
-          <b-progress :value="value" class="mb-3"></b-progress>
-          <b-progress :value="value" class="mb-3"></b-progress>
-          </b-card>
-            </b-col>
-            <b-col>
-          <b-card
-          title="Card Title"
-          img-src="https://picsum.photos/600/300/?image=25"
-          img-alt="Image"
-          img-top
-          tag="article"
-          style="max-width: 24rem;"
-          class="mb-2"
-        >
-          <b-card-text>
-            Some quick example text to build on the card title and make up the bulk of the card's content.
-          </b-card-text>
-          <b-icon icon="geo-alt"></b-icon><br>
-           <b-icon icon="calendar"></b-icon><br>
-           <b-icon icon="clock"></b-icon><br>
-          <b-progress :value="value" class="mb-3"></b-progress>
-          <b-progress :value="value" class="mb-3"></b-progress>
-          </b-card>
-            </b-col>
-            <b-col>
-          <b-card
-          title="Card Title"
-          img-src="https://picsum.photos/600/300/?image=25"
-          img-alt="Image"
-          img-top
-          tag="article"
-          style="max-width: 24rem;"
-          class="mb-2"
-        >
-          <b-card-text>
-            Some quick example text to build on the card title and make up the bulk of the card's content.
-          </b-card-text>
-          <b-icon icon="geo-alt"></b-icon><br>
-           <b-icon icon="calendar"></b-icon><br>
-           <b-icon icon="clock"></b-icon><br>
-          <b-progress :value="value" class="mb-3"></b-progress>
-          <b-progress :value="value" class="mb-3"></b-progress>
-          </b-card>
-            </b-col>
-           </b-row>
-        </b-card-group><br>
-         <b-card-group columns>
-           <b-row>
-            <b-col>
-              <b-card
-          title="Card Title"
-          img-src="https://picsum.photos/600/300/?image=25"
-          img-alt="Image"
-          img-top
-          tag="article"
-          style="max-width: 24rem;"
-          class="mb-2"
-        >
-          <b-card-text>
-            Some quick example text to build on the card title and make up the bulk of the card's content.
-          </b-card-text>
-          <b-icon icon="geo-alt"></b-icon><br>
-           <b-icon icon="calendar"></b-icon><br>
-           <b-icon icon="clock"></b-icon><br>
-          <b-progress :value="value" class="mb-3"></b-progress>
-          <b-progress :value="value" class="mb-3"></b-progress>
-          </b-card>
-            </b-col>
-            <b-col>
-          <b-card
-          title="Card Title"
-          img-src="https://picsum.photos/600/300/?image=25"
-          img-alt="Image"
-          img-top
-          tag="article"
-          style="max-width: 24rem;"
-          class="mb-2"
-        >
-          <b-card-text>
-            Some quick example text to build on the card title and make up the bulk of the card's content.
-          </b-card-text>
-          <b-icon icon="geo-alt"></b-icon><br>
-           <b-icon icon="calendar"></b-icon><br>
-           <b-icon icon="clock"></b-icon><br>
-          <b-progress :value="value" class="mb-3"></b-progress>
-          <b-progress :value="value" class="mb-3"></b-progress>
-          </b-card>
-            </b-col>
-            <b-col>
-          <b-card
-          title="Card Title"
-          img-src="https://picsum.photos/600/300/?image=25"
-          img-alt="Image"
-          img-top
-          tag="article"
-          style="max-width: 24rem;"
-          class="mb-2"
-        >
-          <b-card-text>
-            Some quick example text to build on the card title and make up the bulk of the card's content.
-          </b-card-text>
-          <b-icon icon="geo-alt"></b-icon><br>
-           <b-icon icon="calendar"></b-icon><br>
-           <b-icon icon="clock"></b-icon><br>
-          <b-progress :value="value" class="mb-3"></b-progress>
-          <b-progress :value="value" class="mb-3"></b-progress>
-          </b-card>
-            </b-col>
-           </b-row>
-        </b-card-group>
-        <p class="more"> <b-link to="events">
-          View More Events</b-link>
-          <b-icon icon="chevron-right"></b-icon>
-        </p>
-      </b-container>
+
+    <div class="wp-block-cover is-style-bottom-wave">
+      <div class="events">
+        <b-container>
+          <p class="text" id="events">
+            Events
+          </p>
+
+          <b-row>
+            <template v-if="isLoadingEvents">
+              <b-col v-for="index in [0, 1, 2]" :key="index" cols="12" md="4">
+                <b-card no-body>
+                  <b-skeleton-img height="350px">
+                  </b-skeleton-img>
+                </b-card>
+              </b-col>
+            </template>
+
+            <template v-else>
+              <b-col
+                v-for="event in events"
+                :key="event._id"
+                class="pb-4"
+                cols="12"
+                md="4"
+              >
+                <b-card
+                  class="mb-2"
+                  :img-src="event.logoUrl !== undefined ? event.logoUrl : noImageSrc"
+                  img-height="300px"
+                  img-alt="Image"
+                  style="text-align: left; cursor: pointer; min-height: 600px"
+                  @click="$router.push(`/events/${event._id}`)"
+                >
+                  <h4>
+                    <b-link :to="`/events/${event._id}`">
+                      {{ event.name }}
+                    </b-link>
+                  </h4>
+
+                  <b-card-text v-if="event.description !== undefined">
+                    {{
+                      event.description.length > 175
+                      ? `${event.description.substring(0, 175)}...`
+                      : event.description
+                    }}
+                  </b-card-text>
+
+                  <b-row style="text-align: left">
+                    <b-col v-if="event.location !== undefined" class="pb-2" cols="12">
+                      <b-icon icon="geo-alt"></b-icon> {{ event.location.name }}
+                    </b-col>
+
+                    <b-col class="pb-2" cols="12">
+                      <b-icon icon="calendar"></b-icon>
+                      {{
+                        new Date(event.date.start).toLocaleString('en-us', {
+                          dateStyle: 'short',
+                          timeStyle: 'short'
+                        })
+                      }}
+                      -
+                      {{
+                        isSameDay(event.date.start, event.date.end)
+                        ? new Date(event.date.end).toLocaleString('en-us', {
+                            timeStyle: 'short'
+                          })
+                        : new Date(event.date.end).toLocaleString('en-us', {
+                            dateStyle: 'short',
+                            timeStyle: 'short'
+                          })
+                      }}
+                    </b-col>
+
+                    <b-col class="pb-3" cols="12">
+                      <b-icon icon="clock"></b-icon> {{ getDurationBetweenDates(event.date.start, event.date.end) }}
+                    </b-col>
+                  </b-row>
+
+                  <b-row v-if="event.goals.monetaryDonation.target !== 0">
+                    <b-col cols="12">
+                      <b-progress height="1.5rem" :max="event.goals.monetaryDonation.target">
+                        <b-progress-bar
+                          variant="success"
+                          :value="event.goals.monetaryDonation.current"
+                          :label="getMonetaryDonationCurrentLabel(event.goals.monetaryDonation)"
+                        ></b-progress-bar>
+
+                        <b-progress-bar
+                          variant="danger"
+                          :value="hasGoalReached(event.goals.monetaryDonation) ? 0 : event.goals.monetaryDonation.target"
+                          :label="getMonetaryDonationTargetLabel(event.goals.monetaryDonation)"
+                        ></b-progress-bar>
+                      </b-progress>
+                    </b-col>
+                  </b-row>
+
+                  <b-row v-if="event.goals.numVolunteers.target !== 0">
+                    <b-col class="pt-2" cols="12">
+                      <b-progress height="1.5rem" :max="event.goals.numVolunteers.target">
+                        <b-progress-bar
+                          variant="success"
+                          :value="event.goals.numVolunteers.current"
+                          :label="getVolunteerGoalCurrentLabel(event.goals.numVolunteers)"
+                        ></b-progress-bar>
+
+                        <b-progress-bar
+                          variant="danger"
+                          :value="hasGoalReached(event.goals.numVolunteers) ? 0 : event.goals.numVolunteers.target"
+                          :label="getVolunteerGoalTargetLabel(event.goals.numVolunteers)"
+                        ></b-progress-bar>
+                      </b-progress>
+                    </b-col>
+                  </b-row>
+                </b-card>
+              </b-col>
+            </template>
+          </b-row>
+
+          <p v-if="hasMoreEvents" class="more">
+            <b-link to="/events">
+              View More Events <b-icon icon="chevron-right"></b-icon>
+            </b-link>
+          </p>
+        </b-container>
+
+        <br v-for="i in Array(15)" :key="i" />
       </div>
     </div>
+
     <div class="about">
       <b-container class="bv-example-row">
         <p id="about">About Us</p>
@@ -252,8 +247,16 @@
 </template>
 
 <script>
+import {
+  isSameDay,
+  intervalToDuration,
+  formatDuration
+} from 'date-fns'
+
 import Footer from '../components/Footer.vue'
 const logo = require('../assets/aralpinoywords.png')
+
+const { apiClient } = require('../axios')
 
 export default {
   components: {
@@ -266,7 +269,15 @@ export default {
       sliding: null,
       value: 75,
       scTimer: 0,
-      scY: 0
+      scY: 0,
+      isLoadingEvents: false,
+      hasMoreEvents: false,
+      events: []
+    }
+  },
+  computed: {
+    noImageSrc () {
+      return 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/No_image_available_600_x_450.svg/1280px-No_image_available_600_x_450.svg.png'
     }
   },
   mounted () {
@@ -284,7 +295,29 @@ export default {
       this.$router.replace({ path: '/' })
     }
   },
+  created () {
+    this.getEvents()
+  },
   methods: {
+    async getEvents () {
+      this.isLoadingEvents = true
+
+      const queryString = new URLSearchParams()
+
+      queryString.set('limit', 6)
+      queryString.set('filters.status', 'UPCOMING')
+      queryString.set('sort.field', 'date.start')
+      queryString.set('sort.order', 'asc')
+
+      try {
+        const { data } = await apiClient.get(`/events?${queryString.toString()}`)
+
+        this.events = data.results
+        this.hasMoreEvents = data.total > this.events.length
+      } finally {
+        this.isLoadingEvents = false
+      }
+    },
     onSlideStart (slide) {
       this.sliding = true
     },
@@ -304,6 +337,74 @@ export default {
         top: 0,
         behavior: 'smooth'
       })
+    },
+    isSameDay (firstDate, secondDate) {
+      return isSameDay(new Date(firstDate), new Date(secondDate))
+    },
+    hasGoalReached ({ current, target }) {
+      return current >= target
+    },
+    getMonetaryDonationCurrentLabel ({ current, target }) {
+      if (current >= target) {
+        const currentCurrency = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'PHP'
+        }).format(current)
+
+        const targetCurrency = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'PHP'
+        }).format(target)
+
+        return `We have reached our goal! (${currentCurrency} / ${targetCurrency})`
+      }
+
+      const currency = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'PHP'
+      }).format(current)
+
+      return currency
+    },
+    getMonetaryDonationTargetLabel ({ current, target }) {
+      if (current >= target) {
+        return ''
+      }
+
+      const difference = target - current
+      const currency = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'PHP'
+      }).format(difference)
+
+      return `We still need ${currency} to reach our goal!`
+    },
+    getVolunteerGoalCurrentLabel ({ current, target }) {
+      if (current >= target) {
+        return `We have reached our goal! (${current} / ${target} have volunteered)`
+      }
+
+      const volunteerNoun = current === 1 ? 'volunteer' : 'volunteers'
+
+      return `${current} ${volunteerNoun}`
+    },
+    getVolunteerGoalTargetLabel ({ current, target }) {
+      if (current >= target) {
+        return ''
+      }
+
+      const difference = target - current
+      const volunteerNoun = difference === 1 ? 'volunteer' : 'volunteers'
+
+      return `We still need ${difference} ${volunteerNoun}!`
+    },
+    getDurationBetweenDates (start, end) {
+      const duration = intervalToDuration({
+        start: new Date(start),
+        end: new Date(end)
+      })
+
+      return formatDuration(duration)
     }
   }
 }
@@ -315,57 +416,56 @@ export default {
 @import '../css/style.css';
 
 .bg {
-background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
-url('https://miro.medium.com/max/6300/1*yBLzf7yS7m_GTfLD6oCvzg.jpeg');
-background-position: center;
-background-repeat: no-repeat;
-background-size: cover;
-display: block;
-position:relative;
-left:0px;
-top:0px;
-width: 100%;
-height: 50%;
-z-index:-1;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
+  url('https://miro.medium.com/max/6300/1*yBLzf7yS7m_GTfLD6oCvzg.jpeg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: block;
+  position:relative;
+  left:0px;
+  top:0px;
+  width: 100%;
+  height: 50%;
+  z-index:-1;
 }
 .image {
-padding-top: 45px;
-padding-bottom: 45px;
+  padding-top: 45px;
+  padding-bottom: 45px;
 }
 .featured p {
-font-size: 50px;
-text-align: left;
-padding-top: 18px;
+  font-size: 50px;
+  text-align: left;
+  padding-top: 18px;
 }
 .events {
-background: #04AC6B;
-height: 1425px;
+  background: #04AC6B;
 }
 .text {
-color: white;
-font-family: 'Bebas Neue', cursive;
-font-size: 50px;
-text-align: left;
-padding-top: 18px;
+  color: white;
+  font-family: 'Bebas Neue', cursive;
+  font-size: 50px;
+  text-align: left;
+  padding-top: 18px;
 }
 .more {
-color: white;
-font-family: 'Bebas Neue', cursive;
-font-size: 50px;
-text-align: right;
-padding-top: 18px;
+  color: white;
+  font-family: 'Bebas Neue', cursive;
+  font-size: 50px;
+  text-align: right;
+  padding-top: 18px;
 }
 .about {
-height: 420px;
+  height: 420px;
 }
 .about p {
-font-size: 50px;
-text-align: left;
-padding-top: 18px;
+  font-size: 50px;
+  text-align: left;
+  padding-top: 18px;
 }
 p {
-color: black;
-font-family: 'Bebas Neue', cursive;
+  color: black;
+  font-family: 'Bebas Neue', cursive;
 }
 .info {
   font-family: 'Noto Sans', sans-serif;
@@ -380,10 +480,10 @@ font-family: 'Bebas Neue', cursive;
   mask-size: cover;
 }
 .fixed {
-display: inline;
-position: fixed;
-right: 15px;
-bottom: 15px;
-z-index: 99999;
+  display: inline;
+  position: fixed;
+  right: 15px;
+  bottom: 15px;
+  z-index: 99999;
 }
 </style>

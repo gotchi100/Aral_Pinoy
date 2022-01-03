@@ -1,0 +1,111 @@
+'use strict'
+
+const express = require('express')
+const Joi = require('joi')
+const joiObjectId = require('joi-objectid')
+
+const EventVolunteerController = require('../../controllers/events/volunteers')
+
+Joi.objectId = joiObjectId(Joi)
+
+const createEventVolunteerValidator = Joi.object({
+  userId: Joi.objectId().required(),
+  eventId: Joi.objectId().required(),
+  eventJobName: Joi.string().trim().required()
+}).options({
+  stripUnknown: true
+})
+
+const listEventVolunteersValidator = Joi.object({
+  offset: Joi.number().min(0).default(0),
+  limit: Joi.number().min(1).default(25),
+  expand: Joi.boolean().default(false),
+  'filters.userId': Joi.objectId(),
+  'filters.eventId': Joi.objectId(),
+}).options({ 
+  stripUnknown: true
+})
+
+function validateCreateEventVolunteerBody(req, res, next) {
+  const { value: validatedBody, error } = createEventVolunteerValidator.validate(req.body)
+
+  if (error !== undefined) {      
+    return res.status(400).json({
+      code: 'BadRequest',
+      status: 400,
+      message: error.message
+    })
+  }
+
+  req.body = validatedBody
+
+  next()
+}
+
+async function create(req, res, next) {
+  const {
+    userId,
+    eventId,
+    eventJobName
+  } = req.body
+
+  try {
+    const results = await EventVolunteerController.create(userId, eventId, eventJobName)
+
+    return res.status(201).json(results)
+  } catch (error) {
+    next(error)
+  }
+}
+
+function validateListEventVolunteersBody(req, res, next) {
+  const { value: validatedQuery, error } = listEventVolunteersValidator.validate(req.query)
+
+  if (error !== undefined) {      
+    return res.status(400).json({
+      code: 'BadRequest',
+      status: 400,
+      message: error.message
+    })
+  }
+
+  req.query = validatedQuery
+
+  next()
+}
+
+async function list(req, res, next) {
+  const {
+    offset,
+    limit,
+    expand,
+    'filters.userId': filterUserId,
+    'filters.eventId': filterEventId,
+  } = req.query
+
+  try {
+    const { results, total } = await EventVolunteerController.list({
+      offset,
+      limit,
+      expand,
+      filters: {
+        userId: filterUserId,
+        eventId: filterEventId
+      }
+    })
+
+    return res.json({
+      results,
+      total
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const router = express.Router()
+
+router.post('/', validateCreateEventVolunteerBody, create)
+router.get('/', validateListEventVolunteersBody, list)
+
+module.exports = router

@@ -49,7 +49,7 @@ const questionsSchema = Joi.array().items(
 
 const createEventValidator = Joi.object({
   name: Joi.string().trim().max(255).required(),
-  description: Joi.string().trim().empty('').max(200),
+  description: Joi.string().trim().empty('').max(5000),
   date: Joi.object({
     start: Joi.date().iso().required(),
     end: Joi.date().iso().greater(Joi.ref('start')).required(),
