@@ -384,7 +384,7 @@ export default {
         return `We have reached our goal! (${current} / ${target} have volunteered)`
       }
 
-      const volunteerNoun = target - current === 1 ? 'volunteer' : 'volunteers'
+      const volunteerNoun = current === 1 ? 'volunteer' : 'volunteers'
 
       return `${current} ${volunteerNoun}`
     },
