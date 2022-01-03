@@ -14,6 +14,7 @@ import TermsConditionPage from './pages/TermsCondition.vue'
 
 // /events
 import EventList from './pages/events/EventList'
+import EventDetails from './pages/events/EventDetails'
 
 const routes = [
   { name: 'Home', path: '/', component: HomePage },
@@ -28,7 +29,8 @@ const routes = [
   { path: '/privacy-policy', component: PrivacyPolicyPage },
   { path: '/terms-and-conditions', component: TermsConditionPage },
 
-  { name: 'Events', path: '/events', component: EventList }
+  { name: 'Events', path: '/events', component: EventList },
+  { name: 'EventDetails', path: '/events/:id', component: EventDetails }
 ]
 
 const router = new VueRouter({
