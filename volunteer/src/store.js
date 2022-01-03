@@ -1,12 +1,8 @@
 let localStorageUser = window.localStorage.getItem('user')
-let localStorageToken = window.localStorage.getItem('token')
+const localStorageToken = window.localStorage.getItem('token')
 
-if (localStorageUser && localStorageUser !== 'null') {
+if (localStorageUser) {
   localStorageUser = JSON.parse(localStorageUser)
-}
-
-if (localStorageToken && localStorageToken === 'null') {
-  localStorageToken = null
 }
 
 export default {
@@ -17,12 +13,21 @@ export default {
   mutations: {
     setUser (state, userDetails) {
       state.user = userDetails
-      window.localStorage.setItem('user', JSON.stringify(userDetails))
+
+      if (userDetails !== null) {
+        window.localStorage.setItem('user', JSON.stringify(userDetails))
+      } else {
+        window.localStorage.removeItem('user')
+      }
     },
     setToken (state, token) {
       state.token = token
 
-      window.localStorage.setItem('token', token)
+      if (token !== null) {
+        window.localStorage.setItem('token', token)
+      } else {
+        window.localStorage.removeItem('token')
+      }
     }
   },
   actions: {
@@ -41,6 +46,9 @@ export default {
     },
     isLoggedIn: (state) => {
       return state.token !== null
+    },
+    token: (state) => {
+      return state.token
     }
   }
 }
