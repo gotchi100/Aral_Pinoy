@@ -15,6 +15,7 @@ const UserModel = require('../models/users')
 
 const GoogleCalendarController = require('./google/calendar')
 
+const { STATUSES } = require('../constants/events')
 const { OUTBOUND_RECEIVER_TYPES } = require('../constants/inkind-donations')
 
 const { 
@@ -32,6 +33,11 @@ const storage = new Storage({
 const eventsBucket = storage.bucket('aral-pinoy-events')
 
 const whitespaceRegex = /\s+/g
+
+const SORT_ORDER_MAPPING = {
+  asc : 1,
+  desc: -1
+}
 
 function sanitize(name) {
   return name.replace(whitespaceRegex,' ')
@@ -69,7 +75,7 @@ class EventsController {
     let ikds
     let jobs
     let questions
-    let numVolunteers = 0
+    let targetVolunteers = 0
 
     if (logoFile !== undefined) {
       const { originalname, buffer} = logoFile
@@ -165,21 +171,23 @@ class EventsController {
         const jobSkills = []
         const skillIds = []
 
-        for (const skillId of job.skillIds) {
-          const skill = await SkillModel.findById(skillId, ['name', 'norm', 'description'], {
-            lean: true
-          })
-
-          if (skill === null) {
-            throw new NotFoundError(`Skill does not exist: ${skillId}`)
+        if (Array.isArray(job.skillIds)) {
+          for (const skillId of job.skillIds) {
+            const skill = await SkillModel.findById(skillId, ['name', 'norm', 'description'], {
+              lean: true
+            })
+  
+            if (skill === null) {
+              throw new NotFoundError(`Skill does not exist: ${skillId}`)
+            }
+  
+            jobSkills.push({
+              name: skill.name,
+              norm: skill.norm,
+              description: skill.description,
+            })
+            skillIds.push(skill._id)
           }
-
-          jobSkills.push({
-            name: skill.name,
-            norm: skill.norm,
-            description: skill.description,
-          })
-          skillIds.push(skill._id)
         }
         
         const sanitizedJobName = sanitize(job.name)
@@ -198,12 +206,15 @@ class EventsController {
           upsert: true
         })
 
-        numVolunteers += job.requirements.max
+        targetVolunteers += job.requirements.max
 
         jobs.push({
           name: sanitizedJobName,
           description: job.description,
-          requirements: job.requirements,
+          slots: {
+            current: 0,
+            max: job.requirements.max
+          },
           skills: jobSkills
         })
       }
@@ -228,8 +239,14 @@ class EventsController {
       date,
       location,
       goals: {
-        numVolunteers,
-        monetaryDonation: goals.monetaryDonation
+        numVolunteers: {
+          current: 0,
+          target: targetVolunteers
+        },
+        monetaryDonation: {
+          current: 0,
+          target: goals.monetaryDonation
+        }
       },
       contacts,
       logoUrl,
@@ -272,26 +289,34 @@ class EventsController {
     }))
 
     await GoogleCalendarController.createEvent({
+      id: _id.toString(),
       summary: name,
       address: location.name,
       description,
       attendees,
       startDate: date.start,
       endDate: date.end,
-      metadata: {
-        eventId: _id.toString()
-      }
     })
   }
 
-  static async list(req, res, next) {
+  static async list(options = {}) {
     const {
       limit,
       offset,
-      'filters.name': filterName
-    } = req.query
+      filters = {},
+      sort
+    } = options
+
+    const {
+      name: filterName,
+      status: filterStatus
+    } = filters
 
     const query = {}
+    const queryOptions = {
+      limit,
+      skip: offset
+    }
 
     if (filterName !== undefined && filterName !== '') {
       query.$text = {
@@ -299,35 +324,75 @@ class EventsController {
       }
     }
 
-    try {
-      const [events, total] = await Promise.all([
-        EventModel.find(query, undefined, { 
-          lean: true,
-          limit,
-          skip: offset,
-        }),
-        EventModel.countDocuments(query)
-      ])
-  
-      return res.json({
-        results: events,
-        total
-      })
-    } catch (error) {
-      next(error)
+    if (filterStatus !== undefined) {
+      if (filterStatus === 'UPCOMING') {
+        query.status = {
+          $exists: false
+        }
+      } else {
+        query.status = filterStatus
+      }
+    }
+
+    if (sort !== undefined) {
+      const { field, order } = sort
+
+      queryOptions.sort = {
+        [field]: SORT_ORDER_MAPPING[order]
+      }
+    }
+
+    const [events, total] = await Promise.all([
+      EventModel.find(query, undefined, queryOptions),
+      EventModel.countDocuments(query)
+    ])
+
+    return {
+      results: events,
+      total
     }
   }
 
   static async get(id) {
-    const event = await EventModel.findById(id, undefined, {
-      lean: true
-    })
+    const event = await EventModel.findById(id, undefined)
 
     if (event === null) {
       throw new NotFoundError(`Event does not exist: ${id}`)
     }
 
-    return event
+    return event.toObject()
+  }
+
+  static async updateStatus(id, status) {
+    const event = await EventModel.findById(id, ['__v', 'status'])
+
+    if (event === null) {
+      throw new NotFoundError(`Event does not exist: ${id}`)
+    }
+
+    if (event.status === STATUSES.ENDED || event.status === STATUSES.CANCELED) {
+      throw new ConflictError(`Unable to update event: Status is ${event.status}`)
+    }
+
+    const eventUpdateResults = await EventModel.updateOne({
+      _id: new Types.ObjectId(id),
+      __v : event.__v
+    }, {
+      $set: {
+        status
+      },
+      $inc: {
+        __v: 1
+      }
+    })
+
+    if (eventUpdateResults.matchedCount === 0) {
+      throw new ConflictError('Event was recently updated, please try again')
+    }
+
+    if (status === STATUSES.CANCELED) {
+      await GoogleCalendarController.updateEventStatus(id, status).catch((error) => console.dir(error, { depth: null }))
+    }
   }
 }
 

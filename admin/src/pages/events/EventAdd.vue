@@ -538,41 +538,6 @@
               </b-card>
             </b-col>
           </b-row>
-
-          <!-- <b-row>
-            <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:20px;">
-              <b-container fluid>
-                <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">Event Evaluation Questions</h2>
-                <b-card v-for="(role, index) in roles" :key="index" class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1200px; border-radius: 20px; margin-top:20px;">
-                  <b-row>
-                    <b-col>
-                      <b-form-input style="width:1000px;" v-model="role.question" disabled placeholder="Enter your Question"></b-form-input>
-                    </b-col>
-                    <b-col>
-                      <b-button>Delete</b-button>
-                    </b-col>
-                  </b-row>
-                </b-card>
-                <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1200px; border-radius: 20px; margin-top:20px;">
-                  <b-row>
-                    <b-col>
-                      <b-form-input style="width:1000px;" v-model="form.question" placeholder="Enter your Question"></b-form-input>
-                    </b-col>
-                    <b-col>
-                      <b-button>Delete</b-button>
-                    </b-col>
-                  </b-row>
-                </b-card>
-                <b-row>
-                  <b-col cols="10">
-                  </b-col>
-                  <b-col>
-                    <b-button style="margin-top:20px;" @click="addRole">Add Row</b-button>
-                  </b-col>
-                </b-row>
-              </b-container>
-            </b-card>
-          </b-row> -->
         </b-form>
 
         <b-row class="pt-4 pb-2">

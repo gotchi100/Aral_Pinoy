@@ -1,6 +1,6 @@
 <template>
-  <div class="login">
-    <div class="image">
+  <div>
+    <div class="py-5">
       <img :src="logo" style="width: 320px; height: 150px">
     </div>
 
@@ -153,24 +153,6 @@ export default {
 </script>
 
 <style scoped>
-.image {
-  padding-top: 75px;
-  padding-bottom: 25px;
-}
-.login {
-  background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
-  url('https://rs.projects-abroad.ie/v1/hero/product-5b5b2f57d7d1b.[1600].jpeg');
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  display: block;
-  position:absolute;
-  left:0px;
-  top:0px;
-  width: 100%;
-  height: 100%;
-  z-index:-1;
-}
 .login-or {
   position: relative;
   color: #aaa;

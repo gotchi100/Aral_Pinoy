@@ -8,7 +8,9 @@ const multer  = require('multer')
 
 Joi.objectId = joiObjectId(Joi)
 
+const { STATUSES } = require('../constants/events')
 const EventsController = require('../controllers/events')
+
 const upload = multer({
   limits: {
     fileSize: 5000000 // 5 MB
@@ -47,7 +49,7 @@ const questionsSchema = Joi.array().items(
 
 const createEventValidator = Joi.object({
   name: Joi.string().trim().max(255).required(),
-  description: Joi.string().trim().empty('').max(200),
+  description: Joi.string().trim().empty('').max(5000),
   date: Joi.object({
     start: Joi.date().iso().required(),
     end: Joi.date().iso().greater(Joi.ref('start')).required(),
@@ -68,14 +70,6 @@ const createEventValidator = Joi.object({
     })
   ),
   questions: questionsSchema
-})
-
-const listEventsValidator = Joi.object({
-  offset: Joi.number().min(0).default(0),
-  limit: Joi.number().min(1).default(25),
-  'filters.name': Joi.string().trim().max(100).allow('')
-}).options({ 
-  stripUnknown: true
 })
 
 function validateCreateEventBody(req, res, next) {
@@ -107,6 +101,17 @@ async function createEvent(req, res, next) {
   }
 }
 
+const listEventsValidator = Joi.object({
+  offset: Joi.number().min(0).default(0),
+  limit: Joi.number().min(1).default(25),
+  'filters.name': Joi.string().trim().max(100).allow(''),
+  'filters.status': Joi.string().valid('UPCOMING', 'ENDED', 'CANCELED'),
+  'sort.field': Joi.string().valid('date.start'),
+  'sort.order': Joi.string().valid('asc', 'desc')
+}).options({ 
+  stripUnknown: true
+})
+
 function validateListEventsBody(req, res, next) {
   const { value: validatedQuery, error } = listEventsValidator.validate(req.query)
 
@@ -121,6 +126,45 @@ function validateListEventsBody(req, res, next) {
   req.query = validatedQuery
 
   next()
+}
+
+async function listEvents(req, res, next) {
+  const {
+    limit,
+    offset,
+    'filters.name': filterName,
+    'filters.status': filterStatus,
+    'sort.field': sortField,
+    'sort.order': sortOrder
+  } = req.query
+
+  let sort
+
+  if (sortField !== undefined && sortOrder !== undefined) {
+    sort = {
+      field: sortField,
+      order: sortOrder
+    }
+  }
+
+  try {
+    const { results, total } = await EventsController.list({
+      limit,
+      offset,
+      filters: {
+        name: filterName,
+        status: filterStatus
+      },
+      sort
+    })
+
+    return res.status(200).json({
+      results,
+      total
+    })
+  } catch (error) {
+    next(error)
+  }
 }
 
 function validateGetEventBody(req, res, next) {
@@ -149,10 +193,56 @@ async function getEvent(req, res, next) {
   }
 }
 
+const patchEventStatusValidator = Joi.object({
+  status: Joi.string().valid(STATUSES.ENDED, STATUSES.CANCELED).required(),
+})
+
+function validatePatchEventStatusBody(req, res, next) {
+  const { id } = req.params
+
+  if (!Types.ObjectId.isValid(id)) {
+    return res.status(400).json({
+      code: 'BadRequest',
+      status: 400,
+      message: 'ID is invalid'
+    })
+  }
+
+  const { value: validatedBody, error } = patchEventStatusValidator.validate(req.body)
+
+  if (error !== undefined) {      
+    return res.status(400).json({
+      code: 'BadRequest',
+      status: 400,
+      message: error.message
+    })
+  }
+
+  req.body = validatedBody
+
+  next()
+}
+
+async function patchEventStatus(req, res, next) {
+  const { id } = req.params
+  const { status } = req.body
+
+  try {
+    await EventsController.updateStatus(id, status)
+
+    return res.status(200).json({
+      ok: true
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 const router = express.Router()
 
 router.post('/', upload.single('logo'), validateCreateEventBody, createEvent)
-router.get('/', validateListEventsBody, EventsController.list)
+router.get('/', validateListEventsBody, listEvents)
 router.get('/:id', validateGetEventBody, getEvent)
+router.patch('/:id/status', validatePatchEventStatusBody, patchEventStatus)
 
 module.exports = router

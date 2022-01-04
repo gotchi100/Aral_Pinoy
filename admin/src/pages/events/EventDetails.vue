@@ -21,14 +21,29 @@
                 <b-col cols="12">
                   <b-card style="border-radius: 20px;">
                     <b-row>
-                      <b-col cols="12">
+                      <b-col cols="12" md="6">
                         <h1 class="text-start" style="font-family:'Bebas Neue', cursive;">
                           {{ event.name }}
                         </h1>
                       </b-col>
+
+                      <b-col v-if="event.status === undefined" class="text-end" cols="12" md="6">
+                        <b-dropdown
+                          text="Update Status"
+                          variant="primary"
+                          no-flip
+                        >
+                          <b-dropdown-item @click="cancelEventModal = true">
+                            <strong style="color: red">CANCEL</strong>
+                          </b-dropdown-item>
+                          <b-dropdown-item @click="endEventModal = true">
+                            <strong style="color: blue">END</strong>
+                          </b-dropdown-item>
+                        </b-dropdown>
+                      </b-col>
                     </b-row>
 
-                    <b-row>
+                    <b-row class="pt-3">
                       <b-col cols="12">
                         <b-container fluid>
                           <b-row>
@@ -60,6 +75,12 @@
                                     minute: '2-digit'
                                   })
                                 }}
+                              </p>
+                            </b-col>
+
+                            <b-col cols="12" md="6">
+                              <p class="h4 mb-0">
+                                Status: <i>{{ event.status !== undefined ? event.status : '-' }}</i>
                               </p>
                             </b-col>
                           </b-row>
@@ -103,20 +124,40 @@
                             </b-col>
                           </b-row>
 
-                          <b-row>
-                            <div>
-                              <b-progress height="2rem" style="border-radius:30px;" :max="event.goals.monetaryDonation">
-                                <b-progress-bar :value="5000" label="We need Php 5,000.00 more" style="background-color: #4267B2"></b-progress-bar>
+                          <b-row v-if="event.goals.monetaryDonation.target !== 0">
+                            <b-col cols="12">
+                              <b-progress height="2rem" style="border-radius:30px;" :max="event.goals.monetaryDonation.target">
+                                <b-progress-bar
+                                  variant="success"
+                                  :value="event.goals.monetaryDonation.current"
+                                  :label="monetaryDonationCurrentLabel"
+                                ></b-progress-bar>
+
+                                <b-progress-bar
+                                  variant="danger"
+                                  :value="monetaryDonationReached ? 0 : event.goals.monetaryDonation.target"
+                                  :label="monetaryDonationTargetLabel"
+                                ></b-progress-bar>
                               </b-progress>
-                            </div>
+                            </b-col>
                           </b-row>
-                          <br>
-                          <b-row>
-                            <div>
-                              <b-progress height="2rem" style="border-radius:30px;" :max="event.goals.numVolunteers">
-                                <b-progress-bar :value="1000" label="We need 10 more volunteers" style="background-color: #8F00FF"></b-progress-bar>
+
+                          <b-row v-if="event.goals.numVolunteers.target !== 0" class="pt-4">
+                            <b-col cols="12">
+                              <b-progress height="2rem" style="border-radius:30px;" :max="event.goals.numVolunteers.target">
+                                <b-progress-bar
+                                  variant="success"
+                                  :value="event.goals.numVolunteers.current"
+                                  :label="volunteerGoalCurrentLabel"
+                                ></b-progress-bar>
+
+                                <b-progress-bar
+                                  variant="danger"
+                                  :value="volunteerGoalReached ? 0 : event.goals.numVolunteers.target"
+                                  :label="volunteerGoalTargetLabel"
+                                ></b-progress-bar>
                               </b-progress>
-                            </div>
+                            </b-col>
                           </b-row>
                         </b-container>
                       </b-col>
@@ -151,6 +192,65 @@
                         <b-avatar :src="sdg.imageUrl" :alt="sdg.name" size="150px" square />
                         <br />
                         <strong>{{ sdg.name }}</strong>
+                      </b-col>
+                    </b-row>
+                  </b-card>
+                </b-col>
+              </b-row>
+
+              <b-row v-if="Array.isArray(event.jobs)" class="py-4">
+                <b-col cols="12">
+                  <b-card style="border-radius: 20px;">
+                    <h5 class="text-start" style="font-family:'Bebas Neue', cursive;">
+                      Roles
+                    </h5>
+
+                    <b-row class="pt-2">
+                      <b-col cols="12">
+                        <b-table
+                          :items="event.jobs"
+                          :fields="eventJobFields"
+                          show-empty
+                          responsive
+                          striped
+                          primary-key="name"
+                        >
+                          <template #cell(skills)="{ item }">
+                            <template v-if="item.skills.length > 0">
+                              <b-form-tag
+                                v-for="jobSkill in item.skills"
+                                :key="jobSkill._id"
+                                class="bg-success"
+                                disabled
+                              >
+                                {{ jobSkill.name }}
+                              </b-form-tag>
+                            </template>
+                          </template>
+                        </b-table>
+                      </b-col>
+                    </b-row>
+                  </b-card>
+                </b-col>
+              </b-row>
+
+              <b-row v-if="Array.isArray(event.questions)" class="py-4">
+                <b-col cols="12">
+                  <b-card style="border-radius: 20px;">
+                    <h5 class="text-start" style="font-family:'Bebas Neue', cursive;">
+                      Questionnaire
+                    </h5>
+
+                    <b-row class="pt-2">
+                      <b-col cols="12">
+                        <b-table
+                          :items="event.questions"
+                          :fields="eventQuestionFields"
+                          show-empty
+                          responsive
+                          striped
+                          primary-key="label"
+                        ></b-table>
                       </b-col>
                     </b-row>
                   </b-card>
@@ -199,7 +299,6 @@
                     <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
                     <b-form-input
                       id="filter-input"
-                      v-model="filter"
                       type="search"
                       placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
                     ></b-form-input>
@@ -210,22 +309,16 @@
                 :items="items"
                 :fields="fields"
                 :current-page="currentPage"
-                :per-page="perPage"
-                :filter="filter"
-                :filter-included-fields="filterOn"
-                :sort-by.sync="sortBy"
-                :sort-desc.sync="sortDesc"
-                :sort-direction="sortDirection"
+                :per-page="5"
                 stacked="md"
                 show-empty
                 small
-                @filtered="onFiltered"
               ></b-table>
             <b-col class="my-1">
               <b-pagination
                 v-model="currentPage"
-                :total-rows="totalRows"
-                :per-page="perPage"
+                :total-rows="6"
+                :per-page="5"
                 align="fill"
                 size="sm"
                 class="my-0"
@@ -265,23 +358,63 @@
       </b-container>
     </b-modal>
 
-    <transition name="fade">
-      <div id="pagetop" class="fixed right-0 bottom-0" v-show="scY > 300" @click="toTop">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="48"
-          height="48"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#4a5568"
-          stroke-width="1"
-          stroke-linecap="square"
-          stroke-linejoin="arcs"
-        >
-          <path d="M18 15l-6-6-6 6" />
-        </svg>
-      </div>
-    </transition>
+    <b-modal v-model="endEventModal" size="md">
+      <b-container>
+        <b-row>
+          <b-col cols="12">
+            <h1 class="text-center">
+              Are you sure you want to <strong style="color: blue">END</strong> the event?
+            </h1>
+          </b-col>
+        </b-row>
+      </b-container>
+
+      <template #modal-footer>
+        <b-container>
+          <b-row>
+            <b-col class="text-center" cols="12">
+              <b-button
+                variant="success"
+                size="sm"
+                class="float-right"
+                @click="updateStatus('ENDED')"
+              >
+                CONFIRM
+              </b-button>
+            </b-col>
+          </b-row>
+        </b-container>
+      </template>
+    </b-modal>
+
+    <b-modal v-model="cancelEventModal" size="md">
+      <b-container>
+        <b-row>
+          <b-col cols="12">
+            <h1 class="text-center">
+              Are you sure you want to <strong style="color: red">CANCEL</strong> the event?
+            </h1>
+          </b-col>
+        </b-row>
+      </b-container>
+
+      <template #modal-footer>
+        <b-container>
+          <b-row>
+            <b-col class="text-center" cols="12">
+              <b-button
+                variant="success"
+                size="sm"
+                class="float-right"
+                @click="updateStatus('CANCELED')"
+              >
+                CONFIRM
+              </b-button>
+            </b-col>
+          </b-row>
+        </b-container>
+      </template>
+    </b-modal>
   </div>
 </template>
 
@@ -297,30 +430,9 @@ export default {
     return {
       logo,
       event: null,
-      eventIkdFields: [
-        { key: 'item.name', label: 'Item' },
-        { key: 'quantity', label: 'Quantity' }
-      ],
       isLoadingEvent: false,
-      sliding: null,
-      value: 75,
-      canBeShown: false,
-      scTimer: 0,
-      scY: 0,
       showModal: false,
-      totalRows: 1,
       currentPage: 1,
-      perPage: 5,
-      sortBy: '',
-      sortDesc: false,
-      sortDirection: 'asc',
-      filter: null,
-      filterOn: [],
-      infoModal: {
-        id: 'info-modal',
-        title: '',
-        content: ''
-      },
       items: [
         { name: 'John Anghel', contactNumber: '+639123456789', role: 'Trash Collector' },
         { name: 'Test Dawkins', contactNumber: '+639123356789', role: 'Trash Bag Distributor' },
@@ -333,7 +445,22 @@ export default {
         { key: 'name', label: 'Name', sortable: true, class: 'text-center' },
         { key: 'contactNumber', label: 'Contact Number', sortable: true, class: 'text-center' },
         { key: 'role', label: 'Role', sortable: true, class: 'text-center' }
-      ]
+      ],
+      eventJobFields: [
+        { key: 'name', label: 'Title' },
+        { key: 'description', label: 'Description' },
+        { key: 'slots.max', label: 'Number of Volunteers Needed' },
+        { key: 'skills', label: 'Skills' }
+      ],
+      eventQuestionFields: [
+        { key: 'label', label: 'Question' }
+      ],
+      eventIkdFields: [
+        { key: 'item.name', label: 'Item' },
+        { key: 'quantity', label: 'Quantity' }
+      ],
+      endEventModal: false,
+      cancelEventModal: false
     }
   },
   created () {
@@ -341,23 +468,128 @@ export default {
   },
   computed: {
     ...mapGetters(['token']),
-    sortOption () {
-      // Create an options list from our fields
-      return this.fields
-        .filter(f => f.sortable)
-        .map(f => {
-          return { text: f.label, value: f.key }
-        })
+    eventId () {
+      return this.$route.params.id
+    },
+    monetaryDonationReached () {
+      if (this.event === null) {
+        return false
+      }
+
+      const {
+        current,
+        target
+      } = this.event.goals.monetaryDonation
+
+      return current >= target
+    },
+    monetaryDonationCurrentLabel () {
+      if (this.event === null) {
+        return ''
+      }
+
+      const {
+        current,
+        target
+      } = this.event.goals.monetaryDonation
+
+      if (current >= target) {
+        const currentCurrency = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'PHP'
+        }).format(current)
+
+        const targetCurrency = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'PHP'
+        }).format(target)
+
+        return `We have reached our goal! (${currentCurrency} / ${targetCurrency})`
+      }
+
+      const currency = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'PHP'
+      }).format(current)
+
+      return currency
+    },
+    monetaryDonationTargetLabel () {
+      if (this.event === null) {
+        return ''
+      }
+
+      const {
+        current,
+        target
+      } = this.event.goals.monetaryDonation
+
+      if (current >= target) {
+        return ''
+      }
+
+      const difference = target - current
+      const currency = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'PHP'
+      }).format(difference)
+
+      return `We still need ${currency} to reach our goal!`
+    },
+    volunteerGoalReached () {
+      if (this.event === null) {
+        return false
+      }
+
+      const {
+        current,
+        target
+      } = this.event.goals.numVolunteers
+
+      return current >= target
+    },
+    volunteerGoalCurrentLabel () {
+      if (this.event === null) {
+        return ''
+      }
+
+      const {
+        current,
+        target
+      } = this.event.goals.numVolunteers
+
+      if (current >= target) {
+        return `We have reached our goal! (${current} / ${target} have volunteered)`
+      }
+
+      const volunteerNoun = current === 1 ? 'volunteer' : 'volunteers'
+
+      return `${current} ${volunteerNoun}`
+    },
+    volunteerGoalTargetLabel () {
+      if (this.event === null) {
+        return ''
+      }
+
+      const {
+        current,
+        target
+      } = this.event.goals.numVolunteers
+
+      if (current >= target) {
+        return ''
+      }
+
+      const difference = target - current
+      const volunteerNoun = difference === 1 ? 'volunteer' : 'volunteers'
+
+      return `We still need ${difference} ${volunteerNoun}!`
     }
-  },
-  mounted () {
-    window.addEventListener('scroll', this.handleScroll)
-    this.totalRows = this.items.length
   },
   methods: {
     async getEvent () {
       this.isLoadingEvent = true
-      const eventId = this.$route.params.id
+      const eventId = this.eventId
 
       try {
         const { data } = await apiClient.get(`/events/${eventId}`, {
@@ -371,35 +603,26 @@ export default {
         this.isLoadingEvent = false
       }
     },
-    onSlideStart (slide) {
-      this.sliding = true
-    },
-    onSlideEnd (slide) {
-      this.sliding = false
-    },
-    handleScroll: function () {
-      if (this.scTimer) return
-      this.scTimer = setTimeout(() => {
-        this.scY = window.scrollY
-        clearTimeout(this.scTimer)
-        this.scTimer = 0
-      }, 100)
-    },
-    toTop: function () {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      })
-    },
-    info (item, index, button) {
-      this.infoModal.title = `Row index: ${index}`
-      this.infoModal.content = JSON.stringify(item, null, 2)
-      this.$root.$emit('bv::show::modal', this.infoModal.id, button)
-    },
-    onFiltered (filteredItems) {
-      // Trigger pagination to update the number of buttons/pages due to filtering
-      this.totalRows = filteredItems.length
-      this.currentPage = 1
+    async updateStatus (status) {
+      this.isLoadingEvent = true
+      this.endEventModal = false
+      this.cancelEventModal = false
+
+      const eventId = this.eventId
+
+      try {
+        await apiClient.patch(`/events/${eventId}/status`, {
+          status
+        }, {
+          headers: {
+            Authorization: `Bearer ${this.token}`
+          }
+        })
+
+        this.event.status = status
+      } finally {
+        this.isLoadingEvent = false
+      }
     }
   }
 }
