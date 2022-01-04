@@ -5,57 +5,78 @@
        <b-col cols="12">
          <b-card style="border-radius: 20px;">
           <b-container fluid>
-            <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">Upcoming Events</h2>
-            <b-card-group columns>
-              <b-row>
-                <b-col>
-                  <b-card tag="article" style="max-width: 18rem; border-radius: 20px;" class="mb-2">
-                  <b-link to='/events/1234' style="font-size:20px;">Batangas Coastal Cleanup</b-link><br>
-                  <b-icon icon="geo-alt"></b-icon><br>
-                  <b-icon icon="calendar"></b-icon><br>
-                  <b-icon icon="clock"></b-icon><br>
-                  <b-progress :value="value" class="mb-3"></b-progress>
-                  <b-progress :value="value" class="mb-3"></b-progress>
-                  </b-card>
-                </b-col>
-                <b-col>
-                  <b-card title="Batangas Coastal Cleanup" tag="article" style="max-width: 18rem; border-radius: 20px;" class="mb-2">
-                  <b-icon icon="geo-alt"></b-icon><br>
-                  <b-icon icon="calendar"></b-icon><br>
-                  <b-icon icon="clock"></b-icon><br>
-                  <b-progress :value="value" class="mb-3"></b-progress>
-                  <b-progress :value="value" class="mb-3"></b-progress>
-                  </b-card>
-                </b-col>
-                <b-col>
-                  <b-card title="Batangas Coastal Cleanup" tag="article" style="max-width: 18rem; border-radius: 20px;" class="mb-2">
-                  <b-icon icon="geo-alt"></b-icon><br>
-                  <b-icon icon="calendar"></b-icon><br>
-                  <b-icon icon="clock"></b-icon><br>
-                  <b-progress :value="value" class="mb-3"></b-progress>
-                  <b-progress :value="value" class="mb-3"></b-progress>
-                  </b-card>
-                </b-col>
-                <b-col>
-                  <b-card title="Batangas Coastal Cleanup" tag="article" style="max-width: 18rem; border-radius: 20px;" class="mb-2">
-                  <b-icon icon="geo-alt"></b-icon><br>
-                  <b-icon icon="calendar"></b-icon><br>
-                  <b-icon icon="clock"></b-icon><br>
-                  <b-progress :value="value" class="mb-3"></b-progress>
-                  <b-progress :value="value" class="mb-3"></b-progress>
-                  </b-card>
-                </b-col>
-                <b-col>
-                  <b-card title="Batangas Coastal Cleanup" tag="article" style="max-width: 18rem; border-radius: 20px;" class="mb-2">
-                  <b-icon icon="geo-alt"></b-icon><br>
-                  <b-icon icon="calendar"></b-icon><br>
-                  <b-icon icon="clock"></b-icon><br>
-                  <b-progress :value="value" class="mb-3"></b-progress>
-                  <b-progress :value="value" class="mb-3"></b-progress>
-                  </b-card>
-                </b-col>
-              </b-row>
-            </b-card-group>
+            <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">
+              <b-link to="/events">Upcoming Events <b-icon icon="chevron-right" /></b-link>
+            </h2>
+
+            <b-row>
+              <b-col
+                v-for="event in events.results"
+                :key="event._id"
+                cols="12"
+                md="3"
+              >
+                <b-card style="border-radius: 20px;">
+                  <b-link :to="`/events/${event._id}`" style="font-size:20px;">
+                    {{ event.name }}
+                  </b-link><br>
+
+                  <b-row style="text-align: left">
+                    <b-col v-if="event.location !== undefined" class="pb-2" cols="12">
+                      <b-icon icon="geo-alt"></b-icon> {{ event.location.name }}
+                    </b-col>
+
+                    <b-col class="pb-2" cols="12">
+                      <b-icon icon="calendar"></b-icon>
+                      {{
+                        new Date(event.date.start).toLocaleString('en-us', {
+                          dateStyle: 'short',
+                          timeStyle: 'short'
+                        })
+                      }}
+                    </b-col>
+
+                    <b-col class="pb-3" cols="12">
+                      <b-icon icon="clock"></b-icon> {{ getDurationBetweenDates(event.date.start, event.date.end) }}
+                    </b-col>
+                  </b-row>
+
+                  <b-row v-if="event.goals.monetaryDonation.target !== 0">
+                    <b-col class="pt-2" cols="12">
+                      <b-progress height="1.5rem" :max="event.goals.monetaryDonation.target">
+                        <b-progress-bar
+                          variant="success"
+                          :value="event.goals.monetaryDonation.current"
+                        ></b-progress-bar>
+
+                        <b-progress-bar
+                          variant="danger"
+                          :value="hasGoalReached(event.goals.monetaryDonation) ? 0 : event.goals.monetaryDonation.target"
+                          :label="getMonetaryDonationTargetLabel(event.goals.monetaryDonation)"
+                        ></b-progress-bar>
+                      </b-progress>
+                    </b-col>
+                  </b-row>
+
+                  <b-row v-if="event.goals.numVolunteers.target !== 0">
+                    <b-col class="pt-2" cols="12">
+                      <b-progress height="1.5rem" :max="event.goals.numVolunteers.target">
+                        <b-progress-bar
+                          variant="success"
+                          :value="event.goals.numVolunteers.current"
+                        ></b-progress-bar>
+
+                        <b-progress-bar
+                          variant="danger"
+                          :value="hasGoalReached(event.goals.numVolunteers) ? 0 : event.goals.numVolunteers.target"
+                          :label="getVolunteerGoalTargetLabel(event.goals.numVolunteers)"
+                        ></b-progress-bar>
+                      </b-progress>
+                    </b-col>
+                  </b-row>
+                </b-card>
+              </b-col>
+            </b-row>
           </b-container>
       </b-card>
        </b-col>
@@ -332,7 +353,15 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+import {
+  isSameDay,
+  intervalToDuration,
+  formatDuration
+} from 'date-fns'
+
 const logo = require('../assets/aralpinoywords.png')
+const { apiClient } = require('../axios')
 
 export default {
   name: 'Register',
@@ -409,10 +438,15 @@ export default {
       filter: null,
       filters: null,
       filterOn: [],
-      filterOns: []
+      filterOns: [],
+      isLoadingEvents: false,
+      events: {
+        results: []
+      }
     }
   },
   computed: {
+    ...mapGetters(['token']),
     sortOption () {
       // Create an options list from our fields
       return this.fields
@@ -430,6 +464,9 @@ export default {
         })
     }
   },
+  created () {
+    this.getEvents()
+  },
   mounted () {
     // Set the initial number of items
     this.totalRows = this.items.length
@@ -441,6 +478,96 @@ export default {
       this.totalRows = filteredItems.length
       this.currentPage = 1
       this.currentPages = 1
+    },
+    async getEvents () {
+      this.isLoadingEvents = true
+
+      const queryString = new URLSearchParams()
+
+      queryString.set('limit', 4)
+      queryString.set('filters.status', 'UPCOMING')
+      queryString.set('sort.field', 'date.start')
+      queryString.set('sort.order', 'asc')
+
+      try {
+        const { data } = await apiClient.get(`/events?${queryString.toString()}`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`
+          }
+        })
+
+        this.events.results = data.results
+      } finally {
+        this.isLoadingEvents = false
+      }
+    },
+    isSameDay (firstDate, secondDate) {
+      return isSameDay(new Date(firstDate), new Date(secondDate))
+    },
+    getDurationBetweenDates (start, end) {
+      const duration = intervalToDuration({
+        start: new Date(start),
+        end: new Date(end)
+      })
+
+      return formatDuration(duration)
+    },
+    hasGoalReached ({ current, target }) {
+      return current >= target
+    },
+    getMonetaryDonationCurrentLabel ({ current, target }) {
+      if (current >= target) {
+        const currentCurrency = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'PHP'
+        }).format(current)
+
+        const targetCurrency = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'PHP'
+        }).format(target)
+
+        return `We have reached our goal! (${currentCurrency} / ${targetCurrency})`
+      }
+
+      const currency = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'PHP'
+      }).format(current)
+
+      return currency
+    },
+    getMonetaryDonationTargetLabel ({ current, target }) {
+      if (current >= target) {
+        return ''
+      }
+
+      const difference = target - current
+      const currency = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'PHP'
+      }).format(difference)
+
+      return `We still need ${currency} to reach our goal!`
+    },
+    getVolunteerGoalCurrentLabel ({ current, target }) {
+      if (current >= target) {
+        return `We have reached our goal! (${current} / ${target} have volunteered)`
+      }
+
+      const volunteerNoun = current === 1 ? 'volunteer' : 'volunteers'
+
+      return `${current} ${volunteerNoun}`
+    },
+    getVolunteerGoalTargetLabel ({ current, target }) {
+      if (current >= target) {
+        return ''
+      }
+
+      const difference = target - current
+      const volunteerNoun = difference === 1 ? 'volunteer' : 'volunteers'
+
+      return `We still need ${difference} ${volunteerNoun}!`
     }
   }
 }
