@@ -6,12 +6,14 @@ const EventVolunteerModel = require('../../models/events/volunteers')
 const UserModel = require('../../models/users')
 const EventModel = require('../../models/events')
 
+const GoogleCalendarController = require('../google/calendar')
+
 const { ConflictError, NotFoundError } = require('../../errors')
 
 class EventVolunteerController {
   static async create(userId, eventId, volunteerJob) {
     try {
-      const user = await UserModel.findById(userId, ['_id'])
+      const user = await UserModel.findById(userId, ['_id', 'email'])
 
       if (user === null) {
         throw new NotFoundError(`User does not exist: ${userId}`)
@@ -61,6 +63,8 @@ class EventVolunteerController {
           name: volunteerJob
         }
       })
+
+      EventVolunteerController.addGoogleCalendarAttendee(eventId, user.email).catch((error) => console.dir(error, { depth: null }))
   
       return results.toObject({ 
         minimize: true,
@@ -74,6 +78,13 @@ class EventVolunteerController {
       
       throw error
     }
+  }
+
+  static async addGoogleCalendarAttendee(eventId, attendeeEmail) {
+    const calendarEvent = await GoogleCalendarController.getEvent(eventId)
+    const attendees = calendarEvent.attendees.concat([{ email: attendeeEmail }])
+
+    await GoogleCalendarController.updateEventAttendees(eventId, attendees)
   }
 
   static async list(options = {}) {
