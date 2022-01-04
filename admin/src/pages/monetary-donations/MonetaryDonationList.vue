@@ -259,6 +259,7 @@
                               <b-form-input v-model="name"></b-form-input>
                             </b-col>
                           </b-row>
+                          <br>
                           <b-row>
                             <b-col class="text-center">Sent To</b-col>
                             <b-col>
@@ -272,8 +273,16 @@
                               <b-form-input v-model="name"></b-form-input>
                             </b-col>
                           </b-row>
+                          <br>
                           <b-row>
                             <b-col class="text-center">Donated By</b-col>
+                            <b-col>
+                              <b-form-input v-model="name"></b-form-input>
+                            </b-col>
+                          </b-row>
+                          <br>
+                          <b-row>
+                            <b-col class="text-center">Mobile Number</b-col>
                             <b-col>
                               <b-form-input v-model="name"></b-form-input>
                             </b-col>
