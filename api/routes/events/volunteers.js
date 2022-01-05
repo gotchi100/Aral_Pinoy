@@ -1,6 +1,7 @@
 'use strict'
 
 const express = require('express')
+const { Types } = require('mongoose')
 const Joi = require('joi')
 const joiObjectId = require('joi-objectid')
 
@@ -103,9 +104,38 @@ async function list(req, res, next) {
   }
 }
 
+function validateDeleteEventVolunteersBody(req, res, next) {
+  const { id } = req.params
+
+  if (!Types.ObjectId.isValid(id)) {
+    return res.status(400).json({
+      code: 'BadRequest',
+      status: 400,
+      message: 'ID is invalid'
+    })
+  }
+
+  next()
+}
+
+async function deleteEventVolunteer(req, res, next) {
+  const { id } = req.params
+
+  try {
+    await EventVolunteerController.delete(id)
+
+    return res.json({
+      ok: true
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 const router = express.Router()
 
 router.post('/', validateCreateEventVolunteerBody, create)
 router.get('/', validateListEventVolunteersBody, list)
+router.delete('/:id', validateDeleteEventVolunteersBody, deleteEventVolunteer)
 
 module.exports = router
