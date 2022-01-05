@@ -16,7 +16,7 @@
               </b-row>
             </b-container>
 
-            <b-container v-else fluid>
+            <b-container v-else-if="event !== null" fluid>
               <b-row class="pb-4">
                 <b-col cols="12">
                   <b-card style="border-radius: 20px;">
@@ -198,6 +198,7 @@
                                           variant="success"
                                           style="width: 100%"
                                           :disabled="monetaryDonationReached"
+                                          @click="donationModal = true"
                                         >
                                           DONATE
                                         </b-button>
@@ -276,6 +277,12 @@
                   </b-card>
                 </b-col>
               </b-row>
+
+              <event-donation-modal
+                :event="{ _id: event._id, name: event.name}"
+                :show="donationModal"
+                @close="donationModal = false"
+              ></event-donation-modal>
             </b-container>
           </b-card>
         </b-col>
@@ -372,23 +379,73 @@
         </b-row>
       </b-container>
     </b-modal>
+
+    <b-modal v-model="donationStatusModal" size="lg" hide-footer>
+      <b-container>
+        <b-row>
+          <b-col cols="12" style="text-align: center">
+            <h1
+              :style="donationStatus.success ? 'color: green;' : 'color: red'"
+            >
+              <b-icon
+                :icon="donationStatus.success ? 'check-circle' : 'x-circle'"
+              />
+            </h1>
+            <h6>
+              Reference ID: {{ donationStatus.referenceNumber }}
+            </h6>
+          </b-col>
+        </b-row>
+
+        <b-row class="mb-3">
+          <b-col cols="12">
+            <h2 style="text-align: center">
+              {{
+                donationStatus.success
+                ? 'Thank you for your donation!'
+                : 'It seems there was a problem with your transaction.'
+              }}
+            </h2>
+          </b-col>
+        </b-row>
+
+        <b-row>
+          <b-col cols="12">
+            <h6 style="text-align: center">
+              For issues or concerns, please contact us at <a href="">support@aralpinoy.xyz</a>
+            </h6>
+          </b-col>
+        </b-row>
+      </b-container>
+    </b-modal>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 
+import EventDonationModal from '../../components/EventDonationModal'
+
 const logo = require('../../assets/aralpinoywords.png')
 const { apiClient } = require('../../axios')
 
 export default {
   name: 'EventDetails',
+  components: {
+    EventDonationModal
+  },
   data () {
     return {
       logo,
       event: null,
       eventVolunteer: null,
       isLoadingEvent: false,
+      donationModal: false,
+      donationStatusModal: false,
+      donationStatus: {
+        success: false,
+        referenceNumber: ''
+      },
       volunteerModal: false,
       unjoinEventModal: false,
       confirmEventVolunteerModal: false,
@@ -398,6 +455,10 @@ export default {
   async created () {
     await this.getEventVolunteer()
     this.getEvent()
+
+    if (this.hasDonationStatus) {
+      this.showDonationStatusModal()
+    }
   },
   computed: {
     ...mapGetters(['user', 'token']),
@@ -437,9 +498,42 @@ export default {
       } = this.event.goals.numVolunteers
 
       return current >= target
+    },
+    hasDonationStatus () {
+      const {
+        donationSuccess,
+        referenceNumber
+      } = this.$route.query
+
+      if (donationSuccess === undefined || donationSuccess === '') {
+        return false
+      }
+
+      if (referenceNumber === undefined || referenceNumber === '') {
+        return false
+      }
+
+      return true
     }
   },
   methods: {
+    async showDonationStatusModal () {
+      const {
+        donationSuccess,
+        referenceNumber
+      } = this.$route.query
+
+      this.donationStatus = {
+        success: donationSuccess === 'true',
+        referenceNumber
+      }
+
+      this.$router.replace({
+        path: this.$route.path
+      })
+
+      this.donationStatusModal = true
+    },
     async getEvent () {
       this.isLoadingEvent = true
       const eventId = this.eventId
