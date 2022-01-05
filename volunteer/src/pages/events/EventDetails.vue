@@ -156,8 +156,56 @@
                               <b-card>
                                 <b-container fluid>
                                   <b-row class="text-center" align-h="center">
+                                    <template v-if="event.status === undefined">
+                                      <b-col
+                                        v-if="event.goals.numVolunteers.target !== 0 && !hasAlreadyVolunteered"
+                                        class="m-1"
+                                        cols="12"
+                                        md="4"
+                                      >
+                                        <b-button
+                                          variant="primary"
+                                          style="width: 100%"
+                                          :disabled="volunteerGoalReached || hasAlreadyVolunteered"
+                                          @click="volunteerModal = true"
+                                        >
+                                          VOLUNTEER
+                                        </b-button>
+                                      </b-col>
+
+                                      <b-col
+                                        v-if="hasAlreadyVolunteered"
+                                        class="m-1"
+                                        cols="12"
+                                        md="4"
+                                      >
+                                        <b-button
+                                          variant="outline-danger"
+                                          style="width: 100%"
+                                          @click="unjoinEventModal = true"
+                                        >
+                                          UNJOIN
+                                        </b-button>
+                                      </b-col>
+
+                                      <b-col
+                                        v-if="event.goals.monetaryDonation.target !== 0"
+                                        class="m-1"
+                                        cols="12"
+                                        md="4"
+                                      >
+                                        <b-button
+                                          variant="success"
+                                          style="width: 100%"
+                                          :disabled="monetaryDonationReached"
+                                        >
+                                          DONATE
+                                        </b-button>
+                                      </b-col>
+                                    </template>
+
                                     <b-col
-                                      v-if="event.goals.numVolunteers.target !== 0"
+                                      v-else-if="event.status === 'ENDED'"
                                       class="m-1"
                                       cols="12"
                                       md="4"
@@ -165,29 +213,24 @@
                                       <b-button
                                         variant="primary"
                                         style="width: 100%"
-                                        :disabled="volunteerGoalReached || hasAlreadyVolunteered"
-                                        @click="volunteerModal = true"
+                                        @click="$router.push({ path: `/events/${eventId}/evaluation` })"
                                       >
-                                        {{
-                                          hasAlreadyVolunteered
-                                          ? 'You have already volunteered'
-                                          : 'VOLUNTEER'
-                                        }}
+                                        Answer Evaluation
                                       </b-button>
                                     </b-col>
 
                                     <b-col
-                                      v-if="event.goals.monetaryDonation.target !== 0"
+                                      v-else-if="event.status === 'CANCELED'"
                                       class="m-1"
                                       cols="12"
                                       md="4"
                                     >
                                       <b-button
-                                        variant="success"
+                                        variant="outline-danger"
                                         style="width: 100%"
-                                        :disabled="monetaryDonationReached"
+                                        disabled
                                       >
-                                        DONATE
+                                        Event has been cancelled
                                       </b-button>
                                     </b-col>
                                   </b-row>
@@ -297,6 +340,22 @@
     </b-modal>
 
     <b-modal
+      v-model="unjoinEventModal"
+      @ok="unjoinEvent"
+      @cancel="unjoinEventModal = false"
+    >
+      <b-container>
+        <b-row>
+          <b-col cols="12">
+            <h5>
+              Are you sure you want to unjoin this event?
+            </h5>
+          </b-col>
+        </b-row>
+      </b-container>
+    </b-modal>
+
+    <b-modal
       v-model="confirmEventVolunteerModal"
       @ok="createEventVolunteer(eventJobName)"
       @cancel="eventJobName = null"
@@ -331,6 +390,7 @@ export default {
       eventVolunteer: null,
       isLoadingEvent: false,
       volunteerModal: false,
+      unjoinEventModal: false,
       confirmEventVolunteerModal: false,
       eventJobName: null
     }
@@ -434,6 +494,25 @@ export default {
         eventId,
         eventJobName
       }, {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }
+      })
+
+      this.$router.go()
+    },
+    async unjoinEvent () {
+      if (this.user === null) {
+        return this.$router.push({ path: '/login' })
+      }
+
+      if (this.eventVolunteer === null) {
+        return
+      }
+
+      const id = this.eventVolunteer._id
+
+      await apiClient.delete(`/event-volunteers/${id}`, {
         headers: {
           Authorization: `Bearer ${this.token}`
         }
