@@ -89,7 +89,7 @@
               pill
               variant="success"
               style="width: 100%; font-family: 'Noto Sans', cursive; text-transform: uppercase;"
-              @click="createCheckout"
+              @click="donate"
             >
               Donate
             </b-button>
@@ -105,7 +105,9 @@ import { mapGetters } from 'vuex'
 import { uid } from 'uid'
 import PaymayaSdkClient from 'paymaya-js-sdk'
 
-// const { apiClient } = require('../../axios')
+import { apiClient } from '../axios'
+
+import config from '../../config'
 
 export default {
   name: 'EventDonationModal',
@@ -137,7 +139,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['user'])
+    ...mapGetters(['user']),
+    userId () {
+      if (this.user === null) {
+        return
+      }
+
+      return this.user._id
+    }
   },
   created () {
     if (this.user !== null) {
@@ -152,9 +161,62 @@ export default {
     }
   },
   methods: {
-    async createCheckout () {
+    async donate () {
       this.isDonating = true
 
+      const requestReferenceNumber = uid(36)
+
+      try {
+        await this.createEventDonation(requestReferenceNumber)
+        await this.createCheckout(requestReferenceNumber)
+      } catch (error) {
+        console.error(error)
+
+        this.isDonating = false
+      }
+    },
+    async createEventDonation (requestReferenceNumber) {
+      const eventId = this.event._id
+      let userId
+      let metadata
+
+      if (!this.isAnonymousDonation) {
+        userId = this.userId
+
+        metadata = {
+          contactDetails: {}
+        }
+
+        if (this.person.firstName !== '') {
+          metadata.contactDetails.firstName = this.person.firstName
+        }
+
+        if (this.person.middleName !== '') {
+          metadata.contactDetails.middleName = this.person.middleName
+        }
+
+        if (this.person.lastName !== '') {
+          metadata.contactDetails.lastName = this.person.lastName
+        }
+
+        if (this.person.contact.phone !== '') {
+          metadata.contactDetails.phone = this.person.contact.phone
+        }
+
+        if (this.person.contact.email !== '') {
+          metadata.contactDetails.email = this.person.contact.email
+        }
+      }
+
+      await apiClient.post('event-donations', {
+        userId,
+        eventId,
+        amount: this.amount,
+        referenceNumber: requestReferenceNumber,
+        metadata
+      })
+    },
+    async createCheckout (requestReferenceNumber) {
       const totalAmount = {
         value: this.amount,
         currency: 'PHP'
@@ -196,25 +258,35 @@ export default {
         }
       }]
 
-      const requestReferenceNumber = uid(36)
-
-      try {
-        await PaymayaSdkClient.createCheckout({
-          totalAmount,
-          buyer,
-          items,
-          redirectUrl: {
-            success: `http://localhost:8080/#/events/61d30c290a863b7412286466?donationSuccess=true&referenceNumber=${requestReferenceNumber}`,
-            failure: `http://localhost:8080/#/events/61d30c290a863b7412286466?donationSuccess=false&referenceNumber=${requestReferenceNumber}`,
-            cancel: 'http://localhost:8080/#/events/61d30c290a863b7412286466'
-          },
-          requestReferenceNumber,
-          metadata: {}
-        })
-      } catch (error) {
-        console.error(error)
-        this.isDonating = false
+      const metadata = {
+        aralPinoy: {
+          eventId: event._id
+        }
       }
+
+      if (this.userId !== undefined) {
+        metadata.aralPinoy.userId = this.userId
+      }
+
+      const apiBaseUrl = new URL(config.api.baseUrl).toString()
+      const path = `event-donations/${requestReferenceNumber}/redirectUri`
+      const queryString = new URLSearchParams()
+      queryString.set('eventId', event._id)
+
+      const url = apiBaseUrl + path + `?${queryString.toString()}`
+
+      await PaymayaSdkClient.createCheckout({
+        totalAmount,
+        buyer,
+        items,
+        redirectUrl: {
+          success: `${url}&status=SUCCESS`,
+          failure: `${url}&status=FAILED`,
+          cancel: `${url}&status=CANCELED`
+        },
+        requestReferenceNumber,
+        metadata
+      })
     },
     formatAmount (value) {
       const parsedValue = parseFloat(value)

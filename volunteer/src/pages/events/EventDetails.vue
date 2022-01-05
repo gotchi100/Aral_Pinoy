@@ -425,9 +425,9 @@
 import { mapGetters } from 'vuex'
 
 import EventDonationModal from '../../components/EventDonationModal'
+import { apiClient } from '../../axios'
 
 const logo = require('../../assets/aralpinoywords.png')
-const { apiClient } = require('../../axios')
 
 export default {
   name: 'EventDetails',
