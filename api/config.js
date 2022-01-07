@@ -22,6 +22,9 @@ const {
 
   GOOGLE_CLOUD_SERVICE_ACCOUNT_CREDENTIALS,
 
+  PAYMAYA_API_BASE_URL = 'https://pg-sandbox.paymaya.com',
+  PAYMAYA_API_SECRET_API_KEY = 'sk-X8qolYjy62kIzEbr0QRK1h4b4KDVHaNcwMYk39jInSl',
+
   SMTP_GMAIL_AUTH_USER,
   SMTP_GMAIL_AUTH_PASS,
   SMTP_SENDGRID_AUTH_USER,
@@ -70,6 +73,12 @@ module.exports = {
     },
     cloud: {
       serviceAccount: path.resolve(__dirname, GOOGLE_CLOUD_SERVICE_ACCOUNT_CREDENTIALS)
+    }
+  },
+  paymaya: {
+    api: {
+      baseUrl: PAYMAYA_API_BASE_URL,
+      secretKey: PAYMAYA_API_SECRET_API_KEY
     }
   },
   smtp: {

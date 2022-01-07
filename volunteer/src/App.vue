@@ -6,12 +6,17 @@
 </template>
 
 <script>
+import PaymayaSdkClient from 'paymaya-js-sdk'
+
 import Navbar from './components/Navbar.vue'
 
 export default {
   name: 'App',
   components: {
     Navbar
+  },
+  created () {
+    PaymayaSdkClient.init('pk-Z0OSzLvIcOI2UIvDhdTGVVfRSSeiGStnceqwUE7n0Ah', true)
   }
 }
 </script>

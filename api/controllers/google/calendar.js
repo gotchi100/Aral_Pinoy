@@ -10,6 +10,9 @@ const {
   STATUSES: EVENT_STATUSES
 } = require('../../constants/events')
 
+/** @typedef {import('@googleapis/calendar').calendar_v3.Schema$Event} Event */
+/** @typedef {import('@googleapis/calendar').calendar_v3.Schema$EventAttendee} EventAttendee */
+
 const EVENT_STATUS_TO_CALENDAR_MAPPING = {
   [EVENT_STATUSES.CANCELED] : 'cancelled'
 }
@@ -70,6 +73,38 @@ class GoogleCalendarController {
     }
 
     await this.calendar.events.insert(calendarEvent)
+  }
+
+  /**
+   * 
+   * @param {string} id 
+   * @returns {Promise<Event>}
+   */
+  async getEvent(id) {
+    const { data } = await this.calendar.events.get({
+      calendarId: 'primary',
+      eventId: id,
+    })
+
+    return data
+  }
+
+  /**
+   * 
+   * @param {string} id
+   * @param {EventAttendee[]} attendees
+   */
+  async updateEventAttendees(id, attendees) {
+    const calendarEvent = {
+      calendarId: 'primary',
+      eventId: id,
+      sendUpdates: 'all',
+      requestBody: {
+        attendees
+      }
+    }
+
+    await this.calendar.events.patch(calendarEvent)
   }
 
   /**

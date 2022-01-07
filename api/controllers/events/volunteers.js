@@ -6,12 +6,14 @@ const EventVolunteerModel = require('../../models/events/volunteers')
 const UserModel = require('../../models/users')
 const EventModel = require('../../models/events')
 
+const GoogleCalendarController = require('../google/calendar')
+
 const { ConflictError, NotFoundError } = require('../../errors')
 
 class EventVolunteerController {
   static async create(userId, eventId, volunteerJob) {
     try {
-      const user = await UserModel.findById(userId, ['_id'])
+      const user = await UserModel.findById(userId, ['_id', 'email'])
 
       if (user === null) {
         throw new NotFoundError(`User does not exist: ${userId}`)
@@ -61,6 +63,8 @@ class EventVolunteerController {
           name: volunteerJob
         }
       })
+
+      EventVolunteerController.addGoogleCalendarAttendee(eventId, user.email).catch((error) => console.dir(error, { depth: null }))
   
       return results.toObject({ 
         minimize: true,
@@ -74,6 +78,13 @@ class EventVolunteerController {
       
       throw error
     }
+  }
+
+  static async addGoogleCalendarAttendee(eventId, attendeeEmail) {
+    const calendarEvent = await GoogleCalendarController.getEvent(eventId)
+    const attendees = calendarEvent.attendees.concat([{ email: attendeeEmail }])
+
+    await GoogleCalendarController.updateEventAttendees(eventId, attendees)
   }
 
   static async list(options = {}) {
@@ -114,6 +125,61 @@ class EventVolunteerController {
     return {
       results: eventVolunteers,
       total
+    }
+  }
+
+  static async delete(id) {
+    const eventVolunteer = await EventVolunteerModel.findById(id, ['event', 'eventJob.name'], { 
+      lean: true,
+      populate: ['event']
+    })
+
+    if (eventVolunteer === null) {
+      throw new NotFoundError(`Event volunteer does not exist: ${id}`)
+    }
+
+    const {
+      event,
+      eventJob: {
+        name: jobName
+      }
+    } = eventVolunteer
+
+    const jobIndex = event.jobs.findIndex((job) => job.name === jobName)
+
+    if (jobIndex !== -1) {
+      await EventVolunteerController.updateEventJob(event, jobIndex, -1)
+    }
+
+    const deleteResults = await EventVolunteerModel.deleteOne({
+      _id: id,
+    })
+
+    if (deleteResults.deletedCount === 0) {
+      throw new NotFoundError(`Event volunteer does not exist: ${id}`)
+    }
+  }
+  
+  static async updateEventJob(event, jobIndex, value) {
+    const eventUpdateResults = await EventModel.updateOne({
+      _id: event._id,
+      __v: event.__v,
+      [`jobs.${jobIndex}.slots.current`]: {
+        $gt: 0
+      },
+      'goals.numVolunteers.current': {
+        $gt: 0
+      }
+    }, {
+      $inc: {
+        __v: 1,
+        [`jobs.${jobIndex}.slots.current`]: value,
+        'goals.numVolunteers.current': value
+      }
+    })
+
+    if (eventUpdateResults.matchedCount === 0) {
+      throw new ConflictError('Event was updated. Please try again')
     }
   }
 }
