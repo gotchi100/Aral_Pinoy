@@ -127,6 +127,61 @@ class EventVolunteerController {
       total
     }
   }
+
+  static async delete(id) {
+    const eventVolunteer = await EventVolunteerModel.findById(id, ['event', 'eventJob.name'], { 
+      lean: true,
+      populate: ['event']
+    })
+
+    if (eventVolunteer === null) {
+      throw new NotFoundError(`Event volunteer does not exist: ${id}`)
+    }
+
+    const {
+      event,
+      eventJob: {
+        name: jobName
+      }
+    } = eventVolunteer
+
+    const jobIndex = event.jobs.findIndex((job) => job.name === jobName)
+
+    if (jobIndex !== -1) {
+      await EventVolunteerController.updateEventJob(event, jobIndex, -1)
+    }
+
+    const deleteResults = await EventVolunteerModel.deleteOne({
+      _id: id,
+    })
+
+    if (deleteResults.deletedCount === 0) {
+      throw new NotFoundError(`Event volunteer does not exist: ${id}`)
+    }
+  }
+  
+  static async updateEventJob(event, jobIndex, value) {
+    const eventUpdateResults = await EventModel.updateOne({
+      _id: event._id,
+      __v: event.__v,
+      [`jobs.${jobIndex}.slots.current`]: {
+        $gt: 0
+      },
+      'goals.numVolunteers.current': {
+        $gt: 0
+      }
+    }, {
+      $inc: {
+        __v: 1,
+        [`jobs.${jobIndex}.slots.current`]: value,
+        'goals.numVolunteers.current': value
+      }
+    })
+
+    if (eventUpdateResults.matchedCount === 0) {
+      throw new ConflictError('Event was updated. Please try again')
+    }
+  }
 }
 
 module.exports = EventVolunteerController

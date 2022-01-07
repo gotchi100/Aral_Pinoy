@@ -11,7 +11,7 @@
         <div class="header">
             <h2 style="font-family:'Bebas Neue', cursive; color: black; text-align: left;">Payment Information</h2>
         </div>
-        <h3 style="font-family:'Bebas Neue', cursive; color: black; text-align: left; margin-top: 10px; margin-left: 30px">Select Payment Method:</h3>
+        <h3 style="font-family:'Bebas Neue', cursive; color: black; text-align: left; margin-top: 10px; margin-left: 30px">Donate Anonymously?</h3>
     </div>
     <div>
         <b-form-group v-slot="{ ariaDescribedby }">
@@ -26,37 +26,18 @@
             </b-form-radio-group>
         </b-form-group>
     </div>
-    <h5 style="font-family:'Bebas Neue', cursive; color: black; text-align: left; margin-top: 10px; margin-left: 30px">Credit Card Payment</h5>
     <b-row class="my-1">
-        <label class="cardName" for="input-small">Card Holder Name</label>
+        <label class="cardName" for="input-small">Name :</label>
         <b-col>
             <b-form-input v-model="cardName" style="width: 550px; display: inline-block;"></b-form-input>
         </b-col>
     </b-row>
     <b-row class="my-1">
-        <label class="cardNumber" for="input-small">Card Number
-            <Icon class="visa" icon="logos:visa"/>
-            <Icon class="mastercard" icon="logos:mastercard" height="32"/>
-            <Icon class="paypal" icon="logos:paypal" color="blue" height="30"/>
-            <Icon class="express" icon="fontisto:american-express" color="#2e77bb" height="30"/>
-        </label>
+        <label class="cardName" for="input-small">Amount :</label>
         <b-col>
-            <b-form-input v-model="cardNumber" style="width: 550px; display: inline-block;"></b-form-input>
+            <b-form-input v-model="cardName" style="width: 550px; display: inline-block;"></b-form-input>
         </b-col>
     </b-row>
-    <b-container class="bv-example-row">
-        <b-row>
-            <b-col class="month">MM
-              <b-form-input v-model="month"></b-form-input>
-            </b-col>
-            <b-col class="year">YY
-              <b-form-input v-model="year"></b-form-input>
-            </b-col>
-            <b-col class="cvc">CVC
-              <b-form-input v-model="cvc"></b-form-input>
-            </b-col>
-        </b-row>
-    </b-container>
     <b-container class="bv-example-row">
         <b-row>
             <b-col>
@@ -75,19 +56,13 @@
 </template>
 
 <script>
-import { Icon } from '@iconify/vue2'
-
 export default {
-  components: {
-    Icon
-  },
   data () {
     return {
       selected: 'first',
       options: [
-        { text: 'CREDIT CARD', value: 'first' },
-        { text: 'PAYMAYA QR', value: 'second' },
-        { text: 'BPI BANK TRANSFER', value: 'third' }
+        { text: 'YES', value: 'first' },
+        { text: 'NO', value: 'second' }
       ]
     }
   }
