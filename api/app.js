@@ -19,6 +19,7 @@ const eventsRouter = require('./routes/events')
 const forgotPasswordRouter = require('./routes/forgot-password')
 const googleOAuthRouter = require('./routes/google-oauth')
 const eventVolunteersRouter = require('./routes/events/volunteers')
+const eventDonationsRouter = require('./routes/events/donations')
 const inkindDonationsRouter = require('./routes/inkind-donations')
 const ikdCategoriesRouter = require('./routes/inkind-donations/categories')
 const ikdGroupsRouter = require('./routes/inkind-donations/groups')
@@ -61,7 +62,15 @@ const publicRoutes = [
   {
     url: /^\/events\/[0-9a-fA-F]{24}/,
     methods: ['GET']
-  }
+  },
+  {
+    url: '/event-donations',
+    methods: ['POST']
+  },
+  {
+    url: /^\/event-donations\/[a-z0-9]{36}\/redirectUri/,
+    methods: ['GET']
+  },
 ]
 
 const app = express()
@@ -90,6 +99,7 @@ app.use('/sdgs', sdgsRouter)
 
 app.use('/events', eventsRouter)
 app.use('/event-volunteers', eventVolunteersRouter)
+app.use('/event-donations', eventDonationsRouter)
 
 app.use('/inkind-donations', inkindDonationsRouter)
 app.use('/inkind-donation-categories', ikdCategoriesRouter)
