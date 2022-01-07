@@ -4,7 +4,10 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
+    "serve:staging": "serve -p 8080 -s dist",
     "build": "vue-cli-service build",
+    "build:staging": "vue-cli-service build --mode staging",
+    "start:staging": "npm run build:staging && npm run serve:staging",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -20,6 +23,8 @@
     "core-js": "^3.6.5",
     "date-fns": "^2.25.0",
     "lodash": "^4.17.21",
+    "paymaya-js-sdk": "^2.0.1",
+    "uid": "^2.0.0",
     "vee-validate": "^3.4.14",
     "vue": "^2.6.11",
     "vue-js-modal": "^2.0.1",
@@ -38,6 +43,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.0",
     "eslint-plugin-vue": "^6.2.2",
+    "serve": "^13.0.2",
     "vue-template-compiler": "^2.6.11"
   }
 }
