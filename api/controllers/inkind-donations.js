@@ -180,10 +180,7 @@ class InkindDonationsController {
         InkindDonationModel.aggregate([ 
           {
             $group: {
-              _id: '$group',
-              quantity: {
-                $count: {}
-              }
+              _id: '$group'
             }
           },
           {
