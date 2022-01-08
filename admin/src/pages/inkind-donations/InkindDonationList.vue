@@ -442,7 +442,7 @@
                                       ></b-form-input>
                                     </b-form-group>
 
-                                    <b-form-group class="pt-3" label="Contact Method Type" label-for="outbound-transaction-receiver-contact-method-type" @submit.stop.prevent>
+                                    <b-form-group class="pt-3" label="Contact Method" label-for="outbound-transaction-receiver-contact-method-type" @submit.stop.prevent>
                                       <b-input-group>
                                         <b-form-select
                                           id="outbound-transaction-receiver-contact-method-type"
@@ -454,7 +454,7 @@
                                       </b-input-group>
                                     </b-form-group>
 
-                                    <b-form-group class="pt-3" label="Contact Method Value" label-for="outbound-transaction-receiver-contact-method-value" @submit.stop.prevent>
+                                    <b-form-group class="pt-3" label="Contact Details" label-for="outbound-transaction-receiver-contact-method-value" @submit.stop.prevent>
                                       <b-input-group>
                                         <b-form-input
                                           id="outbound-transaction-receiver-contact-method-value"

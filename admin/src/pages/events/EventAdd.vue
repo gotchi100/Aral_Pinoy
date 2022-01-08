@@ -105,7 +105,7 @@
                                   ></b-form-input>
                                 </b-form-group>
 
-                                <b-form-group class="pt-3" label="Contact Method Type" label-for="event-contact-method-type" @submit.stop.prevent>
+                                <b-form-group class="pt-3" label="Contact Method" label-for="event-contact-method-type" @submit.stop.prevent>
                                   <b-input-group>
                                     <b-form-select
                                       id="event-contact-method-type"
@@ -117,7 +117,7 @@
                                   </b-input-group>
                                 </b-form-group>
 
-                                <b-form-group class="pt-3" label="Contact Method Value" label-for="event-contact-method-value" @submit.stop.prevent>
+                                <b-form-group class="pt-3" label="Contact Details" label-for="event-contact-method-value" @submit.stop.prevent>
                                   <b-input-group>
                                     <b-form-input
                                       id="event-method-value"
