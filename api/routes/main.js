@@ -23,7 +23,7 @@ const registerValidator = Joi.object({
   gender: Joi.string().valid('Male', 'Female'),
   birthDate: Joi.date().iso(),
   address: Joi.object({
-    home: Joi.string().trim().max(256)
+    home: Joi.string().trim().max(256).allow('')
   }),
   skills: Joi.array().items(Joi.objectId()).unique()
 })
