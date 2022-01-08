@@ -4,216 +4,275 @@
       <img :src="logo" style="width: 320px; height: 150px">
     </div>
 
-    <b-card class="mb-5" bg-variant="light" style="display: inline-block; height: 100%; width: 1300px; border-radius: 20px;">
-      <template v-if="isLoadingEvent">
-        <b-container style="height: 100vh">
-          <b-row class="vh-100" align-h="center">
-            <b-col cols="12" align-self="center">
-              <b-spinner style="width: 10rem; height: 10rem;" />
-            </b-col>
-          </b-row>
-        </b-container>
-      </template>
-
-      <template v-else-if="event !== null">
-        <div class="pb-3">
-          <h1 style="font-family:'Bebas Neue', cursive;">
-            {{ event.name }}
-          </h1>
-
-          <h4 style="font-family:'Bebas Neue', cursive;">
-            {{ event.location.name }}
-          </h4>
-
-          <h4 style="font-family:'Bebas Neue', cursive;">
-            {{
-              new Date(event.date.start).toLocaleString('en-us', {
-                dateStyle: 'medium',
-                timeStyle: 'short'
-              })
-            }} -
-            {{
-              new Date(event.date.end).toLocaleString('en-us', {
-                dateStyle: 'medium',
-                timeStyle: 'short'
-              })
-            }}
-          </h4>
-        </div>
-
-        <b-container fluid>
-          <b-row v-if="hasEventQuestions && questionnaireAnswers.length > 0">
-            <b-col cols="12">
-              <b-card class="mb-4">
-                <b-container fluid>
-                  <b-row>
-                    <b-col cols="12">
-                      <h2 style="font-family:'Bebas Neue', cursive; text-align: center;">
-                        Event Questionnaire
-                      </h2>
+    <b-container>
+      <b-row>
+        <b-col cols="12">
+          <b-overlay :show="isSubmittingEvaluation" rounded="sm">
+            <b-card class="mb-5" bg-variant="light" style="border-radius: 20px;">
+              <template v-if="isLoadingEvent">
+                <b-container style="height: 100vh">
+                  <b-row class="vh-100" align-h="center">
+                    <b-col cols="12" align-self="center">
+                      <b-spinner style="width: 10rem; height: 10rem;" />
                     </b-col>
-                  </b-row>
-
-                  <b-row
-                    v-for="(question, questionIndex) in event.questions"
-                    :key="questionIndex"
-                    style="text-align: left;"
-                  >
-                    <b-form-group
-                      v-if="question.type === 'matrix'"
-                      :label="`${questionIndex + 1}. ${question.label}`"
-                      v-slot="{ ariaDescribedby }"
-                    >
-                      <b-col class="mb-3" cols="12">
-                        <b-form-radio
-                          v-model="questionnaireAnswers[questionIndex]"
-                          :aria-describedby="ariaDescribedby"
-                          value="Very Satisfied"
-                        >
-                          &nbsp;Very Satisfied
-                        </b-form-radio>
-                      </b-col>
-
-                      <b-col class="mb-3" cols="12">
-                        <b-form-radio
-                          v-model="questionnaireAnswers[questionIndex]"
-                          :aria-describedby="ariaDescribedby"
-                          value="Satisfied"
-                        >
-                          &nbsp;Satisfied
-                        </b-form-radio>
-                      </b-col>
-
-                      <b-col class="mb-3" cols="12">
-                        <b-form-radio
-                          v-model="questionnaireAnswers[questionIndex]"
-                          :aria-describedby="ariaDescribedby"
-                          value="Neutral"
-                        >
-                          &nbsp;Neutral
-                        </b-form-radio>
-                      </b-col>
-
-                      <b-col class="mb-3" cols="12">
-                        <b-form-radio
-                          v-model="questionnaireAnswers[questionIndex]"
-                          :aria-describedby="ariaDescribedby"
-                          value="Dissatisfied"
-                        >
-                          &nbsp;Dissatisfied
-                        </b-form-radio>
-                      </b-col>
-
-                      <b-col class="mb-3" cols="12">
-                        <b-form-radio
-                          v-model="questionnaireAnswers[questionIndex]"
-                          :aria-describedby="ariaDescribedby"
-                          value="Very Dissatisfied"
-                        >
-                          &nbsp;Very Dissatisfied
-                        </b-form-radio>
-                      </b-col>
-                    </b-form-group>
                   </b-row>
                 </b-container>
-              </b-card>
-            </b-col>
-          </b-row>
+              </template>
 
-          <b-row v-if="hasEventSdgs && sdgAnswers.length > 0">
-            <b-col cols="12">
-              <b-card class="mb-4">
-                <b-container fluid>
-                  <b-row>
-                    <b-col cols="12">
-                      <h2 style="font-family:'Bebas Neue', cursive; text-align: center;">
-                        SDG Evaluation Form
-                      </h2>
+              <template v-else-if="hasEventEvaluation">
+                <b-container>
+                  <b-row align-h="center" style="height: 60vh">
+                    <b-col cols="12" align-self="center">
+                      <h1 class="mb-5">
+                        Thank you for your evaluation!
+                      </h1>
+
+                      <b-button @click="$router.go(-1)">
+                        Go back
+                      </b-button>
                     </b-col>
                   </b-row>
+                </b-container>
+              </template>
 
-                  <b-row>
-                    <b-col v-for="(sdg, sdgIndex) in event.sdgs" :key="sdgIndex" cols="12">
-                      <b-card class="mb-3">
+              <template v-else-if="eventVolunteer === null">
+                <b-container>
+                  <b-row align-h="center" style="height: 60vh">
+                    <b-col cols="12" align-self="center">
+                      <h1 class="mb-5">
+                        You have not volunteered to this event
+                      </h1>
+
+                      <b-button @click="$router.go(-1)">
+                        Go back
+                      </b-button>
+                    </b-col>
+                  </b-row>
+                </b-container>
+              </template>
+
+              <template v-else-if="event !== null">
+                <div class="pb-3">
+                  <h1 style="font-family:'Bebas Neue', cursive;">
+                    {{ event.name }}
+                  </h1>
+
+                  <h4 style="font-family:'Bebas Neue', cursive;">
+                    {{ event.location.name }}
+                  </h4>
+
+                  <h4 style="font-family:'Bebas Neue', cursive;">
+                    {{
+                      new Date(event.date.start).toLocaleString('en-us', {
+                        dateStyle: 'medium',
+                        timeStyle: 'short'
+                      })
+                    }} -
+                    {{
+                      new Date(event.date.end).toLocaleString('en-us', {
+                        dateStyle: 'medium',
+                        timeStyle: 'short'
+                      })
+                    }}
+                  </h4>
+                </div>
+
+                <b-container fluid>
+                  <b-row v-if="hasEventQuestions && questionnaireAnswers.length > 0">
+                    <b-col cols="12">
+                      <b-card class="mb-4">
                         <b-container fluid>
                           <b-row>
                             <b-col cols="12">
-                              <h4 style="font-family:'Bebas Neue', cursive; text-align: left">
-                                {{ sdg.name }}
-                              </h4>
+                              <h2 style="font-family:'Bebas Neue', cursive; text-align: center;">
+                                Event Questionnaire
+                              </h2>
                             </b-col>
+                          </b-row>
 
-                            <b-col class="mb-3" cols="12" style="text-align: left">
-                              <span>
-                                {{ sdg.description }}
-                              </span>
-                            </b-col>
-
-                            <b-col cols="12" style="text-align: left">
-                              <b-row
-                                v-for="(question, questionIndex) in sdg.questions"
-                                :key="`${sdgIndex}-${questionIndex}`"
-                              >
-                                <b-form-group
-                                  v-if="question.type === 'polar'"
-                                  :label="`${questionIndex + 1}. ${question.label}`"
-                                  v-slot="{ ariaDescribedby }"
+                          <b-row
+                            v-for="(question, questionIndex) in event.questions"
+                            :key="questionIndex"
+                            style="text-align: left;"
+                          >
+                            <b-form-group
+                              v-if="question.type === 'matrix'"
+                              :label="`${questionIndex + 1}. ${question.label}`"
+                              v-slot="{ ariaDescribedby }"
+                            >
+                              <b-col class="mb-3" cols="12">
+                                <b-form-radio
+                                  v-model="questionnaireAnswers[questionIndex]"
+                                  :aria-describedby="ariaDescribedby"
+                                  value="Very Satisfied"
                                 >
-                                  <b-col class="mb-3" cols="12">
-                                    <b-form-radio
-                                      v-model="sdgAnswers[sdgIndex][questionIndex]"
-                                      :aria-describedby="ariaDescribedby"
-                                      :value="1"
-                                    >
-                                      &nbsp;Yes
-                                    </b-form-radio>
-                                  </b-col>
+                                  &nbsp;Very Satisfied
+                                </b-form-radio>
+                              </b-col>
 
-                                  <b-col class="mb-3" cols="12">
-                                    <b-form-radio
-                                      v-model="sdgAnswers[sdgIndex][questionIndex]"
-                                      :aria-describedby="ariaDescribedby"
-                                      :value="0"
-                                    >
-                                      &nbsp;No
-                                    </b-form-radio>
-                                  </b-col>
-                                </b-form-group>
-                              </b-row>
+                              <b-col class="mb-3" cols="12">
+                                <b-form-radio
+                                  v-model="questionnaireAnswers[questionIndex]"
+                                  :aria-describedby="ariaDescribedby"
+                                  value="Satisfied"
+                                >
+                                  &nbsp;Satisfied
+                                </b-form-radio>
+                              </b-col>
+
+                              <b-col class="mb-3" cols="12">
+                                <b-form-radio
+                                  v-model="questionnaireAnswers[questionIndex]"
+                                  :aria-describedby="ariaDescribedby"
+                                  value="Neutral"
+                                >
+                                  &nbsp;Neutral
+                                </b-form-radio>
+                              </b-col>
+
+                              <b-col class="mb-3" cols="12">
+                                <b-form-radio
+                                  v-model="questionnaireAnswers[questionIndex]"
+                                  :aria-describedby="ariaDescribedby"
+                                  value="Dissatisfied"
+                                >
+                                  &nbsp;Dissatisfied
+                                </b-form-radio>
+                              </b-col>
+
+                              <b-col class="mb-3" cols="12">
+                                <b-form-radio
+                                  v-model="questionnaireAnswers[questionIndex]"
+                                  :aria-describedby="ariaDescribedby"
+                                  value="Very Dissatisfied"
+                                >
+                                  &nbsp;Very Dissatisfied
+                                </b-form-radio>
+                              </b-col>
+                            </b-form-group>
+                          </b-row>
+                        </b-container>
+                      </b-card>
+                    </b-col>
+                  </b-row>
+
+                  <b-row v-if="hasEventSdgs && sdgAnswers.length > 0">
+                    <b-col cols="12">
+                      <b-card class="mb-4">
+                        <b-container fluid>
+                          <b-row>
+                            <b-col cols="12">
+                              <h2 style="font-family:'Bebas Neue', cursive; text-align: center;">
+                                SDG Evaluation Form
+                              </h2>
+                            </b-col>
+                          </b-row>
+
+                          <b-row>
+                            <b-col v-for="(sdg, sdgIndex) in event.sdgs" :key="sdgIndex" cols="12">
+                              <b-card class="mb-3">
+                                <b-container fluid>
+                                  <b-row>
+                                    <b-col cols="12">
+                                      <h4 style="font-family:'Bebas Neue', cursive; text-align: left">
+                                        {{ sdg.name }}
+                                      </h4>
+                                    </b-col>
+
+                                    <b-col class="mb-3" cols="12" style="text-align: left">
+                                      <span>
+                                        {{ sdg.description }}
+                                      </span>
+                                    </b-col>
+
+                                    <b-col cols="12" style="text-align: left">
+                                      <b-row
+                                        v-for="(question, questionIndex) in sdg.questions"
+                                        :key="`${sdgIndex}-${questionIndex}`"
+                                      >
+                                        <b-form-group
+                                          v-if="question.type === 'polar'"
+                                          :label="`${questionIndex + 1}. ${question.label}`"
+                                          v-slot="{ ariaDescribedby }"
+                                        >
+                                          <b-col class="mb-3" cols="12">
+                                            <b-form-radio
+                                              v-model="sdgAnswers[sdgIndex][questionIndex]"
+                                              :aria-describedby="ariaDescribedby"
+                                              :value="1"
+                                            >
+                                              &nbsp;Yes
+                                            </b-form-radio>
+                                          </b-col>
+
+                                          <b-col class="mb-3" cols="12">
+                                            <b-form-radio
+                                              v-model="sdgAnswers[sdgIndex][questionIndex]"
+                                              :aria-describedby="ariaDescribedby"
+                                              :value="0"
+                                            >
+                                              &nbsp;No
+                                            </b-form-radio>
+                                          </b-col>
+                                        </b-form-group>
+                                      </b-row>
+                                    </b-col>
+                                  </b-row>
+                                </b-container>
+                              </b-card>
                             </b-col>
                           </b-row>
                         </b-container>
                       </b-card>
                     </b-col>
                   </b-row>
+
+                  <b-card class="mb-4">
+                    <b-container fluid>
+                      <h4 style="font-family:'Bebas Neue', cursive; text-align: left;">
+                        Recommendations and Comments
+                      </h4>
+
+                      <b-form-textarea
+                        v-model="comment"
+                        placeholder="Enter something..."
+                        rows="10"
+                        max-rows="6"
+                      ></b-form-textarea>
+                    </b-container>
+                  </b-card>
+
+                  <b-button
+                    pill
+                    variant="danger"
+                    style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;"
+                    @click="confirmModal = true"
+                  >
+                    Submit
+                  </b-button>
                 </b-container>
-              </b-card>
-            </b-col>
-          </b-row>
 
-          <b-card class="mb-4">
-            <b-container fluid>
-              <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">Recommendations and Comments</h2>
-              <b-form-textarea
-                id="textarea"
-                placeholder="Enter something..."
-                rows="10"
-                max-rows="6"
-              ></b-form-textarea>
-            </b-container>
-          </b-card>
-
-          <b-button
-            pill
-            variant="danger"
-            style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;"
-            @click="submitEventEvaluation"
-          >
-            Submit
-          </b-button>
-        </b-container>
-      </template>
-    </b-card>
+                <b-modal
+                  v-model="confirmModal"
+                  @ok="submitEventEvaluation"
+                  @cancel="confirmModal = false"
+                >
+                  <b-container>
+                    <b-row>
+                      <b-col cols="12">
+                        <h5>
+                          Are you sure with all the details?
+                        </h5>
+                      </b-col>
+                    </b-row>
+                  </b-container>
+                </b-modal>
+              </template>
+            </b-card>
+          </b-overlay>
+        </b-col>
+      </b-row>
+    </b-container>
 
     <br />
 
@@ -223,6 +282,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import _ from 'lodash'
 
 import Footer from '../../components/Footer.vue'
 const logo = require('../../assets/aralpinoywords.png')
@@ -239,8 +299,12 @@ export default {
       isLoadingEvent: false,
       event: null,
       eventVolunteer: null,
+      eventEvaluation: null,
       sdgAnswers: [],
-      questionnaireAnswers: []
+      questionnaireAnswers: [],
+      comment: '',
+      confirmModal: false,
+      isSubmittingEvaluation: false
     }
   },
   computed: {
@@ -261,15 +325,22 @@ export default {
       }
 
       return Array.isArray(this.event.questions) && this.event.questions.length > 0
+    },
+    hasEventEvaluation () {
+      if (this.eventVolunteer === null) {
+        return false
+      }
+
+      return this.eventVolunteer.hasEventEvaluation
     }
   },
   async created () {
-    await this.getEventVolunteer()
+    if (this.user !== null) {
+      this.eventVolunteer = await this.getEventVolunteer()
+    }
 
-    if (this.eventVolunteer === null) {
-      return this.$router.push({
-        path: `/events/${this.eventId}`
-      })
+    if (this.eventVolunteer === null || this.eventVolunteer.hasEventEvaluation) {
+      return
     }
 
     await this.getEvent()
@@ -309,6 +380,7 @@ export default {
 
       const queryString = new URLSearchParams()
 
+      queryString.set('limit', 1)
       queryString.set('filters.userId', userId)
       queryString.set('filters.eventId', eventId)
 
@@ -322,7 +394,7 @@ export default {
         return
       }
 
-      this.eventVolunteer = data.results[0]
+      return data.results[0]
     },
     formatForm () {
       if (this.hasEventSdgs) {
@@ -339,9 +411,35 @@ export default {
         this.questionnaireAnswers.push(nullAnswers)
       }
     },
-    submitEventEvaluation () {
-      console.dir(this.sdgAnswers, { depth: null })
-      console.dir(this.questionnaireAnswers, { depth: null })
+    async submitEventEvaluation () {
+      this.isSubmittingEvaluation = true
+
+      const eventId = this.eventId
+      const userId = this.user._id
+
+      const evaluation = _.pickBy({
+        sdgAnswers: this.sdgAnswers,
+        questionnaireAnswers: this.questionnaireAnswers,
+        comment: this.comment
+      }, _.identity)
+
+      try {
+        await apiClient.post('/event-evaluations', {
+          userId,
+          eventId,
+          evaluation
+        }, {
+          headers: {
+            Authorization: `Bearer ${this.token}`
+          }
+        })
+
+        this.$router.go()
+      } catch (error) {
+        console.log(error)
+
+        this.isSubmittingEvaluation = false
+      }
     }
   }
 }

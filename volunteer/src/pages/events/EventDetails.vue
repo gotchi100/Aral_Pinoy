@@ -206,7 +206,7 @@
                                     </template>
 
                                     <b-col
-                                      v-else-if="event.status === 'ENDED'"
+                                      v-else-if="event.status === 'ENDED' && hasAlreadyVolunteered"
                                       class="m-1"
                                       cols="12"
                                       md="4"
@@ -214,9 +214,12 @@
                                       <b-button
                                         variant="primary"
                                         style="width: 100%"
+                                        :disabled="hasAlreadyEvaluation"
                                         @click="$router.push({ path: `/events/${eventId}/evaluation` })"
                                       >
-                                        Answer Evaluation
+                                        {{
+                                          hasAlreadyEvaluation ? 'Thank you for the evaluation' : 'Answer Evaluation'
+                                        }}
                                       </b-button>
                                     </b-col>
 
@@ -453,7 +456,10 @@ export default {
     }
   },
   async created () {
-    await this.getEventVolunteer()
+    if (this.user !== null) {
+      await this.getEventVolunteer()
+    }
+
     this.getEvent()
 
     if (this.hasDonationStatus) {
@@ -474,6 +480,13 @@ export default {
     },
     hasAlreadyVolunteered () {
       return this.eventVolunteer !== null
+    },
+    hasAlreadyEvaluation () {
+      if (this.eventVolunteer === null) {
+        return false
+      }
+
+      return this.eventVolunteer.hasEventEvaluation
     },
     monetaryDonationReached () {
       if (this.event === null) {
@@ -551,15 +564,12 @@ export default {
       }
     },
     async getEventVolunteer () {
-      if (this.user === null) {
-        return
-      }
-
       const userId = this.user._id
       const eventId = this.eventId
 
       const queryString = new URLSearchParams()
 
+      queryString.set('limit', 1)
       queryString.set('filters.userId', userId)
       queryString.set('filters.eventId', eventId)
 
