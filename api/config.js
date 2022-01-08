@@ -14,14 +14,17 @@ const {
   VOLUNTEER_DOMAIN_NAME,
   VOLUNTEER_GOOGLE_OAUTH_REDIRECT_URI,
 
+  GOOGLE_CLOUD_SERVICE_ACCOUNT_CREDENTIALS,
+
+  GOOGLE_OAUTH_TOKEN,
+
   GOOGLE_OAUTH_API_CLIENT_ID,
   GOOGLE_OAUTH_API_CLIENT_SECRET,
   GOOGLE_OAUTH_API_REDIRECT_URI,
+
   GOOGLE_OAUTH_VOLUNTEER_CLIENT_ID,
   GOOGLE_OAUTH_VOLUNTEER_CLIENT_SECRET,
   GOOGLE_OAUTH_VOLUNTEER_REDIRECT_URI,
-
-  GOOGLE_CLOUD_SERVICE_ACCOUNT_CREDENTIALS,
 
   PAYMAYA_API_BASE_URL = 'https://pg-sandbox.paymaya.com',
   PAYMAYA_API_SECRET_API_KEY = 'sk-X8qolYjy62kIzEbr0QRK1h4b4KDVHaNcwMYk39jInSl',
@@ -51,6 +54,20 @@ if (GOOGLE_CLOUD_SERVICE_ACCOUNT_CREDENTIALS !== '') {
     }
   } catch (error) {
     fs.writeFileSync(credentialsPath, GOOGLE_CLOUD_SERVICE_ACCOUNT_CREDENTIALS)
+  }
+}
+
+if (GOOGLE_OAUTH_TOKEN !== '') {
+  const oauthCredentialsPath = path.resolve(__dirname, './google-oauth2-token.json')
+
+  try {
+    const googleOAuthTokenFile = require(oauthCredentialsPath)
+
+    if (GOOGLE_OAUTH_TOKEN !== JSON.stringify(googleOAuthTokenFile)) {
+      fs.writeFileSync(oauthCredentialsPath, GOOGLE_OAUTH_TOKEN)
+    }
+  } catch (error) {
+    fs.writeFileSync(oauthCredentialsPath, GOOGLE_OAUTH_TOKEN)
   }
 }
 
