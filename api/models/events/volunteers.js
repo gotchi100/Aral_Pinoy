@@ -15,7 +15,8 @@ const schema = new mongoose.Schema({
   },
   eventJob: {
     name: String,
-  }
+  },
+  hasEventEvaluation: Boolean
 }, {
   collection: 'eventVolunteers',
   validateBeforeSave: false

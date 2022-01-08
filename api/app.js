@@ -15,19 +15,22 @@ require('./google/oauth')
 
 const mainRouter = require('./routes/main')
 const adminRouter = require('./routes/admin')
-const eventsRouter = require('./routes/events')
 const forgotPasswordRouter = require('./routes/forgot-password')
 const googleOAuthRouter = require('./routes/google-oauth')
-const eventVolunteersRouter = require('./routes/events/volunteers')
+const sdgsRouter = require('./routes/sdgs')
+const skillsRouter = require('./routes/skills')
+const usersRouter = require('./routes/users')
+
+const eventsRouter = require('./routes/events')
 const eventDonationsRouter = require('./routes/events/donations')
+const eventEvaluationsRouter = require('./routes/events/evaluations')
+const eventVolunteersRouter = require('./routes/events/volunteers')
+
 const inkindDonationsRouter = require('./routes/inkind-donations')
 const ikdCategoriesRouter = require('./routes/inkind-donations/categories')
 const ikdGroupsRouter = require('./routes/inkind-donations/groups')
 const ikdTransactionsRouter = require('./routes/inkind-donations/transactions')
 const ikdOutboundTransactionsRouter = require('./routes/inkind-donations/outbound-transactions')
-const sdgsRouter = require('./routes/sdgs')
-const skillsRouter = require('./routes/skills')
-const usersRouter = require('./routes/users')
 
 const seedSdgs = require('./db/seeders/sdg')
 
@@ -98,8 +101,9 @@ app.use('/google-oauth', googleOAuthRouter)
 app.use('/sdgs', sdgsRouter)
 
 app.use('/events', eventsRouter)
-app.use('/event-volunteers', eventVolunteersRouter)
 app.use('/event-donations', eventDonationsRouter)
+app.use('/event-evaluations', eventEvaluationsRouter)
+app.use('/event-volunteers', eventVolunteersRouter)
 
 app.use('/inkind-donations', inkindDonationsRouter)
 app.use('/inkind-donation-categories', ikdCategoriesRouter)

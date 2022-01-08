@@ -1,5 +1,6 @@
 'use strict'
 
+const fs = require('fs')
 const path = require('path')
 
 const {
@@ -30,6 +31,8 @@ const {
   SMTP_SENDGRID_AUTH_USER,
   SMTP_SENDGRID_AUTH_PASS,
 } = process.env
+
+const credentialsPath = path.resolve(__dirname, './service-account-key.json')
   
 if (MONGODB_URI === '') {
   throw new Error('Environment variable `MONGODB_URI` must be provided')
@@ -37,6 +40,18 @@ if (MONGODB_URI === '') {
   
 if (JWT_SECRET === '') {
   throw new Error('Environment variable `JWT_SECRET` must be provided')
+}
+
+if (GOOGLE_CLOUD_SERVICE_ACCOUNT_CREDENTIALS !== '') {
+  try {
+    const gcloudServiceAccountFile = require(credentialsPath)
+
+    if (GOOGLE_CLOUD_SERVICE_ACCOUNT_CREDENTIALS !== JSON.stringify(gcloudServiceAccountFile)) {
+      fs.writeFileSync(credentialsPath, GOOGLE_CLOUD_SERVICE_ACCOUNT_CREDENTIALS)
+    }
+  } catch (error) {
+    fs.writeFileSync(credentialsPath, GOOGLE_CLOUD_SERVICE_ACCOUNT_CREDENTIALS)
+  }
 }
 
 module.exports = {
@@ -72,7 +87,7 @@ module.exports = {
       }
     },
     cloud: {
-      serviceAccount: path.resolve(__dirname, GOOGLE_CLOUD_SERVICE_ACCOUNT_CREDENTIALS)
+      serviceAccount: credentialsPath
     }
   },
   paymaya: {
