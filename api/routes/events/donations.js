@@ -39,6 +39,19 @@ const eventDonationRedirectUriValidator = Joi.object({
   stripUnknown: true
 })
 
+const listValidator = Joi.object({
+  offset: Joi.number().min(0).default(0),
+  limit: Joi.number().min(1).max(500).default(25),
+  expand: Joi.boolean().default(false),
+  'filters.status': Joi.string().valid('success', 'failed'),
+  'filters.userId': Joi.objectId(),
+  'filters.eventId': Joi.objectId(),
+  'sort.field': Joi.string().valid('updatedAt', 'createdAt'),
+  'sort.order': Joi.string().valid('asc', 'desc')
+}).options({ 
+  stripUnknown: true
+})
+
 const deleteEventDonationsValidator = Joi.object({
   reason: Joi.string().trim().min(1).max(100).required(),
   type: Joi.string().valid('void', 'refund').required()
@@ -125,6 +138,65 @@ async function redirectEventDonation(req, res, next) {
   }
 }
 
+function validateListBody(req, res, next) {
+  const { value: validatedQuery, error } = listValidator.validate(req.query)
+
+  if (error !== undefined) {      
+    return res.status(400).json({
+      code: 'BadRequest',
+      status: 400,
+      message: error.message
+    })
+  }
+
+  req.query = validatedQuery
+
+  next()
+}
+
+async function list(req, res, next) {
+  const {
+    offset,
+    limit,
+    expand,
+    'filters.status': filterStatus,
+    'filters.userId': filterUserId,
+    'filters.eventId': filterEventId,
+    'sort.field': sortField,
+    'sort.order': sortOrder
+  } = req.query
+
+  let sort
+
+  if (sortField !== undefined && sortOrder !== undefined) {
+    sort = {
+      field: sortField,
+      order: sortOrder
+    }
+  }
+
+  try {
+    const { results, total } = await EventDonationController.list({
+      offset,
+      limit,
+      expand,
+      filters: {
+        status: filterStatus,
+        userId: filterUserId,
+        eventId: filterEventId
+      },
+      sort
+    })
+
+    return res.json({
+      results,
+      total
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 function validateDeleteEventDonationBody(req, res, next) {
   const { value: validatedBody, error } = deleteEventDonationsValidator.validate(req.body)
 
@@ -165,6 +237,7 @@ async function deleteEventDonation(req, res, next) {
 const router = express.Router()
 
 router.post('/', validateCreateEventDonationBody, create)
+router.get('/', validateListBody, list)
 router.get('/:id/redirectUri', validateReferenceNumberParam, validateEventDonationRedirectUriQuery, redirectEventDonation)
 router.delete('/:id', validateReferenceNumberParam, validateDeleteEventDonationBody, deleteEventDonation)
 

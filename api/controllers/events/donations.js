@@ -1,5 +1,7 @@
 'use strict'
 
+const { Types } = require('mongoose')
+
 const EventDonationModel = require('../../models/events/donations')
 const UserModel = require('../../models/users')
 const EventModel = require('../../models/events')
@@ -22,6 +24,11 @@ const PAYMAYA_PAYMENT_DELETE_MAP = {
 const PAYMAYA_PAYMENT_DELETE_STATUS_MAP = {
   void: 'voided',
   refund: 'refunded'
+}
+
+const SORT_ORDER_MAPPING = {
+  asc : 1,
+  desc: -1
 }
 
 class EventDonationController {
@@ -77,6 +84,61 @@ class EventDonationController {
       }
 
       throw error
+    }
+  }
+
+  static async list(options = {}) {
+    const {
+      limit,
+      offset,
+      expand,
+      sort,
+      filters: {
+        status,
+        userId,
+        eventId
+      }
+    } = options
+
+    const matchQuery = {}
+
+    const queryOptions = { 
+      limit,
+      skip: offset
+    }
+
+    if (status !== undefined) {
+      matchQuery.status = status
+    }
+
+    if (userId !== undefined) {
+      matchQuery.user = new Types.ObjectId(userId)
+    }
+
+    if (eventId !== undefined) {
+      matchQuery.event = new Types.ObjectId(eventId)
+    }
+
+    if (expand === true) {
+      queryOptions.populate = ['user', 'event']
+    }
+
+    if (sort !== undefined) {
+      const { field, order } = sort
+
+      queryOptions.sort = {
+        [field]: SORT_ORDER_MAPPING[order]
+      }
+    }
+
+    const [donations, total] = await Promise.all([
+      EventDonationModel.find(matchQuery, undefined, queryOptions),
+      EventDonationModel.countDocuments(matchQuery)
+    ])
+
+    return {
+      results: donations,
+      total
     }
   }
 

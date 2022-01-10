@@ -57,7 +57,8 @@ const schema = new mongoose.Schema({
   },
   toJSON: {
     getters: true
-  }
+  },
+  timestamps: true
 })
 
 module.exports = mongoose.model('EventDonation', schema)
