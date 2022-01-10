@@ -16,8 +16,9 @@ import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
 import EditHomepage from './pages/EditHomepage'
-import ForgotPassword from './pages/ForgotPassword.vue'
-import ResetPassword from './pages/ResetPassword.vue'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
+import EventCalendar from './pages/EventCalendar'
 
 import EditSDG1 from './pages/AdminEditSDG1.vue'
 import EditSDG4 from './pages/AdminEditSDG4.vue'
@@ -88,6 +89,13 @@ const routes = [
   {
     path: '/dashboard',
     component: Dashboard,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/event-calendar',
+    component: EventCalendar,
     meta: {
       requiresAuth: true
     }
