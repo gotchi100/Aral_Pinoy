@@ -147,203 +147,133 @@
        <b-col cols="12">
          <b-card style="border-radius: 20px;">
           <b-container fluid>
-              <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">Latest Donations Collected</h2>
-              <b-col>
-                <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1200px; border-radius: 20px; margin-top:40px;">
-                <b-container fluid>
-                  <!-- User Interface controls -->
-                  <h3 style="font-family:'Bebas Neue', cursive;">
-                      In-Kind Donations
-                  </h3>
-                  <b-row>
-                    <b-container class="bv-example-row">
+              <h2 style="font-family:'Bebas Neue', cursive; text-align: left;">
+                Latest Donations Collected
+              </h2>
+
+              <b-row class="mb-4">
+                <b-col cols="12">
+                  <b-card style="border-radius: 20px;">
+                    <b-container fluid>
+                      <b-row class="mb-3">
+                        <b-col cols="12">
+                          <h3 style="font-family:'Bebas Neue', cursive;">
+                            In-Kind Donations
+                          </h3>
+                        </b-col>
+                      </b-row>
+
+                      <b-row class="mb-3">
+                        <b-col cols="12">
+                          <b-table
+                            :items="groupedIkd.results"
+                            :fields="groupedIkd.fields"
+                            :current-page="1"
+                            :per-page="5"
+                            stacked="md"
+                            show-empty
+                            small
+                            hover
+                          ></b-table>
+                        </b-col>
+                      </b-row>
+
                       <b-row>
-                        <b-col>
-                          <b-col sm="5" md="6" class="my-1">
-                            <b-form-group style="font-size: 15px; font-family:'Bebas Neue', cursive;"
-                              label="Per page"
-                              label-for="per-page-select"
-                              label-cols-sm="6"
-                              label-cols-md="4"
-                              label-cols-lg="3"
-                              label-align-sm="right"
-                              label-size="sm"
-                              class="mb-0"
-                            >
-                              <b-form-select
-                                id="per-page-select"
-                                v-model="perPage"
-                                :options="pageOptions"
-                                size="sm"
-                              ></b-form-select>
-                            </b-form-group>
-                          </b-col>
-                        </b-col>
-                        <b-col>
-                        </b-col>
-                        <b-col>
-                          <br>
-                          <b-input-group size="sm">
-                            <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
-                            <b-form-input
-                              id="filter-input"
-                              v-model="filter"
-                              type="search"
-                              placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
-                            ></b-form-input>
-                          </b-input-group>
-                          <br>
+                        <b-col cols="12">
+                          <b-button
+                            to="/inkind-donations"
+                            pill
+                            variant="danger"
+                          >
+                            View More In-Kind Donations
+                          </b-button>
                         </b-col>
                       </b-row>
                     </b-container>
-                  </b-row>
+                  </b-card>
+                </b-col>
+              </b-row>
 
-                  <!-- Main table element -->
-                  <b-table
-                    :items="items"
-                    :fields="fields"
-                    :current-page="currentPage"
-                    :per-page="perPage"
-                    :filter="filter"
-                    :filter-included-fields="filterOn"
-                    :sort-by.sync="sortBy"
-                    :sort-desc.sync="sortDesc"
-                    :sort-direction="sortDirection"
-                    stacked="md"
-                    show-empty
-                    small
-                    @filtered="onFiltered"
-                    style="background:white"
-                  >
-                    <template #cell(event)="row">
-                      <b-link :to="`/events/${row.index}`">{{ row.value }}</b-link>
-                    </template>
-                  </b-table>
-                <b-row>
-                  <b-col></b-col>
-                  <b-col>
-                      <b-col class="my-1">
-                        <b-pagination
-                          v-model="currentPage"
-                          :total-rows="totalRows"
-                          :per-page="perPage"
-                          align="fill"
-                          size="sm"
-                          class="my-0"
-                        ></b-pagination>
-                      </b-col>
-                  </b-col>
-                  <b-col></b-col>
-                </b-row>
-                <b-row>
-                  <b-col cols="9"></b-col>
-                    <b-col>
-                      <b-button to="/inkind-donations" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 250px;">
-                        View More In-Kind Donations
-                      </b-button>
-                  </b-col>
-                </b-row>
-                </b-container>
-              </b-card>
-              </b-col>
-              <b-col>
-                <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1200px; border-radius: 20px; margin-top:40px;">
-                <b-container fluid>
-                  <!-- User Interface controls -->
-                  <h3 style="font-family:'Bebas Neue', cursive;">
-                      Monetary Donations
-                  </h3>
-                  <b-row>
-                    <b-container class="bv-example-row">
+              <b-row class="mb-4">
+                <b-col cols="12">
+                  <b-card style="border-radius: 20px;">
+                    <b-container fluid>
+                      <b-row class="mb-3">
+                        <b-col cols="12">
+                          <h3 style="font-family:'Bebas Neue', cursive;">
+                            Monetary Donations
+                          </h3>
+                        </b-col>
+                      </b-row>
+
+                      <b-row class="mb-3">
+                        <b-col cols="12">
+                          <b-table
+                            :items="eventDonations.results"
+                            :fields="eventDonations.fields"
+                            :current-page="1"
+                            :per-page="5"
+                            stacked="md"
+                            show-empty
+                            small
+                            hover
+                          >
+                            <template #cell(volunteerName)="{ item }">
+                              <b-link
+                                v-if="item.user !== undefined"
+                                :to="`/volunteers/${item.user._id}`"
+                              >
+                                {{ item.user.firstName }} {{ item.user.lastName }}
+                              </b-link>
+
+                              <span v-else>
+                                Anonymous
+                              </span>
+                            </template>
+
+                            <template #cell(createdAt)="{ value }">
+                              <span v-if="value !== undefined && value !== ''">
+                                {{
+                                  new Date(value).toLocaleString('en-us', {
+                                    dateStyle: 'short',
+                                    timeStyle: 'short'
+                                  })
+                                }}
+                              </span>
+                            </template>
+
+                            <template #cell(contact)="{ item }">
+                              <span v-if="getValueFromPath(item, 'metadata.contactDetails.email') !== undefined">
+                                <a :href="`mailto:${getValueFromPath(item, 'metadata.contactDetails.email')}`">
+                                  {{ getValueFromPath(item, 'metadata.contactDetails.email') }}
+                                </a>
+                              </span>
+                            </template>
+
+                            <template #cell(event)="{ item }">
+                              <b-link :to="`/events/${item.event._id}`">
+                                {{ item.event.name }}
+                              </b-link>
+                            </template>
+                          </b-table>
+                        </b-col>
+                      </b-row>
+
                       <b-row>
-                        <b-col>
-                          <b-col sm="5" md="6" class="my-1">
-                            <b-form-group style="font-size: 15px; font-family:'Bebas Neue', cursive;"
-                              label="Per page"
-                              label-for="per-page-select"
-                              label-cols-sm="6"
-                              label-cols-md="4"
-                              label-cols-lg="3"
-                              label-align-sm="right"
-                              label-size="sm"
-                              class="mb-0"
-                            >
-                              <b-form-select
-                                id="per-page-select"
-                                v-model="perPages"
-                                :options="pageOptionss"
-                                size="sm"
-                              ></b-form-select>
-                            </b-form-group>
-                          </b-col>
-                        </b-col>
-                        <b-col>
-                        </b-col>
-                        <b-col>
-                          <br>
-                          <b-input-group size="sm">
-                            <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
-                            <b-form-input
-                              id="filter-input"
-                              v-model="filters"
-                              type="search"
-                              placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
-                            ></b-form-input>
-                          </b-input-group>
-                          <br>
+                        <b-col cols="12">
+                          <b-button
+                            to="/monetary-donations"
+                            pill
+                            variant="danger"
+                          >
+                            View More Monetary Donations
+                          </b-button>
                         </b-col>
                       </b-row>
                     </b-container>
-                  </b-row>
-
-                  <!-- Main table element -->
-                  <b-table
-                    :items="choices"
-                    :fields="fielders"
-                    :current-page="currentPages"
-                    :per-page="perPages"
-                    :filter="filters"
-                    :filter-included-fielders="filterOns"
-                    :sort-by.sync="sortBy"
-                    :sort-desc.sync="sortDesc"
-                    :sort-direction="sortDirection"
-                    stacked="md"
-                    show-empty
-                    small
-                    @filtered="onFiltered"
-                    style="background:white"
-                  >
-                    <template #cell(event)="row">
-                      <b-link :to="`/events/${row.index}`">{{ row.value }}</b-link>
-                    </template>
-                  </b-table>
-                <b-row>
-                  <b-col></b-col>
-                  <b-col>
-                      <b-col class="my-1">
-                        <b-pagination
-                          v-model="currentPages"
-                          :total-rows="totalRows"
-                          :per-page="perPages"
-                          align="fill"
-                          size="sm"
-                          class="my-0"
-                        ></b-pagination>
-                      </b-col>
-                  </b-col>
-                  <b-col></b-col>
-                </b-row>
-                <b-row>
-                  <b-col cols="9"></b-col>
-                    <b-col>
-                      <b-button to="/monetary-list" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 250px;">
-                        View More Monetary Donations
-                      </b-button>
-                  </b-col>
-                </b-row>
-                </b-container>
-              </b-card>
-              </b-col>
+                  </b-card>
+                </b-col>
+              </b-row>
             </b-container>
         </b-card>
        </b-col>
@@ -354,14 +284,20 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { get } from 'lodash'
 import {
   isSameDay,
   intervalToDuration,
   formatDuration
 } from 'date-fns'
+import { apiClient } from '../axios'
+import InkindDonationRepository from '../repositories/inkind-donations'
+import EventDonationRepository from '../repositories/events/donations'
 
 const logo = require('../assets/aralpinoywords.png')
-const { apiClient } = require('../axios')
+
+const inkindDonationRepository = new InkindDonationRepository(apiClient)
+const eventDonationRepository = new EventDonationRepository(apiClient)
 
 export default {
   name: 'Register',
@@ -442,6 +378,23 @@ export default {
       isLoadingEvents: false,
       events: {
         results: []
+      },
+      groupedIkd: {
+        results: [],
+        fields: [
+          { key: '_id', label: 'Item Group' },
+          { key: 'quantity', label: 'Quantity' }
+        ]
+      },
+      eventDonations: {
+        results: [],
+        fields: [
+          { key: 'createdAt', label: 'Transaction Date' },
+          { key: 'amount', label: 'Amount' },
+          { key: 'volunteerName', label: 'Donor' },
+          { key: 'contact', label: 'Contact' },
+          { key: 'event', label: 'Event' }
+        ]
       }
     }
   },
@@ -465,7 +418,12 @@ export default {
     }
   },
   created () {
+    inkindDonationRepository.setAuthorizationHeader(`Bearer ${this.token}`)
+    eventDonationRepository.setAuthorizationHeader(`Bearer ${this.token}`)
+
     this.getEvents()
+    this.getGroupedIkd()
+    this.getEventDonations()
   },
   mounted () {
     // Set the initial number of items
@@ -500,6 +458,33 @@ export default {
       } finally {
         this.isLoadingEvents = false
       }
+    },
+    async getGroupedIkd () {
+      const { results } = await inkindDonationRepository.list({}, {
+        limit: 5,
+        offset: 0,
+        grouped: true
+      })
+
+      this.groupedIkd.results = results
+    },
+    async getEventDonations () {
+      const { results } = await eventDonationRepository.list({
+        status: 'success'
+      }, {
+        limit: 5,
+        offset: 0,
+        expand: true,
+        sort: {
+          field: 'createdAt',
+          order: 'desc'
+        }
+      })
+
+      this.eventDonations.results = results
+    },
+    getValueFromPath (object, path, defaultValue) {
+      return get(object, path, defaultValue)
     },
     isSameDay (firstDate, secondDate) {
       return isSameDay(new Date(firstDate), new Date(secondDate))
