@@ -9,7 +9,7 @@
         <b-navbar-nav right>
           <b-nav-item-dropdown style="margin-left: 18px; color: black;" class="events" text="Events">
               <b-dropdown-item to="/events">Event List</b-dropdown-item>
-              <b-dropdown-item href="#">Event Calendar</b-dropdown-item>
+              <b-dropdown-item to="/event-calendar">Event Calendar</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
       </b-navbar-nav>
