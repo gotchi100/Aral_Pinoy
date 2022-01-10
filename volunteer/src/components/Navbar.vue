@@ -13,7 +13,7 @@
     </b-navbar-nav>
 
      <b-navbar-nav v-if="$store.getters.isLoggedIn">
-      <b-nav-item style="margin-left: 18px;" class="calendar" to="/calendar">Events Calendar</b-nav-item>
+      <b-nav-item style="margin-left: 18px;" class="calendar" to="/event-calendar">Events Calendar</b-nav-item>
     </b-navbar-nav>
 
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
