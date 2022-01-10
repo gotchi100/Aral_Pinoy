@@ -4,7 +4,7 @@ import HomePage from './pages/Home'
 import LoginPage from './pages/Login'
 import RegisterPage from './pages/Register'
 import ProfilePage from './pages/Profile'
-import CalendarPage from './pages/EventCalendar'
+import EventCalendar from './pages/EventCalendar'
 import ForgotPassword from './pages/ForgotPassword.vue'
 import ResetPassword from './pages/ResetPassword.vue'
 import GoogleSignInCallbackPage from './pages/GoogleSignIn'
@@ -21,7 +21,7 @@ const routes = [
   { path: '/login', component: LoginPage },
   { path: '/google-sign-in', component: GoogleSignInCallbackPage },
   { path: '/register', component: RegisterPage },
-  { path: '/calendar', component: CalendarPage },
+  { path: '/event-calendar', component: EventCalendar },
   { path: '/forgot-password', component: ForgotPassword },
   { path: '/reset-password', component: ResetPassword },
   { path: '/privacy-policy', component: PrivacyPolicyPage },
