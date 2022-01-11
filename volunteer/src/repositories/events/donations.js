@@ -4,7 +4,7 @@ const axios = require('axios')
 
 /** @typedef {import('axios').Axios} Axios */
 
-class EventVolunteerRepository {
+class EventDonationRepository {
   /**
    *
    * @param {Axios} apiClient
@@ -25,7 +25,11 @@ class EventVolunteerRepository {
     const {
       limit,
       offset,
-      expand
+      expand,
+      sort: {
+        field: sortField,
+        order: sortOrder
+      }
     } = options
 
     const queryString = new URLSearchParams()
@@ -42,10 +46,8 @@ class EventVolunteerRepository {
       queryString.set('expand', expand)
     }
 
-    if (filters.eventStatuses !== undefined) {
-      for (const status of filters.eventStatuses) {
-        queryString.append('filters.eventStatuses[]', status)
-      }
+    if (filters.status !== undefined) {
+      queryString.set('filters.status', filters.status)
     }
 
     if (filters.userId !== undefined) {
@@ -56,7 +58,12 @@ class EventVolunteerRepository {
       queryString.set('filters.eventId', filters.eventId)
     }
 
-    const { data } = await this.apiClient.get(`/event-volunteers?${queryString.toString()}`)
+    if (sortField !== undefined && sortOrder !== undefined) {
+      queryString.set('sort.field', sortField)
+      queryString.set('sort.order', sortOrder)
+    }
+
+    const { data } = await this.apiClient.get(`/event-donations?${queryString.toString()}`)
 
     return {
       results: data.results,
@@ -65,4 +72,4 @@ class EventVolunteerRepository {
   }
 }
 
-module.exports = EventVolunteerRepository
+module.exports = EventDonationRepository
