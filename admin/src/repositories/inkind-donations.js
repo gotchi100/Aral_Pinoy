@@ -1,5 +1,7 @@
 'use strict'
 
+const axios = require('axios')
+
 /** @typedef {import('axios').Axios} Axios */
 
 class InkindDonationRepository {
@@ -8,7 +10,11 @@ class InkindDonationRepository {
    * @param {Axios} apiClient
    */
   constructor (apiClient) {
-    this.apiClient = apiClient
+    const { baseURL } = apiClient.defaults
+
+    this.apiClient = axios.create({
+      baseURL
+    })
   }
 
   setAuthorizationHeader (value) {
