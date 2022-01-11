@@ -94,7 +94,8 @@ class EventVolunteerController {
       expand,
       filters: {
         userId,
-        eventId
+        eventId,
+        eventStatuses
       }
     } = options
 
@@ -113,17 +114,64 @@ class EventVolunteerController {
       matchQuery.event = new Types.ObjectId(eventId)
     }
 
+    let shouldRemoveNullEvents = false
+
     if (expand === true) {
-      queryOptions.populate = ['user', 'event']
+      const userPopulate = {
+        path: 'user'
+      }
+
+      const eventPopulate = {
+        path: 'event',
+      }
+
+      if (eventStatuses !== undefined) {
+        eventPopulate.match = {
+          $or: [
+            {
+              status: eventStatuses
+            },
+            {
+              status: {
+                $exists: false
+              }
+            }
+          ]
+        }
+
+        shouldRemoveNullEvents = true
+      }
+
+      queryOptions.populate = [userPopulate, eventPopulate]
     }
 
-    const [eventVolunteers, total] = await Promise.all([
+    const [eventVolunteers, eventVolunteersTotal] = await Promise.all([
       EventVolunteerModel.find(matchQuery, undefined, queryOptions),
       EventVolunteerModel.countDocuments(matchQuery)
     ])
 
+    if (!shouldRemoveNullEvents) {
+      return {
+        results: eventVolunteers,
+        total: eventVolunteersTotal
+      }
+    }
+
+    const results = []
+    let total = eventVolunteersTotal
+
+    for (const eventVolunteer of eventVolunteers) {
+      if (eventVolunteer.event === null) {
+        total -= 1
+
+        continue
+      }
+
+      results.push(eventVolunteer)
+    }
+
     return {
-      results: eventVolunteers,
+      results,
       total
     }
   }
