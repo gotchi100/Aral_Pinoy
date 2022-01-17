@@ -84,10 +84,6 @@
                         })
                       }}
                     </template>
-
-                    <template #cell(status)="row">
-                      {{ row.value || '-' }}
-                    </template>
                   </b-table>
                 </b-col>
               </b-row>

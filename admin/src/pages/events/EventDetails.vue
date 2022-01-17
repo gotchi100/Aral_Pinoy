@@ -27,7 +27,7 @@
                         </h1>
                       </b-col>
 
-                      <b-col v-if="event.status === undefined" class="text-end" cols="12" md="6">
+                      <b-col v-if="event.status === 'UPCOMING'" class="text-end" cols="12" md="6">
                         <b-dropdown
                           text="Update Status"
                           variant="primary"
@@ -80,7 +80,7 @@
 
                             <b-col cols="12" md="6">
                               <p class="h4 mb-0">
-                                Status: <i>{{ event.status !== undefined ? event.status : '-' }}</i>
+                                Status: <i>{{ event.status }}</i>
                               </p>
                             </b-col>
                           </b-row>

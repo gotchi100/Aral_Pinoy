@@ -238,6 +238,7 @@ class EventsController {
       description,
       date,
       location,
+      status: 'UPCOMING',
       goals: {
         numVolunteers: {
           current: 0,
@@ -325,13 +326,7 @@ class EventsController {
     }
 
     if (filterStatus !== undefined) {
-      if (filterStatus === 'UPCOMING') {
-        query.status = {
-          $exists: false
-        }
-      } else {
-        query.status = filterStatus
-      }
+      query.status = filterStatus
     }
 
     if (sort !== undefined) {

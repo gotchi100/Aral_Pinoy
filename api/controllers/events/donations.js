@@ -16,7 +16,7 @@ const PAYMAYA_PAYMENT_STATUS_MAP = {
   PAYMENT_CANCELLED: 'canceled'
 }
 
-const PAYMAYA_PAYMENT_DELETE_MAP = {
+const PAYMAYA_PAYMENT_REVERSE_MAP = {
   void: 'canVoid',
   refund: 'canRefund'
 }
@@ -142,7 +142,7 @@ class EventDonationController {
     }
   }
 
-  static async updateStatus(id) {
+  static async handleRedirection(id) {
     const eventDonation = await EventDonationModel.findById(id, [
       '__v',
       'amount',
@@ -156,8 +156,8 @@ class EventDonationController {
       throw new NotFoundError(`Event donation does not exist: ${id}`)
     }
 
-    if (eventDonation.status !== undefined) {
-      throw new ConflictError(`Unable to update event donation: Status is [${eventDonation.status}]`)
+    if (eventDonation.status === 'success') {
+      return
     }
 
     const paymayaPayment = await EventDonationController.getPaymayaPaymentByReferenceNumber(id)
@@ -203,8 +203,6 @@ class EventDonationController {
       $set: {
         paymaya: {
           paymentId: paymayaPayment.id,
-          canVoid: paymayaPayment.canVoid,
-          canRefund: paymayaPayment.canRefund
         },
         status
       }
@@ -215,11 +213,11 @@ class EventDonationController {
     }
   }
 
-  static async delete(id, deleteDetails) {
+  static async reverseDonation(id, details) {
     const {
       reason,
       type
-    } = deleteDetails
+    } = details
 
     const eventDonation = await EventDonationModel.findById(id, [
       '__v', 
@@ -241,12 +239,10 @@ class EventDonationController {
       throw new ConflictError(`Unable to update event donation: Status is [${eventDonation.status}]`)
     }
 
-    const deleteType = PAYMAYA_PAYMENT_DELETE_MAP[type]
-    const canDelete = eventDonation.paymaya[deleteType]
+    const paymayaPayment = await EventDonationController.getPaymayaPaymentByReferenceNumber(id)
 
-    if (canDelete === undefined) {
-      throw new Error(`Unable to determine payment delete type: ${type}`)
-    }
+    const reverseType = PAYMAYA_PAYMENT_REVERSE_MAP[type]
+    const canDelete = paymayaPayment[reverseType]
     
     if (!canDelete) {
       throw new ConflictError(`Unable to [${type}] paymaya payment: Paymaya does not allow [${type}]`)
@@ -278,7 +274,7 @@ class EventDonationController {
       })
     }
 
-    const deleteStatus = PAYMAYA_PAYMENT_DELETE_STATUS_MAP[type]
+    const reverseStatus = PAYMAYA_PAYMENT_DELETE_STATUS_MAP[type]
 
     const updateResults = await EventDonationModel.updateOne({
       _id: id,
@@ -290,10 +286,8 @@ class EventDonationController {
       $set: {
         paymaya: {
           reason,
-          canVoid: false,
-          canRefund: false
         },
-        status: deleteStatus
+        status: reverseStatus
       }
     })
 

@@ -104,7 +104,10 @@ const schema = new mongoose.Schema({
     text: true
   },
   description: String,
-  status: String,
+  status: {
+    type: String,
+    default: 'UPCOMING'
+  },
   date: {
     start: Date,
     end: Date
