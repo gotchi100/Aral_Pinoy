@@ -18,9 +18,9 @@
         <b-nav-item to="/volunteers" style="margin-left: 18px;" class="volunteers">Volunteers</b-nav-item>
       </b-navbar-nav>
 
-      <b-navbar-nav>
+      <!-- <b-navbar-nav>
         <b-nav-item to="/officers" style="margin-left: 18px;" class="officers">Officers</b-nav-item>
-      </b-navbar-nav>
+      </b-navbar-nav> -->
 
       <b-navbar-nav class="ml-auto">
         <b-navbar-nav right>

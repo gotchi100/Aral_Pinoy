@@ -140,7 +140,7 @@
                             primary-key="_id"
                           >
                             <template #cell(bestBeforeDate)="row">
-                              <span v-if="row.item.category !== undefined && row.item.category.customFields">
+                              <span v-if="row.item.category !== undefined && hasIkdCustomCategory(row.item.category.customFields, 'bestBeforeDate')">
                                 {{
                                   new Date(row.item.category.customFields.bestBeforeDate).toLocaleString('en-us', {
                                     dateStyle: 'medium'
@@ -150,7 +150,7 @@
                             </template>
 
                             <template #cell(expirationDate)="row">
-                              <span v-if="row.item.category !== undefined && row.item.category.customFields">
+                              <span v-if="row.item.category !== undefined && hasIkdCustomCategory(row.item.category.customFields, 'expirationDate')">
                                 {{
                                   new Date(row.item.category.customFields.expirationDate).toLocaleString('en-us', {
                                     dateStyle: 'medium'
@@ -1063,6 +1063,13 @@ export default {
       }
 
       return parsedNumber
+    },
+    hasIkdCustomCategory (value, field) {
+      if (value === undefined) {
+        return false
+      }
+
+      return value[field] !== undefined
     }
   }
 }

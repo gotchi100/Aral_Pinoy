@@ -63,7 +63,8 @@ export default {
       const userId = this.user._id
 
       const { results, total } = await eventVolunteerRepository.list({
-        userId
+        userId,
+        eventStatuses: ['UPCOMING', 'ENDED']
       }, {
         expand: true
       })
@@ -74,10 +75,6 @@ export default {
 
       for (const item of results) {
         const { event } = item
-
-        if (event.status === 'CANCELED') {
-          continue
-        }
 
         this.calendarOptions.events.push({
           id: event._id,

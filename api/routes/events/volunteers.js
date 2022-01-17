@@ -22,7 +22,7 @@ const listEventVolunteersValidator = Joi.object({
   offset: Joi.number().min(0).default(0),
   limit: Joi.number().min(1).default(25),
   expand: Joi.boolean().default(false),
-  'filters.eventStatuses': Joi.array().items(Joi.string().valid(EVENT_STATUSES.UPCOMING, EVENT_STATUSES.ENDED)),
+  'filters.eventStatuses': Joi.array().items(Joi.string().valid(EVENT_STATUSES.UPCOMING, EVENT_STATUSES.ENDED, EVENT_STATUSES.CANCELED)),
   'filters.userId': Joi.objectId(),
   'filters.eventId': Joi.objectId(),
 }).options({ 
@@ -94,7 +94,7 @@ async function list(req, res, next) {
     }
 
     if (filterEventStatuses !== undefined) {
-      filters.eventStatuses = filterEventStatuses.filter((status) => status !== 'UPCOMING')
+      filters.eventStatuses = filterEventStatuses
     }
 
     const { results, total } = await EventVolunteerController.list({

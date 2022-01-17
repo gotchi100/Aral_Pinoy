@@ -164,7 +164,7 @@ export default {
     async donate () {
       this.isDonating = true
 
-      const requestReferenceNumber = uid(36)
+      const requestReferenceNumber = `APV-${uid(32).toUpperCase()}`
 
       try {
         await this.createEventDonation(requestReferenceNumber)

@@ -51,9 +51,7 @@ class EventEvaluationController {
     }
 
     if (event.status !== STATUSES.ENDED) {
-      const status = event.status || 'UPCOMING'
-
-      throw new NotFoundError(`Unable to add evaluation: Event is [${status}]`)
+      throw new NotFoundError(`Unable to add evaluation: Event is [${event.status}]`)
     }
 
     const user = await UserModel.findOne({

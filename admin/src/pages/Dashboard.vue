@@ -231,6 +231,17 @@
                               </span>
                             </template>
 
+                            <template #cell(amount)="{ value }">
+                              <span>
+                                {{
+                                  new Intl.NumberFormat('en-us', {
+                                    style: 'currency',
+                                    currency: 'PHP'
+                                  }).format(value)
+                                }}
+                              </span>
+                            </template>
+
                             <template #cell(createdAt)="{ value }">
                               <span v-if="value !== undefined && value !== ''">
                                 {{
@@ -389,7 +400,7 @@ export default {
       eventDonations: {
         results: [],
         fields: [
-          { key: 'createdAt', label: 'Transaction Date' },
+          { key: 'createdAt', label: 'Transaction Date & Time' },
           { key: 'amount', label: 'Amount' },
           { key: 'volunteerName', label: 'Donor' },
           { key: 'contact', label: 'Contact' },

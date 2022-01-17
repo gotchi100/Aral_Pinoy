@@ -65,7 +65,7 @@
 
                             <b-col cols="12" md="6">
                               <p class="h4 mb-0">
-                                Status: <i>{{ event.status !== undefined ? event.status : '-' }}</i>
+                                Status: <i>{{ event.status }}</i>
                               </p>
                             </b-col>
                           </b-row>
@@ -156,7 +156,7 @@
                               <b-card>
                                 <b-container fluid>
                                   <b-row class="text-center" align-h="center">
-                                    <template v-if="event.status === undefined">
+                                    <template v-if="event.status === 'UPCOMING'">
                                       <b-col
                                         v-if="event.goals.numVolunteers.target !== 0 && !hasAlreadyVolunteered"
                                         class="m-1"

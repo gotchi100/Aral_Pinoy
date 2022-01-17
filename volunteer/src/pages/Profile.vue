@@ -128,24 +128,22 @@
                     </template>
 
                     <template #cell(status)="{ item }">
-                      <span v-if="item.event.status !== undefined">
+                      <span>
                         {{ item.event.status }}
-                      </span>
-                      <span v-else>
-                        UPCOMING
                       </span>
                     </template>
 
                     <template #cell(action)="{ item }">
                       <b-link
-                        v-if="item.event.status === 'ENDED'"
+                        v-if="item.event.status === 'ENDED' && !item.hasEventEvaluation"
                         :to="`/events/${item.event._id}/evaluation`"
                       >
+
                         Evaluation
                       </b-link>
 
                       <b-link
-                        v-else
+                        v-else-if="item.event.status !== 'ENDED' && item.event.status !== 'CANCELED'"
                         :to="`/events/${item.event._id}`"
                       >
                         Unjoin
@@ -228,6 +226,17 @@
                       </span>
                     </template>
 
+                    <template #cell(amount)="{ value }">
+                      <span>
+                        {{
+                          new Intl.NumberFormat('en-us', {
+                            style: 'currency',
+                            currency: 'PHP'
+                          }).format(value)
+                        }}
+                      </span>
+                    </template>
+
                     <template #cell(event)="{ item }">
                       <b-link :to="`/events/${item.event._id}`">
                         {{ item.event.name }}
@@ -261,7 +270,6 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { get } from 'lodash'
 
 import { apiClient } from '../axios'
 import Footer from '../components/Footer.vue'
@@ -292,74 +300,7 @@ export default {
           home: ''
         }
       },
-      password: '',
-      cpassword: '',
-      items: [
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
-        { date: '09/27/21', event: 'Zatangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Upcoming', action: 'Unjoin' },
-        { date: '09/27/21', event: 'Batangas Coastal Cleanup', venue: 'Batangas', status: 'Completed', action: 'Evaluation' }
-      ],
-      choices: [
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '3,500.50', payee: 'BPI Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '4,500.00', payee: 'BPI Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '13,500.00', payee: 'PayMaya Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '3,500.50', payee: 'PayMaya Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '3,500.50', payee: 'PayMaya Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '2,500.50', payee: 'BPI Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '1,500.50', payee: 'BPI Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '3,500.50', payee: 'BPI Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '3,500.50', payee: 'PayMaya Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '8,500.50', payee: 'BPI Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '3,500.50', payee: 'BPI Aral Pinoy Org Inc.' },
-        { event: 'Zatangas Coastal Cleanup', date: '09/27/21', amount: '3,500.50', payee: 'BPI Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '4,500.50', payee: 'BPI Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '3,500.50', payee: 'PayMaya Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '3,500.50', payee: 'PayMaya Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '3,500.50', payee: 'BPI Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '3,500.50', payee: 'BPI Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '3,500.50', payee: 'PayMaya Aral Pinoy Org Inc.' }
-      ],
-      fields: [
-        { key: 'event', label: 'Event', sortable: true, class: 'text-center' },
-        { key: 'date', label: 'Date', sortable: true, class: 'text-center' },
-        { key: 'venue', label: 'Venue', sortable: true, class: 'text-center' },
-        { key: 'status', label: 'Status', sortable: true, class: 'text-center' },
-        { key: 'action', label: 'Action', sortable: true, class: 'text-center' }
-      ],
-      fielders: [
-        { key: 'event', label: 'Event', sortable: true, class: 'text-center' },
-        { key: 'date', label: 'Date', sortable: true, class: 'text-center' },
-        { key: 'amount', label: 'Amount', sortable: true, class: 'text-center' },
-        { key: 'payee', label: 'Paid To', sortable: true, class: 'text-center' }
-      ],
-      totalRows: 1,
-      currentPage: 1,
-      currentPages: 1,
-      perPage: 5,
-      perPages: 5,
       pageOptions: [5, 10, 15],
-      sortBy: '',
-      sortDesc: false,
-      sortDirection: 'asc',
-      filter: null,
-      filters: null,
-      filterOn: [],
-      filterOns: [],
       eventVolunteers: {
         results: [],
         total: 0,
@@ -369,7 +310,7 @@ export default {
         },
         fields: [
           { key: 'event', label: 'Event' },
-          { key: 'startDate', label: 'Date' },
+          { key: 'startDate', label: 'Date & Time' },
           { key: 'event.location.name', label: 'Venue' },
           { key: 'status', label: 'Status' },
           { key: 'action', label: 'Action' }
@@ -384,7 +325,7 @@ export default {
         },
         fields: [
           { key: '_id', label: 'Reference Number' },
-          { key: 'createdAt', label: 'Transaction Date' },
+          { key: 'createdAt', label: 'Transaction Date & Time' },
           { key: 'amount', label: 'Amount' },
           { key: 'event', label: 'Event' },
           { key: 'status', label: 'Status' }
@@ -394,22 +335,6 @@ export default {
   },
   computed: {
     ...mapGetters(['user', 'token']),
-    sortOption () {
-      // Create an options list from our fields
-      return this.fields
-        .filter(f => f.sortable)
-        .map(f => {
-          return { text: f.label, value: f.key }
-        })
-    },
-    sortOptions () {
-      // Create an options list from our fields
-      return this.fielders
-        .filter(f => f.sortable)
-        .map(f => {
-          return { text: f.label, value: f.key }
-        })
-    },
     skillNames () {
       const skillNames = []
 
@@ -446,11 +371,6 @@ export default {
     if (user.address !== undefined && user.address.home !== undefined) {
       this.profile.address.home = user.address.home
     }
-  },
-  mounted () {
-    // Set the initial number of items
-    this.totalRows = this.items.length
-    this.totalRows = this.choices.length
   },
   methods: {
     async getEventVolunteers (ctx) {
@@ -493,15 +413,6 @@ export default {
       this.eventDonations.total = total
 
       return results
-    },
-    getValueFromPath (object, path, defaultValue) {
-      return get(object, path, defaultValue)
-    },
-    onFiltered (filteredItems) {
-      // Trigger pagination to update the number of buttons/pages due to filtering
-      this.totalRows = filteredItems.length
-      this.currentPage = 1
-      this.currentPages = 1
     }
   }
 }

@@ -121,7 +121,7 @@ async function redirectEventDonation(req, res, next) {
   const { eventId, status } = req.query
 
   try {
-    await EventDonationController.updateStatus(id)
+    await EventDonationController.handleRedirection(id)
 
     let url = `${config.volunteer.domainName}/#/events/${eventId}`
 
@@ -213,7 +213,7 @@ function validateDeleteEventDonationBody(req, res, next) {
   next()
 }
 
-async function deleteEventDonation(req, res, next) {
+async function reverseEventDonation(req, res, next) {
   const { id } = req.params
   const {
     reason,
@@ -221,7 +221,7 @@ async function deleteEventDonation(req, res, next) {
   } = req.body
 
   try {
-    await EventDonationController.delete(id, {
+    await EventDonationController.reverseDonation(id, {
       reason,
       type
     })
@@ -239,6 +239,6 @@ const router = express.Router()
 router.post('/', validateCreateEventDonationBody, create)
 router.get('/', validateListBody, list)
 router.get('/:id/redirectUri', validateReferenceNumberParam, validateEventDonationRedirectUriQuery, redirectEventDonation)
-router.delete('/:id', validateReferenceNumberParam, validateDeleteEventDonationBody, deleteEventDonation)
+router.delete('/:id', validateReferenceNumberParam, validateDeleteEventDonationBody, reverseEventDonation)
 
 module.exports = router

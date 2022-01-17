@@ -71,7 +71,7 @@ const publicRoutes = [
     methods: ['POST']
   },
   {
-    url: /^\/event-donations\/[a-z0-9]{36}\/redirectUri/,
+    url: /^\/event-donations\/[A-Z0-9-]{36}\/redirectUri/,
     methods: ['GET']
   },
 ]
