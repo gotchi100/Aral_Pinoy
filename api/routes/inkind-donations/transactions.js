@@ -19,6 +19,8 @@ const createTransactionValidator = Joi.object({
 const listTransactionsValidator = Joi.object({
   offset: Joi.number().min(0).default(0),
   limit: Joi.number().min(1).default(25),
+  'sort.field': Joi.string().valid('date'),
+  'sort.order': Joi.string().valid('asc', 'desc')
 }).options({ 
   stripUnknown: true
 })
@@ -70,8 +72,28 @@ function validateListTransaction(req, res, next) {
 }
 
 async function list(req, res, next) {
+  const {
+    offset,
+    limit,
+    'sort.field': sortField,
+    'sort.order': sortOrder
+  } = req.query
+
+  let sort
+
+  if (sortField !== undefined && sortOrder !== undefined) {
+    sort = {
+      field: sortField,
+      order: sortOrder
+    }
+  }
+
   try {
-    const { results, total } = await IkdTransactionController.list(req.query)
+    const { results, total } = await IkdTransactionController.list({
+      offset,
+      limit,
+      sort
+    })
 
     return res.json({
       results,

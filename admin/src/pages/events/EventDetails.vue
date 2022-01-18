@@ -33,10 +33,10 @@
                           variant="primary"
                           no-flip
                         >
-                          <b-dropdown-item @click="cancelEventModal = true">
+                          <b-dropdown-item @click="preUpdateStatus('CANCELED')">
                             <strong style="color: red">CANCEL</strong>
                           </b-dropdown-item>
-                          <b-dropdown-item @click="endEventModal = true">
+                          <b-dropdown-item @click="preUpdateStatus('ENDED')">
                             <strong style="color: blue">END</strong>
                           </b-dropdown-item>
                         </b-dropdown>
@@ -285,7 +285,7 @@
       </b-row>
     </b-container>
 
-    <b-modal v-model="showModal" size="xl">
+    <!-- <b-modal v-model="showModal" size="xl">
       <b-container>
         <b-row>
           <b-col cols="12">
@@ -356,15 +356,35 @@
           </b-col>
         </b-row>
       </b-container>
-    </b-modal>
+    </b-modal> -->
 
-    <b-modal v-model="endEventModal" size="md">
+    <b-modal v-model="updateEventStatus.modal" size="md">
       <b-container>
         <b-row>
           <b-col cols="12">
-            <h1 class="text-center">
-              Are you sure you want to <strong style="color: blue">END</strong> the event?
-            </h1>
+            <h5>
+              Items used in the Event
+            </h5>
+          </b-col>
+
+          <b-col cols="12">
+            <b-table
+              :items="updateEventStatus.itemsUsed"
+              :fields="updateEventStatus.fields"
+              show-empty
+              striped
+              primary-key="item.sku"
+            >
+              <template #cell(quantity)="{ item }">
+                <b-form-input
+                  class="text-center"
+                  type="number"
+                  style="width: 30%; display: inline"
+                  v-model="item['quantity']"
+                  :formatter="(value) => validateItemQuantity(value, item.maxQuantity)"
+                /> / {{ item.maxQuantity }}
+              </template>
+            </b-table>
           </b-col>
         </b-row>
       </b-container>
@@ -374,12 +394,14 @@
           <b-row>
             <b-col class="text-center" cols="12">
               <b-button
-                variant="success"
+                variant="outline-primary"
                 size="sm"
                 class="float-right"
-                @click="updateStatus('ENDED')"
+                @click="updateEventStatus.confirmModal = true"
               >
-                CONFIRM
+                {{
+                  updateEventStatus.status === 'ENDED' ? 'End Event' : 'Cancel Event'
+                }}
               </b-button>
             </b-col>
           </b-row>
@@ -387,12 +409,12 @@
       </template>
     </b-modal>
 
-    <b-modal v-model="cancelEventModal" size="md">
+    <b-modal v-model="updateEventStatus.confirmModal" size="md">
       <b-container>
         <b-row>
           <b-col cols="12">
             <h1 class="text-center">
-              Are you sure you want to <strong style="color: red">CANCEL</strong> the event?
+              Are you sure of the details?
             </h1>
           </b-col>
         </b-row>
@@ -406,7 +428,7 @@
                 variant="success"
                 size="sm"
                 class="float-right"
-                @click="updateStatus('CANCELED')"
+                @click="updateStatus(updateEventStatus.status)"
               >
                 CONFIRM
               </b-button>
@@ -433,19 +455,19 @@ export default {
       isLoadingEvent: false,
       showModal: false,
       currentPage: 1,
-      items: [
-        { name: 'John Anghel', contactNumber: '+639123456789', role: 'Trash Collector' },
-        { name: 'Test Dawkins', contactNumber: '+639123356789', role: 'Trash Bag Distributor' },
-        { name: 'Marco Sullivan', contactNumber: '+639323456789', role: 'Trash Collector' },
-        { name: 'Zayn Bontoc', contactNumber: '+639123856789', role: 'Trash Bag Distributor' },
-        { name: 'Arlyn Jimenez', contactNumber: '+639023456789', role: 'Trash Collector' },
-        { name: 'Fredrick Gomez', contactNumber: '+639127456789', role: 'Trash Collector' }
-      ],
-      fields: [
-        { key: 'name', label: 'Name', sortable: true, class: 'text-center' },
-        { key: 'contactNumber', label: 'Contact Number', sortable: true, class: 'text-center' },
-        { key: 'role', label: 'Role', sortable: true, class: 'text-center' }
-      ],
+      // items: [
+      //   { name: 'John Anghel', contactNumber: '+639123456789', role: 'Trash Collector' },
+      //   { name: 'Test Dawkins', contactNumber: '+639123356789', role: 'Trash Bag Distributor' },
+      //   { name: 'Marco Sullivan', contactNumber: '+639323456789', role: 'Trash Collector' },
+      //   { name: 'Zayn Bontoc', contactNumber: '+639123856789', role: 'Trash Bag Distributor' },
+      //   { name: 'Arlyn Jimenez', contactNumber: '+639023456789', role: 'Trash Collector' },
+      //   { name: 'Fredrick Gomez', contactNumber: '+639127456789', role: 'Trash Collector' }
+      // ],
+      // fields: [
+      //   { key: 'name', label: 'Name', sortable: true, class: 'text-center' },
+      //   { key: 'contactNumber', label: 'Contact Number', sortable: true, class: 'text-center' },
+      //   { key: 'role', label: 'Role', sortable: true, class: 'text-center' }
+      // ],
       eventJobFields: [
         { key: 'name', label: 'Title' },
         { key: 'description', label: 'Description' },
@@ -459,8 +481,16 @@ export default {
         { key: 'item.name', label: 'Item' },
         { key: 'quantity', label: 'Quantity' }
       ],
-      endEventModal: false,
-      cancelEventModal: false
+      updateEventStatus: {
+        modal: false,
+        confirmModal: false,
+        status: '',
+        itemsUsed: [],
+        fields: [
+          { key: 'item.name', label: 'Item' },
+          { key: 'quantity', label: 'Number of Used Items', class: 'text-center' }
+        ]
+      }
     }
   },
   created () {
@@ -599,20 +629,60 @@ export default {
         })
 
         this.event = data
+
+        if (Array.isArray(data.ikds) && data.ikds.length > 0) {
+          for (const ikd of data.ikds) {
+            this.updateEventStatus.itemsUsed.push({
+              item: ikd.item,
+              quantity: ikd.quantity,
+              maxQuantity: ikd.quantity
+            })
+          }
+        }
       } finally {
         this.isLoadingEvent = false
       }
     },
+    async preUpdateStatus (status) {
+      this.updateEventStatus.status = status
+
+      if (Array.isArray(this.event.ikds) && this.event.ikds.length > 0) {
+        this.updateEventStatus.modal = true
+
+        return
+      }
+
+      this.updateEventStatus.confirmModal = true
+    },
     async updateStatus (status) {
       this.isLoadingEvent = true
-      this.endEventModal = false
-      this.cancelEventModal = false
+      this.updateEventStatus.modal = false
+      this.updateEventStatus.confirmModal = false
 
       const eventId = this.eventId
+      let itemsUsed
+
+      if (this.updateEventStatus.itemsUsed.length > 0) {
+        itemsUsed = []
+
+        for (const { item, quantity, maxQuantity } of this.updateEventStatus.itemsUsed) {
+          const usedQuantity = maxQuantity - quantity
+
+          if (usedQuantity === 0) {
+            continue
+          }
+
+          itemsUsed.push({
+            sku: item.sku,
+            quantity: usedQuantity
+          })
+        }
+      }
 
       try {
         await apiClient.patch(`/events/${eventId}/status`, {
-          status
+          status,
+          itemsUsed
         }, {
           headers: {
             Authorization: `Bearer ${this.token}`
@@ -623,6 +693,19 @@ export default {
       } finally {
         this.isLoadingEvent = false
       }
+    },
+    validateItemQuantity (value, maxQuantity) {
+      const parsedNumber = Number(value)
+
+      if (isNaN(parsedNumber) || parsedNumber < 0) {
+        return 0
+      }
+
+      if (parsedNumber > maxQuantity) {
+        return maxQuantity
+      }
+
+      return parsedNumber
     }
   }
 }

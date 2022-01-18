@@ -11,6 +11,12 @@ const {
   ConflictError
 } = require('../../errors')
 
+const SORT_ORDER_MAPPING = {
+  asc : 1,
+  desc: -1
+}
+
+
 class InkindDonationTransactionsController {
   static async create(transaction) {
     const {
@@ -66,15 +72,26 @@ class InkindDonationTransactionsController {
   static async list(query) {
     const {
       limit,
-      offset
+      offset,
+      sort
     } = query
 
+    const queryOptions = { 
+      lean: true,
+      limit,
+      skip: offset
+    }
+
+    if (sort !== undefined) {
+      const { field, order } = sort
+
+      queryOptions.sort = {
+        [field] : SORT_ORDER_MAPPING[order]
+      }
+    }
+
     const [transactions, total] = await Promise.all([
-      InkindDonationTransactionModel.find(undefined, undefined, { 
-        lean: true,
-        limit,
-        skip: offset
-      }),
+      InkindDonationTransactionModel.find(undefined, undefined, queryOptions),
       InkindDonationTransactionModel.countDocuments()
     ])
 

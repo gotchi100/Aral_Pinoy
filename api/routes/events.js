@@ -195,6 +195,10 @@ async function getEvent(req, res, next) {
 
 const patchEventStatusValidator = Joi.object({
   status: Joi.string().valid(STATUSES.ENDED, STATUSES.CANCELED).required(),
+  itemsUsed: Joi.array().items(Joi.object({
+    sku: Joi.string().required(),
+    quantity: Joi.number().min(0).integer().required()
+  }))
 })
 
 function validatePatchEventStatusBody(req, res, next) {
@@ -225,10 +229,16 @@ function validatePatchEventStatusBody(req, res, next) {
 
 async function patchEventStatus(req, res, next) {
   const { id } = req.params
-  const { status } = req.body
+  const { 
+    status,
+    itemsUsed
+  } = req.body
 
   try {
-    await EventsController.updateStatus(id, status)
+    await EventsController.updateStatus(id, {
+      status,
+      itemsUsed
+    })
 
     return res.status(200).json({
       ok: true
