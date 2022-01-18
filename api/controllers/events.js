@@ -10,13 +10,14 @@ const EventJobModel = require('../models/event-jobs')
 const SkillModel = require('../models/skills')
 const SdgModel = require('../models/sdgs')
 const InkindDonationModel = require('../models/inkind-donations')
+const IkdTransactionModel = require('../models/inkind-donations/transactions')
 const IkdOutboundTransactionModel = require('../models/inkind-donations/outbound-transactions')
 const UserModel = require('../models/users')
 
 const GoogleCalendarController = require('./google/calendar')
 
 const { STATUSES } = require('../constants/events')
-const { OUTBOUND_RECEIVER_TYPES } = require('../constants/inkind-donations')
+const { OUTBOUND_RECEIVER_TYPES, TRANSACTION_STATUSES } = require('../constants/inkind-donations')
 
 const { 
   NotFoundError,
@@ -358,8 +359,13 @@ class EventsController {
     return event.toObject()
   }
 
-  static async updateStatus(id, status) {
-    const event = await EventModel.findById(id, ['__v', 'status'])
+  static async updateStatus(id, details) {
+    const {
+      status,
+      itemsUsed
+    } = details
+
+    const event = await EventModel.findById(id, ['name', '__v', 'status'])
 
     if (event === null) {
       throw new NotFoundError(`Event does not exist: ${id}`)
@@ -388,6 +394,65 @@ class EventsController {
     if (status === STATUSES.CANCELED) {
       await GoogleCalendarController.updateEventStatus(id, status).catch((error) => console.dir(error, { depth: null }))
     }
+
+    if (Array.isArray(itemsUsed) && itemsUsed.length > 0) {
+      const date = new Date()
+
+      for (const item of itemsUsed) {
+        await EventsController.createTransaction({
+          sku: item.sku,
+          quantity: item.quantity,
+          date,
+          reason: `Unused item from '${event.name}' event`
+        })
+      }
+    }
+  }
+
+  static async createTransaction(transaction) {
+    const {
+      sku,
+      quantity,
+      date,
+      reason
+    } = transaction
+    
+    const item = await InkindDonationModel.findOne({
+      sku
+    }, ['name', 'category', 'quantity', '__v'], {
+      lean: true
+    })
+    
+    if (item === null) {
+      throw new NotFoundError(`In-Kind Donation does not exist: ${sku}`)
+    }
+    
+    const itemUpdateResults = await InkindDonationModel.updateOne({
+      sku,
+      __v : item.__v
+    }, {
+      $inc: {
+        quantity,
+        __v : 1
+      }
+    })
+
+    if (itemUpdateResults.matchedCount === 0) {
+      throw new ConflictError('In-kind donation was recently updated, please try again')
+    }
+    
+    await IkdTransactionModel.create({
+      status: TRANSACTION_STATUSES.COMPLETE,
+      item: {
+        sku,
+        name: item.name,
+        category: item.category,
+        quantity: item.quantity
+      },
+      reason,
+      quantity,
+      date: new Date(date),
+    })
   }
 }
 

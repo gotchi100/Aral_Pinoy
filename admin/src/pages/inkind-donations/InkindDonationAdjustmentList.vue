@@ -136,6 +136,8 @@ export default {
 
       queryString.set('limit', this.perPage)
       queryString.set('offset', this.pageOffset)
+      queryString.set('sort.field', 'date')
+      queryString.set('sort.order', 'desc')
 
       const { data } = await apiClient.get(`/inkind-donation-transactions?${queryString.toString()}`, {
         headers: {
