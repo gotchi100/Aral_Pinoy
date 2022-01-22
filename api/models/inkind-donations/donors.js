@@ -7,6 +7,7 @@ const schema = new mongoose.Schema({
     type: String,
     text: true
   },
+  email: String,
   norm: {
     type: String,
     unique: true,

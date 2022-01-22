@@ -348,6 +348,15 @@
                     </b-col>
                   </b-row>
 
+                  <b-row class="pt-1">
+                    <b-col cols="12">
+                      <label for="item-donor">
+                        Acknowledgement Email <span style="color: grey">(for Donor)</span>
+                      </label>
+                      <b-form-input v-model="createItemForm.donorEmail" name="item-donorEmail"></b-form-input>
+                    </b-col>
+                  </b-row>
+
                   <b-row class="pt-4 pb-3" align-h="center">
                     <b-col cols="2">
                       <b-button
@@ -756,6 +765,7 @@ export default {
         quantity: 0,
         unit: 'boxes',
         donor: '',
+        donorEmail: '',
         category: null,
         categoryCustomFields: [],
         group: ''
@@ -929,6 +939,7 @@ export default {
         quantity,
         unit,
         donor,
+        donorEmail,
         category,
         categoryCustomFields,
         group
@@ -947,6 +958,7 @@ export default {
         quantity,
         unit,
         donor,
+        donorEmail,
         categoryId,
         categoryCustomFields,
         group

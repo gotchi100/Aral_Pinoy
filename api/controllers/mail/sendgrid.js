@@ -12,6 +12,10 @@ class SendgridMailController {
   static async sendResetPasswordSuccess(to) {
     await transporter.sendResetPasswordSuccess(to)
   }
+
+  static async sendIkdAcknowledgement(to) {
+    await transporter.sendIkdAcknowledgement(to)
+  }
 }
 
 module.exports = SendgridMailController

@@ -5,6 +5,8 @@ const InkindDonationCategoryModel = require('../models/inkind-donations/categori
 const InkindDonationDonorModel = require('../models/inkind-donations/donors')
 const InkindDonationGroupModel = require('../models/inkind-donations/groups')
 
+const SendgridMailController = require('../controllers/mail/sendgrid')
+
 const { CATEGORY_CUSTOM_FIELD_DATA_TYPES } = require('../constants/inkind-donations')
 
 const { 
@@ -28,6 +30,7 @@ class InkindDonationsController {
       quantity,
       unit,
       donor,
+      donorEmail,
       categoryId,
       categoryCustomFields = [],
       group
@@ -69,15 +72,20 @@ class InkindDonationsController {
       const donorNorm = donorName.toLowerCase()
 
       await InkindDonationDonorModel.updateOne({
-        norm: donorNorm
+        norm: donorNorm,
       }, {
         $setOnInsert: {
           name: donorName,
-          norm: donorNorm
+          norm: donorNorm,
+          email: donorEmail
         }
       } , {
         upsert: true
       })
+
+      if (donorEmail !== undefined) {
+        await SendgridMailController.sendIkdAcknowledgement(donorEmail).catch(console.error)
+      }
     }
 
     if (group !== undefined) {
