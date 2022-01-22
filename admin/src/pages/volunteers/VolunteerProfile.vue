@@ -376,6 +376,12 @@ export default {
       }
 
       return this.user.address.home
+    },
+    eventDonationsPageOffset () {
+      return (this.eventDonations.pagination.currentPage - 1) * this.eventDonations.pagination.perPage
+    },
+    eventVolunteersPageOffset () {
+      return (this.eventVolunteers.pagination.currentPage - 1) * this.eventVolunteers.pagination.perPage
     }
   },
   methods: {

@@ -279,6 +279,37 @@
                   </b-card>
                 </b-col>
               </b-row>
+
+              <b-row class="py-4">
+                <b-col cols="12">
+                  <b-card style="border-radius: 20px;">
+                    <h1 class="text-start" style="font-family:'Bebas Neue', cursive;">
+                      Volunteers
+                    </h1>
+
+                    <b-row>
+                      <b-col cols="12">
+                        <b-table
+                          :items="getEventVolunteers"
+                          :fields="eventVolunteers.fields"
+                          :current-page="eventVolunteers.pagination.currentPage"
+                          :per-page="eventVolunteers.pagination.perPage"
+                          show-empty
+                          small
+                          stacked="md"
+                          style="background:white"
+                        >
+                          <template #cell(volunteerName)="{ item }">
+                            <b-link :to="`/volunteers/${item.user._id}`">
+                              {{ item.user.firstName }} {{ item.user.lastName }}
+                            </b-link>
+                          </template>
+                        </b-table>
+                      </b-col>
+                    </b-row>
+                  </b-card>
+                </b-col>
+              </b-row>
             </b-container>
           </b-card>
         </b-col>
@@ -442,9 +473,12 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { apiClient } from '../../axios'
+import EventVolunteerRepository from '../../repositories/events/volunteers'
 
 const logo = require('../../assets/aralpinoywords.png')
-const { apiClient } = require('../../axios')
+
+const eventVolunteerRepository = new EventVolunteerRepository(apiClient)
 
 export default {
   name: 'EventDetails',
@@ -455,6 +489,18 @@ export default {
       isLoadingEvent: false,
       showModal: false,
       currentPage: 1,
+      eventVolunteers: {
+        results: [],
+        total: 0,
+        pagination: {
+          perPage: 5,
+          currentPage: 1
+        },
+        fields: [
+          { key: 'volunteerName', label: 'Volunteer' },
+          { key: 'eventJob.name', label: 'Role' }
+        ]
+      },
       // items: [
       //   { name: 'John Anghel', contactNumber: '+639123456789', role: 'Trash Collector' },
       //   { name: 'Test Dawkins', contactNumber: '+639123356789', role: 'Trash Bag Distributor' },
@@ -493,9 +539,6 @@ export default {
         ]
       }
     }
-  },
-  created () {
-    this.getEvent()
   },
   computed: {
     ...mapGetters(['token']),
@@ -615,7 +658,15 @@ export default {
       const volunteerNoun = difference === 1 ? 'volunteer' : 'volunteers'
 
       return `We still need ${difference} ${volunteerNoun}!`
+    },
+    eventVolunteersPageOffset () {
+      return (this.eventVolunteers.pagination.currentPage - 1) * this.eventVolunteers.pagination.perPage
     }
+  },
+  created () {
+    eventVolunteerRepository.setAuthorizationHeader(`Bearer ${this.token}`)
+
+    this.getEvent()
   },
   methods: {
     async getEvent () {
@@ -645,6 +696,22 @@ export default {
       } finally {
         this.isLoadingEvent = false
       }
+    },
+    async getEventVolunteers (ctx) {
+      const perPage = this.eventVolunteers.pagination.perPage
+      const pageOffset = this.eventVolunteersPageOffset
+
+      const { results, total } = await eventVolunteerRepository.list({
+        eventId: this.eventId
+      }, {
+        limit: perPage,
+        offset: pageOffset,
+        expand: true
+      })
+
+      this.eventVolunteers.total = total
+
+      return results
     },
     async preUpdateStatus (status) {
       this.updateEventStatus.status = status
