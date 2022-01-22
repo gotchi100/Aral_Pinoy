@@ -262,6 +262,12 @@
                         {{ item.event.name }}
                       </b-link>
                     </template>
+
+                    <template #cell(status)="{ value }">
+                      <span>
+                        {{ value.toUpperCase() }}
+                      </span>
+                    </template>
                   </b-table>
                 </b-col>
               </b-row>
@@ -370,6 +376,12 @@ export default {
       }
 
       return this.user.address.home
+    },
+    eventDonationsPageOffset () {
+      return (this.eventDonations.pagination.currentPage - 1) * this.eventDonations.pagination.perPage
+    },
+    eventVolunteersPageOffset () {
+      return (this.eventVolunteers.pagination.currentPage - 1) * this.eventVolunteers.pagination.perPage
     }
   },
   methods: {

@@ -11,6 +11,8 @@ class SendgridTransporter extends BaseTransporter {
       user,
       pass
     })
+
+    this.volunteerUrl = new URL(config.volunteer.domainName)
   }
 
   get noReplyFromAddress() {
@@ -37,9 +39,23 @@ class SendgridTransporter extends BaseTransporter {
     return this.transporter.sendMail({
       from: this.supportFromAddress,
       to,
-      replyTo: 'aralpinoycapstone@gmail.com',
+      replyTo: 'support@aralpinoy.xyz',
       subject: 'Password has been reset',
       template: 'reset-password-success'
+    })
+  }
+
+  sendIkdAcknowledgement(to) {
+    return this.transporter.sendMail({
+      from: this.supportFromAddress,
+      to,
+      replyTo: 'support@aralpinoy.xyz',
+      subject: 'Thank you for your In-Kind Donation!',
+      template: 'inkind-donation-acknowledgement',
+      context: {
+        volunteerHref: this.volunteerUrl.href,
+        volunteerDomain: this.volunteerUrl.hostname
+      }
     })
   }
 }

@@ -16,6 +16,7 @@ const createInkindDonationValidator = Joi.object({
   quantity: Joi.number().integer(),
   unit: Joi.string().trim().max(20).required(),
   donor: Joi.string().trim().max(255),
+  donorEmail: Joi.string().trim().empty('').email(),
   categoryId: Joi.objectId(),
   categoryCustomFields: Joi.array().items(
     Joi.object({

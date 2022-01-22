@@ -242,6 +242,12 @@
                         {{ item.event.name }}
                       </b-link>
                     </template>
+
+                    <template #cell(status)="{ value }">
+                      <span>
+                        {{ value.toUpperCase() }}
+                      </span>
+                    </template>
                   </b-table>
                 </b-col>
               </b-row>

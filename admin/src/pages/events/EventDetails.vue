@@ -261,7 +261,7 @@
                 <b-col cols="12">
                   <b-card style="border-radius: 20px;">
                     <h1 class="text-start" style="font-family:'Bebas Neue', cursive;">
-                      Items to be used for the Event
+                      Items for the Event
                     </h1>
 
                     <b-row>
@@ -274,6 +274,37 @@
                           striped
                           primary-key="item.sku"
                         ></b-table>
+                      </b-col>
+                    </b-row>
+                  </b-card>
+                </b-col>
+              </b-row>
+
+              <b-row class="py-4">
+                <b-col cols="12">
+                  <b-card style="border-radius: 20px;">
+                    <h1 class="text-start" style="font-family:'Bebas Neue', cursive;">
+                      Volunteers
+                    </h1>
+
+                    <b-row>
+                      <b-col cols="12">
+                        <b-table
+                          :items="getEventVolunteers"
+                          :fields="eventVolunteers.fields"
+                          :current-page="eventVolunteers.pagination.currentPage"
+                          :per-page="eventVolunteers.pagination.perPage"
+                          show-empty
+                          small
+                          stacked="md"
+                          style="background:white"
+                        >
+                          <template #cell(volunteerName)="{ item }">
+                            <b-link :to="`/volunteers/${item.user._id}`">
+                              {{ item.user.firstName }} {{ item.user.lastName }}
+                            </b-link>
+                          </template>
+                        </b-table>
                       </b-col>
                     </b-row>
                   </b-card>
@@ -442,9 +473,12 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { apiClient } from '../../axios'
+import EventVolunteerRepository from '../../repositories/events/volunteers'
 
 const logo = require('../../assets/aralpinoywords.png')
-const { apiClient } = require('../../axios')
+
+const eventVolunteerRepository = new EventVolunteerRepository(apiClient)
 
 export default {
   name: 'EventDetails',
@@ -455,6 +489,18 @@ export default {
       isLoadingEvent: false,
       showModal: false,
       currentPage: 1,
+      eventVolunteers: {
+        results: [],
+        total: 0,
+        pagination: {
+          perPage: 5,
+          currentPage: 1
+        },
+        fields: [
+          { key: 'volunteerName', label: 'Volunteer' },
+          { key: 'eventJob.name', label: 'Role' }
+        ]
+      },
       // items: [
       //   { name: 'John Anghel', contactNumber: '+639123456789', role: 'Trash Collector' },
       //   { name: 'Test Dawkins', contactNumber: '+639123356789', role: 'Trash Bag Distributor' },
@@ -479,7 +525,8 @@ export default {
       ],
       eventIkdFields: [
         { key: 'item.name', label: 'Item' },
-        { key: 'quantity', label: 'Quantity' }
+        { key: 'quantity', label: 'Quantity' },
+        { key: 'usedQuantity', label: 'Used' }
       ],
       updateEventStatus: {
         modal: false,
@@ -492,9 +539,6 @@ export default {
         ]
       }
     }
-  },
-  created () {
-    this.getEvent()
   },
   computed: {
     ...mapGetters(['token']),
@@ -614,7 +658,15 @@ export default {
       const volunteerNoun = difference === 1 ? 'volunteer' : 'volunteers'
 
       return `We still need ${difference} ${volunteerNoun}!`
+    },
+    eventVolunteersPageOffset () {
+      return (this.eventVolunteers.pagination.currentPage - 1) * this.eventVolunteers.pagination.perPage
     }
+  },
+  created () {
+    eventVolunteerRepository.setAuthorizationHeader(`Bearer ${this.token}`)
+
+    this.getEvent()
   },
   methods: {
     async getEvent () {
@@ -630,18 +682,36 @@ export default {
 
         this.event = data
 
-        if (Array.isArray(data.ikds) && data.ikds.length > 0) {
-          for (const ikd of data.ikds) {
-            this.updateEventStatus.itemsUsed.push({
-              item: ikd.item,
-              quantity: ikd.quantity,
-              maxQuantity: ikd.quantity
-            })
+        if (data.status === 'UPCOMING') {
+          if (Array.isArray(data.ikds) && data.ikds.length > 0) {
+            for (const ikd of data.ikds) {
+              this.updateEventStatus.itemsUsed.push({
+                item: ikd.item,
+                quantity: ikd.quantity,
+                maxQuantity: ikd.quantity
+              })
+            }
           }
         }
       } finally {
         this.isLoadingEvent = false
       }
+    },
+    async getEventVolunteers (ctx) {
+      const perPage = this.eventVolunteers.pagination.perPage
+      const pageOffset = this.eventVolunteersPageOffset
+
+      const { results, total } = await eventVolunteerRepository.list({
+        eventId: this.eventId
+      }, {
+        limit: perPage,
+        offset: pageOffset,
+        expand: true
+      })
+
+      this.eventVolunteers.total = total
+
+      return results
     },
     async preUpdateStatus (status) {
       this.updateEventStatus.status = status
@@ -660,21 +730,21 @@ export default {
       this.updateEventStatus.confirmModal = false
 
       const eventId = this.eventId
-      let itemsUsed
+      let itemsUnused
 
       if (this.updateEventStatus.itemsUsed.length > 0) {
-        itemsUsed = []
+        itemsUnused = []
 
         for (const { item, quantity, maxQuantity } of this.updateEventStatus.itemsUsed) {
-          const usedQuantity = maxQuantity - quantity
+          const unUsedQuantity = maxQuantity - quantity
 
-          if (usedQuantity === 0) {
+          if (unUsedQuantity === 0) {
             continue
           }
 
-          itemsUsed.push({
+          itemsUnused.push({
             sku: item.sku,
-            quantity: usedQuantity
+            quantity: unUsedQuantity
           })
         }
       }
@@ -682,7 +752,7 @@ export default {
       try {
         await apiClient.patch(`/events/${eventId}/status`, {
           status,
-          itemsUsed
+          itemsUnused
         }, {
           headers: {
             Authorization: `Bearer ${this.token}`
