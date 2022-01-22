@@ -261,7 +261,7 @@
                 <b-col cols="12">
                   <b-card style="border-radius: 20px;">
                     <h1 class="text-start" style="font-family:'Bebas Neue', cursive;">
-                      Items to be used for the Event
+                      Items for the Event
                     </h1>
 
                     <b-row>
@@ -479,7 +479,8 @@ export default {
       ],
       eventIkdFields: [
         { key: 'item.name', label: 'Item' },
-        { key: 'quantity', label: 'Quantity' }
+        { key: 'quantity', label: 'Quantity' },
+        { key: 'usedQuantity', label: 'Used' }
       ],
       updateEventStatus: {
         modal: false,
@@ -630,13 +631,15 @@ export default {
 
         this.event = data
 
-        if (Array.isArray(data.ikds) && data.ikds.length > 0) {
-          for (const ikd of data.ikds) {
-            this.updateEventStatus.itemsUsed.push({
-              item: ikd.item,
-              quantity: ikd.quantity,
-              maxQuantity: ikd.quantity
-            })
+        if (data.status === 'UPCOMING') {
+          if (Array.isArray(data.ikds) && data.ikds.length > 0) {
+            for (const ikd of data.ikds) {
+              this.updateEventStatus.itemsUsed.push({
+                item: ikd.item,
+                quantity: ikd.quantity,
+                maxQuantity: ikd.quantity
+              })
+            }
           }
         }
       } finally {
@@ -660,21 +663,21 @@ export default {
       this.updateEventStatus.confirmModal = false
 
       const eventId = this.eventId
-      let itemsUsed
+      let itemsUnused
 
       if (this.updateEventStatus.itemsUsed.length > 0) {
-        itemsUsed = []
+        itemsUnused = []
 
         for (const { item, quantity, maxQuantity } of this.updateEventStatus.itemsUsed) {
-          const usedQuantity = maxQuantity - quantity
+          const unUsedQuantity = maxQuantity - quantity
 
-          if (usedQuantity === 0) {
+          if (unUsedQuantity === 0) {
             continue
           }
 
-          itemsUsed.push({
+          itemsUnused.push({
             sku: item.sku,
-            quantity: usedQuantity
+            quantity: unUsedQuantity
           })
         }
       }
@@ -682,7 +685,7 @@ export default {
       try {
         await apiClient.patch(`/events/${eventId}/status`, {
           status,
-          itemsUsed
+          itemsUnused
         }, {
           headers: {
             Authorization: `Bearer ${this.token}`

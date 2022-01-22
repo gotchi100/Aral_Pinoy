@@ -46,7 +46,8 @@ const ikdSchema = new mongoose.Schema({
       name: String
     }
   },
-  quantity: Number
+  quantity: Number,
+  usedQuantity: Number
 }, {
   _id: false,
   validateBeforeSave: false

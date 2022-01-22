@@ -362,10 +362,10 @@ class EventsController {
   static async updateStatus(id, details) {
     const {
       status,
-      itemsUsed
+      itemsUnused
     } = details
 
-    const event = await EventModel.findById(id, ['name', '__v', 'status'])
+    const event = await EventModel.findById(id, ['name', '__v', 'status', 'ikds'])
 
     if (event === null) {
       throw new NotFoundError(`Event does not exist: ${id}`)
@@ -375,12 +375,52 @@ class EventsController {
       throw new ConflictError(`Unable to update event: Status is ${event.status}`)
     }
 
+    const ikdUsedQuantityMap = {}
+    const ikdTransactions = []
+
+    if (Array.isArray(itemsUnused) && itemsUnused.length > 0 && Array.isArray(event.ikds) &&  event.ikds.length > 0) {
+      const itemsUnusedMap = new Map()
+      const date = new Date()
+
+      for (const item of itemsUnused) {
+        itemsUnusedMap.set(item.sku, item.quantity)
+      }
+
+      for (let i = 0; i < event.ikds.length; i++) {
+        const ikd = event.ikds[i]
+
+        const unUsedQuantity = itemsUnusedMap.get(ikd.item.sku)
+
+        if (unUsedQuantity === undefined) {
+          ikdUsedQuantityMap[`ikds.${i}.usedQuantity`] = ikd.quantity
+
+          continue
+        }
+
+        const usedQuantity = ikd.quantity - unUsedQuantity
+
+        if (usedQuantity > 0) {
+          ikdUsedQuantityMap[`ikds.${i}.usedQuantity`] = usedQuantity
+        }
+
+        ikdTransactions.push(
+          EventsController.createTransaction({
+            sku: ikd.item.sku,
+            quantity: unUsedQuantity,
+            date,
+            reason: `Unused item from '${event.name}' event`
+          })
+        )
+      }
+    }
+
     const eventUpdateResults = await EventModel.updateOne({
       _id: new Types.ObjectId(id),
       __v : event.__v
     }, {
       $set: {
-        status
+        status,
+        ...ikdUsedQuantityMap
       },
       $inc: {
         __v: 1
@@ -395,18 +435,9 @@ class EventsController {
       await GoogleCalendarController.updateEventStatus(id, status).catch((error) => console.dir(error, { depth: null }))
     }
 
-    if (Array.isArray(itemsUsed) && itemsUsed.length > 0) {
-      const date = new Date()
-
-      for (const item of itemsUsed) {
-        await EventsController.createTransaction({
-          sku: item.sku,
-          quantity: item.quantity,
-          date,
-          reason: `Unused item from '${event.name}' event`
-        })
-      }
-    }
+    if (ikdTransactions.length > 0) {
+      await Promise.all(ikdTransactions)
+    }    
   }
 
   static async createTransaction(transaction) {
