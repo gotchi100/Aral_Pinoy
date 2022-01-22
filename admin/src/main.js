@@ -9,7 +9,6 @@ import { fab } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import Vuex from 'vuex'
 import VModal from 'vue-js-modal'
-import axios from 'axios'
 
 import App from './App'
 import Login from './pages/Login'
@@ -56,6 +55,7 @@ import ReportVolunteers from './pages/reports/ReportVolunteers'
 import VolunteerSuggestion from './pages/events/VolunteerSuggestion.vue'
 import Donate from './pages/AdminDonate.vue'
 
+import { apiClient } from './axios'
 import vuexStore from './store'
 
 library.add(fas)
@@ -300,7 +300,7 @@ router.beforeEach((to, from, next) => {
   }
 })
 
-axios.interceptors.response.use((response) => response, function (error) {
+apiClient.interceptors.response.use((response) => response, function (error) {
   if (error.response?.status === 401) {
     store.dispatch('logout')
 

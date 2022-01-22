@@ -9,10 +9,10 @@ import { fab } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import Vuex from 'vuex'
 import VModal from 'vue-js-modal'
-import axios from 'axios'
 
 import App from './App.vue'
 
+import { apiClient } from './axios'
 import vuexStore from './store'
 import getRouter from './router'
 
@@ -34,7 +34,7 @@ const store = new Vuex.Store(vuexStore)
 
 const router = getRouter(store)
 
-axios.interceptors.response.use((response) => response, function (error) {
+apiClient.interceptors.response.use((response) => response, function (error) {
   if (error.response?.status === 401) {
     store.dispatch('logout')
 
