@@ -43,6 +43,9 @@ import InkindDonationAdjustmentList from './pages/inkind-donations/InkindDonatio
 import InkindDonationCategoryList from './pages/inkind-donations/InkindDonationCategoryList'
 import InkindDonationOutboundList from './pages/inkind-donations/InkindDonationOutboundList'
 
+// /monetary-donations
+import MonetaryDonationList from './pages/monetary-donations/MonetaryDonationList.vue'
+
 // /skills
 import Skills from './pages/skills/SkillList'
 
@@ -202,6 +205,13 @@ const routes = [
   {
     path: '/inkind-donations/outbound',
     component: InkindDonationOutboundList,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/monetary-donations',
+    component: MonetaryDonationList,
     meta: {
       requiresAuth: true
     }

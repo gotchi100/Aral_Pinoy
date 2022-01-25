@@ -1,0 +1,454 @@
+<template>
+  <div>
+    <b-container class="py-5">
+      <b-row>
+        <b-col cols="12">
+          <b-card style="border-radius: 20px;">
+            <b-container fluid>
+              <b-row>
+                <b-col cols="12">
+                  <h1 style="font-family:'Bebas Neue', cursive;">
+                    Monetary Donations Received
+                  </h1>
+                </b-col>
+              </b-row>
+
+              <b-row>
+                <b-col cols="12">
+                  <b-tabs pills card>
+                    <b-tab title="Donated to Aral Pinoy Organization" disabled>
+                      <!-- <b-row>
+                        <b-col cols="12">
+                          <b-container>
+                            <b-row>
+                              <b-col cols="4">
+                                <b-form-group
+                                  style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                                  label="Per page"
+                                  label-for="per-page-select"
+                                  content-cols="12"
+                                >
+                                  <b-form-select
+                                    id="per-page-select"
+                                    class="w-25"
+                                    v-model="orgTransactionPerPage"
+                                    :options="pageOptions"
+                                  ></b-form-select>
+                                </b-form-group>
+                              </b-col>
+                            </b-row>
+                          </b-container>
+                        </b-col>
+                      </b-row>
+
+                      <b-row class="pt-4">
+                        <b-col cols="12">
+                          <b-table
+                            :items="getOrganizationTransactions"
+                            :fields="orgTransactionFields"
+                            :current-page="orgTransactionCurrentPage"
+                            :per-page="orgTransactionPerPage"
+                            stacked="md"
+                            style="background:white"
+                            show-empty
+                            small
+                            primary-key="_id"
+                          >
+                          <template #cell(date)="row">
+                              {{
+                                new Date(row.value).toLocaleString('en-us', {
+                                  dateStyle: 'medium'
+                                })
+                              }}
+                            </template>
+
+                            <template #cell(name)="row">
+                              {{ row.value.first }} {{ row.value.last }}
+                            </template>
+
+                            <template #cell(contact)="row">
+                              <template v-if="checkOrganizationContacts(row.item.receiver.organization.contacts)">
+                                <span v-if="row.item.receiver.organization.contacts.length === 1">
+                                  {{row.item.receiver.organization.contacts[0].name}} &lt;{{row.item.receiver.organization.contacts[0].contactMethods[0].value}}&gt;
+                                </span>
+
+                                <b-dropdown
+                                  v-else
+                                  text="See List"
+                                  style="width: 100%"
+                                  menu-class="w-100"
+                                  variant="outline-primary"
+                                >
+                                  <b-dropdown-item
+                                    v-for="(contact, index) in row.item.receiver.organization.contacts"
+                                    :key="index"
+                                    disabled
+                                  >
+                                    <span style="color: black">
+                                      {{contact.name}} &lt;{{contact.contactMethods[0].value}}&gt;
+                                    </span>
+                                  </b-dropdown-item>
+                                </b-dropdown>
+                              </template>
+                            </template>
+
+                            <template #cell(status)="row">
+                              <b-dropdown v-if="row.value==='PENDING'" :text="row.value" size="sm">
+                              <b-dropdown-item
+                                  @click="showTransactionStatusUpdateConfirmModal(row.item._id, 'COMPLETE')"
+                                >
+                                  COMPLETE
+                                </b-dropdown-item>
+
+                                <b-dropdown-item
+                                  @click="showTransactionStatusUpdateConfirmModal(row.item._id, 'RETURNED')"
+                                >
+                                  RETURNED
+                                </b-dropdown-item>
+                              </b-dropdown>
+
+                              <span v-else>
+                                {{ row.value }}
+                              </span>
+                            </template>
+                          </b-table>
+                        </b-col>
+                      </b-row>
+
+                      <b-row class="pt-4 justify-content-md-center">
+                          <b-col cols="6" class="my-1">
+                            <b-pagination
+                              v-model="orgTransactionCurrentPage"
+                              :total-rows="orgTransactionTotal"
+                              :per-page="orgTransactionPerPage"
+                              align="fill"
+                              size="sm"
+                              class="my-0"
+                            ></b-pagination>
+                          </b-col>
+                      </b-row> -->
+                    </b-tab>
+
+                    <b-tab title="Donated to Aral Pinoy Events" active>
+                      <b-row>
+                        <b-col cols="12">
+                          <b-container>
+                            <b-row>
+                              <b-col cols="4">
+                                <b-form-group
+                                  style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                                  label="Per page"
+                                  label-for="per-page-select"
+                                  content-cols="12"
+                                >
+                                  <b-form-select
+                                    id="per-page-select"
+                                    class="w-25"
+                                    v-model="eventDonations.pagination.perPage"
+                                    :options="pageOptions"
+                                  ></b-form-select>
+                                </b-form-group>
+                              </b-col>
+
+                              <!-- TODO: Implement search for inkind donation outbound transactions for organizations -->
+                              <!-- <b-col>
+                                <br>
+                                <b-input-group size="sm">
+                                  <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
+                                  <b-form-input
+                                    id="filter-input"
+                                    v-model="filter"
+                                    type="search"
+                                    placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
+                                  ></b-form-input>
+                                </b-input-group>
+                                <br>
+                              </b-col> -->
+                            </b-row>
+                          </b-container>
+                        </b-col>
+                      </b-row>
+
+                      <b-row class="pt-4">
+                        <b-col cols="12">
+                          <b-table
+                            :items="getEventDonations"
+                            :fields="eventDonations.fields"
+                            :current-page="eventDonations.pagination.currentPage"
+                            :per-page="eventDonations.pagination.perPage"
+                            stacked="md"
+                            style="background:white"
+                            show-empty
+                            small
+                            primary-key="_id"
+                            hover
+                            @row-clicked="showDonationReceipt"
+                          >
+                            <template #cell(createdAt)="{ value }">
+                              {{
+                                new Date(value).toLocaleString('en-us', {
+                                  dateStyle: 'medium',
+                                  timeStyle: 'short'
+                                })
+                              }}
+                            </template>
+
+                            <template #cell(amount)="{ value }">
+                              {{
+                                new Intl.NumberFormat('en-us', {
+                                  style: 'currency',
+                                  currency: 'PHP'
+                                }).format(value)
+                              }}
+                            </template>
+
+                            <template #cell(donor)="{ item }">
+                              <span v-if="item.user !== undefined">
+                                <b-link :to="`/volunteers/${item.user._id}`">
+                                  {{ item.user.firstName }} {{ item.user.lastName }}
+                                </b-link>
+                              </span>
+                              <span v-else>
+                                Anonymous
+                              </span>
+                            </template>
+
+                            <template #cell(eventName)="{ item }">
+                              <b-link :to="`/events/${item.event._id}`">
+                                {{ item.event.name }}
+                              </b-link>
+                            </template>
+
+                            <template #cell(status)="{ value }">
+                              {{ value.toUpperCase() }}
+                            </template>
+                          </b-table>
+                        </b-col>
+                      </b-row>
+
+                      <b-row class="pt-4 justify-content-md-center">
+                          <b-col cols="6" class="my-1">
+                            <b-pagination
+                              v-model="eventDonations.pagination.currentPage"
+                              :total-rows="eventDonations.total"
+                              :per-page="eventDonations.pagination.perPage"
+                              align="fill"
+                              size="sm"
+                              class="my-0"
+                            ></b-pagination>
+                          </b-col>
+                        </b-row>
+                    </b-tab>
+                  </b-tabs>
+                </b-col>
+              </b-row>
+            </b-container>
+
+            <b-modal v-model="donationReceipt.modal" size="xl" hide-footer>
+              <div>
+                <div class="addskill">
+                  <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1100px; border-radius: 20px; margin-top: 40px;">
+                    <b-container fluid>
+                      <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
+                        <b-row>
+                          <b-col>Donation Detail</b-col>
+                          <b-col></b-col>
+                          <b-col>
+                            <img :src="logo" style="margin-left: 25px; width: 200px; height: 60px">
+                          </b-col>
+                        </b-row>
+                      </h1>
+
+                      <hr style="height:20px;">
+
+                      <b-row class="mb-4">
+                        <b-col cols="6" class="text-center">
+                          Reference Number
+                        </b-col>
+
+                        <b-col cols="6">
+                          <b-form-input v-model="donationReceipt.form.referenceNumber" readonly></b-form-input>
+                        </b-col>
+                      </b-row>
+
+                      <b-row>
+                        <b-col cols="6" class="text-center">
+                          Sent To
+                        </b-col>
+
+                        <b-col cols="6">
+                          <b-form-input v-model="donationReceipt.form.eventName" readonly></b-form-input>
+                        </b-col>
+                      </b-row>
+
+                      <hr style="height:20px;">
+
+                      <b-row class="mb-4">
+                        <b-col cols="6" class="text-center">
+                          Date Received
+                        </b-col>
+
+                        <b-col cols="6">
+                          <b-form-input v-model="donationReceipt.form.createdAt" readonly></b-form-input>
+                        </b-col>
+                      </b-row>
+
+                      <b-row class="mb-4">
+                        <b-col cols="6" class="text-center">
+                          Donated By
+                        </b-col>
+
+                        <b-col cols="6">
+                          <b-form-input v-model="donationReceipt.form.donor.name" readonly></b-form-input>
+                        </b-col>
+                      </b-row>
+
+                      <b-row>
+                        <b-col cols="6" class="text-center">
+                          Contact Details
+                        </b-col>
+
+                        <b-col>
+                          <b-form-input v-model="donationReceipt.form.donor.contact" readonly></b-form-input>
+                        </b-col>
+                      </b-row>
+
+                      <hr style="height:20px;">
+
+                      <b-row>
+                        <b-col cols="6" class="text-center">
+                          Amount
+                        </b-col>
+
+                        <b-col>
+                          <b-form-input v-model="donationReceipt.form.amount" readonly></b-form-input>
+                        </b-col>
+                      </b-row>
+
+                      <hr style="height:20px;">
+
+                      <b-row>
+                        <b-col></b-col>
+                        <b-col class="text-center">Thank you for the donation!</b-col>
+                        <b-col>
+                        </b-col>
+                      </b-row>
+                    </b-container>
+                  </b-card>
+                </div>
+              </div>
+            </b-modal>
+          </b-card>
+        </b-col>
+      </b-row>
+    </b-container>
+  </div>
+</template>
+
+<script>
+import { mapGetters } from 'vuex'
+import { apiClient } from '../../axios'
+import EventDonationRepository from '../../repositories/events/donations'
+
+const logo = require('../../assets/aralpinoywords.png')
+
+const eventDonationRepository = new EventDonationRepository(apiClient)
+
+export default {
+  data () {
+    return {
+      logo,
+      pageOptions: [5, 10, 20],
+      eventDonations: {
+        results: [],
+        total: 0,
+        pagination: {
+          perPage: 5,
+          currentPage: 1
+        },
+        fields: [
+          { key: 'createdAt', label: 'Transaction Date & Time' },
+          { key: 'amount', label: 'Total Amount Received' },
+          { key: 'donor', label: 'Donor' },
+          { key: 'eventName', label: 'Event' },
+          { key: 'status', label: 'Status' }
+        ]
+      },
+      donationReceipt: {
+        modal: false,
+        form: {
+          referenceNumber: '',
+          eventName: '',
+          createdAt: '',
+          donor: {
+            name: '',
+            contact: ''
+          },
+          amount: 0
+        }
+      }
+    }
+  },
+  created () {
+    eventDonationRepository.setAuthorizationHeader(`Bearer ${this.token}`)
+  },
+  computed: {
+    ...mapGetters(['token']),
+    eventDonationsPageOffset () {
+      return (this.eventDonations.pagination.currentPage - 1) * this.eventDonations.pagination.perPage
+    }
+  },
+  methods: {
+    async getEventDonations (ctx) {
+      const perPage = this.eventDonations.pagination.perPage
+      const pageOffset = this.eventDonationsPageOffset
+
+      const { results, total } = await eventDonationRepository.list(undefined, {
+        limit: perPage,
+        offset: pageOffset,
+        expand: true,
+        sort: {
+          field: 'createdAt',
+          order: 'desc'
+        }
+      })
+
+      this.eventDonations.total = total
+
+      return results
+    },
+    showDonationReceipt (eventDonation) {
+      let donorName = 'Anonymous'
+      let contact = ''
+
+      if (eventDonation.user !== undefined) {
+        donorName = `${eventDonation.user.firstName} ${eventDonation.user.lastName}`
+      }
+
+      if (eventDonation.metadata !== undefined && eventDonation.metadata.contactDetails) {
+        contact = eventDonation.metadata.contactDetails.email
+      }
+
+      const form = {
+        referenceNumber: eventDonation._id,
+        eventName: eventDonation.event.name,
+        createdAt: new Date(eventDonation.createdAt).toLocaleString('en-us', {
+          dateStyle: 'medium',
+          timeStyle: 'short'
+        }),
+        donor: {
+          name: donorName,
+          contact
+        },
+        amount: new Intl.NumberFormat('en-us', {
+          style: 'currency',
+          currency: 'PHP'
+        }).format(eventDonation.amount)
+      }
+
+      this.donationReceipt.form = form
+      this.donationReceipt.modal = true
+    }
+  }
+}
+</script>
