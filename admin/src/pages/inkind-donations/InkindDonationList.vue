@@ -248,24 +248,54 @@
                     </b-col>
                   </b-row>
 
-                  <b-row class="pt-1">
+                  <b-row class="pt-3">
                     <b-col cols="12">
                       <label for="item-group">
                         Group
                       </label>
-                      <b-form-input
-                        id="item-group"
-                        v-model="createItemForm.group"
-                        list="item-group-list"
-                        debounce="500"
-                        @update="searchInkindDonationGroups"
-                      ></b-form-input>
 
-                      <datalist id="item-group-list">
-                        <option v-for="(group, index) in groupOptions" :key="index">
+                      <b-dropdown
+                        :text="createItemForm.group || 'Select a group'"
+                        style="width: 100%"
+                        menu-class="w-100"
+                        variant="outline-primary"
+                        :no-caret="!!createItemForm.group"
+                        no-flip
+                      >
+                        <b-dropdown-form>
+                          <b-form-group label="Search Group" label-for="item-group" @submit.stop.prevent>
+                            <b-form-input
+                              id="item-group"
+                              v-model="itemGroupSearch"
+                              debounce="250"
+                              @update="searchInkindDonationGroups"
+                            ></b-form-input>
+                          </b-form-group>
+                        </b-dropdown-form>
+                        <b-dropdown-divider></b-dropdown-divider>
+                        <b-dropdown-item
+                          v-for="group in groupOptions"
+                          :key="group._id"
+                          @click="selectGroup(group)"
+                        >
                           {{ group.name }}
-                        </option>
-                      </datalist>
+                        </b-dropdown-item>
+
+                        <b-dropdown-item
+                          v-if="itemGroupSearch !== '' && groupOptions.length === 0"
+                          @click="selectGroup({ name: itemGroupSearch })"
+                        >
+                          Add `{{ itemGroupSearch }}` group
+                        </b-dropdown-item>
+
+                        <b-dropdown-item
+                          v-if="createItemForm.group !== ''"
+                          @click="unselectGroup()"
+                          style="background-color: #f2f2f2"
+                        >
+                          Unset `{{ createItemForm.group }}` group
+                        </b-dropdown-item>
+                      </b-dropdown>
                     </b-col>
                   </b-row>
 
@@ -294,6 +324,7 @@
                         name="item-uom"
                         :options="unitOptions"
                         size="lg"
+                        :disabled="preselectGroupUnit"
                       ></b-form-select>
                     </b-col>
                   </b-row>
@@ -756,6 +787,8 @@ export default {
       inkindDonationTotal: 0,
       inkindDonationCurrentPage: 1,
       inkindDonationPerPage: 5,
+      preselectGroupUnit: false,
+      itemGroupSearch: '',
       createItemModal: false,
       createItemConfirmModal: false,
       createItemForm: {
@@ -1082,6 +1115,22 @@ export default {
       }
 
       return value[field] !== undefined
+    },
+    selectGroup (group) {
+      this.createItemForm.group = group.name
+
+      if (group.unit !== undefined) {
+        this.createItemForm.unit = group.unit
+        this.preselectGroupUnit = true
+      }
+
+      this.itemGroupSearch = ''
+    },
+    unselectGroup () {
+      this.createItemForm.group = ''
+      this.itemGroupSearch = ''
+
+      this.preselectGroupUnit = false
     }
   }
 }

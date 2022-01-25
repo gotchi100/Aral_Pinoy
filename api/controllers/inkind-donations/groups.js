@@ -7,18 +7,18 @@ class InkindDonationGroupsController {
     const {
       limit,
       offset,
-      'filters.name': filterName
+      filters = {}
     } = query
 
     const matchQuery = {}
 
-    if (filterName !== undefined && filterName !== '') {
+    if (filters.name !== undefined && filters.name !== '') {
       matchQuery.$text = {
-        $search: decodeURIComponent(filterName)
+        $search: decodeURIComponent(filters.name)
       }
     }
 
-    const [categories, total] = await Promise.all([
+    const [groups, total] = await Promise.all([
       IkdGroupModel.find(matchQuery, undefined, { 
         lean: true,
         limit,
@@ -28,7 +28,7 @@ class InkindDonationGroupsController {
     ])
 
     return {
-      results: categories,
+      results: groups,
       total
     }
   }

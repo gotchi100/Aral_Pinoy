@@ -101,7 +101,8 @@ class InkindDonationsController {
       }, {
         $setOnInsert: {
           name: groupName,
-          norm: groupNorm
+          norm: groupNorm,
+          unit
         }
       } , {
         upsert: true

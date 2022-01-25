@@ -30,8 +30,20 @@ function validateListGroupsBody(req, res, next) {
 }
 
 async function list(req, res, next) {
+  const {
+    offset,
+    limit,
+    'filters.name': filterName
+  } = req.query
+
   try {
-    const { results, total } = await IkdGroupController.list(req.query)
+    const { results, total } = await IkdGroupController.list({
+      offset,
+      limit,
+      filters: {
+        name: filterName
+      }
+    })
 
     return res.json({
       results,
