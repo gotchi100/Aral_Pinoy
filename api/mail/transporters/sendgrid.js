@@ -45,7 +45,7 @@ class SendgridTransporter extends BaseTransporter {
     })
   }
 
-  sendIkdAcknowledgement(to) {
+  sendIkdAcknowledgement(to, item) {
     return this.transporter.sendMail({
       from: this.supportFromAddress,
       to,
@@ -53,6 +53,11 @@ class SendgridTransporter extends BaseTransporter {
       subject: 'Thank you for your In-Kind Donation!',
       template: 'inkind-donation-acknowledgement',
       context: {
+        item: {
+          name: item.name,
+          quantity: item.quantity,
+          unit: item.unit
+        },
         volunteerHref: this.volunteerUrl.href,
         volunteerDomain: this.volunteerUrl.hostname
       }

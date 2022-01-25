@@ -84,7 +84,11 @@ class InkindDonationsController {
       })
 
       if (donorEmail !== undefined) {
-        await SendgridMailController.sendIkdAcknowledgement(donorEmail).catch(console.error)
+        await SendgridMailController.sendIkdAcknowledgement(donorEmail, {
+          name,
+          quantity,
+          unit
+        }).catch(console.error)
       }
     }
 

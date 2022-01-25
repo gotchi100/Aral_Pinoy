@@ -13,8 +13,8 @@ class SendgridMailController {
     await transporter.sendResetPasswordSuccess(to)
   }
 
-  static async sendIkdAcknowledgement(to) {
-    await transporter.sendIkdAcknowledgement(to)
+  static async sendIkdAcknowledgement(to, item) {
+    await transporter.sendIkdAcknowledgement(to, item)
   }
 }
 
