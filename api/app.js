@@ -28,7 +28,9 @@ const eventVolunteersRouter = require('./routes/events/volunteers')
 
 const inkindDonationsRouter = require('./routes/inkind-donations')
 const ikdCategoriesRouter = require('./routes/inkind-donations/categories')
+const ikdDonorsRouter = require('./routes/inkind-donations/donors')
 const ikdGroupsRouter = require('./routes/inkind-donations/groups')
+const ikdOrganizationsRouter = require('./routes/inkind-donations/organizations')
 const ikdTransactionsRouter = require('./routes/inkind-donations/transactions')
 const ikdOutboundTransactionsRouter = require('./routes/inkind-donations/outbound-transactions')
 
@@ -107,7 +109,9 @@ app.use('/event-volunteers', eventVolunteersRouter)
 
 app.use('/inkind-donations', inkindDonationsRouter)
 app.use('/inkind-donation-categories', ikdCategoriesRouter)
+app.use('/inkind-donation-donors', ikdDonorsRouter)
 app.use('/inkind-donation-groups', ikdGroupsRouter)
+app.use('/inkind-donation-organizations', ikdOrganizationsRouter)
 app.use('/inkind-donation-transactions', ikdTransactionsRouter)
 app.use('/inkind-donation-outbound-transactions', ikdOutboundTransactionsRouter)
 

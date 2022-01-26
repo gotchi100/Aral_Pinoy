@@ -77,13 +77,15 @@ class InkindDonationsController {
         $setOnInsert: {
           name: donorName,
           norm: donorNorm,
+        },
+        $set: {
           email: donorEmail
         }
       } , {
         upsert: true
       })
 
-      if (donorEmail !== undefined) {
+      if (donorEmail !== undefined && quantity > 0) {
         await SendgridMailController.sendIkdAcknowledgement(donorEmail, {
           name,
           quantity,
