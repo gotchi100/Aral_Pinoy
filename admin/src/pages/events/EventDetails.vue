@@ -36,8 +36,11 @@
                           <b-dropdown-item @click="preUpdateStatus('CANCELED')">
                             <strong style="color: red">CANCEL</strong>
                           </b-dropdown-item>
-                          <b-dropdown-item @click="preUpdateStatus('ENDED')">
-                            <strong style="color: blue">END</strong>
+                          <b-dropdown-item
+                            @click="preUpdateStatus('ENDED')"
+                            :disabled="!canEndEvent"
+                          >
+                            <strong>END</strong>
                           </b-dropdown-item>
                         </b-dropdown>
                       </b-col>
@@ -498,6 +501,7 @@ export default {
       isLoadingEvent: false,
       showModal: false,
       currentPage: 1,
+      canEndEvent: false,
       eventVolunteers: {
         results: [],
         total: 0,
@@ -683,17 +687,23 @@ export default {
       const eventId = this.eventId
 
       try {
-        const { data } = await apiClient.get(`/events/${eventId}`, {
+        const {
+          data: event
+        } = await apiClient.get(`/events/${eventId}`, {
           headers: {
             Authorization: `Bearer ${this.token}`
           }
         })
 
-        this.event = data
+        this.event = event
 
-        if (data.status === 'UPCOMING') {
-          if (Array.isArray(data.ikds) && data.ikds.length > 0) {
-            for (const ikd of data.ikds) {
+        if (new Date() > new Date(event.date.start)) {
+          this.canEndEvent = true
+        }
+
+        if (event.status === 'UPCOMING') {
+          if (Array.isArray(event.ikds) && event.ikds.length > 0) {
+            for (const ikd of event.ikds) {
               this.updateEventStatus.itemsUsed.push({
                 item: ikd.item,
                 quantity: 0,
