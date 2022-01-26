@@ -273,7 +273,16 @@
                           responsive
                           striped
                           primary-key="item.sku"
-                        ></b-table>
+                        >
+                          <template #cell(usedQuantity)="{ value }">
+                            <span v-if="value !== undefined && value !== ''">
+                              {{ value }}
+                            </span>
+                            <span v-else>
+                              0
+                            </span>
+                          </template>
+                        </b-table>
                       </b-col>
                     </b-row>
                   </b-card>
@@ -687,7 +696,7 @@ export default {
             for (const ikd of data.ikds) {
               this.updateEventStatus.itemsUsed.push({
                 item: ikd.item,
-                quantity: ikd.quantity,
+                quantity: 0,
                 maxQuantity: ikd.quantity
               })
             }
@@ -716,7 +725,7 @@ export default {
     async preUpdateStatus (status) {
       this.updateEventStatus.status = status
 
-      if (Array.isArray(this.event.ikds) && this.event.ikds.length > 0) {
+      if (status !== 'CANCELED' && Array.isArray(this.event.ikds) && this.event.ikds.length > 0) {
         this.updateEventStatus.modal = true
 
         return
