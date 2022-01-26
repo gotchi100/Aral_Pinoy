@@ -417,11 +417,21 @@ export default {
       const eventId = this.eventId
       const userId = this.user._id
 
-      const evaluation = _.pickBy({
-        sdgAnswers: this.sdgAnswers,
-        questionnaireAnswers: this.questionnaireAnswers,
+      const prepayload = {
+        sdgAnswers: undefined,
+        questionnaireAnswers: undefined,
         comment: this.comment
-      }, _.identity)
+      }
+
+      if (this.sdgAnswers.length > 0) {
+        prepayload.sdgAnswers = this.sdgAnswers
+      }
+
+      if (this.questionnaireAnswers.length > 0) {
+        prepayload.questionnaireAnswers = this.questionnaireAnswers
+      }
+
+      const evaluation = _.pickBy(prepayload, _.identity)
 
       try {
         await apiClient.post('/event-evaluations', {
