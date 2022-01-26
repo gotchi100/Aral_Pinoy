@@ -46,7 +46,7 @@
                           <b-form-datepicker
                             v-model="startDate.date"
                             class="mb-2"
-                            :min="new Date()"
+                            :min="nextMonth"
                             required
                           ></b-form-datepicker>
                         </b-form-group>
@@ -66,7 +66,7 @@
                             v-model="endDate.date"
                             class="mb-2"
                             required
-                            :min="new Date()"
+                            :min="startDate.date"
                           ></b-form-datepicker>
                         </b-form-group>
                       </b-col>
@@ -573,22 +573,27 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import {
+  addMonths,
+  addDays,
+  isSameDay
+} from 'date-fns'
 
 const { apiClient } = require('../../axios')
 
-const today = new Date()
-const midnightToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0, 0)
+const nextMonth = addMonths(new Date(), 1)
 
 export default ({
   data () {
     return {
+      nextMonth,
       startDate: {
-        date: today,
+        date: nextMonth,
         time: '00:00'
       },
       endDate: {
-        date: today,
-        time: '00:00'
+        date: nextMonth,
+        time: '01:00'
       },
       event: {
         name: '',
@@ -597,8 +602,8 @@ export default ({
           name: ''
         },
         date: {
-          start: midnightToday,
-          end: midnightToday
+          start: new Date(nextMonth.getFullYear(), nextMonth.getMonth(), nextMonth.getDate(), 0, 0, 0, 0),
+          end: new Date(nextMonth.getFullYear(), nextMonth.getMonth(), nextMonth.getDate(), 1, 0, 0, 0)
         },
         goals: {
           monetaryDonation: '0.00'
@@ -756,13 +761,19 @@ export default ({
       this.search = ''
     },
     setEventStartDate (date, time) {
-      const [year, month, day] = date.split('-')
+      const year = date.getFullYear()
+      const month = date.getMonth()
+      const day = date.getDate()
+
       const [hours, minutes] = time.split(':')
 
-      this.event.date.start = new Date(year, month - 1, day, hours, minutes, 0, 0)
+      this.event.date.start = new Date(year, month, day, hours, minutes, 0, 0)
     },
     setEventEndDate (date, time) {
-      const [year, month, day] = date.split('-')
+      const year = date.getFullYear()
+      const month = date.getMonth()
+      const day = date.getDate()
+
       const [hours, minutes] = time.split(':')
 
       this.event.date.end = new Date(year, month - 1, day, hours, minutes, 0, 0)
@@ -947,16 +958,53 @@ export default ({
       reader.readAsDataURL(value)
     },
     'startDate.date' (value) {
-      this.setEventStartDate(value, this.startDate.time)
+      const startDate = new Date(value)
+
+      this.setEventStartDate(startDate, this.startDate.time)
+
+      const endDate = new Date(this.endDate.date)
+
+      if (endDate < startDate) {
+        this.endDate.date = value
+      }
     },
     'startDate.time' (value) {
-      this.setEventStartDate(this.startDate.date, value)
+      const startDate = new Date(this.startDate.date)
+      const endDate = new Date(this.endDate.date)
+
+      this.setEventStartDate(startDate, value)
+
+      if (!isSameDay(startDate, endDate)) {
+        return
+      }
+
+      const startTimeParts = value.split(':')
+      const startHours = Number(startTimeParts[0])
+      const startMinutes = Number(startTimeParts[1])
+
+      const endTimeParts = this.endDate.time.split(':')
+      const endHours = Number(endTimeParts[0])
+
+      if (startHours >= endHours) {
+        const addedHours = startHours + 1
+        let hours = addedHours.toString().padStart(2, '0')
+
+        if (addedHours > 23) {
+          hours = '00'
+
+          this.endDate.date = addDays(endDate, 1)
+        }
+
+        const minutes = startMinutes.toString().padStart(2, '0')
+
+        this.endDate.time = `${hours}:${minutes}:00`
+      }
     },
     'endDate.date' (value) {
-      this.setEventEndDate(value, this.endDate.time)
+      this.setEventEndDate(new Date(value), this.endDate.time)
     },
     'endDate.time' (value) {
-      this.setEventEndDate(this.endDate.date, value)
+      this.setEventEndDate(new Date(this.endDate.date), value)
     }
   }
 })
