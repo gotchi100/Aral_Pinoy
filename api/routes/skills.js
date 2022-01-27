@@ -11,6 +11,11 @@ const createSkillValidator = Joi.object({
   description: Joi.string().trim().empty('').max(200),
 })
 
+const updateSkillValidator = Joi.object({
+  name: Joi.string().trim().max(50),
+  description: Joi.string().trim().empty('').max(200),
+})
+
 const listSkillsValidator = Joi.object({
   offset: Joi.number().min(0).default(0),
   limit: Joi.number().min(1).default(25),
@@ -84,7 +89,7 @@ async function list(req, res, next) {
   }
 }
 
-function validateGetSkillBody(req, res, next) {
+function validateIdParameter(req, res, next) {
   const { id } = req.params
 
   if (!Types.ObjectId.isValid(id)) {
@@ -98,10 +103,60 @@ function validateGetSkillBody(req, res, next) {
   next()
 }
 
+function validateUpdateSkill(req, res, next) {
+  const { value: validatedBody, error } = updateSkillValidator.validate(req.body)
+
+  if (error !== undefined) {      
+    return res.status(400).json({
+      code: 'BadRequest',
+      status: 400,
+      message: error.message
+    })
+  }
+
+  req.body = validatedBody
+
+  next()
+}
+
+async function updateSkill(req, res, next) {
+  const { id } = req.params
+  const { name, description } = req.body
+
+  try {
+    await SkillsController.update(id, {
+      name,
+      description
+    })
+
+    return res.status(200).json({
+      ok: true
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+async function deleteSkill(req, res, next) {
+  const { id } = req.params
+
+  try {
+    await SkillsController.delete(id)
+
+    return res.status(200).json({
+      ok: true
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 const router = express.Router()
 
 router.post('/', validateCreateSkillBody, SkillsController.create)
 router.get('/', validateListSkillsBody, list)
-router.get('/:id', validateGetSkillBody, SkillsController.get)
+router.get('/:id', validateIdParameter, SkillsController.get)
+router.delete('/:id', validateIdParameter, deleteSkill)
+router.put('/:id', validateIdParameter, validateUpdateSkill, updateSkill)
 
 module.exports = router

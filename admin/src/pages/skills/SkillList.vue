@@ -70,7 +70,25 @@
                     show-empty
                     small
                     primary-key="_id"
-                  ></b-table>
+                  >
+                    <template #cell(actions)="{ item }">
+                      <b-icon
+                        variant="primary"
+                        icon="pencil-square"
+                        font-scale=".85"
+                        style="cursor: pointer"
+                        @click="showEditSkill(item)"
+                      />
+                      &nbsp;&nbsp;&nbsp;
+                      <b-icon
+                        variant="danger"
+                        icon="trash-fill"
+                        font-scale=".85"
+                        style="cursor: pointer"
+                        @click="showConfirmDeleteSkill(item)"
+                      />
+                    </template>
+                  </b-table>
                 </b-col>
               </b-row>
 
@@ -101,7 +119,7 @@
     </b-container>
 
     <b-modal v-model="showModal" size="xl" hide-footer>
-      <b-overlay :show="isAdding">
+      <b-overlay :show="isLoading">
         <validation-observer v-slot="{ invalid }">
           <b-container fluid>
             <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
@@ -167,13 +185,118 @@
               pill
               variant="danger"
               style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;"
-              :disabled="invalid || isAdding"
+              :disabled="invalid || isLoading"
               @click="addSkill"
             >
               Add Skill
             </b-button>
           </b-container>
         </validation-observer>
+      </b-overlay>
+    </b-modal>
+
+    <b-modal
+      v-model="editSkillForm.modal"
+      hide-footer
+    >
+      <b-overlay :show="isLoading">
+        <validation-observer v-slot="{ invalid }">
+          <b-container fluid>
+            <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
+              Edit Skill
+            </h1>
+
+            <b-alert :show="!!editSkillForm.errorMessage" variant="danger">
+              {{ editSkillForm.errorMessage }}
+            </b-alert>
+
+            <b-row class="my-1">
+              <label class="skill" for="input-skill-name">
+                Skill Label
+              </label>
+
+              <b-col>
+                <validation-provider
+                  :rules="{
+                    required: true,
+                    max: 50
+                  }"
+                  v-slot="validationContext"
+                >
+                  <b-form-input
+                    id="edit-input-skill-name"
+                    v-model="editSkillForm.form.name"
+                    :state="getValidationState(validationContext)"
+                    aria-describedby="edit-input-skill-name-feedback"
+                  />
+
+                  <b-form-invalid-feedback id="edit-input-skill-name-feedback">
+                    {{ validationContext.errors[0] }}
+                  </b-form-invalid-feedback>
+                </validation-provider>
+              </b-col>
+            </b-row>
+
+            <b-row class="my-1">
+              <label for="input-skill-description">
+                Skill Description
+              </label>
+
+              <b-col>
+                <validation-provider
+                  :rules="{ max: 200 }"
+                  v-slot="validationContext"
+                >
+                  <b-form-input
+                    id="edit-input-skill-description"
+                    v-model="editSkillForm.form.description"
+                    :state="getValidationState(validationContext)"
+                    aria-describedby="edit-input-skill-description-feedback"
+                  />
+
+                  <b-form-invalid-feedback id="edit-input-skill-description-feedback">
+                    {{ validationContext.errors[0] }}
+                  </b-form-invalid-feedback>
+                </validation-provider>
+              </b-col>
+            </b-row>
+
+            <b-row class="mt-4" align-h="center">
+              <b-col cols="6">
+                <b-button
+                  class="w-100"
+                  variant="success"
+                  :disabled="invalid || isLoading"
+                  @click="editSkill"
+                >
+                  Submit
+                </b-button>
+              </b-col>
+            </b-row>
+          </b-container>
+        </validation-observer>
+      </b-overlay>
+    </b-modal>
+
+    <b-modal
+      v-model="deleteSkillForm.modal"
+      @ok="deleteSkill"
+      @cancel="deleteSkillForm.modal = false"
+      hide-header
+      :busy="isLoading"
+    >
+      <b-overlay :show="isLoading">
+        <b-container fluid>
+          <h4 style="font-family:'Bebas Neue', cursive; text-align:center;">
+            Are you sure you want to delete the following skill?
+          </h4>
+
+          <br />
+
+          <h5 style="font-family:'Bebas Neue', cursive; text-align:center;">
+            {{ deleteSkillForm.skillToDelete.name }}
+          </h5>
+        </b-container>
       </b-overlay>
     </b-modal>
   </div>
@@ -215,14 +338,28 @@ export default {
       pageOptions: [5, 10, 20],
       fields: [
         { key: 'name', label: 'Name', sortable: true },
-        { key: 'description', label: 'Description' }
+        { key: 'description', label: 'Description' },
+        { key: 'actions', label: 'Actions' }
       ],
       showModal: false,
       name: '',
       description: '',
-      isAdding: false,
+      isLoading: false,
       errorMessage: '',
-      skillFilter: ''
+      skillFilter: '',
+      editSkillForm: {
+        errorMessage: '',
+        modal: false,
+        form: {
+          _id: '',
+          name: '',
+          description: ''
+        }
+      },
+      deleteSkillForm: {
+        modal: false,
+        skillToDelete: {}
+      }
     }
   },
   computed: {
@@ -267,7 +404,7 @@ export default {
     async addSkill () {
       this.errorMessage = ''
 
-      this.isAdding = true
+      this.isLoading = true
 
       try {
         await skillRepository.create({
@@ -277,11 +414,70 @@ export default {
 
         this.$router.go()
       } catch (error) {
-        this.isAdding = false
+        this.isLoading = false
 
         if (error.response?.data?.code === 'SkillAlreadyExists') {
           this.errorMessage = 'This skill already exists!'
         }
+      }
+    },
+    async editSkill () {
+      this.editSkillForm.errorMessage = ''
+      this.isLoading = true
+
+      const {
+        _id,
+        name,
+        description
+      } = this.editSkillForm.form
+
+      try {
+        await skillRepository.update(_id, {
+          name,
+          description
+        })
+
+        this.$router.go()
+      } catch (error) {
+        this.isLoading = false
+
+        if (error.response?.data) {
+          const { code, message } = error.response.data
+
+          if (code === 'Conflict' && message.includes('Duplicate Skill:')) {
+            this.editSkillForm.errorMessage = 'This skill already exists!'
+          }
+        }
+      }
+    },
+    async deleteSkill () {
+      this.isLoading = true
+
+      const skillId = this.deleteSkillForm.skillToDelete._id
+
+      try {
+        await skillRepository.delete(skillId)
+
+        this.$router.go()
+      } catch (error) {
+        this.isLoading = false
+      }
+    },
+    showEditSkill (skill) {
+      this.editSkillForm.modal = true
+
+      this.editSkillForm.form = {
+        _id: skill._id,
+        name: skill.name,
+        description: skill.description
+      }
+    },
+    showConfirmDeleteSkill (skill) {
+      this.deleteSkillForm.modal = true
+
+      this.deleteSkillForm.skillToDelete = {
+        _id: skill._id,
+        name: skill.name
       }
     }
   }

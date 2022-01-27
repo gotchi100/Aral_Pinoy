@@ -55,6 +55,14 @@ class SkillRepository {
       total: data.total
     }
   }
+
+  async update (id, payload) {
+    await this.apiClient.put(`/skills/${id}`, payload)
+  }
+
+  async delete (id) {
+    await this.apiClient.delete(`/skills/${id}`)
+  }
 }
 
 module.exports = SkillRepository
