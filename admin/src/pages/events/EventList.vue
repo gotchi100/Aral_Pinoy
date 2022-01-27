@@ -13,52 +13,88 @@
                 </b-col>
               </b-row>
 
-              <b-row>
+              <b-row class="my-2">
                 <b-col cols="12">
                   <b-container>
-                    <b-row>
+                    <b-row class="mb-4" align-v="center">
                       <b-col cols="4">
-                        <b-form-group
-                          style="font-size: 15px; font-family:'Bebas Neue', cursive;"
-                          label="Per page"
-                          label-for="per-page-select"
-                          content-cols="12"
-                        >
-                          <b-form-select
-                            id="per-page-select"
-                            class="w-25"
-                            v-model="perPage"
-                            :options="pageOptions"
-                          ></b-form-select>
-                        </b-form-group>
+                        <b-row align-v="center">
+                          <b-col cols="3">
+                            <label
+                              for="per-page-select"
+                              style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                            >
+                              Per Page&nbsp;&nbsp;
+                            </label>
+                          </b-col>
+
+                          <b-col>
+                            <select v-model="perPage" class="form-select form-select-sm" aria-label="Default select example">
+                              <option v-for="option in pageOptions" :key="option">
+                                {{ option }}
+                              </option>
+                            </select>
+                          </b-col>
+                        </b-row>
                       </b-col>
-                      <!-- TODO: Search by email or full name -->
-                      <!-- <b-col cols="4">
-                        <br>
-                        <b-input-group size="sm">
-                          <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
-                          <b-form-input
-                            id="filter-input"
-                            v-model="filter"
-                            type="search"
-                            placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
-                          ></b-form-input>
-                        </b-input-group>
-                        <br>
-                      </b-col> -->
+
+                      <b-col cols="4">
+                        <b-row align-v="center">
+                          <b-col cols="3">
+                            <label
+                              for="filter-eventName"
+                              style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                            >
+                              Search&nbsp;&nbsp;
+                            </label>
+                          </b-col>
+
+                          <b-col>
+                            <b-form-input
+                              id="filter-eventName"
+                              class="form-control"
+                              v-model="searchFilter"
+                              type="search"
+                              size="sm"
+                              debounce="500"
+                            ></b-form-input>
+                          </b-col>
+                        </b-row>
+                      </b-col>
+
+                      <b-col cols="4">
+                        <b-dropdown class="w-50" size="sm" text="Filter by Status">
+                          <b-dropdown-form style="width: 100%">
+                            <div v-for="option in statusOptions" :key="option" class="form-check form-switch">
+                              <label class="form-check-label" :for="`status-checkbox-${option}`">
+                                {{ option }}
+                              </label>
+
+                              <input
+                                :id="`status-checkbox-${option}`"
+                                class="form-check-input"
+                                type="checkbox"
+                                :value="option"
+                                v-model="statusFilters"
+                              >
+                            </div>
+                          </b-dropdown-form>
+                        </b-dropdown>
+                      </b-col>
                     </b-row>
                   </b-container>
                 </b-col>
               </b-row>
 
-              <!-- Main table element -->
               <b-row class="pt-4">
                 <b-col cols="12">
                   <b-table
+                    ref="eventsTable"
                     :items="getEvents"
                     :fields="fields"
                     :current-page="currentPage"
                     :per-page="perPage"
+                    :filter="searchFilter"
                     stacked="md"
                     show-empty
                     small
@@ -118,23 +154,33 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import EventRepository from '../../repositories/events'
+import { apiClient } from '../../axios'
 
-const { apiClient } = require('../../axios')
+const eventRepository = new EventRepository(apiClient)
+
+const EVENT_SORT_FIELDS_MAP = {
+  name: 'name',
+  date: 'date.start'
+}
 
 export default {
   data () {
     return {
       fields: [
-        { key: 'name', label: 'Event Name', class: 'text-center' },
-        { key: 'date', label: 'Date', class: 'text-center' },
-        { key: 'location.name', label: 'Venue', class: 'text-center' },
-        { key: 'status', label: 'Status', class: 'text-center' }
+        { key: 'name', label: 'Event Name', sortable: true },
+        { key: 'date', label: 'Date', sortable: true },
+        { key: 'location.name', label: 'Venue' },
+        { key: 'status', label: 'Status' }
       ],
       events: [],
       total: 0,
       currentPage: 1,
       perPage: 5,
-      pageOptions: [5, 10, 20]
+      pageOptions: [5, 10, 20],
+      searchFilter: '',
+      statusFilters: ['UPCOMING'],
+      statusOptions: ['UPCOMING', 'ENDED', 'CANCELED']
     }
   },
   computed: {
@@ -143,24 +189,47 @@ export default {
       return (this.currentPage - 1) * this.perPage
     }
   },
+  created () {
+    eventRepository.setAuthorizationHeader(`Bearer ${this.token}`)
+  },
   methods: {
     async getEvents (ctx) {
-      const queryString = new URLSearchParams()
+      const {
+        sortBy,
+        sortDesc,
+        filter
+      } = ctx
 
-      queryString.set('limit', this.perPage)
-      queryString.set('offset', this.pageOffset)
+      const limit = this.perPage
+      const offset = this.pageOffset
+      const sort = {}
 
-      const { data } = await apiClient.get(`/events?${queryString.toString()}`, {
-        headers: {
-          Authorization: `Bearer ${this.token}`
-        }
+      if (sortBy !== undefined && sortBy !== '') {
+        sort.field = EVENT_SORT_FIELDS_MAP[sortBy]
+        sort.order = sortDesc ? 'desc' : 'asc'
+      }
+
+      const { results, total } = await eventRepository.list({
+        name: filter,
+        status: this.statusFilters
+      }, {
+        limit,
+        offset,
+        sort
       })
-
-      const { results, total } = data
 
       this.total = total
 
       return results
+    }
+  },
+  watch: {
+    statusFilters (val) {
+      if (val.length === 0) {
+        return
+      }
+
+      this.$refs.eventsTable.refresh()
     }
   }
 }

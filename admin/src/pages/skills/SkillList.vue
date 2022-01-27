@@ -41,9 +41,10 @@
                           label="Search"
                           label-size="sm"
                           label-cols
+                          label-for="filter-skill"
                         >
                           <b-form-input
-                            id="filter-input"
+                            id="filter-skill"
                             v-model="skillFilter"
                             type="search"
                             size="sm"
