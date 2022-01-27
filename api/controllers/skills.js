@@ -2,6 +2,11 @@
 
 const SkillModel = require('../models/skills')
 
+const SORT_ORDER_MAPPING = {
+  asc : 1,
+  desc: -1
+}
+
 const whitespaceRegex = /\s+/g
 
 function sanitize(name) {
@@ -44,37 +49,45 @@ class SkillsController {
     }
   }
 
-  static async list(req, res, next) {
+  static async list(options = {}) {
     const {
       limit,
       offset,
-      'filters.name': filterName
-    } = req.query
+      filters = {},
+      sort
+    } = options
 
-    const query = {}
+    const {
+      name: filterName
+    } = filters
+
+    const filterQuery = {}
+    const queryOptions = {
+      lean: true,
+      limit,
+      skip: offset
+    }
 
     if (filterName !== undefined && filterName !== '') {
-      query.$text = {
+      filterQuery.$text = {
         $search: decodeURIComponent(filterName)
       }
     }
 
-    try {
-      const [skills, total] = await Promise.all([
-        SkillModel.find(query, undefined, { 
-          lean: true,
-          limit,
-          skip: offset
-        }),
-        SkillModel.countDocuments(query)
-      ])
-  
-      return res.json({
-        results: skills,
-        total
-      })
-    } catch (error) {
-      next(error)
+    if (sort.field !== undefined && sort.order !== undefined) {
+      queryOptions.sort = {
+        [sort.field]: SORT_ORDER_MAPPING[sort.order]
+      }
+    }
+
+    const [skills, total] = await Promise.all([
+      SkillModel.find(filterQuery, undefined, queryOptions),
+      SkillModel.countDocuments(filterQuery)
+    ])
+
+    return {
+      results: skills,
+      total
     }
   }
 

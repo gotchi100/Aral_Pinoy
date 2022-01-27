@@ -14,7 +14,9 @@ const createSkillValidator = Joi.object({
 const listSkillsValidator = Joi.object({
   offset: Joi.number().min(0).default(0),
   limit: Joi.number().min(1).default(25),
-  'filters.name': Joi.string().trim().max(100).allow('')
+  'filters.name': Joi.string().trim().max(100).allow(''),
+  'sort.field': Joi.string().valid('name'),
+  'sort.order': Joi.string().valid('asc', 'desc')
 }).options({ 
   stripUnknown: true
 })
@@ -51,6 +53,37 @@ function validateListSkillsBody(req, res, next) {
   next()
 }
 
+async function list(req, res, next) {
+  const {
+    offset,
+    limit,
+    'filters.name': filterName,
+    'sort.field': sortField,
+    'sort.order': sortOrder
+  } = req.query
+
+  try {
+    const { results, total } = await SkillsController.list({
+      offset,
+      limit,
+      filters: {
+        name: filterName
+      },
+      sort: {
+        field: sortField,
+        order: sortOrder
+      }
+    }) 
+
+    return res.json({
+      results,
+      total
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 function validateGetSkillBody(req, res, next) {
   const { id } = req.params
 
@@ -68,7 +101,7 @@ function validateGetSkillBody(req, res, next) {
 const router = express.Router()
 
 router.post('/', validateCreateSkillBody, SkillsController.create)
-router.get('/', validateListSkillsBody, SkillsController.list)
+router.get('/', validateListSkillsBody, list)
 router.get('/:id', validateGetSkillBody, SkillsController.get)
 
 module.exports = router

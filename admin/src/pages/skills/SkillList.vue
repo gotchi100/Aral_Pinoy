@@ -16,7 +16,7 @@
               <b-row>
                 <b-col cols="12">
                   <b-container>
-                    <b-row>
+                    <b-row align-h="end">
                       <b-col cols="4">
                         <b-form-group
                           style="font-size: 15px; font-family:'Bebas Neue', cursive;"
@@ -32,26 +32,30 @@
                           ></b-form-select>
                         </b-form-group>
                       </b-col>
-                      <!-- TODO: Search by email or full name -->
-                      <!-- <b-col cols="4">
-                        <br>
-                        <b-input-group size="sm">
-                          <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
+
+                      <b-col cols="4" />
+
+                      <b-col cols="4">
+                        <b-form-group
+                          style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                          label="Search"
+                          label-size="sm"
+                          label-cols
+                        >
                           <b-form-input
                             id="filter-input"
-                            v-model="filter"
+                            v-model="skillFilter"
                             type="search"
-                            placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
+                            size="sm"
+                            debounce="500"
                           ></b-form-input>
-                        </b-input-group>
-                        <br>
-                      </b-col> -->
+                        </b-form-group>
+                      </b-col>
                     </b-row>
                   </b-container>
                 </b-col>
               </b-row>
 
-              <!-- Main table element -->
               <b-row class="pt-4">
                 <b-col cols="12">
                   <b-table
@@ -59,6 +63,7 @@
                     :fields="fields"
                     :current-page="currentPage"
                     :per-page="perPage"
+                    :filter="skillFilter"
                     stacked="md"
                     style="background:white"
                     show-empty
@@ -177,7 +182,10 @@
 import { mapGetters } from 'vuex'
 import { ValidationObserver, ValidationProvider, extend } from 'vee-validate'
 import { required, max } from 'vee-validate/dist/rules'
+import SkillRepository from '../../repositories/skills'
 import { apiClient } from '../../axios'
+
+const skillRepository = new SkillRepository(apiClient)
 
 extend('required', {
   ...required,
@@ -194,6 +202,9 @@ export default {
     ValidationObserver,
     ValidationProvider
   },
+  created () {
+    skillRepository.setAuthorizationHeader(`Bearer ${this.token}`)
+  },
   data () {
     return {
       skills: [],
@@ -202,14 +213,15 @@ export default {
       perPage: 5,
       pageOptions: [5, 10, 20],
       fields: [
-        { key: 'name', label: 'Name' },
+        { key: 'name', label: 'Name', sortable: true },
         { key: 'description', label: 'Description' }
       ],
       showModal: false,
       name: '',
       description: '',
       isAdding: false,
-      errorMessage: ''
+      errorMessage: '',
+      skillFilter: ''
     }
   },
   computed: {
@@ -223,18 +235,29 @@ export default {
       return dirty || validated ? valid : null
     },
     async getSkills (ctx) {
-      const queryString = new URLSearchParams()
+      const {
+        filter,
+        sortBy,
+        sortDesc
+      } = ctx
 
-      queryString.set('limit', this.perPage)
-      queryString.set('offset', this.pageOffset)
+      const limit = this.perPage
+      const offset = this.pageOffset
 
-      const { data } = await apiClient.get(`/skills?${queryString.toString()}`, {
-        headers: {
-          Authorization: `Bearer ${this.token}`
-        }
+      const sort = {}
+
+      if (sortBy !== undefined && sortBy !== '') {
+        sort.field = sortBy
+        sort.order = sortDesc ? 'desc' : 'asc'
+      }
+
+      const { results, total } = await skillRepository.list({
+        name: filter
+      }, {
+        limit,
+        offset,
+        sort
       })
-
-      const { results, total } = data
 
       this.total = total
 
@@ -246,13 +269,9 @@ export default {
       this.isAdding = true
 
       try {
-        await apiClient.post('/skills', {
+        await skillRepository.create({
           name: this.name,
           description: this.description
-        }, {
-          headers: {
-            authorization: `Bearer ${this.token}`
-          }
         })
 
         this.$router.go()
