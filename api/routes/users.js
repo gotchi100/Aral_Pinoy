@@ -25,7 +25,10 @@ const createUserValidator = Joi.object({
 const paginationValidator = Joi.object({
   offset: Joi.number().min(0).default(0),
   limit: Joi.number().min(1).default(25),
-  'filters.roles': Joi.array().items(Joi.string().valid('admin', 'officer', 'volunteer')).unique()
+  'filters.roles': Joi.array().items(Joi.string().valid('admin', 'officer', 'volunteer')).unique(),
+  'filters.name': Joi.string().trim().empty(''),
+  'sort.field': Joi.string().valid('firstName', 'lastName'),
+  'sort.order': Joi.string().valid('asc', 'desc')
 }).options({ 
   stripUnknown: true
 })
@@ -46,7 +49,7 @@ function validateCreateUserBody(req, res, next) {
   next()
 }
 
-function validateListUsersBody(req, res, next) {
+function validateListUsers(req, res, next) {
   const { value: validatedQuery, error } = paginationValidator.validate(req.query)
 
   if (error !== undefined) {      
@@ -60,6 +63,39 @@ function validateListUsersBody(req, res, next) {
   req.query = validatedQuery
 
   next()
+}
+
+async function list(req, res, next) {
+  const {
+    offset,
+    limit,
+    'filters.roles': filterRoles,
+    'filters.name': filterName,
+    'sort.field': sortField,
+    'sort.order': sortOrder
+  } = req.query
+
+  try {
+    const { results, total } = await UsersController.list({
+      offset,
+      limit,
+      filters: {
+        name: filterName,
+        roles: filterRoles
+      },
+      sort: {
+        field: sortField,
+        order: sortOrder
+      }
+    })
+
+    return res.json({
+      results,
+      total
+    })
+  } catch (error) {
+    next(error)
+  }
 }
 
 function validateGetUserBody(req, res, next) {
@@ -79,7 +115,7 @@ function validateGetUserBody(req, res, next) {
 const router = express.Router()
 
 router.post('/', validateCreateUserBody, UsersController.create)
-router.get('/', validateListUsersBody, UsersController.list)
+router.get('/', validateListUsers, list)
 router.get('/:id', validateGetUserBody, UsersController.get)
 
 module.exports = router

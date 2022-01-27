@@ -3,6 +3,11 @@
 const UserModel = require('../models/users')
 const SkillModel = require('../models/skills')
 
+const SORT_ORDER_MAPPING = {
+  asc : 1,
+  desc: -1
+}
+
 class UsersController {
   static async create(req, res, next) {
     const {
@@ -63,34 +68,58 @@ class UsersController {
     }
   }
 
-  static async list(req, res) {
+  static async list(options = {}) {
     const {
       limit,
       offset,
-      'filters.roles': roles
-    } = req.query
+      filters = {},
+      sort = {}
+    } = options
 
-    const query = {}
+    const {
+      roles: filterRoles,
+      name: filterName
+    } = filters
 
-    if (Array.isArray(roles)) {
-      query.roles = {
-        $in : roles
+    const {
+      field: sortField,
+      order: sortOrder
+    } = sort
+
+    const filterQuery = {}
+    const queryOptions = { 
+      lean: true,
+      limit,
+      skip: offset
+    }
+
+    if (filterName !== undefined && filterName !== '') {
+      filterQuery.$text = {
+        $search: decodeURIComponent(filterName)
+      }
+    }
+
+    if (filterRoles !== undefined && filterRoles.length > 0) {
+      filterQuery.roles = {
+        $in : filterRoles
+      }
+    }
+
+    if (sortField !== undefined && sortOrder !== undefined) {
+      queryOptions.sort = {
+        [sortField]: SORT_ORDER_MAPPING[sortOrder]
       }
     }
 
     const [users, total] = await Promise.all([
-      UserModel.find(query, undefined, { 
-        lean: true,
-        limit,
-        skip: offset
-      }),
-      UserModel.countDocuments(query)
+      UserModel.find(filterQuery, undefined, queryOptions),
+      UserModel.countDocuments(filterQuery)
     ])
 
-    return res.json({
+    return {
       results: users,
       total
-    })
+    }
   }
 
   static async get(req, res) {
