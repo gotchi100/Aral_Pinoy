@@ -21,10 +21,17 @@ class InkindDonationCategoryRepository {
     this.apiClient.defaults.headers.Authorization = value
   }
 
+  async create (payload) {
+    const { data } = await this.apiClient.post('/inkind-donation-categories', payload)
+
+    return data
+  }
+
   async list (filters = {}, options = {}) {
     const {
       limit = 5,
-      offset = 0
+      offset = 0,
+      sort = {}
     } = options
 
     const queryString = new URLSearchParams()
@@ -36,12 +43,21 @@ class InkindDonationCategoryRepository {
       queryString.set('filters.name', filters.name)
     }
 
+    if (sort.field !== undefined && sort.order !== undefined) {
+      queryString.set('sort.field', sort.field)
+      queryString.set('sort.order', sort.order)
+    }
+
     const { data } = await this.apiClient.get(`/inkind-donation-categories?${queryString.toString()}`)
 
     return {
       results: data.results,
       total: data.total
     }
+  }
+
+  async delete (id) {
+    await this.apiClient.delete(`/inkind-donation-categories/${id}`)
   }
 }
 
