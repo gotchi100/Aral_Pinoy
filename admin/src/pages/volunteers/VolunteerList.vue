@@ -13,39 +13,54 @@
                 </b-col>
               </b-row>
 
-              <b-row>
+              <b-row class="my-2">
                 <b-col cols="12">
                   <b-container>
-                    <b-row>
+                    <b-row class="mb-4" align-v="center" align-h="around">
                       <b-col cols="4">
-                        <b-form-group
-                          style="font-size: 15px; font-family:'Bebas Neue', cursive;"
-                          label="Per page"
-                          label-for="per-page-select"
-                          content-cols="12"
-                        >
-                          <b-form-select
-                            id="per-page-select"
-                            class="w-25"
-                            v-model="perPage"
-                            :options="pageOptions"
-                          ></b-form-select>
-                        </b-form-group>
+                        <b-row align-v="center">
+                          <b-col cols="3">
+                            <label
+                              for="per-page-select"
+                              style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                            >
+                              Per Page&nbsp;&nbsp;
+                            </label>
+                          </b-col>
+
+                          <b-col>
+                            <select v-model="perPage" class="form-select form-select-sm" aria-label="Default select example">
+                              <option v-for="option in pageOptions" :key="option">
+                                {{ option }}
+                              </option>
+                            </select>
+                          </b-col>
+                        </b-row>
                       </b-col>
-                      <!-- TODO: Search by email or full name -->
-                      <!-- <b-col cols="4">
-                        <br>
-                        <b-input-group size="sm">
-                          <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
-                          <b-form-input
-                            id="filter-input"
-                            v-model="filter"
-                            type="search"
-                            placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
-                          ></b-form-input>
-                        </b-input-group>
-                        <br>
-                      </b-col> -->
+
+                      <b-col cols="4">
+                        <b-row align-v="center">
+                          <b-col cols="3">
+                            <label
+                              for="filter-eventName"
+                              style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                            >
+                              Search&nbsp;&nbsp;
+                            </label>
+                          </b-col>
+
+                          <b-col>
+                            <b-form-input
+                              id="filter-eventName"
+                              class="form-control"
+                              v-model="searchFilter"
+                              type="search"
+                              size="sm"
+                              debounce="500"
+                            ></b-form-input>
+                          </b-col>
+                        </b-row>
+                      </b-col>
                     </b-row>
                   </b-container>
                 </b-col>
@@ -58,6 +73,7 @@
                     :fields="fields"
                     :current-page="currentPage"
                     :per-page="perPage"
+                    :filter="searchFilter"
                     stacked="md"
                     style="background:white"
                     show-empty
@@ -96,8 +112,10 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { apiClient } from '../../axios'
+import UserRepository from '../../repositories/users'
 
-const { apiClient } = require('../../axios')
+const userRepository = new UserRepository(apiClient)
 
 export default {
   name: 'VolunteerList',
@@ -108,10 +126,12 @@ export default {
       currentPage: 1,
       perPage: 5,
       pageOptions: [5, 10, 20],
+      searchFilter: '',
       fields: [
-        { key: 'email', label: 'Email', class: 'text-center' },
-        { key: 'name', label: 'Full Name', sortDirection: 'desc' },
-        { key: 'contactNumber', label: 'Contact Number', class: 'text-center' }
+        { key: 'email', label: 'Email' },
+        { key: 'lastName', label: 'Last Name', sortable: true },
+        { key: 'firstName', label: 'First Name', sortable: true },
+        { key: 'contactNumber', label: 'Contact Number' }
       ]
     }
   },
@@ -121,20 +141,34 @@ export default {
       return (this.currentPage - 1) * this.perPage
     }
   },
+  created () {
+    userRepository.setAuthorizationHeader(`Bearer ${this.token}`)
+  },
   methods: {
     async getUsers (ctx) {
-      const queryString = new URLSearchParams()
+      const {
+        filter,
+        sortBy,
+        sortDesc
+      } = ctx
 
-      queryString.set('limit', this.perPage)
-      queryString.set('offset', this.pageOffset)
+      const limit = this.perPage
+      const offset = this.pageOffset
+      const sort = {}
 
-      const { data } = await apiClient.get(`/users?filters.roles[]=volunteer&${queryString.toString()}`, {
-        headers: {
-          Authorization: `Bearer ${this.token}`
-        }
+      if (sortBy !== undefined && sortBy !== '') {
+        sort.field = sortBy
+        sort.order = sortDesc ? 'desc' : 'asc'
+      }
+
+      const { results, total } = await userRepository.list({
+        name: filter,
+        roles: ['volunteer']
+      }, {
+        limit,
+        offset,
+        sort
       })
-
-      const { results, total } = data
 
       this.total = total
 

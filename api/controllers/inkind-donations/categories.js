@@ -4,6 +4,11 @@ const IkdCategoryModel = require('../../models/inkind-donations/categories')
 
 const { ConflictError, NotFoundError } = require('../../errors')
 
+const SORT_ORDER_MAPPING = {
+  asc : 1,
+  desc: -1
+}
+
 const whitespaceRegex = /\s+/g
 
 function sanitize(name) {
@@ -46,24 +51,41 @@ class InkindDonationCategoriesController {
     const {
       limit,
       offset,
-      'filters.name': filterName
+      filters = {},
+      sort = {}
     } = query
 
-    const dbQuery = {}
+    const {
+      name: filterName
+    } = filters
+
+    const {
+      field: sortField,
+      order: sortOrder
+    } = sort
+
+    const filterQuery = {}
+    const queryOptions = { 
+      lean: true,
+      limit,
+      skip: offset
+    }
 
     if (filterName !== undefined && filterName !== '') {
-      dbQuery.$text = {
+      filterQuery.$text = {
         $search: decodeURIComponent(filterName)
       }
     }
 
+    if (sortField !== undefined && sortOrder !== undefined) {
+      queryOptions.sort = {
+        [sortField]: SORT_ORDER_MAPPING[sortOrder]
+      }
+    }
+
     const [categories, total] = await Promise.all([
-      IkdCategoryModel.find(dbQuery, undefined, { 
-        lean: true,
-        limit,
-        skip: offset
-      }),
-      IkdCategoryModel.countDocuments(dbQuery)
+      IkdCategoryModel.find(filterQuery, undefined, queryOptions),
+      IkdCategoryModel.countDocuments(filterQuery)
     ])
 
     return {
@@ -80,6 +102,16 @@ class InkindDonationCategoriesController {
     }
 
     return category
+  }
+
+  static async delete(id) {
+    const { deletedCount } = await IkdCategoryModel.deleteOne({
+      _id: id
+    })
+
+    if (deletedCount === 0) {
+      throw new NotFoundError(`In-kind donation category not found: ${id}`)
+    }
   }
 }
 

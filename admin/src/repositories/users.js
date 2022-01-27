@@ -4,7 +4,7 @@ const axios = require('axios')
 
 /** @typedef {import('axios').Axios} Axios */
 
-class InkindDonationCategoryRepository {
+class UserRepository {
   /**
    *
    * @param {Axios} apiClient
@@ -21,26 +21,37 @@ class InkindDonationCategoryRepository {
     this.apiClient.defaults.headers.Authorization = value
   }
 
-  async create (payload) {
-    const { data } = await this.apiClient.post('/inkind-donation-categories', payload)
+  async get (id) {
+    const { data } = await this.apiClient.get(`/users/${id}`)
 
     return data
   }
 
   async list (filters = {}, options = {}) {
     const {
-      limit = 5,
-      offset = 0,
+      limit,
+      offset,
       sort = {}
     } = options
 
     const queryString = new URLSearchParams()
 
-    queryString.set('limit', limit)
-    queryString.set('offset', offset)
+    if (limit !== undefined) {
+      queryString.set('limit', limit)
+    }
+
+    if (offset !== undefined) {
+      queryString.set('offset', offset)
+    }
 
     if (filters.name !== undefined && filters.name !== '') {
       queryString.set('filters.name', filters.name)
+    }
+
+    if (Array.isArray(filters.roles) && filters.roles.length > 0) {
+      for (const role of filters.roles) {
+        queryString.append('filters.roles[]', role)
+      }
     }
 
     if (sort.field !== undefined && sort.order !== undefined) {
@@ -48,17 +59,13 @@ class InkindDonationCategoryRepository {
       queryString.set('sort.order', sort.order)
     }
 
-    const { data } = await this.apiClient.get(`/inkind-donation-categories?${queryString.toString()}`)
+    const { data } = await this.apiClient.get(`/users?${queryString.toString()}`)
 
     return {
       results: data.results,
       total: data.total
     }
   }
-
-  async delete (id) {
-    await this.apiClient.delete(`/inkind-donation-categories/${id}`)
-  }
 }
 
-module.exports = InkindDonationCategoryRepository
+module.exports = UserRepository

@@ -71,4 +71,10 @@ async function hashPasswordBeforeUpdate () {
 userSchema.pre('save', hashPasswordBeforeSave)
 userSchema.pre('updateOne', hashPasswordBeforeUpdate)
 
+userSchema.index({
+  firstName: 'text',
+  middleName: 'text',
+  lastName: 'text'
+})
+
 module.exports = mongoose.model('User', userSchema)

@@ -221,6 +221,7 @@
                       <MonetaryDonationEventDonationList
                         :show="eventDonations.modal"
                         :event="eventDonations.event"
+                        @close="eventDonations.modal = false"
                       />
 
                       <b-row class="pt-4 justify-content-md-center">

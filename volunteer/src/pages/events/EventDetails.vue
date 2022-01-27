@@ -256,9 +256,11 @@
                       Event Description
                     </h1>
 
-                    <p class="text-start">
-                      {{ event.description }}
-                    </p>
+                    <b-form-textarea
+                      rows="15"
+                      v-model="event.description"
+                      readonly
+                    />
                   </b-card>
                 </b-col>
               </b-row>

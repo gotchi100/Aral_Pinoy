@@ -31,10 +31,7 @@ class EventRepository {
     const {
       limit,
       offset,
-      sort: {
-        field: sortField,
-        order: sortOrder
-      }
+      sort = {}
     } = options
 
     const queryString = new URLSearchParams()
@@ -52,16 +49,22 @@ class EventRepository {
     }
 
     if (filters.status !== undefined && filters.status !== '') {
-      queryString.set('filters.status', filters.status)
+      if (Array.isArray(filters.status)) {
+        for (const status of filters.status) {
+          queryString.append('filters.status[]', status)
+        }
+      } else {
+        queryString.set('filters.status', filters.status)
+      }
     }
 
     if (filters.hasMonetaryGoal !== undefined) {
       queryString.set('filters.hasMonetaryGoal', filters.hasMonetaryGoal)
     }
 
-    if (sortField !== undefined && sortOrder !== undefined) {
-      queryString.set('sort.field', sortField)
-      queryString.set('sort.order', sortOrder)
+    if (sort.field !== undefined && sort.order !== undefined) {
+      queryString.set('sort.field', sort.field)
+      queryString.set('sort.order', sort.order)
     }
 
     const { data } = await this.apiClient.get(`/events?${queryString.toString()}`)

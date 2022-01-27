@@ -11,7 +11,10 @@
             <label class="lname" for="input-small">Last Name</label>
             <b-col>
               <validation-provider
-                :rules="{ required: true }"
+                :rules="{
+                  required: true,
+                  regex: regexRules.filipinoCharacters
+                }"
                 v-slot="validationContext"
               >
                 <b-form-input
@@ -20,7 +23,16 @@
                   aria-describedby="input-user-lastname-feedback"
                 ></b-form-input>
 
-                <b-form-invalid-feedback id="input-user-lastname-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                <b-form-invalid-feedback
+                  v-if="validationContext.failedRules.regex !== undefined"
+                  id="input-user-lastname-feedback"
+                >
+                  This field does not have a valid format
+                </b-form-invalid-feedback>
+
+                <b-form-invalid-feedback v-else id="input-user-lastname-feedback">
+                  {{ validationContext.errors[0] }}
+                </b-form-invalid-feedback>
               </validation-provider>
             </b-col>
           </b-row>
@@ -29,7 +41,10 @@
             <label class="fname" for="input-user-firstname">First Name</label>
             <b-col>
               <validation-provider
-                :rules="{ required: true }"
+                :rules="{
+                  required: true,
+                  regex: regexRules.filipinoCharacters
+                }"
                 v-slot="validationContext"
               >
                 <b-form-input
@@ -39,7 +54,16 @@
                   aria-describedby="input-user-firstname-feedback"
                 ></b-form-input>
 
-                <b-form-invalid-feedback id="input-user-firstname-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                <b-form-invalid-feedback
+                  v-if="validationContext.failedRules.regex !== undefined"
+                  id="input-user-firstname-feedback"
+                >
+                  This field does not have a valid format
+                </b-form-invalid-feedback>
+
+                <b-form-invalid-feedback v-else id="input-user-firstname-feedback">
+                  {{ validationContext.errors[0] }}
+                </b-form-invalid-feedback>
               </validation-provider>
             </b-col>
           </b-row>
@@ -68,7 +92,7 @@
             <b-col>
               <validation-provider
                 :rules="{
-                  regex: /^(09|\+639)\d{9}$/
+                  regex: regexRules.phContactNumber
                 }"
                 v-slot="validationContext"
               >
@@ -375,7 +399,11 @@ export default {
       maxBirthDate: subYears(new Date(), 10),
       skills: [],
       skillNameSearch: '',
-      userSkills: []
+      userSkills: [],
+      regexRules: {
+        filipinoCharacters: /^[a-zA-Z\u00f1\u00d1 -]+$/,
+        phContactNumber: /^(09|\+639)\d{9}$/
+      }
     }
   },
   methods: {

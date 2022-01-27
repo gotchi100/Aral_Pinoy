@@ -169,16 +169,18 @@
                 </b-col>
               </b-row>
 
-              <b-row v-if="event.description !== undefined" class="py-4">
+              <b-row v-if="event.description !== undefined" class="py-4 text-start">
                 <b-col cols="12">
                   <b-card style="border-radius: 20px;">
-                    <h1 class="text-start" style="font-family:'Bebas Neue', cursive;">
+                    <h1 style="font-family:'Bebas Neue', cursive;">
                       Event Description
                     </h1>
 
-                    <p class="text-start">
-                      {{ event.description }}
-                    </p>
+                    <b-form-textarea
+                      rows="15"
+                      v-model="event.description"
+                      readonly
+                    />
                   </b-card>
                 </b-col>
               </b-row>
@@ -333,79 +335,6 @@
         </b-col>
       </b-row>
     </b-container>
-
-    <!-- <b-modal v-model="showModal" size="xl">
-      <b-container>
-        <b-row>
-          <b-col cols="12">
-            <b-card>
-              <b-row>
-                <b-col>
-                  <b-button>Download List</b-button>
-                </b-col>
-                <b-col>
-                  <b-input-group size="sm">
-                    <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
-                    <b-form-input
-                      id="filter-input"
-                      type="search"
-                      placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
-                    ></b-form-input>
-                  </b-input-group>
-                </b-col>
-              </b-row>
-              <b-table
-                :items="items"
-                :fields="fields"
-                :current-page="currentPage"
-                :per-page="5"
-                stacked="md"
-                show-empty
-                small
-              ></b-table>
-            <b-col class="my-1">
-              <b-pagination
-                v-model="currentPage"
-                :total-rows="6"
-                :per-page="5"
-                align="fill"
-                size="sm"
-                class="my-0"
-              ></b-pagination>
-            </b-col>
-            </b-card>
-          </b-col>
-
-          <b-col cols="12">
-            <b-card style="margin-top:20px;">
-              <b-container>
-                <b-row>
-                  <b-col cols="12">
-                    <h2>Role</h2>
-                  </b-col>
-                </b-row>
-
-                <b-row>
-                  <b-col cols="12">
-                    <h5>Trash Collector</h5>
-                    <b-progress height="2rem" style="border-radius:30px;" :max="20">
-                      <b-progress-bar :value="14" label="6 volunteers more are needed for this role"></b-progress-bar>
-                    </b-progress>
-                  </b-col>
-
-                  <b-col cols="12">
-                    <h5>Trash Bag Distributor</h5>
-                    <b-progress height="2rem" style="border-radius:30px;" :max="20">
-                      <b-progress-bar :value="12" label="8 volunteers more are needed for this role"></b-progress-bar>
-                    </b-progress>
-                  </b-col>
-                </b-row>
-              </b-container>
-            </b-card>
-          </b-col>
-        </b-row>
-      </b-container>
-    </b-modal> -->
 
     <b-modal v-model="updateEventStatus.modal" size="md">
       <b-container>

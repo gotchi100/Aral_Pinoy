@@ -25,7 +25,9 @@ const createCategoryValidator = Joi.object({
 const listCategoriesValidator = Joi.object({
   offset: Joi.number().min(0).default(0),
   limit: Joi.number().min(1).default(25),
-  'filters.name': Joi.string().trim().max(100).allow('')
+  'filters.name': Joi.string().trim().max(100).allow(''),
+  'sort.field': Joi.string().valid('name'),
+  'sort.order': Joi.string().valid('asc', 'desc')
 }).options({ 
   stripUnknown: true
 })
@@ -73,8 +75,26 @@ function validateListCategoriesBody(req, res, next) {
 }
 
 async function list(req, res, next) {
+  const {
+    offset,
+    limit,
+    'filters.name': filterName,
+    'sort.field': sortField,
+    'sort.order': sortOrder
+  } = req.query
+
   try {
-    const { results, total } = await IkdCategoriesController.list(req.query)
+    const { results, total } = await IkdCategoriesController.list({
+      offset,
+      limit,
+      filters: {
+        name: filterName
+      },
+      sort: {
+        field: sortField,
+        order: sortOrder
+      }
+    })
 
     return res.json({
       results,
@@ -85,7 +105,7 @@ async function list(req, res, next) {
   }
 }
 
-function validateGetCategoryBody(req, res, next) {
+function validateIdParam(req, res, next) {
   const { id } = req.params
 
   if (!Types.ObjectId.isValid(id)) {
@@ -111,10 +131,25 @@ async function get(req, res, next) {
   }
 }
 
+async function deleteCategory(req, res, next) {
+  const { id } = req.params
+
+  try {
+    await IkdCategoriesController.delete(id)
+
+    return res.json({
+      ok: true
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 const router = express.Router()
 
 router.post('/', validateCreateCategoryBody, create)
 router.get('/', validateListCategoriesBody, list)
-router.get('/:id', validateGetCategoryBody, get)
+router.get('/:id', validateIdParam, get)
+router.delete('/:id', validateIdParam, deleteCategory)
 
 module.exports = router

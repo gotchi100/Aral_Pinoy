@@ -31,8 +31,8 @@ const contactsSchema = Joi.array().items(
 
 const jobsSchema = Joi.array().items(
   Joi.object({
-    name: Joi.string().trim().max(255).required(),
-    description: Joi.string().trim().empty('').max(200),
+    name: Joi.string().trim().max(50).required(),
+    description: Joi.string().trim().empty('').max(100),
     requirements: Joi.object({
       max: Joi.number().min(1).default(1)
     }).required(),
@@ -48,7 +48,7 @@ const questionsSchema = Joi.array().items(
 )
 
 const createEventValidator = Joi.object({
-  name: Joi.string().trim().max(255).required(),
+  name: Joi.string().trim().max(100).required(),
   description: Joi.string().trim().empty('').max(5000),
   date: Joi.object({
     start: Joi.date().iso().required(),
@@ -105,9 +105,14 @@ const listEventsValidator = Joi.object({
   offset: Joi.number().min(0).default(0),
   limit: Joi.number().min(1).default(25),
   'filters.name': Joi.string().trim().max(100).allow(''),
-  'filters.status': Joi.string().valid('UPCOMING', 'ENDED', 'CANCELED'),
+  'filters.status': [
+    Joi.string().valid('UPCOMING', 'ENDED', 'CANCELED'),
+    Joi.array().items(
+      Joi.string().valid('UPCOMING', 'ENDED', 'CANCELED')
+    )
+  ],
   'filters.hasMonetaryGoal': Joi.boolean(),
-  'sort.field': Joi.string().valid('date.start'),
+  'sort.field': Joi.string().valid('date.start', 'name'),
   'sort.order': Joi.string().valid('asc', 'desc')
 }).options({ 
   stripUnknown: true

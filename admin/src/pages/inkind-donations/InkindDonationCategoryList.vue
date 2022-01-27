@@ -13,40 +13,54 @@
                 </b-col>
               </b-row>
 
-              <b-row>
+              <b-row class="my-2">
                 <b-col cols="12">
                   <b-container>
-                    <b-row>
+                    <b-row class="mb-4" align-v="center" align-h="around">
                       <b-col cols="4">
-                        <b-form-group
-                          style="font-size: 15px; font-family:'Bebas Neue', cursive;"
-                          label="Per page"
-                          label-for="per-page-select"
-                          content-cols="12"
-                        >
-                          <b-form-select
-                            id="per-page-select"
-                            class="w-25"
-                            v-model="perPage"
-                            :options="pageOptions"
-                          ></b-form-select>
-                        </b-form-group>
+                        <b-row align-v="center">
+                          <b-col cols="3">
+                            <label
+                              for="per-page-select"
+                              style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                            >
+                              Per Page&nbsp;&nbsp;
+                            </label>
+                          </b-col>
+
+                          <b-col>
+                            <select v-model="perPage" class="form-select form-select-sm" aria-label="Default select example">
+                              <option v-for="option in pageOptions" :key="option">
+                                {{ option }}
+                              </option>
+                            </select>
+                          </b-col>
+                        </b-row>
                       </b-col>
 
-                      <!-- TODO: Implement search for inkind-categories -->
-                      <!-- <b-col>
-                        <br>
-                        <b-input-group size="sm">
-                          <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
-                          <b-form-input
-                            id="filter-input"
-                            v-model="filter"
-                            type="search"
-                            placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
-                          ></b-form-input>
-                        </b-input-group>
-                        <br>
-                      </b-col> -->
+                      <b-col cols="4">
+                        <b-row align-v="center">
+                          <b-col cols="3">
+                            <label
+                              for="filter-eventName"
+                              style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                            >
+                              Search&nbsp;&nbsp;
+                            </label>
+                          </b-col>
+
+                          <b-col>
+                            <b-form-input
+                              id="filter-eventName"
+                              class="form-control"
+                              v-model="searchFilter"
+                              type="search"
+                              size="sm"
+                              debounce="500"
+                            ></b-form-input>
+                          </b-col>
+                        </b-row>
+                      </b-col>
                     </b-row>
                   </b-container>
                 </b-col>
@@ -59,6 +73,7 @@
                     :fields="fields"
                     :current-page="currentPage"
                     :per-page="perPage"
+                    :filter="searchFilter"
                     stacked="md"
                     style="background:white"
                     show-empty
@@ -77,6 +92,16 @@
                         :icon="hasCustomField(row.item, 'expirationDate') ? 'check-circle' : 'circle'"
                         font-scale="1"
                       ></b-icon>
+                    </template>
+
+                    <template #cell(actions)="{ item }">
+                      <b-icon
+                        variant="danger"
+                        icon="trash-fill"
+                        font-scale=".85"
+                        style="cursor: pointer"
+                        @click="showConfirmDelete(item)"
+                      />
                     </template>
                   </b-table>
                 </b-col>
@@ -114,96 +139,129 @@
     </b-container>
 
     <b-modal v-model="showAddModal" size="xl" hide-footer>
-      <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1100px; border-radius: 20px; margin-top: 40px;">
-        <b-container fluid>
-          <b-row>
-            <b-col cols="12">
-              <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
-                Add a Category Entry
-              </h1>
-            </b-col>
-          </b-row>
-
-          <b-row class="pt-1">
-            <b-col cols="12">
-              <label for="category-name">Category Name</label>
-              <b-form-input name="category-name" v-model="addCategoryForm.name"></b-form-input>
-            </b-col>
-          </b-row>
-
-          <b-row class="pt-3">
-            <b-col>
-              <b-form-checkbox
-                v-model="checkBestBeforeDate"
-              >
-                &nbsp; Requires Best Before Date?
-              </b-form-checkbox>
-            </b-col>
-
-            <b-col>
-              <b-form-checkbox
-                v-model="checkExpirationDate"
-              >
-                &nbsp; Requires Expiration Date?
-              </b-form-checkbox>
-            </b-col>
-          </b-row>
-
-          <b-row class="pt-4 pb-3" align-h="center">
-            <b-col cols="2">
-              <b-button
-                style="font-size: 16px; padding: 8px; width: 150px;"
-                pill
-                variant="danger"
-                @click="showAddConfirmationModal = !showAddConfirmationModal"
-              >
-                Add Category
-              </b-button>
-            </b-col>
-          </b-row>
-        </b-container>
-
-        <b-modal
-          v-model="showAddConfirmationModal"
-          @ok="addCategory"
-          @cancel="showAddConfirmationModal = false"
-        >
+      <b-overlay :show="isLoading">
+        <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1100px; border-radius: 20px; margin-top: 40px;">
           <b-container fluid>
-            <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
-              Are you sure with all the details?
-            </h1>
+            <b-row>
+              <b-col cols="12">
+                <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
+                  Add a Category Entry
+                </h1>
+              </b-col>
+            </b-row>
+
+            <b-row class="pt-1">
+              <b-col cols="12">
+                <label for="category-name">Category Name</label>
+                <b-form-input name="category-name" v-model="addCategoryForm.name"></b-form-input>
+              </b-col>
+            </b-row>
+
+            <b-row class="pt-3">
+              <b-col>
+                <b-form-checkbox
+                  v-model="checkBestBeforeDate"
+                >
+                  &nbsp; Requires Best Before Date?
+                </b-form-checkbox>
+              </b-col>
+
+              <b-col>
+                <b-form-checkbox
+                  v-model="checkExpirationDate"
+                >
+                  &nbsp; Requires Expiration Date?
+                </b-form-checkbox>
+              </b-col>
+            </b-row>
+
+            <b-row class="pt-4 pb-3" align-h="center">
+              <b-col cols="2">
+                <b-button
+                  style="font-size: 16px; padding: 8px; width: 150px;"
+                  pill
+                  variant="danger"
+                  @click="showAddConfirmationModal = !showAddConfirmationModal"
+                >
+                  Add Category
+                </b-button>
+              </b-col>
+            </b-row>
           </b-container>
-        </b-modal>
-      </b-card>
+
+          <b-modal
+            v-model="showAddConfirmationModal"
+            @ok="addCategory"
+            @cancel="showAddConfirmationModal = false"
+          >
+            <b-container fluid>
+              <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
+                Are you sure with all the details?
+              </h1>
+            </b-container>
+          </b-modal>
+        </b-card>
+      </b-overlay>
+    </b-modal>
+
+    <b-modal
+      v-model="deleteCategoryForm.modal"
+      @ok="deleteCategory"
+      @cancel="deleteCategoryForm.modal = false"
+      hide-header
+      :busy="isLoading"
+    >
+      <b-overlay :show="isLoading">
+        <b-container fluid>
+          <h4 style="font-family:'Bebas Neue', cursive; text-align:center;">
+            Are you sure you want to delete the following category?
+          </h4>
+
+          <br />
+
+          <h5 style="font-family:'Bebas Neue', cursive; text-align:center;">
+            {{ deleteCategoryForm.category.name }}
+          </h5>
+        </b-container>
+      </b-overlay>
     </b-modal>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import { apiClient } from '../../axios'
+import InkindDonationCategoryRepository from '../../repositories/inkind-donations/categories'
 
-const { apiClient } = require('../../axios')
+const ikdCategoryRepository = new InkindDonationCategoryRepository(apiClient)
 
 export default {
   data () {
     return {
       fields: [
-        { key: 'name', label: 'Category' },
+        { key: 'name', label: 'Category', sortable: true },
         { key: 'bestBeforeDate', label: 'Requires Best Before Date?' },
-        { key: 'expirationDate', label: 'Requires Expiration Date?' }
+        { key: 'expirationDate', label: 'Requires Expiration Date?' },
+        { key: 'actions', label: 'Actions' }
       ],
       categories: [],
       total: 0,
       currentPage: 1,
       perPage: 5,
       pageOptions: [5, 10, 20],
+      searchFilter: '',
       addCategoryForm: {
         name: ''
       },
+      isLoading: false,
       checkBestBeforeDate: false,
       checkExpirationDate: false,
       showAddModal: false,
-      showAddConfirmationModal: false
+      showAddConfirmationModal: false,
+      deleteCategoryForm: {
+        modal: false,
+        category: {}
+      }
     }
   },
   computed: {
@@ -212,26 +270,41 @@ export default {
       return (this.currentPage - 1) * this.perPage
     }
   },
+  created () {
+    ikdCategoryRepository.setAuthorizationHeader(`Bearer ${this.token}`)
+  },
   methods: {
     async getInkindCategories (ctx) {
-      const queryString = new URLSearchParams()
+      const {
+        filter,
+        sortBy,
+        sortDesc
+      } = ctx
 
-      queryString.set('limit', this.perPage)
-      queryString.set('offset', this.pageOffset)
+      const limit = this.perPage
+      const offset = this.pageOffset
+      const sort = {}
 
-      const { data } = await apiClient.get(`/inkind-donation-categories?${queryString.toString()}`, {
-        headers: {
-          Authorization: `Bearer ${this.token}`
-        }
+      if (sortBy !== undefined && sortBy !== '') {
+        sort.field = sortBy
+        sort.order = sortDesc ? 'desc' : 'asc'
+      }
+
+      const { results, total } = await ikdCategoryRepository.list({
+        name: filter
+      }, {
+        limit,
+        offset,
+        sort
       })
-
-      const { results, total } = data
 
       this.total = total
 
       return results
     },
     async addCategory () {
+      this.isLoading = true
+
       const { name } = this.addCategoryForm
 
       const customFields = {}
@@ -250,16 +323,29 @@ export default {
         }
       }
 
-      await apiClient.post('/inkind-donation-categories', {
-        name,
-        customFields
-      }, {
-        headers: {
-          Authorization: `Bearer ${this.token}`
-        }
-      })
+      try {
+        await ikdCategoryRepository.create({
+          name,
+          customFields
+        })
 
-      this.$router.go()
+        this.$router.go()
+      } catch {
+        this.isLoading = false
+      }
+    },
+    async deleteCategory () {
+      this.isLoading = true
+
+      const categoryId = this.deleteCategoryForm.category._id
+
+      try {
+        await ikdCategoryRepository.delete(categoryId)
+
+        this.$router.go()
+      } catch {
+        this.isLoading = false
+      }
     },
     hasCustomField (category, field) {
       if (category.customFields === undefined) {
@@ -267,6 +353,14 @@ export default {
       }
 
       return category.customFields[field] !== undefined
+    },
+    showConfirmDelete (category) {
+      this.deleteCategoryForm.modal = true
+
+      this.deleteCategoryForm.category = {
+        _id: category._id,
+        name: category.name
+      }
     }
   }
 }

@@ -328,7 +328,13 @@ class EventsController {
     }
 
     if (filterStatus !== undefined) {
-      query.status = filterStatus
+      if (Array.isArray(filterStatus)) {
+        query.status = {
+          $in: filterStatus
+        }
+      } else {
+        query.status = filterStatus
+      }
     }
 
     if (filterHasMonetaryGoal !== undefined) {
@@ -336,8 +342,6 @@ class EventsController {
         $gt: 0
       }
     }
-
-    console.log(query)
 
     if (sort !== undefined) {
       const { field, order } = sort

@@ -4,7 +4,7 @@ const axios = require('axios')
 
 /** @typedef {import('axios').Axios} Axios */
 
-class InkindDonationCategoryRepository {
+class SkillRepository {
   /**
    *
    * @param {Axios} apiClient
@@ -22,7 +22,7 @@ class InkindDonationCategoryRepository {
   }
 
   async create (payload) {
-    const { data } = await this.apiClient.post('/inkind-donation-categories', payload)
+    const { data } = await this.apiClient.post('/skills', payload)
 
     return data
   }
@@ -48,7 +48,7 @@ class InkindDonationCategoryRepository {
       queryString.set('sort.order', sort.order)
     }
 
-    const { data } = await this.apiClient.get(`/inkind-donation-categories?${queryString.toString()}`)
+    const { data } = await this.apiClient.get(`/skills?${queryString.toString()}`)
 
     return {
       results: data.results,
@@ -56,9 +56,13 @@ class InkindDonationCategoryRepository {
     }
   }
 
+  async update (id, payload) {
+    await this.apiClient.put(`/skills/${id}`, payload)
+  }
+
   async delete (id) {
-    await this.apiClient.delete(`/inkind-donation-categories/${id}`)
+    await this.apiClient.delete(`/skills/${id}`)
   }
 }
 
-module.exports = InkindDonationCategoryRepository
+module.exports = SkillRepository
