@@ -89,62 +89,111 @@
                 <b-col></b-col>
               </b-row>
             </b-container>
-            <b-modal v-model="showModal" size="xl" hide-footer>
-              <div>
-                <div class="addskill">
-                  <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1100px; border-radius: 20px; margin-top: 40px;">
-                    <b-container fluid>
-                      <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
-                        Add a Skill
-                      </h1>
-
-                      <b-alert :show="!!errorMessage" variant="danger">
-                        {{ errorMessage }}
-                      </b-alert>
-
-                      <b-row class="my-1">
-                        <label class="skill" for="input-small">Skill Label</label>
-                        <b-col>
-                          <b-form-input v-model="name"></b-form-input>
-                        </b-col>
-                      </b-row>
-
-                      <b-row class="my-1">
-                        <label class="description" for="input-small">Skill Description</label>
-                        <b-col>
-                          <b-form-input v-model="description"></b-form-input>
-                        </b-col>
-                      </b-row>
-
-                      <b-button
-                        pill
-                        variant="danger"
-                        style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;"
-                        :disabled="isAdding"
-                        @click="addSkill"
-                      >
-                        <b-spinner v-if="isAdding"></b-spinner>
-                        <span v-else>Add Skill</span>
-                      </b-button>
-                    </b-container>
-                  </b-card>
-                </div>
-              </div>
-            </b-modal>
           </b-card>
         </b-col>
       </b-row>
     </b-container>
+
+    <b-modal v-model="showModal" size="xl" hide-footer>
+      <b-overlay :show="isAdding">
+        <validation-observer v-slot="{ invalid }">
+          <b-container fluid>
+            <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
+              Add a Skill
+            </h1>
+
+            <b-alert :show="!!errorMessage" variant="danger">
+              {{ errorMessage }}
+            </b-alert>
+
+            <b-row class="my-1">
+              <label class="skill" for="input-skill-name">
+                Skill Label
+              </label>
+
+              <b-col>
+                <validation-provider
+                  :rules="{
+                    required: true,
+                    max: 50
+                  }"
+                  v-slot="validationContext"
+                >
+                  <b-form-input
+                    id="input-skill-name"
+                    v-model="name"
+                    :state="getValidationState(validationContext)"
+                    aria-describedby="input-skill-name-feedback"
+                  />
+
+                  <b-form-invalid-feedback id="input-skill-name-feedback">
+                    {{ validationContext.errors[0] }}
+                  </b-form-invalid-feedback>
+                </validation-provider>
+              </b-col>
+            </b-row>
+
+            <b-row class="my-1">
+              <label for="input-skill-description">
+                Skill Description
+              </label>
+
+              <b-col>
+                <validation-provider
+                  :rules="{ max: 200 }"
+                  v-slot="validationContext"
+                >
+                  <b-form-input
+                    id="input-skill-description"
+                    v-model="description"
+                    :state="getValidationState(validationContext)"
+                    aria-describedby="input-skill-description-feedback"
+                  />
+
+                  <b-form-invalid-feedback id="input-skill-description-feedback">
+                    {{ validationContext.errors[0] }}
+                  </b-form-invalid-feedback>
+                  </validation-provider>
+              </b-col>
+            </b-row>
+
+            <b-button
+              pill
+              variant="danger"
+              style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;"
+              :disabled="invalid || isAdding"
+              @click="addSkill"
+            >
+              Add Skill
+            </b-button>
+          </b-container>
+        </validation-observer>
+      </b-overlay>
+    </b-modal>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import { ValidationObserver, ValidationProvider, extend } from 'vee-validate'
+import { required, max } from 'vee-validate/dist/rules'
+import { apiClient } from '../../axios'
 
-const { apiClient } = require('../../axios')
+extend('required', {
+  ...required,
+  message: 'This field is required'
+})
+extend('max', {
+  ...max,
+  message: 'This field must be less than or equal to {length} characters'
+})
 
 export default {
   name: 'SkillList',
+  components: {
+    ValidationObserver,
+    ValidationProvider
+  },
   data () {
     return {
       skills: [],
@@ -170,6 +219,9 @@ export default {
     }
   },
   methods: {
+    getValidationState ({ dirty, validated, valid = null }) {
+      return dirty || validated ? valid : null
+    },
     async getSkills (ctx) {
       const queryString = new URLSearchParams()
 
@@ -205,11 +257,11 @@ export default {
 
         this.$router.go()
       } catch (error) {
+        this.isAdding = false
+
         if (error.response?.data?.code === 'SkillAlreadyExists') {
           this.errorMessage = 'This skill already exists!'
         }
-      } finally {
-        this.isAdding = false
       }
     }
   }
