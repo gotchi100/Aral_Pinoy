@@ -486,7 +486,7 @@ export default {
         return false
       }
 
-      return this.eventVolunteer.hasEventEvaluation
+      return this.eventVolunteer.eventEvaluation !== undefined
     },
     monetaryDonationReached () {
       if (this.event === null) {

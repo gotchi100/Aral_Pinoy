@@ -331,7 +331,7 @@ export default {
         return false
       }
 
-      return this.eventVolunteer.hasEventEvaluation
+      return this.eventVolunteer.eventEvaluation !== undefined
     }
   },
   async created () {
@@ -339,7 +339,7 @@ export default {
       this.eventVolunteer = await this.getEventVolunteer()
     }
 
-    if (this.eventVolunteer === null || this.eventVolunteer.hasEventEvaluation) {
+    if (this.hasEventEvaluation) {
       return
     }
 

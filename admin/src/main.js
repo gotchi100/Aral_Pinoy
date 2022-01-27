@@ -36,6 +36,7 @@ import OfficerAdd from './pages/officers/OfficerAdd'
 import EventList from './pages/events/EventList'
 import EventDetails from './pages/events/EventDetails'
 import EventAdd from './pages/events/EventAdd'
+import EventEvaluation from './pages/events/EventEvaluation'
 
 // /inkind-donations
 import InkindDonationList from './pages/inkind-donations/InkindDonationList'
@@ -126,6 +127,15 @@ const routes = [
     component: ResetPassword
   },
   {
+    path: '/skills',
+    component: Skills,
+    meta: {
+      requiresAuth: true
+    }
+  },
+
+  // /events
+  {
     path: '/events',
     component: EventList,
     meta: {
@@ -146,6 +156,17 @@ const routes = [
       requiresAuth: true
     }
   },
+
+  // /event-evaluations
+  {
+    path: '/event-evaluations/:id',
+    component: EventEvaluation,
+    meta: {
+      requiresAuth: true
+    }
+  },
+
+  // /volunteers
   {
     path: '/volunteers',
     component: VolunteerList,
@@ -160,6 +181,8 @@ const routes = [
       requiresAuth: true
     }
   },
+
+  // /officers
   {
     path: '/officers',
     component: OfficerList,
@@ -181,6 +204,8 @@ const routes = [
       requiresAuth: true
     }
   },
+
+  // /inkind-donations
   {
     path: '/inkind-donations',
     component: InkindDonationList,
@@ -209,6 +234,8 @@ const routes = [
       requiresAuth: true
     }
   },
+
+  // /monetary-donations
   {
     path: '/monetary-donations',
     component: MonetaryDonationList,
@@ -216,13 +243,8 @@ const routes = [
       requiresAuth: true
     }
   },
-  {
-    path: '/skills',
-    component: Skills,
-    meta: {
-      requiresAuth: true
-    }
-  },
+
+  // /reports
   {
     path: '/reports/inkind-donations',
     component: ReportInkindDonations,

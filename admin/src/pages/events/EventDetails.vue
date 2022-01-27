@@ -316,6 +316,12 @@
                               {{ item.user.firstName }} {{ item.user.lastName }}
                             </b-link>
                           </template>
+
+                          <template #cell(action)="{ item }">
+                            <b-link v-if="item.eventEvaluation !== undefined" :to="`/event-evaluations/${item.eventEvaluation}/`">
+                              See Evaluation
+                            </b-link>
+                          </template>
                         </b-table>
                       </b-col>
                     </b-row>
@@ -511,7 +517,8 @@ export default {
         },
         fields: [
           { key: 'volunteerName', label: 'Volunteer' },
-          { key: 'eventJob.name', label: 'Role' }
+          { key: 'eventJob.name', label: 'Role' },
+          { key: 'action', label: 'Action' }
         ]
       },
       // items: [

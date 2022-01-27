@@ -72,24 +72,8 @@ class EventEvaluationController {
       questionnaireAnswers
     })
 
-    const eventVolunteerUpdateResults = await EventVolunteerModel.updateOne({
-      _id: eventVolunteer._id,
-      __v: eventVolunteer.__v
-    }, {
-      $set: {
-        hasEventEvaluation: true
-      },
-      $inc: {
-        __v: 1
-      }
-    })
-
-    if (eventVolunteerUpdateResults.matchedCount === 0) {
-      throw new ConflictError('Event volunteer was recently updated. Please try again')
-    }
-
     try {
-      const results = await EventEvaluationModel.create({
+      const eventEvaluation = new EventEvaluationModel({
         user,
         event,
         rating,
@@ -97,8 +81,26 @@ class EventEvaluationController {
         sdgAnswers,
         questionnaireAnswers,
       })
+
+      const eventVolunteerUpdateResults = await EventVolunteerModel.updateOne({
+        _id: eventVolunteer._id,
+        __v: eventVolunteer.__v
+      }, {
+        $set: {
+          eventEvaluation: eventEvaluation._id
+        },
+        $inc: {
+          __v: 1
+        }
+      })
   
-      return results.toObject({ 
+      if (eventVolunteerUpdateResults.matchedCount === 0) {
+        throw new ConflictError('Event volunteer was recently updated. Please try again')
+      }
+
+      await eventEvaluation.save()
+  
+      return eventEvaluation.toObject({ 
         minimize: true,
         versionKey: false,
         useProjection: true
@@ -223,7 +225,10 @@ class EventEvaluationController {
   }
 
   static async get(id) {
-    const evaluation = await EventEvaluationModel.findById(id, undefined, { lean: true })
+    const evaluation = await EventEvaluationModel.findById(id, undefined, {
+      lean: true,
+      populate: ['user']
+    })
 
     if (evaluation === null) {
       throw new NotFoundError(`Event evaluation does not exist: ${id}`)
