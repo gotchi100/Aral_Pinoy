@@ -14,18 +14,6 @@ align-items: baseline!important;
 .d-inline-flex {
 display: inline-flex!important;
 }
-.badge-info {
-color: #fff;
-background-color: #17a2b8;
-}
-.badge {
-padding: 0.25em 0.4em;
-text-align: center;
-white-space: nowrap;
-vertical-align: baseline;
-border-radius: 0.25rem;
-transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-}
 button.close {
 background-color: transparent;
 border: none;
