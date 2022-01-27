@@ -144,7 +144,7 @@
                                   <b-form-select
                                     id="per-page-select"
                                     class="w-25"
-                                    v-model="eventDonations.pagination.perPage"
+                                    v-model="events.pagination.perPage"
                                     :options="pageOptions"
                                   ></b-form-select>
                                 </b-form-group>
@@ -172,172 +172,74 @@
                       <b-row class="pt-4">
                         <b-col cols="12">
                           <b-table
-                            :items="getEventDonations"
-                            :fields="eventDonations.fields"
-                            :current-page="eventDonations.pagination.currentPage"
-                            :per-page="eventDonations.pagination.perPage"
+                            :items="getEvents"
+                            :fields="events.fields"
+                            :current-page="events.pagination.currentPage"
+                            :per-page="events.pagination.perPage"
                             stacked="md"
                             style="background:white"
                             show-empty
-                            small
                             primary-key="_id"
                             hover
-                            @row-clicked="showDonationReceipt"
+                            @row-clicked="showEventDonations"
                           >
-                            <template #cell(createdAt)="{ value }">
+                            <template #cell(startDate)="{ item }">
                               {{
-                                new Date(value).toLocaleString('en-us', {
-                                  dateStyle: 'medium',
-                                  timeStyle: 'short'
+                                new Date(item.date.start).toLocaleString('en-us', {
+                                  dateStyle: 'medium'
                                 })
                               }}
                             </template>
 
-                            <template #cell(amount)="{ value }">
+                            <template #cell(name)="{ item }">
+                              <b-link :to="`/events/${item._id}`">
+                                {{ item.name }}
+                              </b-link>
+                            </template>
+
+                            <template #cell(donationGoal)="{ item }">
                               {{
                                 new Intl.NumberFormat('en-us', {
                                   style: 'currency',
                                   currency: 'PHP'
-                                }).format(value)
+                                }).format(item.goals.monetaryDonation.target)
                               }}
                             </template>
 
-                            <template #cell(donor)="{ item }">
-                              <span v-if="item.user !== undefined">
-                                <b-link :to="`/volunteers/${item.user._id}`">
-                                  {{ item.user.firstName }} {{ item.user.lastName }}
-                                </b-link>
-                              </span>
-                              <span v-else>
-                                Anonymous
-                              </span>
-                            </template>
-
-                            <template #cell(eventName)="{ item }">
-                              <b-link :to="`/events/${item.event._id}`">
-                                {{ item.event.name }}
-                              </b-link>
-                            </template>
-
-                            <template #cell(status)="{ value }">
-                              {{ value.toUpperCase() }}
+                            <template #cell(donationCurrent)="{ item }">
+                              {{
+                                new Intl.NumberFormat('en-us', {
+                                  style: 'currency',
+                                  currency: 'PHP'
+                                }).format(item.goals.monetaryDonation.current)
+                              }}
                             </template>
                           </b-table>
                         </b-col>
                       </b-row>
 
+                      <MonetaryDonationEventDonationList
+                        :show="eventDonations.modal"
+                        :event="eventDonations.event"
+                      />
+
                       <b-row class="pt-4 justify-content-md-center">
-                          <b-col cols="6" class="my-1">
-                            <b-pagination
-                              v-model="eventDonations.pagination.currentPage"
-                              :total-rows="eventDonations.total"
-                              :per-page="eventDonations.pagination.perPage"
-                              align="fill"
-                              size="sm"
-                              class="my-0"
-                            ></b-pagination>
-                          </b-col>
-                        </b-row>
+                        <b-col cols="6" class="my-1">
+                          <b-pagination
+                            v-model="events.pagination.currentPage"
+                            :total-rows="events.total"
+                            :per-page="events.pagination.perPage"
+                            align="fill"
+                            size="sm"
+                            class="my-0"
+                          ></b-pagination>
+                        </b-col>
+                      </b-row>
                     </b-tab>
                   </b-tabs>
                 </b-col>
               </b-row>
             </b-container>
-
-            <b-modal v-model="donationReceipt.modal" size="xl" hide-footer>
-              <div>
-                <div class="addskill">
-                  <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1100px; border-radius: 20px; margin-top: 40px;">
-                    <b-container fluid>
-                      <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
-                        <b-row>
-                          <b-col>Donation Detail</b-col>
-                          <b-col></b-col>
-                          <b-col>
-                            <img :src="logo" style="margin-left: 25px; width: 200px; height: 60px">
-                          </b-col>
-                        </b-row>
-                      </h1>
-
-                      <hr style="height:20px;">
-
-                      <b-row class="mb-4">
-                        <b-col cols="6" class="text-center">
-                          Reference Number
-                        </b-col>
-
-                        <b-col cols="6">
-                          <b-form-input v-model="donationReceipt.form.referenceNumber" readonly></b-form-input>
-                        </b-col>
-                      </b-row>
-
-                      <b-row>
-                        <b-col cols="6" class="text-center">
-                          Sent To
-                        </b-col>
-
-                        <b-col cols="6">
-                          <b-form-input v-model="donationReceipt.form.eventName" readonly></b-form-input>
-                        </b-col>
-                      </b-row>
-
-                      <hr style="height:20px;">
-
-                      <b-row class="mb-4">
-                        <b-col cols="6" class="text-center">
-                          Date Received
-                        </b-col>
-
-                        <b-col cols="6">
-                          <b-form-input v-model="donationReceipt.form.createdAt" readonly></b-form-input>
-                        </b-col>
-                      </b-row>
-
-                      <b-row class="mb-4">
-                        <b-col cols="6" class="text-center">
-                          Donated By
-                        </b-col>
-
-                        <b-col cols="6">
-                          <b-form-input v-model="donationReceipt.form.donor.name" readonly></b-form-input>
-                        </b-col>
-                      </b-row>
-
-                      <b-row>
-                        <b-col cols="6" class="text-center">
-                          Contact Details
-                        </b-col>
-
-                        <b-col>
-                          <b-form-input v-model="donationReceipt.form.donor.contact" readonly></b-form-input>
-                        </b-col>
-                      </b-row>
-
-                      <hr style="height:20px;">
-
-                      <b-row>
-                        <b-col cols="6" class="text-center">
-                          Amount
-                        </b-col>
-
-                        <b-col>
-                          <b-form-input v-model="donationReceipt.form.amount" readonly></b-form-input>
-                        </b-col>
-                      </b-row>
-
-                      <hr style="height:20px;">
-
-                      <b-row>
-                        <b-col></b-col>
-                        <b-col class="text-center">Thank you for the donation!</b-col>
-                        <b-col>
-                        </b-col>
-                      </b-row>
-                    </b-container>
-                  </b-card>
-                </div>
-              </div>
-            </b-modal>
           </b-card>
         </b-col>
       </b-row>
@@ -348,18 +250,23 @@
 <script>
 import { mapGetters } from 'vuex'
 import { apiClient } from '../../axios'
-import EventDonationRepository from '../../repositories/events/donations'
+import EventRepository from '../../repositories/events'
+import MonetaryDonationEventDonationList from '../../components/monetary-donations/MonetaryDonationEventDonationList'
 
 const logo = require('../../assets/aralpinoywords.png')
 
-const eventDonationRepository = new EventDonationRepository(apiClient)
+const eventRepository = new EventRepository(apiClient)
 
 export default {
+  name: 'MonetaryDonationList',
+  components: {
+    MonetaryDonationEventDonationList
+  },
   data () {
     return {
       logo,
       pageOptions: [5, 10, 20],
-      eventDonations: {
+      events: {
         results: [],
         total: 0,
         pagination: {
@@ -367,87 +274,54 @@ export default {
           currentPage: 1
         },
         fields: [
-          { key: 'createdAt', label: 'Transaction Date & Time' },
-          { key: 'amount', label: 'Total Amount Received' },
-          { key: 'donor', label: 'Donor' },
-          { key: 'eventName', label: 'Event' },
-          { key: 'status', label: 'Status' }
+          { key: 'startDate', label: 'Date' },
+          { key: 'name', label: 'Event Name' },
+          { key: 'donationGoal', label: 'Donation Goal', class: 'text-end' },
+          { key: 'donationCurrent', label: 'Donation Collection', class: 'text-end' },
+          { key: 'status', label: 'Event Status' }
         ]
       },
-      donationReceipt: {
+      eventDonations: {
         modal: false,
-        form: {
-          referenceNumber: '',
-          eventName: '',
-          createdAt: '',
-          donor: {
-            name: '',
-            contact: ''
-          },
-          amount: 0
-        }
+        event: {}
       }
     }
   },
   created () {
-    eventDonationRepository.setAuthorizationHeader(`Bearer ${this.token}`)
+    eventRepository.setAuthorizationHeader(`Bearer ${this.token}`)
   },
   computed: {
     ...mapGetters(['token']),
-    eventDonationsPageOffset () {
-      return (this.eventDonations.pagination.currentPage - 1) * this.eventDonations.pagination.perPage
+    eventsPageOffset () {
+      return (this.events.pagination.currentPage - 1) * this.events.pagination.perPage
     }
   },
   methods: {
-    async getEventDonations (ctx) {
-      const perPage = this.eventDonations.pagination.perPage
-      const pageOffset = this.eventDonationsPageOffset
+    async getEvents (ctx) {
+      const perPage = this.events.pagination.perPage
+      const pageOffset = this.eventsPageOffset
 
-      const { results, total } = await eventDonationRepository.list(undefined, {
+      const { results, total } = await eventRepository.list({
+        hasMonetaryGoal: true
+      }, {
         limit: perPage,
         offset: pageOffset,
-        expand: true,
         sort: {
-          field: 'createdAt',
-          order: 'desc'
+          field: 'date.start',
+          order: 'asc'
         }
       })
 
-      this.eventDonations.total = total
+      this.events.total = total
 
       return results
     },
-    showDonationReceipt (eventDonation) {
-      let donorName = 'Anonymous'
-      let contact = ''
-
-      if (eventDonation.user !== undefined) {
-        donorName = `${eventDonation.user.firstName} ${eventDonation.user.lastName}`
+    showEventDonations (event) {
+      this.eventDonations.modal = true
+      this.eventDonations.event = {
+        _id: event._id,
+        name: event.name
       }
-
-      if (eventDonation.metadata !== undefined && eventDonation.metadata.contactDetails) {
-        contact = eventDonation.metadata.contactDetails.email
-      }
-
-      const form = {
-        referenceNumber: eventDonation._id,
-        eventName: eventDonation.event.name,
-        createdAt: new Date(eventDonation.createdAt).toLocaleString('en-us', {
-          dateStyle: 'medium',
-          timeStyle: 'short'
-        }),
-        donor: {
-          name: donorName,
-          contact
-        },
-        amount: new Intl.NumberFormat('en-us', {
-          style: 'currency',
-          currency: 'PHP'
-        }).format(eventDonation.amount)
-      }
-
-      this.donationReceipt.form = form
-      this.donationReceipt.modal = true
     }
   }
 }

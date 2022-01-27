@@ -106,6 +106,7 @@ const listEventsValidator = Joi.object({
   limit: Joi.number().min(1).default(25),
   'filters.name': Joi.string().trim().max(100).allow(''),
   'filters.status': Joi.string().valid('UPCOMING', 'ENDED', 'CANCELED'),
+  'filters.hasMonetaryGoal': Joi.boolean(),
   'sort.field': Joi.string().valid('date.start'),
   'sort.order': Joi.string().valid('asc', 'desc')
 }).options({ 
@@ -134,6 +135,7 @@ async function listEvents(req, res, next) {
     offset,
     'filters.name': filterName,
     'filters.status': filterStatus,
+    'filters.hasMonetaryGoal': filterHasMonetaryGoal,
     'sort.field': sortField,
     'sort.order': sortOrder
   } = req.query
@@ -153,7 +155,8 @@ async function listEvents(req, res, next) {
       offset,
       filters: {
         name: filterName,
-        status: filterStatus
+        status: filterStatus,
+        hasMonetaryGoal: filterHasMonetaryGoal
       },
       sort
     })
