@@ -9,6 +9,14 @@ const UserModel = require('../models/users')
 const SkillModel = require('../models/skills')
 const config = require('../config')
 
+const { BadRequestError } = require('../errors')
+
+const whitespaceRegex = /\s+/g
+
+function sanitize(name) {
+  return name.replace(whitespaceRegex,' ')
+}
+
 class MainController {
   static async login (req, res, next) {
     const {
@@ -89,6 +97,10 @@ class MainController {
 
       const googleUser = userInfoResults.data
 
+      if (!googleUser.family_name) {
+        throw new BadRequestError('Unable to sign-up by Google: Account does not have a family name')
+      }
+
       let user = await UserModel.findOne({
         email: googleUser.email,
         roles: 'volunteer'
@@ -152,13 +164,16 @@ class MainController {
         email,
         password,
         contactNumber,
-        firstName,
-        middleName,
-        lastName,
+        firstName: sanitize(firstName),
+        lastName: sanitize(lastName),
         gender,
         address,
         roles: ['volunteer'],
         skills
+      }
+
+      if (middleName !== undefined) {
+        userData.middleName = sanitize(middleName)
       }
 
       if (birthDate !== undefined) {
