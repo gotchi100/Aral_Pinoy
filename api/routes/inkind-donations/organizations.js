@@ -3,9 +3,9 @@
 const express = require('express')
 const Joi = require('joi')
 
-const IkdGroupController = require('../../controllers/inkind-donations/groups')
+const IkdOrganizationController = require('../../controllers/inkind-donations/organizations')
 
-const listCategoriesValidator = Joi.object({
+const listValidator = Joi.object({
   offset: Joi.number().min(0).default(0),
   limit: Joi.number().min(1).default(25),
   'filters.name': Joi.string().trim().max(100).allow('')
@@ -13,8 +13,8 @@ const listCategoriesValidator = Joi.object({
   stripUnknown: true
 })
 
-function validateListGroupsBody(req, res, next) {
-  const { value: validatedQuery, error } = listCategoriesValidator.validate(req.query)
+function validateList(req, res, next) {
+  const { value: validatedQuery, error } = listValidator.validate(req.query)
 
   if (error !== undefined) {      
     return res.status(400).json({
@@ -37,7 +37,7 @@ async function list(req, res, next) {
   } = req.query
 
   try {
-    const { results, total } = await IkdGroupController.list({
+    const { results, total } = await IkdOrganizationController.list({
       offset,
       limit,
       filters: {
@@ -56,6 +56,6 @@ async function list(req, res, next) {
 
 const router = express.Router()
 
-router.get('/', validateListGroupsBody, list)
+router.get('/', validateList, list)
 
 module.exports = router

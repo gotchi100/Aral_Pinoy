@@ -311,7 +311,32 @@
 
                 <b-row class="pb-5" v-for="job in event.jobs" :key="job.name">
                   <b-col cols="12">
-                    <h5>{{ job.name }}</h5>
+                    <h5>
+                      {{ job.name }} <b-icon v-if="job.description !== undefined" v-b-tooltip="job.description" icon="info-circle" font-scale=".75" />
+                    </h5>
+
+                    <b-row v-if="Array.isArray(job.skills)">
+                      <b-col cols="12">
+                        <template v-for="(skill, index) in job.skills">
+                          <span
+                            :id="`${index}-skill`"
+                            :key="skill.norm"
+                            class="badge bg-primary mx-1"
+                          >
+                            {{ skill.name }}
+                          </span>
+
+                          <b-tooltip
+                            v-if="skill.description !== undefined"
+                            :key="`${index}-tooltip`"
+                            :target="`${index}-skill`"
+                            triggers="hover"
+                          >
+                            {{ skill.description }}
+                          </b-tooltip>
+                        </template>
+                      </b-col>
+                    </b-row>
 
                     <b-row align-v="center" align-h="center">
                       <b-col cols="10">
@@ -486,7 +511,7 @@ export default {
         return false
       }
 
-      return this.eventVolunteer.hasEventEvaluation
+      return this.eventVolunteer.eventEvaluation !== undefined
     },
     monetaryDonationReached () {
       if (this.event === null) {

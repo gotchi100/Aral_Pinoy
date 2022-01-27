@@ -4,7 +4,7 @@ const axios = require('axios')
 
 /** @typedef {import('axios').Axios} Axios */
 
-class InkindDonationRepository {
+class InkindDonationCategoryRepository {
   /**
    *
    * @param {Axios} apiClient
@@ -21,30 +21,22 @@ class InkindDonationRepository {
     this.apiClient.defaults.headers.Authorization = value
   }
 
-  async create (payload) {
-    const { data } = await this.apiClient.post('/inkind-donations', payload)
-
-    return data
-  }
-
   async list (filters = {}, options = {}) {
     const {
       limit = 5,
-      offset = 0,
-      grouped = false
+      offset = 0
     } = options
 
     const queryString = new URLSearchParams()
 
     queryString.set('limit', limit)
     queryString.set('offset', offset)
-    queryString.set('grouped', grouped)
 
-    if (filters.query !== undefined && filters.query !== '') {
-      queryString.set('filters.query', filters.query)
+    if (filters.name !== undefined && filters.name !== '') {
+      queryString.set('filters.name', filters.name)
     }
 
-    const { data } = await this.apiClient.get(`/inkind-donations?${queryString.toString()}`)
+    const { data } = await this.apiClient.get(`/inkind-donation-categories?${queryString.toString()}`)
 
     return {
       results: data.results,
@@ -53,4 +45,4 @@ class InkindDonationRepository {
   }
 }
 
-module.exports = InkindDonationRepository
+module.exports = InkindDonationCategoryRepository

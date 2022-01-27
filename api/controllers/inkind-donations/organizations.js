@@ -1,8 +1,8 @@
 'use strict'
 
-const IkdGroupModel = require('../../models/inkind-donations/groups')
+const IkdOrganizationModel = require('../../models/inkind-donations/organizations')
 
-class InkindDonationGroupsController {
+class InkindDonationOrganizationController {
   static async list(query) {
     const {
       limit,
@@ -18,20 +18,20 @@ class InkindDonationGroupsController {
       }
     }
 
-    const [groups, total] = await Promise.all([
-      IkdGroupModel.find(matchQuery, undefined, { 
+    const [organizations, total] = await Promise.all([
+      IkdOrganizationModel.find(matchQuery, undefined, { 
         lean: true,
         limit,
         skip: offset
       }),
-      IkdGroupModel.countDocuments(matchQuery)
+      IkdOrganizationModel.countDocuments(matchQuery)
     ])
 
     return {
-      results: groups,
+      results: organizations,
       total
     }
   }
 }
 
-module.exports = InkindDonationGroupsController
+module.exports = InkindDonationOrganizationController

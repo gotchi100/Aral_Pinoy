@@ -36,8 +36,11 @@
                           <b-dropdown-item @click="preUpdateStatus('CANCELED')">
                             <strong style="color: red">CANCEL</strong>
                           </b-dropdown-item>
-                          <b-dropdown-item @click="preUpdateStatus('ENDED')">
-                            <strong style="color: blue">END</strong>
+                          <b-dropdown-item
+                            @click="preUpdateStatus('ENDED')"
+                            :disabled="!canEndEvent"
+                          >
+                            <strong>END</strong>
                           </b-dropdown-item>
                         </b-dropdown>
                       </b-col>
@@ -273,7 +276,16 @@
                           responsive
                           striped
                           primary-key="item.sku"
-                        ></b-table>
+                        >
+                          <template #cell(usedQuantity)="{ value }">
+                            <span v-if="value !== undefined && value !== ''">
+                              {{ value }}
+                            </span>
+                            <span v-else>
+                              0
+                            </span>
+                          </template>
+                        </b-table>
                       </b-col>
                     </b-row>
                   </b-card>
@@ -302,6 +314,12 @@
                           <template #cell(volunteerName)="{ item }">
                             <b-link :to="`/volunteers/${item.user._id}`">
                               {{ item.user.firstName }} {{ item.user.lastName }}
+                            </b-link>
+                          </template>
+
+                          <template #cell(action)="{ item }">
+                            <b-link v-if="item.eventEvaluation !== undefined" :to="`/event-evaluations/${item.eventEvaluation}/`">
+                              See Evaluation
                             </b-link>
                           </template>
                         </b-table>
@@ -489,6 +507,7 @@ export default {
       isLoadingEvent: false,
       showModal: false,
       currentPage: 1,
+      canEndEvent: false,
       eventVolunteers: {
         results: [],
         total: 0,
@@ -498,7 +517,8 @@ export default {
         },
         fields: [
           { key: 'volunteerName', label: 'Volunteer' },
-          { key: 'eventJob.name', label: 'Role' }
+          { key: 'eventJob.name', label: 'Role' },
+          { key: 'action', label: 'Action' }
         ]
       },
       // items: [
@@ -674,20 +694,26 @@ export default {
       const eventId = this.eventId
 
       try {
-        const { data } = await apiClient.get(`/events/${eventId}`, {
+        const {
+          data: event
+        } = await apiClient.get(`/events/${eventId}`, {
           headers: {
             Authorization: `Bearer ${this.token}`
           }
         })
 
-        this.event = data
+        this.event = event
 
-        if (data.status === 'UPCOMING') {
-          if (Array.isArray(data.ikds) && data.ikds.length > 0) {
-            for (const ikd of data.ikds) {
+        if (new Date() > new Date(event.date.start)) {
+          this.canEndEvent = true
+        }
+
+        if (event.status === 'UPCOMING') {
+          if (Array.isArray(event.ikds) && event.ikds.length > 0) {
+            for (const ikd of event.ikds) {
               this.updateEventStatus.itemsUsed.push({
                 item: ikd.item,
-                quantity: ikd.quantity,
+                quantity: 0,
                 maxQuantity: ikd.quantity
               })
             }
@@ -716,7 +742,7 @@ export default {
     async preUpdateStatus (status) {
       this.updateEventStatus.status = status
 
-      if (Array.isArray(this.event.ikds) && this.event.ikds.length > 0) {
+      if (status !== 'CANCELED' && Array.isArray(this.event.ikds) && this.event.ikds.length > 0) {
         this.updateEventStatus.modal = true
 
         return

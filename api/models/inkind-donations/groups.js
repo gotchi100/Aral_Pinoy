@@ -7,6 +7,7 @@ const schema = new mongoose.Schema({
     type: String,
     text: true
   },
+  unit: String,
   norm: {
     type: String,
     unique: true,

@@ -135,10 +135,9 @@
 
                     <template #cell(action)="{ item }">
                       <b-link
-                        v-if="item.event.status === 'ENDED' && !item.hasEventEvaluation"
+                        v-if="item.event.status === 'ENDED' && item.eventEvaluation === undefined"
                         :to="`/events/${item.event._id}/evaluation`"
                       >
-
                         Evaluation
                       </b-link>
 

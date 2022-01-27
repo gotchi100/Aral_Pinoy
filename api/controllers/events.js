@@ -311,7 +311,8 @@ class EventsController {
 
     const {
       name: filterName,
-      status: filterStatus
+      status: filterStatus,
+      hasMonetaryGoal: filterHasMonetaryGoal
     } = filters
 
     const query = {}
@@ -329,6 +330,14 @@ class EventsController {
     if (filterStatus !== undefined) {
       query.status = filterStatus
     }
+
+    if (filterHasMonetaryGoal !== undefined) {
+      query['goals.monetaryDonation.target'] = {
+        $gt: 0
+      }
+    }
+
+    console.log(query)
 
     if (sort !== undefined) {
       const { field, order } = sort

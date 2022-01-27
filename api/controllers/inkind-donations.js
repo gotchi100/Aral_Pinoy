@@ -77,14 +77,20 @@ class InkindDonationsController {
         $setOnInsert: {
           name: donorName,
           norm: donorNorm,
+        },
+        $set: {
           email: donorEmail
         }
       } , {
         upsert: true
       })
 
-      if (donorEmail !== undefined) {
-        await SendgridMailController.sendIkdAcknowledgement(donorEmail).catch(console.error)
+      if (donorEmail !== undefined && quantity > 0) {
+        await SendgridMailController.sendIkdAcknowledgement(donorEmail, {
+          name,
+          quantity,
+          unit
+        }).catch(console.error)
       }
     }
 
@@ -97,7 +103,8 @@ class InkindDonationsController {
       }, {
         $setOnInsert: {
           name: groupName,
-          norm: groupNorm
+          norm: groupNorm,
+          unit
         }
       } , {
         upsert: true
