@@ -2,268 +2,349 @@
   <b-modal v-model="modal" size="xl" hide-footer @hide="$emit('close')">
     <b-overlay :show="isLoading" rounded="sm">
       <b-card>
-        <b-container fluid>
-          <b-row>
-            <b-col cols="12">
-              <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
-                Add an in-kind donation
-              </h1>
-            </b-col>
-          </b-row>
-
-          <b-row class="pt-1">
-            <b-col cols="12" md="6">
-              <label for="item-sku">
-                Stock Keeping Unit (SKU) <b-icon v-b-tooltip="'Unique identifier of the item'" icon="info-circle" font-scale=".85"></b-icon>
-              </label>
-              <b-form-input v-model="form.sku" name="item-sku"></b-form-input>
-            </b-col>
-
-            <b-col cols="12" md="6">
-              <label for="item-name">Item Name</label>
-              <b-form-input v-model="form.name" name="item-name"></b-form-input>
-            </b-col>
-          </b-row>
-
-          <b-row class="pt-3">
-            <b-col cols="12">
-              <label for="item-group">
-                Group
-              </label>
-
-              <b-dropdown
-                :text="form.group || 'Select a group'"
-                style="width: 100%"
-                menu-class="w-100"
-                variant="outline-primary"
-                :no-caret="!!form.group"
-                no-flip
-              >
-                <b-dropdown-form>
-                  <b-form-group label="Search Group" label-for="item-group" @submit.stop.prevent>
-                    <b-form-input
-                      id="item-group"
-                      v-model="itemGroupSearch"
-                      debounce="250"
-                      @update="searchInkindDonationGroups"
-                    ></b-form-input>
-                  </b-form-group>
-                </b-dropdown-form>
-                <b-dropdown-divider></b-dropdown-divider>
-                <b-dropdown-item
-                  v-for="group in groupOptions"
-                  :key="group._id"
-                  @click="selectGroup(group)"
-                >
-                  {{ group.name }}
-                </b-dropdown-item>
-
-                <b-dropdown-item
-                  v-if="itemGroupSearch !== '' && groupOptions.length === 0"
-                  @click="selectGroup({ name: itemGroupSearch })"
-                >
-                  Add `{{ itemGroupSearch }}` group
-                </b-dropdown-item>
-
-                <b-dropdown-item
-                  v-if="form.group !== ''"
-                  @click="unselectGroup()"
-                  style="background-color: #f2f2f2"
-                >
-                  Unset `{{ form.group }}` group
-                </b-dropdown-item>
-              </b-dropdown>
-            </b-col>
-          </b-row>
-
-          <b-row class="pt-1">
-            <b-col cols="12">
-              <b-form-group class="text-start">
-                <label for="item-description">
-                  Item Description
-                </label>
-                <b-form-textarea id="item-description" rows="3" max-rows="8" v-model="form.description"></b-form-textarea>
-              </b-form-group>
-            </b-col>
-          </b-row>
-
-          <b-row class="pt-3">
-            <b-col cols="12" md="6">
-              <label for="item-quantity">Initial Quantity</label>
-              <b-form-input v-model="form.quantity" type="number" name="item-quantity"></b-form-input>
-            </b-col>
-
-            <b-col cols="12" md="6">
-              <label for="item-uom">Unit of Measurement</label>
-              <b-form-select
-                v-model="form.unit"
-                style="width: 100%; padding: 0.5rem 0.75rem"
-                name="item-uom"
-                :options="unitOptions"
-                size="lg"
-                :disabled="preselectGroupUnit"
-              ></b-form-select>
-            </b-col>
-          </b-row>
-
-          <b-row class="pt-3">
-            <b-col cols="12">
-              <label for="item-category">Category</label>
-              <b-dropdown
-                :text="form.category ? form.category.name : 'Select a category'"
-                style="width: 100%"
-                menu-class="w-100"
-                variant="outline-primary"
-                :no-caret="!!form.category"
-                no-flip
-              >
-                <b-dropdown-form>
-                  <b-form-group label="Search Category" label-for="item-category" @submit.stop.prevent>
-                    <b-form-input
-                      id="item-category"
-                      debounce="500"
-                      @update="searchInkindDonationCategories"
-                    ></b-form-input>
-                  </b-form-group>
-                </b-dropdown-form>
-                <b-dropdown-divider></b-dropdown-divider>
-                <b-dropdown-item
-                  v-for="category in categoryOptions"
-                  :key="category._id"
-                  @click="selectCategory(category)"
-                >
-                  {{ category.name }}
-                </b-dropdown-item>
-              </b-dropdown>
-            </b-col>
-          </b-row>
-
-          <b-row v-if="form.categoryCustomFields.length > 0" class="pt-3">
-            <b-col v-for="customField in form.categoryCustomFields" :key="customField.key">
-              <template v-if="customField.dataType === 'DATE'">
-                <label :for="customField.key">{{ customField.label }}</label>
-                <b-form-datepicker :label="customField.key" v-model="customField.value" value-as-date></b-form-datepicker>
-              </template>
-            </b-col>
-          </b-row>
-
-          <!-- <b-row class="pt-1">
-            <b-col cols="12">
-              <label for="item-donor">
-                Donor
-              </label>
-              <b-form-input v-model="form.donor" name="item-donor"></b-form-input>
-            </b-col>
-          </b-row> -->
-
-          <b-row class="pt-3">
-            <b-col cols="12">
-              <label for="item-donor">
-                Donor
-              </label>
-
-              <b-dropdown
-                :text="form.donor || 'Select a donor'"
-                style="width: 100%"
-                menu-class="w-100"
-                variant="outline-primary"
-                :no-caret="!!form.donor"
-                no-flip
-              >
-                <b-dropdown-form>
-                  <b-form-group label="Search Donor" label-for="item-donor" @submit.stop.prevent>
-                    <b-form-input
-                      id="item-donor"
-                      v-model="itemDonorSearch"
-                      debounce="250"
-                      @update="searchInkindDonationDonors"
-                    ></b-form-input>
-                  </b-form-group>
-                </b-dropdown-form>
-                <b-dropdown-divider></b-dropdown-divider>
-                <b-dropdown-item
-                  v-for="donor in donorOptions"
-                  :key="donor._id"
-                  @click="selectDonor(donor)"
-                >
-                  {{ donor.name }}
-                </b-dropdown-item>
-
-                <b-dropdown-item
-                  v-if="itemDonorSearch !== '' && !isDonorSearchInOptions()"
-                  @click="selectDonor({ name: itemDonorSearch })"
-                >
-                  Add `{{ itemDonorSearch }}` donor
-                </b-dropdown-item>
-
-                <b-dropdown-item
-                  v-if="form.donor !== ''"
-                  @click="unselectDonor()"
-                  style="background-color: #f2f2f2"
-                >
-                  Unset `{{ form.donor }}` donor
-                </b-dropdown-item>
-              </b-dropdown>
-            </b-col>
-          </b-row>
-
-          <b-row v-if="form.donor" class="pt-1">
-            <b-col cols="12">
-              <label for="item-donor">
-                Acknowledgement Email <span style="color: grey">(for Donor)</span>
-              </label>
-
-              <b-form-input v-model="form.donorEmail" name="item-donorEmail"></b-form-input>
-            </b-col>
-          </b-row>
-
-          <b-row class="pt-4 pb-3" align-h="center">
-            <b-col cols="2">
-              <b-button
-                style="font-size: 16px; padding: 8px; width: 150px;"
-                pill
-                variant="danger"
-                @click="confirmModal = !confirmModal"
-              >
-                Add Donation
-              </b-button>
-            </b-col>
-          </b-row>
-        </b-container>
-
-        <b-modal
-          v-model="confirmModal"
-          @ok="createdInkindDonation"
-          @cancel="confirmModal = false"
-        >
+        <validation-observer v-slot="{ invalid }">
           <b-container fluid>
-            <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
-              Are you sure with all the details?
-            </h1>
+            <b-row>
+              <b-col cols="12">
+                <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
+                  Add an in-kind donation
+                </h1>
+              </b-col>
+            </b-row>
+
+            <b-row class="pt-1">
+              <b-col cols="12" md="6">
+                <label for="item-sku">
+                  Stock Keeping Unit (SKU) <b-icon v-b-tooltip="'Unique identifier of the item'" icon="info-circle" font-scale=".85"></b-icon>
+                </label>
+
+                <validation-provider
+                  :rules="{
+                    required: true,
+                    max: 100
+                  }"
+                  v-slot="validationContext"
+                >
+                  <b-form-input
+                    v-model="form.sku"
+                    name="item-sku"
+                    :state="getValidationState(validationContext)"
+                    aria-describedby="item-sku-feedback"
+                    :formatter="toUpperCase"
+                  />
+
+                  <b-form-invalid-feedback id="item-sku-feedback">
+                    {{ validationContext.errors[0] }}
+                  </b-form-invalid-feedback>
+                </validation-provider>
+              </b-col>
+
+              <b-col cols="12" md="6">
+                <label for="item-name">Item Name</label>
+
+                <validation-provider
+                  :rules="{
+                    required: true,
+                    max: 100
+                  }"
+                  v-slot="validationContext"
+                >
+                  <b-form-input
+                    v-model="form.name"
+                    name="item-name"
+                    :state="getValidationState(validationContext)"
+                    aria-describedby="item-name-feedback"
+                  />
+
+                  <b-form-invalid-feedback id="item-name-feedback">
+                    {{ validationContext.errors[0] }}
+                  </b-form-invalid-feedback>
+                </validation-provider>
+              </b-col>
+            </b-row>
+
+            <b-row class="pt-3">
+              <b-col cols="12">
+                <label for="item-group">
+                  Group
+                </label>
+
+                <b-dropdown
+                  :text="form.group || 'Select a group'"
+                  style="width: 100%"
+                  menu-class="w-100"
+                  variant="outline-primary"
+                  :no-caret="!!form.group"
+                  no-flip
+                >
+                  <b-dropdown-form>
+                    <b-form-group label="Search Group" label-for="item-group" @submit.stop.prevent>
+                      <b-form-input
+                        id="item-group"
+                        v-model="itemGroupSearch"
+                        debounce="250"
+                        @update="searchInkindDonationGroups"
+                      ></b-form-input>
+                    </b-form-group>
+                  </b-dropdown-form>
+                  <b-dropdown-divider></b-dropdown-divider>
+                  <b-dropdown-item
+                    v-for="group in groupOptions"
+                    :key="group._id"
+                    @click="selectGroup(group)"
+                  >
+                    {{ group.name }}
+                  </b-dropdown-item>
+
+                  <b-dropdown-item
+                    v-if="itemGroupSearch !== '' && groupOptions.length === 0"
+                    @click="selectGroup({ name: itemGroupSearch })"
+                  >
+                    Add `{{ itemGroupSearch }}` group
+                  </b-dropdown-item>
+
+                  <b-dropdown-item
+                    v-if="form.group !== ''"
+                    @click="unselectGroup()"
+                    style="background-color: #f2f2f2"
+                  >
+                    Unset `{{ form.group }}` group
+                  </b-dropdown-item>
+                </b-dropdown>
+              </b-col>
+            </b-row>
+
+            <b-row class="pt-1">
+              <b-col cols="12">
+                <b-form-group class="text-start">
+                  <label for="item-description">
+                    Item Description
+                  </label>
+
+                  <validation-provider
+                    :rules="{
+                      max: 200
+                    }"
+                    v-slot="validationContext"
+                  >
+                    <b-form-textarea
+                      id="item-description"
+                      v-model="form.description"
+                      rows="3"
+                      max-rows="8"
+                      :state="getValidationState(validationContext)"
+                      aria-describedby="item-description-feedback"
+                    />
+
+                    <b-form-invalid-feedback id="item-description-feedback">
+                      {{ validationContext.errors[0] }}
+                    </b-form-invalid-feedback>
+                  </validation-provider>
+                </b-form-group>
+              </b-col>
+            </b-row>
+
+            <b-row class="pt-3">
+              <b-col cols="12" md="6">
+                <label for="item-quantity">Initial Quantity</label>
+
+                <b-form-input
+                  v-model="form.quantity"
+                  type="number"
+                  name="item-quantity"
+                  :formatter="isZeroOrPositive"
+                />
+              </b-col>
+
+              <b-col cols="12" md="6">
+                <label for="item-uom">Unit of Measurement</label>
+                <b-form-select
+                  v-model="form.unit"
+                  style="width: 100%; padding: 0.5rem 0.75rem"
+                  name="item-uom"
+                  :options="unitOptions"
+                  size="lg"
+                  :disabled="preselectGroupUnit"
+                ></b-form-select>
+              </b-col>
+            </b-row>
+
+            <b-row class="pt-3">
+              <b-col cols="12">
+                <label for="item-category">Category</label>
+                <b-dropdown
+                  :text="form.category ? form.category.name : 'Select a category'"
+                  style="width: 100%"
+                  menu-class="w-100"
+                  variant="outline-primary"
+                  :no-caret="!!form.category"
+                  no-flip
+                >
+                  <b-dropdown-form>
+                    <b-form-group label="Search Category" label-for="item-category" @submit.stop.prevent>
+                      <b-form-input
+                        id="item-category"
+                        debounce="500"
+                        @update="searchInkindDonationCategories"
+                      ></b-form-input>
+                    </b-form-group>
+                  </b-dropdown-form>
+                  <b-dropdown-divider></b-dropdown-divider>
+                  <b-dropdown-item
+                    v-for="category in categoryOptions"
+                    :key="category._id"
+                    @click="selectCategory(category)"
+                  >
+                    {{ category.name }}
+                  </b-dropdown-item>
+                </b-dropdown>
+              </b-col>
+            </b-row>
+
+            <b-row v-if="form.categoryCustomFields.length > 0" class="pt-3">
+              <b-col v-for="customField in form.categoryCustomFields" :key="customField.key">
+                <template v-if="customField.dataType === 'DATE'">
+                  <label :for="customField.key">{{ customField.label }}</label>
+                  <b-form-datepicker :label="customField.key" v-model="customField.value" value-as-date></b-form-datepicker>
+                </template>
+              </b-col>
+            </b-row>
+
+            <b-row class="pt-3">
+              <b-col cols="12">
+                <label for="item-donor">
+                  Donor
+                </label>
+
+                <b-dropdown
+                  :text="form.donor || 'Select a donor'"
+                  style="width: 100%"
+                  menu-class="w-100"
+                  variant="outline-primary"
+                  :no-caret="!!form.donor"
+                  no-flip
+                >
+                  <b-dropdown-form>
+                    <b-form-group label="Search Donor" label-for="item-donor" @submit.stop.prevent>
+                      <b-form-input
+                        id="item-donor"
+                        v-model="itemDonorSearch"
+                        debounce="250"
+                        @update="searchInkindDonationDonors"
+                      ></b-form-input>
+                    </b-form-group>
+                  </b-dropdown-form>
+                  <b-dropdown-divider></b-dropdown-divider>
+                  <b-dropdown-item
+                    v-for="donor in donorOptions"
+                    :key="donor._id"
+                    @click="selectDonor(donor)"
+                  >
+                    {{ donor.name }}
+                  </b-dropdown-item>
+
+                  <b-dropdown-item
+                    v-if="itemDonorSearch !== '' && !isDonorSearchInOptions()"
+                    @click="selectDonor({ name: itemDonorSearch })"
+                  >
+                    Add `{{ itemDonorSearch }}` donor
+                  </b-dropdown-item>
+
+                  <b-dropdown-item
+                    v-if="form.donor !== ''"
+                    @click="unselectDonor()"
+                    style="background-color: #f2f2f2"
+                  >
+                    Unset `{{ form.donor }}` donor
+                  </b-dropdown-item>
+                </b-dropdown>
+              </b-col>
+            </b-row>
+
+            <b-row v-if="form.donor" class="pt-1">
+              <b-col cols="12">
+                <label for="item-donor">
+                  Acknowledgement Email <span style="color: grey">(for Donor)</span>
+                </label>
+
+                <b-form-input v-model="form.donorEmail" name="item-donorEmail"></b-form-input>
+              </b-col>
+            </b-row>
+
+            <b-row class="pt-4 pb-3" align-h="center">
+              <b-col cols="2">
+                <b-button
+                  style="font-size: 16px; padding: 8px; width: 150px;"
+                  pill
+                  variant="danger"
+                  :disabled="invalid"
+                  @click="confirmModal = !confirmModal"
+                >
+                  Add Donation
+                </b-button>
+              </b-col>
+            </b-row>
           </b-container>
-        </b-modal>
+        </validation-observer>
       </b-card>
     </b-overlay>
+
+    <b-modal
+      v-model="confirmModal"
+      @ok="createdInkindDonation"
+      @cancel="confirmModal = false"
+    >
+      <b-container fluid>
+        <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
+          Are you sure with all the details?
+        </h1>
+      </b-container>
+    </b-modal>
   </b-modal>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import { pickBy, identity } from 'lodash'
+import { ValidationObserver, ValidationProvider, extend } from 'vee-validate'
+import { required, min, max } from 'vee-validate/dist/rules'
 
 import InkindDonationGroupRepository from '../../repositories/inkind-donations/groups'
 import InkindDonationCategoryRepository from '../../repositories/inkind-donations/categories'
 import InkindDonationDonorRepository from '../../repositories/inkind-donations/donors'
 import InkindDonationRepository from '../../repositories/inkind-donations'
 import { apiClient } from '../../axios'
+import validationMixin from '../../mixins/validation'
+import formattersMixin from '../../mixins/formatters'
 
 const inkindDonationGroupRepository = new InkindDonationGroupRepository(apiClient)
 const inkindDonationCategoryRepository = new InkindDonationCategoryRepository(apiClient)
 const inkindDonationDonorRepository = new InkindDonationDonorRepository(apiClient)
 const inkindDonationRepository = new InkindDonationRepository(apiClient)
 
+extend('required', {
+  ...required,
+  message: 'This field is required'
+})
+extend('min', {
+  ...min,
+  message: 'This field must be greater than or equal to {length} characters'
+})
+extend('max', {
+  ...max,
+  message: 'This field must be less than or equal to {length} characters'
+})
+
 export default {
   name: 'InkindDonationCreateItemModal',
+  components: {
+    ValidationObserver,
+    ValidationProvider
+  },
+  mixins: [
+    validationMixin,
+    formattersMixin
+  ],
   props: {
     show: {
       type: Boolean,

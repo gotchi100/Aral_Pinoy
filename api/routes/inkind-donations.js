@@ -11,7 +11,7 @@ const InkindDonationController = require('../controllers/inkind-donations')
 
 const createInkindDonationValidator = Joi.object({
   sku: Joi.string().trim().max(100).uppercase().required(),
-  name: Joi.string().trim().max(255).required(),
+  name: Joi.string().trim().max(100).required(),
   description: Joi.string().trim().empty('').max(200),
   quantity: Joi.number().integer(),
   unit: Joi.string().trim().max(20).required(),
