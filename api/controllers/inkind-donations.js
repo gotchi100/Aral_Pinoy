@@ -15,6 +15,11 @@ const {
   NotFoundError
 } = require('../errors')
 
+const SORT_ORDER_MAPPING = {
+  asc : 1,
+  desc: -1
+}
+
 const whitespaceRegex = /\s+/g
 
 function sanitize(name) {
@@ -143,8 +148,19 @@ class InkindDonationsController {
       limit,
       offset,
       grouped,
-      'filters.query': filterQuery
+      filters = {},
+      sort = {}
     } = query
+
+    const {
+      query: filterQuery,
+      categoryCustomFields
+    } = filters
+
+    const {
+      field: sortField,
+      order: sortOrder
+    } = sort
 
     let results, total
 
@@ -208,6 +224,11 @@ class InkindDonationsController {
       total = aggregationResults[1][0].count
     } else {
       const matchQuery = {}
+      const queryOptions = { 
+        lean: true,
+        limit,
+        skip: offset
+      }
 
       if (filterQuery !== undefined && filterQuery !== '') {
         matchQuery.$text = {
@@ -215,12 +236,24 @@ class InkindDonationsController {
         }
       }
 
+      if (Array.isArray(categoryCustomFields) && categoryCustomFields.length > 0) {
+        for (const customField of categoryCustomFields) {
+          const dbField = `category.customFields.${customField}`
+
+          matchQuery[dbField] = {
+            $exists: true
+          }
+        }
+      }
+
+      if (sortField !== undefined && sortOrder !== undefined) {
+        queryOptions.sort = {
+          [sortField]: SORT_ORDER_MAPPING[sortOrder]
+        }
+      }
+
       [results, total] = await Promise.all([
-        InkindDonationModel.find(matchQuery, undefined, { 
-          lean: true,
-          limit,
-          skip: offset
-        }),
+        InkindDonationModel.find(matchQuery, undefined, queryOptions),
         InkindDonationModel.countDocuments(matchQuery)
       ])
     }

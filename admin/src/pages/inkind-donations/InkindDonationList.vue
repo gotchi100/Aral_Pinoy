@@ -17,40 +17,30 @@
                 <b-col cols="12">
                   <b-tabs pills card>
                     <b-tab title="Compiled View" active>
-                      <b-row>
+                      <b-row class="my-2">
                         <b-col cols="12">
                           <b-container>
-                            <b-row>
+                            <b-row class="mb-4" align-v="center" align-h="start">
                               <b-col cols="4">
-                                <b-form-group
-                                  style="font-size: 15px; font-family:'Bebas Neue', cursive;"
-                                  label="Per page"
-                                  label-for="grouped-ikd-per-page-select"
-                                  content-cols="12"
-                                >
-                                  <b-form-select
-                                    id="grouped-ikd-per-page-select"
-                                    class="w-25"
-                                    v-model="groupedIkdPerPage"
-                                    :options="pageOptions"
-                                  ></b-form-select>
-                                </b-form-group>
-                              </b-col>
+                                <b-row align-v="center">
+                                  <b-col cols="3">
+                                    <label
+                                      for="per-page-select"
+                                      style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                                    >
+                                      Per Page&nbsp;&nbsp;
+                                    </label>
+                                  </b-col>
 
-                              <!-- TODO: Implement search for compiled inkind donations -->
-                              <!-- <b-col>
-                                <br>
-                                <b-input-group size="sm">
-                                  <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
-                                  <b-form-input
-                                    id="filter-input"
-                                    v-model="filter"
-                                    type="search"
-                                    placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
-                                  ></b-form-input>
-                                </b-input-group>
-                                <br>
-                              </b-col> -->
+                                  <b-col>
+                                    <select v-model="groupedIkdPerPage" class="form-select form-select-sm" aria-label="Default select example">
+                                      <option v-for="option in pageOptions" :key="option">
+                                        {{ option }}
+                                      </option>
+                                    </select>
+                                  </b-col>
+                                </b-row>
+                              </b-col>
                             </b-row>
                           </b-container>
                         </b-col>
@@ -86,40 +76,74 @@
                     </b-tab>
 
                     <b-tab title="Detailed View">
-                      <b-row>
+                      <b-row class="my-2">
                         <b-col cols="12">
                           <b-container>
-                            <b-row>
+                            <b-row class="mb-4" align-v="center" align-h="around">
                               <b-col cols="4">
-                                <b-form-group
-                                  style="font-size: 15px; font-family:'Bebas Neue', cursive;"
-                                  label="Per page"
-                                  label-for="per-page-select"
-                                  content-cols="12"
-                                >
-                                  <b-form-select
-                                    id="per-page-select"
-                                    class="w-25"
-                                    v-model="inkindDonationPerPage"
-                                    :options="pageOptions"
-                                  ></b-form-select>
-                                </b-form-group>
+                                <b-row align-v="center">
+                                  <b-col cols="3">
+                                    <label
+                                      for="per-page-select"
+                                      style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                                    >
+                                      Per Page&nbsp;&nbsp;
+                                    </label>
+                                  </b-col>
+
+                                  <b-col>
+                                    <select v-model="inkindDonationPerPage" class="form-select form-select-sm" aria-label="Default select example">
+                                      <option v-for="option in pageOptions" :key="option">
+                                        {{ option }}
+                                      </option>
+                                    </select>
+                                  </b-col>
+                                </b-row>
                               </b-col>
 
-                              <!-- TODO: Implement search for detailed inkind donations -->
-                              <!-- <b-col>
-                                <br>
-                                <b-input-group size="sm">
-                                  <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
-                                  <b-form-input
-                                    id="filter-input"
-                                    v-model="filter"
-                                    type="search"
-                                    placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
-                                  ></b-form-input>
-                                </b-input-group>
-                                <br>
-                              </b-col> -->
+                              <b-col cols="4">
+                                <b-row align-v="center">
+                                  <b-col cols="3">
+                                    <label
+                                      for="filter-ikd"
+                                      style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                                    >
+                                      Search&nbsp;&nbsp;
+                                    </label>
+                                  </b-col>
+
+                                  <b-col>
+                                    <b-form-input
+                                      id="filter-ikd"
+                                      class="form-control"
+                                      v-model="inkindDonationSearchFilter"
+                                      type="search"
+                                      size="sm"
+                                      debounce="500"
+                                    ></b-form-input>
+                                  </b-col>
+                                </b-row>
+                              </b-col>
+
+                              <b-col cols="4">
+                                <b-dropdown class="w-50" size="sm" text="Filter Options">
+                                  <b-dropdown-form style="width: 100%">
+                                    <div v-for="option in ikdCategoryCustomFieldsOptions" :key="option.value" class="form-check form-switch">
+                                      <label class="form-check-label" :for="`status-checkbox-${option}`">
+                                        {{ option.label }}
+                                      </label>
+
+                                      <input
+                                        :id="`status-checkbox-${option.value}`"
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        :value="option.value"
+                                        v-model="ikdCategoryCustomFieldFilters"
+                                      >
+                                    </div>
+                                  </b-dropdown-form>
+                                </b-dropdown>
+                              </b-col>
                             </b-row>
                           </b-container>
                         </b-col>
@@ -128,10 +152,12 @@
                       <b-row class="pt-4">
                         <b-col cols="12">
                           <b-table
+                            ref="ikdsTable"
                             :items="getInkindDonations"
                             :fields="inkindDonationFields"
                             :current-page="inkindDonationCurrentPage"
                             :per-page="inkindDonationPerPage"
+                            :filter="inkindDonationSearchFilter"
                             fixed
                             stacked="sm"
                             style="background:white"
@@ -245,7 +271,17 @@ import { mapGetters } from 'vuex'
 import InkindDonationCreateItemModal from '../../components/inkind-donations/InkindDonationCreateItemModal'
 import InkindDonationTransactionModal from '../../components/inkind-donations/InkindDonationTransactionModal'
 
-const { apiClient } = require('../../axios')
+import InkindDonationRepository from '../../repositories/inkind-donations'
+import { apiClient } from '../../axios'
+
+const inkindDonationRepository = new InkindDonationRepository(apiClient)
+
+const IKD_SORT_MAP = {
+  name: 'name',
+  sku: 'sku',
+  bestBeforeDate: 'category.customFields.bestBeforeDate',
+  expirationDate: 'category.customFields.expirationDate'
+}
 
 export default {
   components: {
@@ -262,14 +298,23 @@ export default {
       groupedIkdTotal: 0,
       groupedIkdCurrentPage: 1,
       groupedIkdPerPage: 5,
+      inkindDonationSearchFilter: '',
+      ikdCategoryCustomFieldFilters: [],
+      ikdCategoryCustomFieldsOptions: [{
+        label: 'Best Before Date',
+        value: 'bestBeforeDate'
+      }, {
+        label: 'Expiration Date',
+        value: 'expirationDate'
+      }],
       inkindDonationFields: [
-        { key: 'sku', label: 'SKU' },
-        { key: 'name', label: 'Item' },
+        { key: 'sku', label: 'SKU', sortable: true },
+        { key: 'name', label: 'Item', sortable: true },
         { key: 'donor', label: 'Donor' },
         { key: 'quantity', label: 'Quantity' },
         { key: 'category.name', label: 'Category' },
-        { key: 'bestBeforeDate', label: 'Best Before' },
-        { key: 'expirationDate', label: 'Expiration Date' }
+        { key: 'bestBeforeDate', label: 'Best Before', sortable: true },
+        { key: 'expirationDate', label: 'Expiration Date', sortable: true }
       ],
       inkindDonations: [],
       inkindDonationTotal: 0,
@@ -287,6 +332,9 @@ export default {
     inkindDonationPageOffset () {
       return (this.inkindDonationCurrentPage - 1) * this.inkindDonationPerPage
     }
+  },
+  created () {
+    inkindDonationRepository.setAuthorizationHeader(`Bearer ${this.token}`)
   },
   methods: {
     async getGroupedInkindDonations (ctx) {
@@ -309,18 +357,29 @@ export default {
       return results
     },
     async getInkindDonations (ctx) {
-      const queryString = new URLSearchParams()
+      const {
+        filter,
+        sortBy,
+        sortDesc
+      } = ctx
 
-      queryString.set('limit', this.inkindDonationPerPage)
-      queryString.set('offset', this.inkindDonationPageOffset)
+      const limit = this.inkindDonationPerPage
+      const offset = this.inkindDonationPageOffset
+      const sort = {}
 
-      const { data } = await apiClient.get(`/inkind-donations?${queryString.toString()}`, {
-        headers: {
-          Authorization: `Bearer ${this.token}`
-        }
+      if (sortBy !== undefined && sortBy !== '') {
+        sort.field = IKD_SORT_MAP[sortBy]
+        sort.order = sortDesc ? 'desc' : 'asc'
+      }
+
+      const { results, total } = await inkindDonationRepository.list({
+        query: filter,
+        categoryCustomFields: this.ikdCategoryCustomFieldFilters
+      }, {
+        limit,
+        offset,
+        sort
       })
-
-      const { results, total } = data
 
       this.inkindDonationTotal = total
 
@@ -332,6 +391,11 @@ export default {
       }
 
       return value[field] !== undefined
+    }
+  },
+  watch: {
+    ikdCategoryCustomFieldFilters (val) {
+      this.$refs.ikdsTable.refresh()
     }
   }
 }

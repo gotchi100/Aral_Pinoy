@@ -33,7 +33,12 @@ const listInkindDonationsValidator = Joi.object({
   offset: Joi.number().min(0).default(0),
   limit: Joi.number().min(1).default(25),
   grouped: Joi.boolean().default(false),
-  'filters.query': Joi.string().trim().max(255)
+  'filters.query': Joi.string().trim().max(255),
+  'filters.categoryCustomFields': Joi.array().items(
+    Joi.string().valid('bestBeforeDate', 'expirationDate')
+  ),
+  'sort.field': Joi.string().valid('sku', 'name', 'category.customFields.bestBeforeDate', 'category.customFields.expirationDate'),
+  'sort.order': Joi.string().valid('asc', 'desc')
 }).options({ 
   stripUnknown: true
 })
@@ -81,8 +86,30 @@ function validateListInkindDonation(req, res, next) {
 }
 
 async function list(req, res, next) {
+  const {
+    offset,
+    limit,
+    grouped,
+    'filters.query': filterQuery,
+    'filters.categoryCustomFields': filterCategoryCustomFields,
+    'sort.field': sortField,
+    'sort.order': sortOrder
+  } = req.query
+
   try {
-    const { results, total } = await InkindDonationController.list(req.query)
+    const { results, total } = await InkindDonationController.list({
+      offset,
+      limit,
+      grouped,
+      filters: {
+        query: filterQuery,
+        categoryCustomFields: filterCategoryCustomFields
+      },
+      sort: {
+        field: sortField,
+        order: sortOrder
+      }
+    })
 
     return res.json({
       results,

@@ -31,7 +31,8 @@ class InkindDonationRepository {
     const {
       limit = 5,
       offset = 0,
-      grouped = false
+      grouped = false,
+      sort = {}
     } = options
 
     const queryString = new URLSearchParams()
@@ -42,6 +43,17 @@ class InkindDonationRepository {
 
     if (filters.query !== undefined && filters.query !== '') {
       queryString.set('filters.query', filters.query)
+    }
+
+    if (Array.isArray(filters.categoryCustomFields) && filters.categoryCustomFields.length > 0) {
+      for (const customField of filters.categoryCustomFields) {
+        queryString.append('filters.categoryCustomFields[]', customField)
+      }
+    }
+
+    if (sort.field !== undefined && sort.order !== undefined) {
+      queryString.set('sort.field', sort.field)
+      queryString.set('sort.order', sort.order)
     }
 
     const { data } = await this.apiClient.get(`/inkind-donations?${queryString.toString()}`)
