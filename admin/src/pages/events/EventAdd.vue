@@ -590,13 +590,14 @@
                                 show-empty
                                 responsive
                                 striped
+                                fixed
                                 primary-key="_id"
                               >
                                 <template #cell(quantity)="{ item }">
                                   <b-form-input
                                     class="text-center"
                                     type="number"
-                                    style="width: 10%; display: inline"
+                                    style="width: 25%; display: inline"
                                     v-model="item['quantity']"
                                     :formatter="(value) => validateItemQuantity(value, item.maxQuantity)"
                                   /> / {{ item.maxQuantity }}
