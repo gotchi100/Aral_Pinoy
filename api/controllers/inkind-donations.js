@@ -131,7 +131,7 @@ class InkindDonationsController {
       })
     } catch (error) {
       if (error.code === 11000 && error.keyPattern.sku === 1) {
-        throw new ConflictError(`Duplicate SKU item: ${sku}`)
+        throw new ConflictError('duplicate_ikd_sku')
       }
 
       throw error

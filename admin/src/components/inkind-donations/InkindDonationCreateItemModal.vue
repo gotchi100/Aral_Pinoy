@@ -12,6 +12,10 @@
               </b-col>
             </b-row>
 
+            <b-alert :show="!!errorMessage" variant="danger">
+              {{ errorMessage }}
+            </b-alert>
+
             <b-row class="pt-1">
               <b-col cols="12" md="6">
                 <label for="item-sku">
@@ -382,7 +386,8 @@ export default {
       ],
       donorOptions: [],
       groupOptions: [],
-      categoryOptions: []
+      categoryOptions: [],
+      errorMessage: ''
     }
   },
   computed: {
@@ -484,6 +489,7 @@ export default {
       }
     },
     async createdInkindDonation () {
+      this.errorMessage = ''
       this.isLoading = true
 
       const {
@@ -523,8 +529,17 @@ export default {
         await inkindDonationRepository.create(inkindDonation)
 
         this.$router.go()
-      } catch {
+      } catch (error) {
         this.isLoading = false
+        const data = error.response?.data
+
+        if (data) {
+          const { status, message } = data
+
+          if (status === 409 && message === 'duplicate_ikd_sku') {
+            this.errorMessage = 'SKU Item already exists!'
+          }
+        }
       }
     }
   },
