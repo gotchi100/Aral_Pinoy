@@ -156,7 +156,7 @@
                   v-model="form.quantity"
                   type="number"
                   name="item-quantity"
-                  :formatter="isZeroOrPositive"
+                  :formatter="toZeroOrPositive"
                 />
               </b-col>
 

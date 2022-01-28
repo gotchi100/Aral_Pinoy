@@ -12,6 +12,21 @@ const isZeroOrPositive = v.compile({
   }
 })
 
+const isPositive = v.compile({
+  value: {
+    type: 'number',
+    positive: true,
+    convert: true
+  }
+})
+
+const isNumber = v.compile({
+  value: {
+    type: 'number',
+    convert: true
+  }
+})
+
 export default {
   methods: {
     toUpperCase (value) {
@@ -21,12 +36,30 @@ export default {
 
       return value.toUpperCase()
     },
-    isZeroOrPositive (value) {
+    toZeroOrPositive (value) {
       if (value === '-') {
         return 0
       }
 
       if (isZeroOrPositive({ value }) !== true) {
+        return 0
+      }
+
+      return Number(value)
+    },
+    toPositiveNumber (value) {
+      if (value === '-') {
+        return 1
+      }
+
+      if (isPositive({ value }) !== true) {
+        return 1
+      }
+
+      return Number(value)
+    },
+    toNumber (value) {
+      if (isNumber({ value }) !== true) {
         return 0
       }
 

@@ -23,7 +23,7 @@ const contactMethodSchema = Joi.object({
 
 const contactsSchema = Joi.array().items(
   Joi.object({
-    name: Joi.string().trim().max(255).required(),
+    name: Joi.string().trim().max(100).required(),
     contactMethods: Joi.array().items(contactMethodSchema)
   })
 )
