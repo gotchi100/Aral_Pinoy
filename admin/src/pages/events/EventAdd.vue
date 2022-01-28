@@ -911,7 +911,7 @@ export default ({
 
       const [hours, minutes] = time.split(':')
 
-      this.event.date.end = new Date(year, month - 1, day, hours, minutes, 0, 0)
+      this.event.date.end = new Date(year, month, day, hours, minutes, 0, 0)
     },
     validateFloat (value) {
       const parsedValue = parseFloat(value)
