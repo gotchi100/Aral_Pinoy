@@ -71,7 +71,7 @@
           <b-row class="my-1">
             <label class="gender" for="input-small">Gender</label>
             <b-col>
-              <b-form-select v-model="user.gender" :options="options" class="mb-3"></b-form-select>
+              <b-form-select v-model="user.gender" :options="options" style="width: 100%"></b-form-select>
             </b-col>
           </b-row>
 
@@ -261,8 +261,9 @@
                   <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
                     <li v-for="tag in tags" :key="tag" class="list-inline-item">
                       <b-form-tag
+                        class="badge bg-success"
                         @remove="removeSkill(JSON.parse(tag))"
-                        variant="info"
+                        variant="success"
                       >
                         {{ JSON.parse(tag).name }}
                       </b-form-tag>
@@ -377,7 +378,7 @@ export default {
   data () {
     return {
       logo,
-      step: 0,
+      step: 2,
       options: [
         { value: 'Male', text: 'Male' },
         { value: 'Female', text: 'Female' }
@@ -514,22 +515,6 @@ font-size: 14px;
 }
 .signin {
 font-size: 14px;
-}
-.mb-3{
-display: block;
-width: 100%;
-height: 40px;
-padding: 0.375rem 0.75rem;
-font-size: 1rem;
-font-weight: 400;
-line-height: 1.5;
-color: #212529;
-background-color: #fff;
-background-clip: padding-box;
-border: 1px solid #ced4da;
-box-sizing: border-box;
-border-radius: 0.25rem;
-margin-bottom: 0 !important;
 }
 .text {
 font-size: 12px;
