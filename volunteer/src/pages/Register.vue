@@ -389,14 +389,14 @@ export default {
         lastName: '',
         gender: 'Male',
         contactNumber: '',
-        birthDate: subYears(new Date(), 14),
+        birthDate: subYears(new Date(), 18),
         address: {
           home: ''
         },
         skills: []
       },
       confirmPassword: '',
-      maxBirthDate: subYears(new Date(), 10),
+      maxBirthDate: subYears(new Date(), 18),
       skills: [],
       skillNameSearch: '',
       userSkills: [],
@@ -411,11 +411,12 @@ export default {
       return dirty || validated ? valid : null
     },
     async register () {
-      this.user.birthDate = startOfDay(this.user.birthDate)
+      const birthDate = startOfDay(new Date(this.user.birthDate))
       const skills = this.user.skills.map((skill) => skill._id)
 
       const userData = _.pickBy({
         ...this.user,
+        birthDate,
         skills
       }, _.identity)
 
