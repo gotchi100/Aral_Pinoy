@@ -20,6 +20,7 @@ const googleOAuthRouter = require('./routes/google-oauth')
 const sdgsRouter = require('./routes/sdgs')
 const skillsRouter = require('./routes/skills')
 const usersRouter = require('./routes/users')
+const monetaryDonationsRouter = require('./routes/monetary-donations')
 
 const eventsRouter = require('./routes/events')
 const eventDonationsRouter = require('./routes/events/donations')
@@ -76,6 +77,14 @@ const publicRoutes = [
     url: /^\/event-donations\/[A-Z0-9-]{36}\/redirectUri/,
     methods: ['GET']
   },
+  {
+    url: '/monetary-donations',
+    methods: ['POST']
+  },
+  {
+    url: /^\/monetary-donations\/[A-Z0-9-]{36}\/redirectUri/,
+    methods: ['GET']
+  },
 ]
 
 const app = express()
@@ -101,6 +110,7 @@ app.use('/skills', skillsRouter)
 app.use('/forgot-password', forgotPasswordRouter)
 app.use('/google-oauth', googleOAuthRouter)
 app.use('/sdgs', sdgsRouter)
+app.use('/monetary-donations', monetaryDonationsRouter)
 
 app.use('/events', eventsRouter)
 app.use('/event-donations', eventDonationsRouter)

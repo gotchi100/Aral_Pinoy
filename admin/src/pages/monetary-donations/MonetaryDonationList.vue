@@ -16,25 +16,50 @@
               <b-row>
                 <b-col cols="12">
                   <b-tabs pills card>
-                    <b-tab title="Donated to Aral Pinoy Organization" disabled>
-                      <!-- <b-row>
+                    <b-tab title="Donated to Aral Pinoy Organization" active>
+                      <b-row class="my-2">
                         <b-col cols="12">
                           <b-container>
-                            <b-row>
+                            <b-row class="mb-4" align-h="around" align-v="center">
                               <b-col cols="4">
-                                <b-form-group
-                                  style="font-size: 15px; font-family:'Bebas Neue', cursive;"
-                                  label="Per page"
-                                  label-for="per-page-select"
-                                  content-cols="12"
-                                >
-                                  <b-form-select
-                                    id="per-page-select"
-                                    class="w-25"
-                                    v-model="orgTransactionPerPage"
-                                    :options="pageOptions"
-                                  ></b-form-select>
-                                </b-form-group>
+                                <b-row align-v="center">
+                                  <b-col cols="3">
+                                    <label
+                                      for="per-page-select"
+                                      style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                                    >
+                                      Per Page&nbsp;&nbsp;
+                                    </label>
+                                  </b-col>
+
+                                  <b-col>
+                                    <select v-model="monetaryDonations.pagination.perPage" class="form-select form-select-sm" aria-label="Default select example">
+                                      <option v-for="option in pageOptions" :key="option">
+                                        {{ option }}
+                                      </option>
+                                    </select>
+                                  </b-col>
+                                </b-row>
+                              </b-col>
+
+                              <b-col cols="4">
+                                <b-dropdown class="w-50" size="sm" text="Filter by Status">
+                                  <b-dropdown-form style="width: 100%">
+                                    <div v-for="option in monetaryDonations.statusOptions" :key="option" class="form-check form-switch">
+                                      <label class="form-check-label" :for="`status-checkbox-${option}`">
+                                        {{ option.toUpperCase() }}
+                                      </label>
+
+                                      <input
+                                        :id="`status-checkbox-${option}`"
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        :value="option"
+                                        v-model="monetaryDonations.filters.statuses"
+                                      >
+                                    </div>
+                                  </b-dropdown-form>
+                                </b-dropdown>
                               </b-col>
                             </b-row>
                           </b-container>
@@ -44,71 +69,63 @@
                       <b-row class="pt-4">
                         <b-col cols="12">
                           <b-table
-                            :items="getOrganizationTransactions"
-                            :fields="orgTransactionFields"
-                            :current-page="orgTransactionCurrentPage"
-                            :per-page="orgTransactionPerPage"
+                            ref="monetaryDonations"
+                            :items="getMonetaryDonations"
+                            :fields="monetaryDonations.fields"
+                            :current-page="monetaryDonations.pagination.currentPage"
+                            :per-page="monetaryDonations.pagination.perPage"
                             stacked="md"
                             style="background:white"
                             show-empty
-                            small
                             primary-key="_id"
+                            hover
                           >
-                          <template #cell(date)="row">
-                              {{
-                                new Date(row.value).toLocaleString('en-us', {
-                                  dateStyle: 'medium'
-                                })
-                              }}
-                            </template>
-
-                            <template #cell(name)="row">
-                              {{ row.value.first }} {{ row.value.last }}
-                            </template>
-
-                            <template #cell(contact)="row">
-                              <template v-if="checkOrganizationContacts(row.item.receiver.organization.contacts)">
-                                <span v-if="row.item.receiver.organization.contacts.length === 1">
-                                  {{row.item.receiver.organization.contacts[0].name}} &lt;{{row.item.receiver.organization.contacts[0].contactMethods[0].value}}&gt;
-                                </span>
-
-                                <b-dropdown
-                                  v-else
-                                  text="See List"
-                                  style="width: 100%"
-                                  menu-class="w-100"
-                                  variant="outline-primary"
-                                >
-                                  <b-dropdown-item
-                                    v-for="(contact, index) in row.item.receiver.organization.contacts"
-                                    :key="index"
-                                    disabled
-                                  >
-                                    <span style="color: black">
-                                      {{contact.name}} &lt;{{contact.contactMethods[0].value}}&gt;
-                                    </span>
-                                  </b-dropdown-item>
-                                </b-dropdown>
-                              </template>
-                            </template>
-
-                            <template #cell(status)="row">
-                              <b-dropdown v-if="row.value==='PENDING'" :text="row.value" size="sm">
-                              <b-dropdown-item
-                                  @click="showTransactionStatusUpdateConfirmModal(row.item._id, 'COMPLETE')"
-                                >
-                                  COMPLETE
-                                </b-dropdown-item>
-
-                                <b-dropdown-item
-                                  @click="showTransactionStatusUpdateConfirmModal(row.item._id, 'RETURNED')"
-                                >
-                                  RETURNED
-                                </b-dropdown-item>
-                              </b-dropdown>
+                            <template #cell(volunteerName)="{ item }">
+                              <b-link
+                                v-if="item.user !== undefined"
+                                :to="`/volunteers/${item.user._id}`"
+                              >
+                                {{ item.user.firstName }} {{ item.user.lastName }}
+                              </b-link>
 
                               <span v-else>
-                                {{ row.value }}
+                                Anonymous
+                              </span>
+                            </template>
+
+                            <template #cell(amount)="{ value }">
+                              <span>
+                                {{
+                                  new Intl.NumberFormat('en-us', {
+                                    style: 'currency',
+                                    currency: 'PHP'
+                                  }).format(value)
+                                }}
+                              </span>
+                            </template>
+
+                            <template #cell(createdAt)="{ value }">
+                              <span v-if="value !== undefined && value !== ''">
+                                {{
+                                  new Date(value).toLocaleString('en-us', {
+                                    dateStyle: 'short',
+                                    timeStyle: 'short'
+                                  })
+                                }}
+                              </span>
+                            </template>
+
+                            <template #cell(contact)="{ item }">
+                              <span v-if="getValueFromPath(item, 'metadata.contactDetails.email') !== undefined">
+                                <a :href="`mailto:${getValueFromPath(item, 'metadata.contactDetails.email')}`">
+                                  {{ getValueFromPath(item, 'metadata.contactDetails.email') }}
+                                </a>
+                              </span>
+                            </template>
+
+                            <template #cell(status)="{ value }">
+                              <span>
+                                {{ value.toUpperCase() }}
                               </span>
                             </template>
                           </b-table>
@@ -116,54 +133,44 @@
                       </b-row>
 
                       <b-row class="pt-4 justify-content-md-center">
-                          <b-col cols="6" class="my-1">
-                            <b-pagination
-                              v-model="orgTransactionCurrentPage"
-                              :total-rows="orgTransactionTotal"
-                              :per-page="orgTransactionPerPage"
-                              align="fill"
-                              size="sm"
-                              class="my-0"
-                            ></b-pagination>
-                          </b-col>
-                      </b-row> -->
+                        <b-col cols="6" class="my-1">
+                          <b-pagination
+                            v-model="monetaryDonations.pagination.currentPage"
+                            :total-rows="monetaryDonations.total"
+                            :per-page="monetaryDonations.pagination.perPage"
+                            align="fill"
+                            size="sm"
+                            class="my-0"
+                          ></b-pagination>
+                        </b-col>
+                      </b-row>
                     </b-tab>
 
-                    <b-tab title="Donated to Aral Pinoy Events" active>
-                      <b-row>
+                    <b-tab title="Donated to Aral Pinoy Events">
+                      <b-row class="my-2">
                         <b-col cols="12">
                           <b-container>
-                            <b-row>
+                            <b-row class="mb-4" align-h="around" align-v="center">
                               <b-col cols="4">
-                                <b-form-group
-                                  style="font-size: 15px; font-family:'Bebas Neue', cursive;"
-                                  label="Per page"
-                                  label-for="per-page-select"
-                                  content-cols="12"
-                                >
-                                  <b-form-select
-                                    id="per-page-select"
-                                    class="w-25"
-                                    v-model="events.pagination.perPage"
-                                    :options="pageOptions"
-                                  ></b-form-select>
-                                </b-form-group>
-                              </b-col>
+                                <b-row align-v="center">
+                                  <b-col cols="3">
+                                    <label
+                                      for="per-page-select"
+                                      style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                                    >
+                                      Per Page&nbsp;&nbsp;
+                                    </label>
+                                  </b-col>
 
-                              <!-- TODO: Implement search for inkind donation outbound transactions for organizations -->
-                              <!-- <b-col>
-                                <br>
-                                <b-input-group size="sm">
-                                  <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
-                                  <b-form-input
-                                    id="filter-input"
-                                    v-model="filter"
-                                    type="search"
-                                    placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
-                                  ></b-form-input>
-                                </b-input-group>
-                                <br>
-                              </b-col> -->
+                                  <b-col>
+                                    <select v-model="events.pagination.perPage" class="form-select form-select-sm" aria-label="Default select example">
+                                      <option v-for="option in pageOptions" :key="option">
+                                        {{ option }}
+                                      </option>
+                                    </select>
+                                  </b-col>
+                                </b-row>
+                              </b-col>
                             </b-row>
                           </b-container>
                         </b-col>
@@ -250,13 +257,21 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { get } from 'lodash'
+
 import { apiClient } from '../../axios'
 import EventRepository from '../../repositories/events'
+import MonetaryDonationRepository from '../../repositories/monetary-donations'
 import MonetaryDonationEventDonationList from '../../components/monetary-donations/MonetaryDonationEventDonationList'
 
 const logo = require('../../assets/aralpinoywords.png')
 
 const eventRepository = new EventRepository(apiClient)
+const monetaryDonationRepository = new MonetaryDonationRepository(apiClient)
+
+const MONETARY_DONATION_SORT_MAPPING = {
+  createdAt: 'updatedAt'
+}
 
 export default {
   name: 'MonetaryDonationList',
@@ -267,6 +282,25 @@ export default {
     return {
       logo,
       pageOptions: [5, 10, 20],
+      monetaryDonations: {
+        results: [],
+        total: 0,
+        filters: {
+          statuses: ['success']
+        },
+        statusOptions: ['success', 'failed', 'pending', 'voided', 'refunded'],
+        pagination: {
+          perPage: 5,
+          currentPage: 1
+        },
+        fields: [
+          { key: 'createdAt', label: 'Transaction Date & Time', sortable: true },
+          { key: 'amount', label: 'Amount' },
+          { key: 'volunteerName', label: 'Donor' },
+          { key: 'contact', label: 'Contact' },
+          { key: 'status', label: 'Status' }
+        ]
+      },
       events: {
         results: [],
         total: 0,
@@ -289,12 +323,18 @@ export default {
     }
   },
   created () {
-    eventRepository.setAuthorizationHeader(`Bearer ${this.token}`)
+    const authHeader = `Bearer ${this.token}`
+
+    eventRepository.setAuthorizationHeader(authHeader)
+    monetaryDonationRepository.setAuthorizationHeader(authHeader)
   },
   computed: {
     ...mapGetters(['token']),
     eventsPageOffset () {
       return (this.events.pagination.currentPage - 1) * this.events.pagination.perPage
+    },
+    monetaryDonationsPageOffset () {
+      return (this.monetaryDonations.pagination.currentPage - 1) * this.monetaryDonations.pagination.perPage
     }
   },
   methods: {
@@ -317,12 +357,56 @@ export default {
 
       return results
     },
+    async getMonetaryDonations (ctx) {
+      const {
+        sortBy,
+        sortDesc
+      } = ctx
+
+      const perPage = this.monetaryDonations.pagination.perPage
+      const pageOffset = this.monetaryDonationsPageOffset
+      const status = this.monetaryDonations.filters.statuses
+      const sort = {
+        field: 'createdAt',
+        order: 'desc'
+      }
+
+      if (sortBy !== undefined && sortBy !== '') {
+        sort.field = MONETARY_DONATION_SORT_MAPPING[sortBy]
+        sort.order = sortDesc ? 'desc' : 'asc'
+      }
+
+      const { results, total } = await monetaryDonationRepository.list({
+        status
+      }, {
+        limit: perPage,
+        offset: pageOffset,
+        expand: true,
+        sort
+      })
+
+      this.monetaryDonations.total = total
+
+      return results
+    },
     showEventDonations (event) {
       this.eventDonations.modal = true
       this.eventDonations.event = {
         _id: event._id,
         name: event.name
       }
+    },
+    getValueFromPath (object, path, defaultValue) {
+      return get(object, path, defaultValue)
+    }
+  },
+  watch: {
+    'monetaryDonations.filters.statuses' (val) {
+      if (val.length === 0) {
+        return
+      }
+
+      this.$refs.monetaryDonations.refresh()
     }
   }
 }
