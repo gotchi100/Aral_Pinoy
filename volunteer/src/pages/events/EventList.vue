@@ -16,6 +16,61 @@
           Events
         </p>
 
+        <b-row class="mt-2 mb-4">
+          <b-col cols="12">
+            <b-card>
+              <b-container>
+                <b-row align-h="around" align-v="center">
+                  <b-col cols="4">
+                    <b-row align-v="center">
+                      <b-col cols="3">
+                        <label
+                          for="per-page-select"
+                          style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                        >
+                          Per Page&nbsp;&nbsp;
+                        </label>
+                      </b-col>
+
+                      <b-col>
+                        <select v-model="eventsPagination.perPage" class="form-select form-select-sm" aria-label="Default select example">
+                          <option v-for="option in pageOptions" :key="option">
+                            {{ option }}
+                          </option>
+                        </select>
+                      </b-col>
+                    </b-row>
+                  </b-col>
+
+                  <b-col cols="4">
+                    <b-row align-v="center">
+                      <b-col cols="3">
+                        <label
+                          for="filter-eventName"
+                          style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                        >
+                          Search&nbsp;&nbsp;
+                        </label>
+                      </b-col>
+
+                      <b-col>
+                        <b-form-input
+                          id="filter-eventName"
+                          class="form-control"
+                          v-model="searchFilter"
+                          type="search"
+                          size="sm"
+                          debounce="500"
+                        ></b-form-input>
+                      </b-col>
+                    </b-row>
+                  </b-col>
+                </b-row>
+              </b-container>
+            </b-card>
+          </b-col>
+        </b-row>
+
         <b-row class="pb-4">
           <template v-if="isLoadingEvents">
             <b-col v-for="index in [0, 1, 2]" :key="index" cols="12" md="4">
@@ -151,9 +206,13 @@ import {
 } from 'date-fns'
 
 import Footer from '../../components/Footer.vue'
+
+import EventRepository from '../../repositories/events'
+import { apiClient } from '../../axios'
+
 const logo = require('../../assets/aralpinoywords.png')
 
-const { apiClient } = require('../../axios')
+const eventRepository = new EventRepository(apiClient)
 
 export default {
   components: {
@@ -163,6 +222,8 @@ export default {
     return {
       logo,
       isLoadingEvents: false,
+      searchFilter: '',
+      pageOptions: [6, 12, 18],
       events: {
         results: [],
         total: 0
@@ -176,6 +237,9 @@ export default {
   computed: {
     eventsPaginationOffset () {
       return (this.eventsPagination.currentPage - 1) * this.eventsPagination.perPage
+    },
+    noImageSrc () {
+      return 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/No_image_available_600_x_450.svg/1280px-No_image_available_600_x_450.svg.png'
     }
   },
   created () {
@@ -185,19 +249,24 @@ export default {
     async getEvents () {
       this.isLoadingEvents = true
 
-      const queryString = new URLSearchParams()
-
-      queryString.set('limit', this.eventsPagination.perPage)
-      queryString.set('offset', this.eventsPaginationOffset)
-      queryString.set('filters.status', 'UPCOMING')
-      queryString.set('sort.field', 'date.start')
-      queryString.set('sort.order', 'asc')
+      const limit = this.eventsPagination.perPage
+      const offset = this.eventsPaginationOffset
 
       try {
-        const { data } = await apiClient.get(`/events?${queryString.toString()}`)
+        const { results, total } = await eventRepository.list({
+          name: this.searchFilter,
+          status: 'UPCOMING'
+        }, {
+          limit,
+          offset,
+          sort: {
+            field: 'date.start',
+            order: 'asc'
+          }
+        })
 
-        this.events.results = data.results
-        this.events.total = data.total
+        this.events.results = results
+        this.events.total = total
       } finally {
         this.isLoadingEvents = false
       }
@@ -272,6 +341,12 @@ export default {
     }
   },
   watch: {
+    searchFilter () {
+      this.getEvents()
+    },
+    'eventsPagination.perPage' () {
+      this.getEvents()
+    },
     'eventsPagination.currentPage' () {
       this.getEvents()
     }
