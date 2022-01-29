@@ -28,6 +28,10 @@
                       </b-col>
 
                       <b-col v-if="event.status === 'UPCOMING'" class="text-end" cols="12" md="6">
+                        <b-button variant="success" class="mx-3" @click="updateEvent.modal = true">
+                          Edit Event
+                        </b-button>
+
                         <b-dropdown
                           text="Update Status"
                           variant="primary"
@@ -36,6 +40,7 @@
                           <b-dropdown-item @click="preUpdateStatus('CANCELED')">
                             <strong style="color: red">CANCEL</strong>
                           </b-dropdown-item>
+
                           <b-dropdown-item
                             @click="preUpdateStatus('ENDED')"
                             :disabled="!canEndEvent"
@@ -415,13 +420,23 @@
         </b-container>
       </template>
     </b-modal>
+
+    <EventUpdateModal
+      :show="updateEvent.modal"
+      :current-event="updateEvent.event"
+      @update="patchEvent"
+      @close="updateEvent.modal = false"
+    />
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import { cloneDeep, pickBy, identity } from 'lodash'
+
 import { apiClient } from '../../axios'
 import EventVolunteerRepository from '../../repositories/events/volunteers'
+import EventUpdateModal from '../../components/events/EventUpdateModal'
 
 const logo = require('../../assets/aralpinoywords.png')
 
@@ -429,6 +444,9 @@ const eventVolunteerRepository = new EventVolunteerRepository(apiClient)
 
 export default {
   name: 'EventDetails',
+  components: {
+    EventUpdateModal
+  },
   data () {
     return {
       logo,
@@ -486,6 +504,10 @@ export default {
           { key: 'item.name', label: 'Item' },
           { key: 'quantity', label: 'Number of Used Items', class: 'text-center' }
         ]
+      },
+      updateEvent: {
+        modal: false,
+        event: null
       }
     }
   },
@@ -632,6 +654,7 @@ export default {
         })
 
         this.event = event
+        this.updateEvent.event = event
 
         if (new Date() > new Date(event.date.start)) {
           this.canEndEvent = true
@@ -667,6 +690,11 @@ export default {
       this.eventVolunteers.total = total
 
       return results
+    },
+    patchEvent (event) {
+      Object.assign(this.event, cloneDeep(event))
+
+      this.event = pickBy(this.event, identity)
     },
     async preUpdateStatus (status) {
       this.updateEventStatus.status = status

@@ -92,6 +92,61 @@ class GoogleCalendarController {
   /**
    * 
    * @param {string} id
+   * @param {Object} update
+   * @param {Object} [options={}]
+   */
+  async patchEvent(id, update, options = {}) {
+    const {
+      summary,
+      description,
+      locationName,
+      startDate,
+      endDate
+    } = update
+
+    const {
+      sendUpdates = 'none'
+    } = options
+
+    const requestBody = {}
+
+    if (summary !== undefined) {
+      requestBody.summary = summary
+    }
+
+    if (description !== undefined) {
+      requestBody.description = description
+    }
+
+    if (locationName !== undefined) {
+      requestBody.location = locationName
+    }
+
+    if (startDate !== undefined) {
+      requestBody.start = {
+        dateTime : startDate
+      }
+    }
+
+    if (endDate !== undefined) {
+      requestBody.end = {
+        dateTime : endDate
+      }
+    }
+
+    const calendarEvent = {
+      calendarId: 'primary',
+      eventId: id,
+      sendUpdates,
+      requestBody
+    }
+
+    await this.calendar.events.patch(calendarEvent)
+  }
+
+  /**
+   * 
+   * @param {string} id
    * @param {EventAttendee[]} attendees
    */
   async updateEventAttendees(id, attendees) {

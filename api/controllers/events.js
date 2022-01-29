@@ -372,6 +372,96 @@ class EventsController {
     return event.toObject()
   }
 
+  static async update(id, event) {
+    const {
+      name,
+      description,
+      location,
+      date
+    } = event
+
+    const currentEvent = await EventModel.findById(id, ['__v', 'status'])
+
+    if (currentEvent === null) {
+      throw new NotFoundError('event')
+    }
+
+    if (currentEvent.status !== STATUSES.UPCOMING) {
+      throw new ConflictError('non_upcoming_event')
+    }
+
+    const $set = {}
+    const $unset = {}
+
+    if (name !== undefined) {
+      $set.name = name
+    }
+
+    if (description !== undefined) {
+      if (description === null) {
+        $unset.description = ''
+      } else {
+        $set.description = description 
+      }
+    }
+
+    if (location !== undefined) {
+      $set.location = location
+    }
+
+    if (date !== undefined) {
+      $set['date.start'] = date.start
+      $set['date.end'] = date.end
+    }
+
+    const { matchedCount } = await EventModel.updateOne({
+      _id: id,
+      __v: currentEvent.__v
+    }, {
+      $set,
+      $unset,
+      $inc: {
+        __v: 1
+      }
+    })
+
+    if (matchedCount === 0) {
+      throw new ConflictError('version_conflict')
+    }
+
+    EventsController.updateGoogleEvent(id, {
+      name,
+      description,
+      location,
+      date
+    }, { sendUpdates: 'all' }).catch(console.error)
+  }
+
+  static async updateGoogleEvent(id, event, options = {}) {
+    const {
+      name,
+      description,
+      location,
+      date
+    } = event
+
+    const update = {
+      summary: name,
+      description
+    }
+
+    if (location !== undefined && location.name !== undefined) {
+      update.locationName = location.name
+    }
+
+    if (date !== undefined) {
+      update.startDate = date.start
+      update.endDate = date.end
+    }
+
+    await GoogleCalendarController.patchEvent(id, update, options)
+  }
+
   static async updateStatus(id, details) {
     const {
       status,

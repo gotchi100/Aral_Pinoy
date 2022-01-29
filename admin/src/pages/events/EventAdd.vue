@@ -94,7 +94,12 @@
 
                           <b-col>
                             <b-form-group label="Start Time:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                              <b-form-timepicker v-model="startDate.time" locale="en" required></b-form-timepicker>
+                              <b-form-timepicker
+                                v-model="startDate.time"
+                                locale="en"
+                                minutes-step="10"
+                                required
+                              />
                             </b-form-group>
                           </b-col>
                         </b-row>
@@ -113,7 +118,12 @@
 
                           <b-col>
                             <b-form-group label="End Time:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                              <b-form-timepicker v-model="endDate.time" locale="en" required></b-form-timepicker>
+                              <b-form-timepicker
+                                v-model="endDate.time"
+                                locale="en"
+                                minutes-step="10"
+                                required
+                              />
                             </b-form-group>
                           </b-col>
                         </b-row>

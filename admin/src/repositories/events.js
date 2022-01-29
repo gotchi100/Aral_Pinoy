@@ -74,6 +74,10 @@ class EventRepository {
       total: data.total
     }
   }
+
+  async update (id, payload) {
+    await this.apiClient.patch(`/events/${id}`, payload)
+  }
 }
 
 module.exports = EventRepository

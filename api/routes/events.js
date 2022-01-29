@@ -175,7 +175,7 @@ async function listEvents(req, res, next) {
   }
 }
 
-function validateGetEventBody(req, res, next) {
+function validateIdParams(req, res, next) {
   const { id } = req.params
 
   if (!Types.ObjectId.isValid(id)) {
@@ -201,6 +201,59 @@ async function getEvent(req, res, next) {
   }
 }
 
+const patchEventValidator = Joi.object({
+  name: Joi.string().trim().max(100),
+  description: Joi.string().allow(null).trim().max(5000),
+  location: Joi.object({
+    name: Joi.string().trim().max(500).required()
+  }),
+  date: Joi.object({
+    start: Joi.date().iso().required(),
+    end: Joi.date().iso().greater(Joi.ref('start')).required(),
+  }),
+})
+
+function validatePatchEvent(req, res, next) {
+  const { value: validatedBody, error } = patchEventValidator.validate(req.body)
+
+  if (error !== undefined) {      
+    return res.status(400).json({
+      code: 'BadRequest',
+      status: 400,
+      message: error.message
+    })
+  }
+
+  req.body = validatedBody
+
+  next()
+}
+
+async function patchEvent(req, res, next) {
+  const { id } = req.params
+  const { 
+    name,
+    description,
+    location,
+    date
+  } = req.body
+
+  try {
+    await EventsController.update(id, {
+      name,
+      description,
+      location,
+      date
+    })
+
+    return res.status(200).json({
+      ok: true
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 const patchEventStatusValidator = Joi.object({
   status: Joi.string().valid(STATUSES.ENDED, STATUSES.CANCELED).required(),
   itemsUnused: Joi.array().items(Joi.object({
@@ -210,16 +263,6 @@ const patchEventStatusValidator = Joi.object({
 })
 
 function validatePatchEventStatusBody(req, res, next) {
-  const { id } = req.params
-
-  if (!Types.ObjectId.isValid(id)) {
-    return res.status(400).json({
-      code: 'BadRequest',
-      status: 400,
-      message: 'ID is invalid'
-    })
-  }
-
   const { value: validatedBody, error } = patchEventStatusValidator.validate(req.body)
 
   if (error !== undefined) {      
@@ -259,8 +302,13 @@ async function patchEventStatus(req, res, next) {
 const router = express.Router()
 
 router.post('/', upload.single('logo'), validateCreateEventBody, createEvent)
+
 router.get('/', validateListEventsBody, listEvents)
-router.get('/:id', validateGetEventBody, getEvent)
-router.patch('/:id/status', validatePatchEventStatusBody, patchEventStatus)
+
+router.get('/:id', validateIdParams, getEvent)
+
+router.patch('/:id', validatePatchEvent, patchEvent)
+
+router.patch('/:id/status', validateIdParams, validatePatchEventStatusBody, patchEventStatus)
 
 module.exports = router
