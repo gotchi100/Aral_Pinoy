@@ -82,7 +82,10 @@ class EventVolunteerController {
 
   static async addGoogleCalendarAttendee(eventId, attendeeEmail) {
     const calendarEvent = await GoogleCalendarController.getEvent(eventId)
-    const attendees = calendarEvent.attendees.concat([{ email: attendeeEmail }])
+    const attendees = calendarEvent.attendees.concat([{
+      email: attendeeEmail,
+      responseStatus: 'accepted'
+    }])
 
     await GoogleCalendarController.updateEventAttendees(eventId, attendees)
   }
@@ -177,9 +180,9 @@ class EventVolunteerController {
   }
 
   static async delete(id) {
-    const eventVolunteer = await EventVolunteerModel.findById(id, ['event', 'eventJob.name'], { 
+    const eventVolunteer = await EventVolunteerModel.findById(id, ['user','event', 'eventJob.name'], { 
       lean: true,
-      populate: ['event']
+      populate: ['user', 'event']
     })
 
     if (eventVolunteer === null) {
@@ -187,6 +190,7 @@ class EventVolunteerController {
     }
 
     const {
+      user,
       event,
       eventJob: {
         name: jobName
@@ -206,6 +210,15 @@ class EventVolunteerController {
     if (deleteResults.deletedCount === 0) {
       throw new NotFoundError(`Event volunteer does not exist: ${id}`)
     }
+
+    EventVolunteerController.removeGoogleCalendarAttendee(event._id.toString(), user.email).catch(console.error)
+  }
+
+  static async removeGoogleCalendarAttendee(eventId, attendeeEmailToRemove) {
+    const calendarEvent = await GoogleCalendarController.getEvent(eventId)
+    const attendees = calendarEvent.attendees.filter((attendee) => attendee.email !== attendeeEmailToRemove)
+
+    await GoogleCalendarController.updateEventAttendees(eventId, attendees)
   }
   
   static async updateEventJob(event, jobIndex, value) {
