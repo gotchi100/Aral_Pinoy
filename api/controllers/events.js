@@ -7,6 +7,7 @@ const config = require('../config')
 
 const EventModel = require('../models/events')
 const EventJobModel = require('../models/event-jobs')
+const EventExpenseModel = require('../models/events/expenses')
 const SkillModel = require('../models/skills')
 const SdgModel = require('../models/sdgs')
 const InkindDonationModel = require('../models/inkind-donations')
@@ -465,10 +466,11 @@ class EventsController {
   static async updateStatus(id, details) {
     const {
       status,
-      itemsUnused
+      itemsUnused,
+      expenses
     } = details
 
-    const event = await EventModel.findById(id, ['name', '__v', 'status', 'ikds'])
+    const event = await EventModel.findById(id, ['_id', 'name', '__v', 'status', 'ikds', 'goals'])
 
     if (event === null) {
       throw new NotFoundError(`Event does not exist: ${id}`)
@@ -476,6 +478,28 @@ class EventsController {
 
     if (event.status === STATUSES.ENDED || event.status === STATUSES.CANCELED) {
       throw new ConflictError(`Unable to update event: Status is ${event.status}`)
+    }
+
+    const expenseTransactions = []
+
+    if (Array.isArray(expenses) && expenses.length > 0) {
+      if (event.goals.monetaryDonation.current === 0) {
+        throw new ConflictError('monetary_donation_zero_balance')
+      }
+
+      for (const expense of expenses) {
+        const sanitizedType = sanitize(expense.type)
+
+        expenseTransactions.push(
+          EventExpenseModel.create({
+            event: event._id,
+            type: sanitizedType,
+            typeNorm: sanitizedType.toLowerCase(),
+            amount: expense.amount,
+            remarks: expense.remarks
+          })
+        )
+      }
     }
 
     const ikdUsedQuantityMap = {}
@@ -538,9 +562,13 @@ class EventsController {
       await GoogleCalendarController.updateEventStatus(id, status).catch((error) => console.dir(error, { depth: null }))
     }
 
+    if (expenseTransactions.length > 0) {
+      await Promise.all(expenseTransactions)
+    }
+
     if (ikdTransactions.length > 0) {
       await Promise.all(ikdTransactions)
-    }    
+    }
   }
 
   static async createTransaction(transaction) {
