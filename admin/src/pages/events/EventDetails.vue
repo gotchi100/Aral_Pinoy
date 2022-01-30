@@ -1017,12 +1017,10 @@ export default {
       this.updateEventStatus.confirmModal = false
 
       const eventId = this.eventId
-      let itemsUnused
+      const itemsUnused = []
       let expenses
 
       if (this.updateEventStatus.itemsUsed.length > 0) {
-        itemsUnused = []
-
         for (const { item, quantity, maxQuantity } of this.updateEventStatus.itemsUsed) {
           const unUsedQuantity = maxQuantity - quantity
 

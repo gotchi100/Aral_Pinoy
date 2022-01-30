@@ -41,6 +41,11 @@ const SORT_ORDER_MAPPING = {
   desc: -1
 }
 
+const EVENT_STATUS_OUTBOUND_TRANSACTION_MAP = {
+  [STATUSES.CANCELED]: TRANSACTION_STATUSES.RETURNED,
+  [STATUSES.ENDED]: TRANSACTION_STATUSES.COMPLETE
+}
+
 function sanitize(name) {
   return name.replace(whitespaceRegex,' ')
 }
@@ -505,7 +510,7 @@ class EventsController {
     const ikdUsedQuantityMap = {}
     const ikdTransactions = []
 
-    if (Array.isArray(itemsUnused) && itemsUnused.length > 0 && Array.isArray(event.ikds) &&  event.ikds.length > 0) {
+    if (Array.isArray(event.ikds) &&  event.ikds.length > 0) {
       const itemsUnusedMap = new Map()
       const date = new Date()
 
@@ -569,6 +574,18 @@ class EventsController {
     if (ikdTransactions.length > 0) {
       await Promise.all(ikdTransactions)
     }
+
+    await IkdOutboundTransactionModel.updateMany({
+      'receiver.event': event._id,
+      status: TRANSACTION_STATUSES.PENDING
+    }, {
+      $set: {
+        status: EVENT_STATUS_OUTBOUND_TRANSACTION_MAP[status]
+      },
+      $inc: {
+        __v: 1
+      }
+    })
   }
 
   static async createTransaction(transaction) {
