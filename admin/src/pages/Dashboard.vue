@@ -46,7 +46,7 @@
                       <b-progress height="1.5rem" :max="event.goals.monetaryDonation.target">
                         <b-progress-bar
                           variant="success"
-                          :value="event.goals.monetaryDonation.current"
+                          :value="hasGoalReached(event.goals.monetaryDonation) ? event.goals.monetaryDonation.current : 0"
                           :label="getMonetaryDonationCurrentLabel(event.goals.monetaryDonation)"
                         ></b-progress-bar>
 
@@ -64,7 +64,7 @@
                       <b-progress height="1.5rem" :max="event.goals.numVolunteers.target">
                         <b-progress-bar
                           variant="success"
-                          :value="event.goals.numVolunteers.current"
+                          :value="hasGoalReached(event.goals.numVolunteers) ? event.goals.numVolunteers.current : 0"
                           :label="getVolunteerGoalCurrentLabel(event.goals.numVolunteers)"
                         ></b-progress-bar>
 
@@ -555,7 +555,7 @@ export default {
         return `${current} / ${target} ${volunteerNoun}`
       }
 
-      return ''
+      return undefined
     },
     getVolunteerGoalTargetLabel ({ current, target }) {
       if (current >= target) {
