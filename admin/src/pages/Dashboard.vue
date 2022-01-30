@@ -47,6 +47,7 @@
                         <b-progress-bar
                           variant="success"
                           :value="event.goals.monetaryDonation.current"
+                          :label="getMonetaryDonationCurrentLabel(event.goals.monetaryDonation)"
                         ></b-progress-bar>
 
                         <b-progress-bar
@@ -64,6 +65,7 @@
                         <b-progress-bar
                           variant="success"
                           :value="event.goals.numVolunteers.current"
+                          :label="getVolunteerGoalCurrentLabel(event.goals.numVolunteers)"
                         ></b-progress-bar>
 
                         <b-progress-bar
@@ -523,19 +525,19 @@ export default {
           currency: 'PHP'
         }).format(target)
 
-        return `We have reached our goal! (${currentCurrency} / ${targetCurrency})`
+        return `${currentCurrency} / ${targetCurrency}`
       }
 
-      const currency = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'PHP'
-      }).format(current)
-
-      return currency
+      return ''
     },
     getMonetaryDonationTargetLabel ({ current, target }) {
       if (current >= target) {
-        return ''
+        const currency = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'PHP'
+        }).format(current)
+
+        return currency
       }
 
       const difference = target - current
@@ -548,12 +550,12 @@ export default {
     },
     getVolunteerGoalCurrentLabel ({ current, target }) {
       if (current >= target) {
-        return `We have reached our goal! (${current} / ${target} have volunteered)`
+        const volunteerNoun = target === 1 ? 'volunteer' : 'volunteers'
+
+        return `${current} / ${target} ${volunteerNoun}`
       }
 
-      const volunteerNoun = current === 1 ? 'volunteer' : 'volunteers'
-
-      return `${current} ${volunteerNoun}`
+      return ''
     },
     getVolunteerGoalTargetLabel ({ current, target }) {
       if (current >= target) {
