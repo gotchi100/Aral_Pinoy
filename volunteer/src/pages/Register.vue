@@ -378,7 +378,7 @@ export default {
   data () {
     return {
       logo,
-      step: 2,
+      step: 0,
       options: [
         { value: 'Male', text: 'Male' },
         { value: 'Female', text: 'Female' }
