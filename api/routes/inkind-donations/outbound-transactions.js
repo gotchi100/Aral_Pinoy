@@ -57,7 +57,12 @@ const createTransactionValidator = Joi.object({
 const listTransactionsValidator = Joi.object({
   offset: Joi.number().min(0).default(0),
   limit: Joi.number().min(1).default(25),
-  'filters.receiverType': receiverTypeSchema
+  'filters.receiverType': receiverTypeSchema,
+  'filters.status': Joi.array().items(
+    Joi.string().valid(TRANSACTION_STATUSES.COMPLETE, TRANSACTION_STATUSES.PENDING, TRANSACTION_STATUSES.RETURNED)
+  ),
+  'sort.field': Joi.string().valid('date'),
+  'sort.order': Joi.string().valid('asc', 'desc')
 }).options({ 
   stripUnknown: true
 })
@@ -109,8 +114,28 @@ function validateListTransaction(req, res, next) {
 }
 
 async function list(req, res, next) {
+  const {
+    offset,
+    limit,
+    'filters.receiverType': filterReceiverType,
+    'filters.status': filterStatus,
+    'sort.field': sortField,
+    'sort.order': sortOrder
+  } = req.query
+
   try {
-    const { results, total } = await IkdOutboundTransactionsController.list(req.query)
+    const { results, total } = await IkdOutboundTransactionsController.list({
+      offset,
+      limit,
+      filters: {
+        receiverType: filterReceiverType,
+        status: filterStatus
+      },
+      sort: {
+        field: sortField,
+        order: sortOrder
+      }
+    })
 
     return res.json({
       results,

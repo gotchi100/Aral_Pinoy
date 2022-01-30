@@ -17,40 +17,50 @@
                 <b-col cols="12">
                   <b-tabs pills card>
                     <b-tab title="External Organizations" active>
-                      <b-row>
+                      <b-row class="my-2">
                         <b-col cols="12">
                           <b-container>
-                            <b-row>
+                            <b-row class="mb-4" align-h="around" align-v="center">
                               <b-col cols="4">
-                                <b-form-group
-                                  style="font-size: 15px; font-family:'Bebas Neue', cursive;"
-                                  label="Per page"
-                                  label-for="per-page-select"
-                                  content-cols="12"
-                                >
-                                  <b-form-select
-                                    id="per-page-select"
-                                    class="w-25"
-                                    v-model="orgTransactionPerPage"
-                                    :options="pageOptions"
-                                  ></b-form-select>
-                                </b-form-group>
+                                <b-row align-v="center">
+                                  <b-col cols="3">
+                                    <label
+                                      for="per-page-select"
+                                      style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                                    >
+                                      Per Page&nbsp;&nbsp;
+                                    </label>
+                                  </b-col>
+
+                                  <b-col>
+                                    <select v-model="orgTransactionPerPage" class="form-select form-select-sm">
+                                      <option v-for="option in pageOptions" :key="option">
+                                        {{ option }}
+                                      </option>
+                                    </select>
+                                  </b-col>
+                                </b-row>
                               </b-col>
 
-                              <!-- TODO: Implement search for inkind donation outbound transactions for organizations -->
-                              <!-- <b-col>
-                                <br>
-                                <b-input-group size="sm">
-                                  <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
-                                  <b-form-input
-                                    id="filter-input"
-                                    v-model="filter"
-                                    type="search"
-                                    placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
-                                  ></b-form-input>
-                                </b-input-group>
-                                <br>
-                              </b-col> -->
+                              <b-col cols="4">
+                                <b-dropdown class="w-50" size="sm" text="Filter by Status">
+                                  <b-dropdown-form style="width: 100%">
+                                    <div v-for="option in orgTransactions.statusOptions" :key="option" class="form-check form-switch">
+                                      <label class="form-check-label" :for="`org-transaction-status-checkbox-${option}`">
+                                        {{ option }}
+                                      </label>
+
+                                      <input
+                                        :id="`org-transaction-status-checkbox-${option}`"
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        :value="option"
+                                        v-model="orgTransactions.filters.status"
+                                      >
+                                    </div>
+                                  </b-dropdown-form>
+                                </b-dropdown>
+                              </b-col>
                             </b-row>
                           </b-container>
                         </b-col>
@@ -59,6 +69,7 @@
                       <b-row class="pt-4">
                         <b-col cols="12">
                           <b-table
+                            ref="orgTransactionsTable"
                             :items="getOrganizationTransactions"
                             :fields="orgTransactionFields"
                             :current-page="orgTransactionCurrentPage"
@@ -145,40 +156,50 @@
                     </b-tab>
 
                     <b-tab title="Aral Pinoy Events">
-                      <b-row>
+                      <b-row class="my-2">
                         <b-col cols="12">
                           <b-container>
-                            <b-row>
+                            <b-row class="mb-4" align-h="around" align-v="center">
                               <b-col cols="4">
-                                <b-form-group
-                                  style="font-size: 15px; font-family:'Bebas Neue', cursive;"
-                                  label="Per page"
-                                  label-for="per-page-select"
-                                  content-cols="12"
-                                >
-                                  <b-form-select
-                                    id="per-page-select"
-                                    class="w-25"
-                                    v-model="eventTransactionPerPage"
-                                    :options="pageOptions"
-                                  ></b-form-select>
-                                </b-form-group>
+                                <b-row align-v="center">
+                                  <b-col cols="3">
+                                    <label
+                                      for="per-page-select"
+                                      style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                                    >
+                                      Per Page&nbsp;&nbsp;
+                                    </label>
+                                  </b-col>
+
+                                  <b-col>
+                                    <select v-model="eventTransactionPerPage" class="form-select form-select-sm" aria-label="Default select example">
+                                      <option v-for="option in pageOptions" :key="option">
+                                        {{ option }}
+                                      </option>
+                                    </select>
+                                  </b-col>
+                                </b-row>
                               </b-col>
 
-                              <!-- TODO: Implement search for inkind donation outbound transactions for organizations -->
-                              <!-- <b-col>
-                                <br>
-                                <b-input-group size="sm">
-                                  <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
-                                  <b-form-input
-                                    id="filter-input"
-                                    v-model="filter"
-                                    type="search"
-                                    placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
-                                  ></b-form-input>
-                                </b-input-group>
-                                <br>
-                              </b-col> -->
+                              <b-col cols="4">
+                                <b-dropdown class="w-50" size="sm" text="Filter by Status">
+                                  <b-dropdown-form style="width: 100%">
+                                    <div v-for="option in eventTransactions.statusOptions" :key="option" class="form-check form-switch">
+                                      <label class="form-check-label" :for="`event-transaction-status-checkbox-${option}`">
+                                        {{ option }}
+                                      </label>
+
+                                      <input
+                                        :id="`event-transaction-status-checkbox-${option}`"
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        :value="option"
+                                        v-model="eventTransactions.filters.status"
+                                      >
+                                    </div>
+                                  </b-dropdown-form>
+                                </b-dropdown>
+                              </b-col>
                             </b-row>
                           </b-container>
                         </b-col>
@@ -187,6 +208,7 @@
                       <b-row class="pt-4">
                         <b-col cols="12">
                           <b-table
+                            ref="eventTransactionsTable"
                             :items="getEventTransactions"
                             :fields="eventTransactionFields"
                             :current-page="eventTransactionCurrentPage"
@@ -257,14 +279,17 @@
 <script>
 import { mapGetters } from 'vuex'
 
-const { apiClient } = require('../../axios')
+import { apiClient } from '../../axios'
+import IkdOutboundTransactionRepository from '../../repositories/inkind-donations/outbound-transactions'
+
+const ikdOutboundTransactionRepository = new IkdOutboundTransactionRepository(apiClient)
 
 export default {
   data () {
     return {
       pageOptions: [5, 10, 20],
       eventTransactionFields: [
-        { key: 'date', label: 'Date Sent' },
+        { key: 'date', label: 'Date Sent', sortable: true },
         { key: 'item.name', label: 'Item' },
         { key: 'item.category.name', label: 'Category' },
         { key: 'quantity', label: 'Quantity Donated' },
@@ -280,9 +305,21 @@ export default {
         { key: 'contact', label: 'Contacts' },
         { key: 'status', label: 'Status' }
       ],
+      eventTransactions: {
+        filters: {
+          status: ['PENDING']
+        },
+        statusOptions: ['COMPLETE', 'RETURNED', 'PENDING']
+      },
       eventTransactionTotal: 1,
       eventTransactionCurrentPage: 1,
       eventTransactionPerPage: 5,
+      orgTransactions: {
+        filters: {
+          status: ['PENDING']
+        },
+        statusOptions: ['COMPLETE', 'RETURNED', 'PENDING']
+      },
       orgTransactionTotal: 0,
       orgTransactionCurrentPage: 1,
       orgTransactionPerPage: 5,
@@ -302,40 +339,67 @@ export default {
       return (this.orgTransactionCurrentPage - 1) * this.orgTransactionPerPage
     }
   },
+  created () {
+    ikdOutboundTransactionRepository.setAuthorizationHeader(`Bearer ${this.token}`)
+  },
   methods: {
     async getEventTransactions (ctx) {
-      const queryString = new URLSearchParams()
+      const {
+        sortBy,
+        sortDesc
+      } = ctx
 
-      queryString.set('limit', this.eventTransactionPerPage)
-      queryString.set('offset', this.eventTransactionPageOffset)
-      queryString.set('filters.receiverType', 'EVENT')
+      const limit = this.eventTransactionPerPage
+      const offset = this.eventTransactionPageOffset
+      const sort = {
+        field: 'date',
+        order: 'desc'
+      }
 
-      const { data } = await apiClient.get(`/inkind-donation-outbound-transactions?${queryString.toString()}`, {
-        headers: {
-          Authorization: `Bearer ${this.token}`
-        }
+      if (sortBy !== undefined && sortBy !== '') {
+        sort.field = sortBy
+        sort.order = sortDesc ? 'desc' : 'asc'
+      }
+
+      const { results, total } = await ikdOutboundTransactionRepository.list({
+        receiverType: 'EVENT',
+        status: this.eventTransactions.filters.status
+      }, {
+        limit,
+        offset,
+        sort
       })
-
-      const { results, total } = data
 
       this.eventTransactionTotal = total
 
       return results
     },
     async getOrganizationTransactions (ctx) {
-      const queryString = new URLSearchParams()
+      const {
+        sortBy,
+        sortDesc
+      } = ctx
 
-      queryString.set('limit', this.orgTransactionPerPage)
-      queryString.set('offset', this.orgTransactionPageOffset)
-      queryString.set('filters.receiverType', 'ORGANIZATION')
+      const limit = this.orgTransactionPerPage
+      const offset = this.orgTransactionPageOffset
+      const sort = {
+        field: 'date',
+        order: 'desc'
+      }
 
-      const { data } = await apiClient.get(`/inkind-donation-outbound-transactions?${queryString.toString()}`, {
-        headers: {
-          Authorization: `Bearer ${this.token}`
-        }
+      if (sortBy !== undefined && sortBy !== '') {
+        sort.field = sortBy
+        sort.order = sortDesc ? 'desc' : 'asc'
+      }
+
+      const { results, total } = await ikdOutboundTransactionRepository.list({
+        receiverType: 'ORGANIZATION',
+        status: this.orgTransactions.filters.status
+      }, {
+        limit,
+        offset,
+        sort
       })
-
-      const { results, total } = data
 
       this.orgTransactionTotal = total
 
@@ -368,6 +432,22 @@ export default {
       }
 
       return contacts.length > 0
+    }
+  },
+  watch: {
+    'eventTransactions.filters.status' (val) {
+      if (val.length === 0) {
+        return
+      }
+
+      this.$refs.eventTransactionsTable.refresh()
+    },
+    'orgTransactions.filters.status' (val) {
+      if (val.length === 0) {
+        return
+      }
+
+      this.$refs.orgTransactionsTable.refresh()
     }
   }
 }

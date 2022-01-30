@@ -16,6 +16,11 @@ const {
   ConflictError
 } = require('../../errors')
 
+const SORT_ORDER_MAPPING = {
+  asc : 1,
+  desc: -1
+}
+
 const whitespaceRegex = /\s+/g
 
 function sanitize(name) {
@@ -91,30 +96,54 @@ class InkindDonationOutboundTransactionsController {
     })
   }
 
-  static async list(query) {
+  static async list(options = {}) {
     const {
       limit,
       offset,
-      'filters.receiverType': filterReceiverType
-    } = query
+      filters = {},
+      sort = {}
+    } = options
 
-    const dbQuery = {}
+    const {
+      receiverType: filterReceiverType,
+      status: filterStatus
+    } = filters
+
+    const {
+      field: sortField,
+      order: sortOrder
+    } = sort
+
+    const filterQuery = {}
+    const queryOptions = { 
+      lean: true,
+      limit,
+      skip: offset,
+      populate: {
+        path: 'receiver.event',
+        select: ['_id', 'name']
+      }
+    }
 
     if (filterReceiverType !== undefined) {
-      dbQuery['receiver.type'] = filterReceiverType
+      filterQuery['receiver.type'] = filterReceiverType
+    }
+
+    if (filterStatus !== undefined) {
+      filterQuery.status = {
+        $in: filterStatus
+      }
+    }
+
+    if (sortField !== undefined && sortOrder !== undefined) {
+      queryOptions.sort = {
+        [sortField]: SORT_ORDER_MAPPING[sortOrder]
+      }
     }
 
     const [transactions, total] = await Promise.all([
-      IkdOutboundTransactionModel.find(dbQuery, undefined, { 
-        lean: true,
-        limit,
-        skip: offset,
-        populate: {
-          path: 'receiver.event',
-          select: ['_id', 'name']
-        }
-      }),
-      IkdOutboundTransactionModel.countDocuments(dbQuery)
+      IkdOutboundTransactionModel.find(filterQuery, undefined, queryOptions),
+      IkdOutboundTransactionModel.countDocuments(filterQuery)
     ])
 
     return {
