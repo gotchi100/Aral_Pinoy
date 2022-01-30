@@ -11,66 +11,45 @@
       </div>
     </div>
 
-    <div class="featured">
+    <div class="featured mb-5">
       <b-container>
         <p>Featured</p>
 
         <b-carousel
-          id="carousel-1"
           class="mb-5"
           v-model="slide"
           :interval="4000"
           controls
           indicators
           background="#ababab"
-          img-width="1024"
-          img-height="480"
           style="text-shadow: 1px 1px 2px #333;"
           @sliding-start="onSlideStart"
           @sliding-end="onSlideEnd"
         >
-          <!-- Text slides with image -->
           <b-carousel-slide
-          caption="First slide"
-          text="Nulla vitae elit libero, a pharetra augue mollis interdum."
-          img-src="https://picsum.photos/1024/480/?image=52"
-          ></b-carousel-slide>
-
-          <!-- Slides with custom text -->
-          <b-carousel-slide img-src="https://picsum.photos/1024/480/?image=54">
-          <h1>Hello world!</h1>
-          </b-carousel-slide>
-
-          <!-- Slides with image only -->
-          <b-carousel-slide img-src="https://picsum.photos/1024/480/?image=58"></b-carousel-slide>
-
-          <!-- Slides with img slot -->
-          <!-- Note the classes .d-block and .img-fluid to prevent browser default image alignment -->
-          <b-carousel-slide>
-          <template #img>
-              <img
-              class="d-block img-fluid w-100"
-              width="1024"
-              height="480"
-              src="https://picsum.photos/1024/480/?image=55"
-              alt="image slot"
-              >
-          </template>
-          </b-carousel-slide>
-
-          <!-- Slide with blank fluid image to maintain slide aspect ratio -->
-          <b-carousel-slide caption="Blank Image" img-blank img-alt="Blank image">
-          <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse eros felis, tincidunt
-              a tincidunt eget, convallis vel est. Ut pellentesque ut lacus vel interdum.
-          </p>
-          </b-carousel-slide>
+            v-for="(carousel, index) in carouselImages"
+            :key="index"
+            :img-src="carousel.image"
+          />
         </b-carousel>
 
-        <!-- <p class="mt-4">
-          Slide #: {{ slide }}<br>
-          Sliding: {{ sliding }}
-        </p> -->
+        <b-row class="text-start">
+          <b-col class="mb-3" cols="12">
+            <b-skeleton v-if="sliding" type="input" />
+
+            <h3 v-else style="font-family:'Bebas Neue', cursive;">
+              {{ carouselImages[slide].title }}
+            </h3>
+          </b-col>
+
+          <b-col cols="12">
+            <b-skeleton v-if="sliding" type="input" />
+
+            <h5 v-else>
+              {{ carouselImages[slide].caption }}
+            </h5>
+          </b-col>
+        </b-row>
       </b-container>
     </div>
 
@@ -266,6 +245,19 @@ export default {
     return {
       logo,
       slide: 0,
+      carouselImages: [{
+        title: 'Journey of Hope - The Power of Service of Kuya Mon at Dasma 3',
+        caption: 'Last March 1, 2021 Aral Pinoy held an event at Dasma 3 Covered Court Barangay Salawag Dasmarinas City Cavite. We were able to help Titser Fe and Kuya Mon with tutoring the kids with basic education and played with them.',
+        image: 'https://i.imgur.com/wVUhXzJ.png'
+      }, {
+        title: 'One Million Trees and Beyond',
+        caption: 'Aral Pinoy held an event last August 17, 2021 at Pililla Rizal. We reached our goal of Php 7,000 and we were able to buy 200 Guyabano seeds that were successfully planted! Thank you for the support!',
+        image: 'https://i.imgur.com/WOg20eg.jpg'
+      }, {
+        title: 'Call for Donation Drive',
+        caption: 'Last December 24, Aral Pinoy went to Brgy. Siargao and distributed Noche Buena packages for the 20 families in the community. Gladly we were able to reach our target amount! Our thanks goes to the people who donated!',
+        image: 'https://i.imgur.com/wsqdtqH.jpg'
+      }],
       sliding: null,
       value: 75,
       scTimer: 0,
