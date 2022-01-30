@@ -18,7 +18,7 @@
         <b-carousel
           class="mb-5"
           v-model="slide"
-          :interval="4000"
+          :interval="10000"
           controls
           indicators
           background="#ababab"
