@@ -11,6 +11,20 @@
             </b-col>
           </b-row>
 
+          <b-row>
+            <b-col cols="12">
+              <h4 style="font-family:'Bebas Neue', cursive;" no-body>
+                Total Amount Received:
+                {{
+                  new Intl.NumberFormat('en-us', {
+                    style: 'currency',
+                    currency: 'PHP'
+                  }).format(event.totalDonation)
+                }}
+              </h4>
+            </b-col>
+          </b-row>
+
           <b-row class="pt-4">
             <b-col cols="12">
               <b-table
@@ -242,6 +256,9 @@ export default {
     },
     eventDonationsPageOffset () {
       return (this.eventDonations.pagination.currentPage - 1) * this.eventDonations.pagination.perPage
+    },
+    eventTotalDonationAmount () {
+      return this.event.totalDonation
     }
   },
   created () {
@@ -255,7 +272,8 @@ export default {
       const eventId = this.eventId
 
       const { results, total } = await eventDonationRepository.list({
-        eventId
+        eventId,
+        status: 'success'
       }, {
         limit: perPage,
         offset: pageOffset,

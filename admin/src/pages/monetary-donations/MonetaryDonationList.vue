@@ -393,7 +393,8 @@ export default {
       this.eventDonations.modal = true
       this.eventDonations.event = {
         _id: event._id,
-        name: event.name
+        name: event.name,
+        totalDonation: event.goals.monetaryDonation.current
       }
     },
     getValueFromPath (object, path, defaultValue) {
