@@ -86,13 +86,36 @@
                               </b-col>
                             </b-row>
 
+                            <b-row class="pt-3">
+                              <b-col cols="12">
+                                <b-form-group class="pt-2 text-start">
+                                  <div class="form-check form-switch">
+                                    <label
+                                      class="form-check-label"
+                                      for="is-urgent-event-checkbox"
+                                      style="font-family: 'Bebas Neue', cursive;"
+                                    >
+                                      Urgent
+                                    </label>
+
+                                    <input
+                                      id="is-urgent-event-checkbox"
+                                      class="form-check-input"
+                                      type="checkbox"
+                                      v-model="isUrgentEvent"
+                                    >
+                                  </div>
+                                </b-form-group>
+                              </b-col>
+                            </b-row>
+
                             <b-row>
                               <b-col>
                                 <b-form-group label="Start Date:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
                                   <b-form-datepicker
                                     v-model="startDate.date"
                                     class="mb-2"
-                                    :min="nextMonth"
+                                    :min="minStartDate"
                                     required
                                   ></b-form-datepicker>
                                 </b-form-group>
@@ -720,7 +743,8 @@ import EventTemplateRepository from '../../repositories/events/templates'
 import { apiClient } from '../../axios'
 
 const eventTemplateRepository = new EventTemplateRepository(apiClient)
-const nextMonth = addMonths(new Date(), 1)
+const today = new Date()
+const nextMonth = addMonths(today, 1)
 
 extend('required', {
   ...required,
@@ -740,7 +764,8 @@ export default ({
   data () {
     return {
       isFetchingTemplate: false,
-      nextMonth,
+      isUrgentEvent: false,
+      minStartDate: nextMonth,
       startDate: {
         date: nextMonth,
         time: '00:00'
@@ -1150,6 +1175,19 @@ export default ({
     }
   },
   watch: {
+    isUrgentEvent (value) {
+      if (!value) {
+        this.minStartDate = nextMonth
+
+        if (new Date(this.startDate.date) < nextMonth) {
+          this.startDate.date = nextMonth
+        }
+
+        return
+      }
+
+      this.minStartDate = today
+    },
     'event.logo' (value) {
       const reader = new FileReader()
 
