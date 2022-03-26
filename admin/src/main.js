@@ -35,8 +35,13 @@ import OfficerAdd from './pages/officers/OfficerAdd'
 // /events
 import EventList from './pages/events/EventList'
 import EventDetails from './pages/events/EventDetails'
+import EventPreAdd from './pages/events/EventPreAdd'
 import EventAdd from './pages/events/EventAdd'
 import EventEvaluation from './pages/events/EventEvaluation'
+
+// /event-templates
+import EventTemplateAdd from './pages/events/templates/EventTemplateAdd'
+import EventTemplateSelect from './pages/events/templates/EventTemplateSelect'
 
 // /inkind-donations
 import InkindDonationList from './pages/inkind-donations/InkindDonationList'
@@ -143,6 +148,13 @@ const routes = [
     }
   },
   {
+    path: '/events/pre-add',
+    component: EventPreAdd,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
     path: '/events/add',
     component: EventAdd,
     meta: {
@@ -152,6 +164,22 @@ const routes = [
   {
     path: '/events/:id',
     component: EventDetails,
+    meta: {
+      requiresAuth: true
+    }
+  },
+
+  // /event-templates
+  {
+    path: '/event-templates/add',
+    component: EventTemplateAdd,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/event-templates/select',
+    component: EventTemplateSelect,
     meta: {
       requiresAuth: true
     }

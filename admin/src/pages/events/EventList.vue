@@ -126,7 +126,7 @@
 
               <b-row align-h="end">
                 <b-col cols="2">
-                  <b-button to="/events/add" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 145px;">
+                  <b-button to="/events/pre-add" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 145px;">
                     Create an Event
                   </b-button>
                 </b-col>
