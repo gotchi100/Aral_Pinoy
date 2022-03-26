@@ -47,7 +47,7 @@
                         class="flex-column align-items-start"
                         to="#"
                         style="text-align: left"
-                        @click="selectTemplate(template.id)"
+                        @click="selectTemplate(template._id)"
                       >
                         <div>
                           <h5 class="mb-1">
@@ -103,7 +103,12 @@ export default ({
       this.isFetchingTemplates = true
 
       try {
-        const { results, total } = await eventTemplateRepository.list()
+        const { results, total } = await eventTemplateRepository.list({
+          sort: {
+            field: 'name',
+            order: 'asc'
+          }
+        })
 
         this.templates.results = results
         this.templates.total = total
