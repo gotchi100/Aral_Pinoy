@@ -26,10 +26,10 @@
                         >
                           <b-form-select
                             id="per-page-select"
-                            class="w-25"
                             v-model="perPage"
+                            class="w-25"
                             :options="pageOptions"
-                          ></b-form-select>
+                          />
                         </b-form-group>
                       </b-col>
 
@@ -81,16 +81,19 @@
               </b-row>
 
               <b-row class="pt-4 justify-content-md-center">
-                  <b-col cols="6" class="my-1">
-                    <b-pagination
-                      v-model="currentPage"
-                      :total-rows="total"
-                      :per-page="perPage"
-                      align="fill"
-                      size="sm"
-                      class="my-0"
-                    ></b-pagination>
-                  </b-col>
+                <b-col
+                  cols="6"
+                  class="my-1"
+                >
+                  <b-pagination
+                    v-model="currentPage"
+                    :total-rows="total"
+                    :per-page="perPage"
+                    align="fill"
+                    size="sm"
+                    class="my-0"
+                  />
+                </b-col>
               </b-row>
             </b-container>
           </b-card>

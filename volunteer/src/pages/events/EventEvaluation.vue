@@ -1,18 +1,34 @@
 <template>
   <div>
     <div class="py-5">
-      <img :src="logo" style="width: 320px; height: 150px">
+      <img
+        :src="logo"
+        style="width: 320px; height: 150px"
+      >
     </div>
 
     <b-container>
       <b-row>
         <b-col cols="12">
-          <b-overlay :show="isSubmittingEvaluation" rounded="sm">
-            <b-card class="mb-5" bg-variant="light" style="border-radius: 20px;">
+          <b-overlay
+            :show="isSubmittingEvaluation"
+            rounded="sm"
+          >
+            <b-card
+              class="mb-5"
+              bg-variant="light"
+              style="border-radius: 20px;"
+            >
               <template v-if="isLoadingEvent">
                 <b-container style="height: 100vh">
-                  <b-row class="vh-100" align-h="center">
-                    <b-col cols="12" align-self="center">
+                  <b-row
+                    class="vh-100"
+                    align-h="center"
+                  >
+                    <b-col
+                      cols="12"
+                      align-self="center"
+                    >
                       <b-spinner style="width: 10rem; height: 10rem;" />
                     </b-col>
                   </b-row>
@@ -21,8 +37,14 @@
 
               <template v-else-if="hasEventEvaluation">
                 <b-container>
-                  <b-row align-h="center" style="height: 60vh">
-                    <b-col cols="12" align-self="center">
+                  <b-row
+                    align-h="center"
+                    style="height: 60vh"
+                  >
+                    <b-col
+                      cols="12"
+                      align-self="center"
+                    >
                       <h1 class="mb-5">
                         Thank you for your evaluation!
                       </h1>
@@ -37,8 +59,14 @@
 
               <template v-else-if="eventVolunteer === null">
                 <b-container>
-                  <b-row align-h="center" style="height: 60vh">
-                    <b-col cols="12" align-self="center">
+                  <b-row
+                    align-h="center"
+                    style="height: 60vh"
+                  >
+                    <b-col
+                      cols="12"
+                      align-self="center"
+                    >
                       <h1 class="mb-5">
                         You have not volunteered to this event
                       </h1>
@@ -97,10 +125,13 @@
                           >
                             <b-form-group
                               v-if="question.type === 'matrix'"
-                              :label="`${questionIndex + 1}. ${question.label}`"
                               v-slot="{ ariaDescribedby }"
+                              :label="`${questionIndex + 1}. ${question.label}`"
                             >
-                              <b-col class="mb-3" cols="12">
+                              <b-col
+                                class="mb-3"
+                                cols="12"
+                              >
                                 <b-form-radio
                                   v-model="questionnaireAnswers[questionIndex]"
                                   :aria-describedby="ariaDescribedby"
@@ -110,7 +141,10 @@
                                 </b-form-radio>
                               </b-col>
 
-                              <b-col class="mb-3" cols="12">
+                              <b-col
+                                class="mb-3"
+                                cols="12"
+                              >
                                 <b-form-radio
                                   v-model="questionnaireAnswers[questionIndex]"
                                   :aria-describedby="ariaDescribedby"
@@ -120,7 +154,10 @@
                                 </b-form-radio>
                               </b-col>
 
-                              <b-col class="mb-3" cols="12">
+                              <b-col
+                                class="mb-3"
+                                cols="12"
+                              >
                                 <b-form-radio
                                   v-model="questionnaireAnswers[questionIndex]"
                                   :aria-describedby="ariaDescribedby"
@@ -130,7 +167,10 @@
                                 </b-form-radio>
                               </b-col>
 
-                              <b-col class="mb-3" cols="12">
+                              <b-col
+                                class="mb-3"
+                                cols="12"
+                              >
                                 <b-form-radio
                                   v-model="questionnaireAnswers[questionIndex]"
                                   :aria-describedby="ariaDescribedby"
@@ -140,7 +180,10 @@
                                 </b-form-radio>
                               </b-col>
 
-                              <b-col class="mb-3" cols="12">
+                              <b-col
+                                class="mb-3"
+                                cols="12"
+                              >
                                 <b-form-radio
                                   v-model="questionnaireAnswers[questionIndex]"
                                   :aria-describedby="ariaDescribedby"
@@ -169,7 +212,11 @@
                           </b-row>
 
                           <b-row>
-                            <b-col v-for="(sdg, sdgIndex) in event.sdgs" :key="sdgIndex" cols="12">
+                            <b-col
+                              v-for="(sdg, sdgIndex) in event.sdgs"
+                              :key="sdgIndex"
+                              cols="12"
+                            >
                               <b-card class="mb-3">
                                 <b-container fluid>
                                   <b-row>
@@ -179,23 +226,33 @@
                                       </h4>
                                     </b-col>
 
-                                    <b-col class="mb-3" cols="12" style="text-align: left">
+                                    <b-col
+                                      class="mb-3"
+                                      cols="12"
+                                      style="text-align: left"
+                                    >
                                       <span>
                                         {{ sdg.description }}
                                       </span>
                                     </b-col>
 
-                                    <b-col cols="12" style="text-align: left">
+                                    <b-col
+                                      cols="12"
+                                      style="text-align: left"
+                                    >
                                       <b-row
                                         v-for="(question, questionIndex) in sdg.questions"
                                         :key="`${sdgIndex}-${questionIndex}`"
                                       >
                                         <b-form-group
                                           v-if="question.type === 'polar'"
-                                          :label="`${questionIndex + 1}. ${question.label}`"
                                           v-slot="{ ariaDescribedby }"
+                                          :label="`${questionIndex + 1}. ${question.label}`"
                                         >
-                                          <b-col class="mb-3" cols="12">
+                                          <b-col
+                                            class="mb-3"
+                                            cols="12"
+                                          >
                                             <b-form-radio
                                               v-model="sdgAnswers[sdgIndex][questionIndex]"
                                               :aria-describedby="ariaDescribedby"
@@ -205,7 +262,10 @@
                                             </b-form-radio>
                                           </b-col>
 
-                                          <b-col class="mb-3" cols="12">
+                                          <b-col
+                                            class="mb-3"
+                                            cols="12"
+                                          >
                                             <b-form-radio
                                               v-model="sdgAnswers[sdgIndex][questionIndex]"
                                               :aria-describedby="ariaDescribedby"
@@ -238,7 +298,7 @@
                         placeholder="Enter something..."
                         rows="10"
                         max-rows="6"
-                      ></b-form-textarea>
+                      />
                     </b-container>
                   </b-card>
 
@@ -274,7 +334,7 @@
       </b-row>
     </b-container>
 
-    <br />
+    <br>
 
     <Footer />
   </div>

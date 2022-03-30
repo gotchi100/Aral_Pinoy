@@ -1,154 +1,245 @@
 <template>
   <div>
-   <b-container class="py-5">
-     <b-row class="pb-5">
-       <b-col cols="12">
-         <b-card style="border-radius: 20px;">
-          <b-container fluid>
-            <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">
-              <b-link to="/events">Upcoming Events <b-icon icon="chevron-right" /></b-link>
-            </h2>
+    <b-container class="py-5">
+      <b-row class="pb-5">
+        <b-col cols="12">
+          <b-card style="border-radius: 20px;">
+            <b-container fluid>
+              <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">
+                <b-link to="/events">
+                  Upcoming Events <b-icon icon="chevron-right" />
+                </b-link>
+              </h2>
 
-            <b-row>
-              <b-col
-                v-for="event in events.results"
-                :key="event._id"
-                cols="12"
-                md="3"
-              >
-                <b-card style="border-radius: 20px;">
-                  <b-link :to="`/events/${event._id}`" style="font-size:20px;">
-                    {{ event.name }}
-                  </b-link><br>
-
-                  <b-row style="text-align: left">
-                    <b-col v-if="event.location !== undefined" class="pb-2" cols="12">
-                      <b-icon icon="geo-alt"></b-icon> {{ event.location.name }}
-                    </b-col>
-
-                    <b-col class="pb-2" cols="12">
-                      <b-icon icon="calendar"></b-icon>
-                      {{
-                        new Date(event.date.start).toLocaleString('en-us', {
-                          dateStyle: 'short',
-                          timeStyle: 'short'
-                        })
-                      }}
-                    </b-col>
-
-                    <b-col class="pb-3" cols="12">
-                      <b-icon icon="clock"></b-icon> {{ getDurationBetweenDates(event.date.start, event.date.end) }}
-                    </b-col>
-                  </b-row>
-
-                  <b-row v-if="event.goals.monetaryDonation.target !== 0">
-                    <b-col class="pt-2" cols="12">
-                      <b-progress height="1.5rem" :max="event.goals.monetaryDonation.target">
-                        <b-progress-bar
-                          variant="success"
-                          :value="hasGoalReached(event.goals.monetaryDonation) ? event.goals.monetaryDonation.current : 0"
-                          :label="getMonetaryDonationCurrentLabel(event.goals.monetaryDonation)"
-                        ></b-progress-bar>
-
-                        <b-progress-bar
-                          variant="danger"
-                          :value="hasGoalReached(event.goals.monetaryDonation) ? 0 : event.goals.monetaryDonation.target"
-                          :label="getMonetaryDonationTargetLabel(event.goals.monetaryDonation)"
-                        ></b-progress-bar>
-                      </b-progress>
-                    </b-col>
-                  </b-row>
-
-                  <b-row v-if="event.goals.numVolunteers.target !== 0">
-                    <b-col class="pt-2" cols="12">
-                      <b-progress height="1.5rem" :max="event.goals.numVolunteers.target">
-                        <b-progress-bar
-                          variant="success"
-                          :value="hasGoalReached(event.goals.numVolunteers) ? event.goals.numVolunteers.current : 0"
-                          :label="getVolunteerGoalCurrentLabel(event.goals.numVolunteers)"
-                        ></b-progress-bar>
-
-                        <b-progress-bar
-                          variant="danger"
-                          :value="hasGoalReached(event.goals.numVolunteers) ? 0 : event.goals.numVolunteers.target"
-                          :label="getVolunteerGoalTargetLabel(event.goals.numVolunteers)"
-                        ></b-progress-bar>
-                      </b-progress>
-                    </b-col>
-                  </b-row>
-                </b-card>
-              </b-col>
-            </b-row>
-          </b-container>
-      </b-card>
-       </b-col>
-     </b-row>
-
-     <b-row class="pb-5">
-       <b-col cols="12">
-         <b-card style="border-radius: 20px;">
-          <b-container fluid>
-              <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">SDG Campaign</h2>
               <b-row>
-                <b-col>
-                  <b-card style="margin-left:100px; margin-bottom:20px; width: 250px; height:250px;" img-src="https://cdn.iconscout.com/icon/free/png-256/chart-growth-1913955-1624750.png" img-alt="Card image" img-top>
-                    <b-row>
-                      <label for="input-small" style="font-family:'Bebas Neue', cursive;">No Poverty</label>
+                <b-col
+                  v-for="event in events.results"
+                  :key="event._id"
+                  cols="12"
+                  md="3"
+                >
+                  <b-card style="border-radius: 20px;">
+                    <b-link
+                      :to="`/events/${event._id}`"
+                      style="font-size:20px;"
+                    >
+                      {{ event.name }}
+                    </b-link><br>
+
+                    <b-row style="text-align: left">
+                      <b-col
+                        v-if="event.location !== undefined"
+                        class="pb-2"
+                        cols="12"
+                      >
+                        <b-icon icon="geo-alt" /> {{ event.location.name }}
+                      </b-col>
+
+                      <b-col
+                        class="pb-2"
+                        cols="12"
+                      >
+                        <b-icon icon="calendar" />
+                        {{
+                          new Date(event.date.start).toLocaleString('en-us', {
+                            dateStyle: 'short',
+                            timeStyle: 'short'
+                          })
+                        }}
+                      </b-col>
+
+                      <b-col
+                        class="pb-3"
+                        cols="12"
+                      >
+                        <b-icon icon="clock" /> {{ getDurationBetweenDates(event.date.start, event.date.end) }}
+                      </b-col>
                     </b-row>
-                    <b-row>
-                      <b-button to="/edit-sdg1"  v-if="isDisabled">SDG #1</b-button>
+
+                    <b-row v-if="event.goals.monetaryDonation.target !== 0">
+                      <b-col
+                        class="pt-2"
+                        cols="12"
+                      >
+                        <b-progress
+                          height="1.5rem"
+                          :max="event.goals.monetaryDonation.target"
+                        >
+                          <b-progress-bar
+                            variant="success"
+                            :value="hasGoalReached(event.goals.monetaryDonation) ? event.goals.monetaryDonation.current : 0"
+                            :label="getMonetaryDonationCurrentLabel(event.goals.monetaryDonation)"
+                          />
+
+                          <b-progress-bar
+                            variant="danger"
+                            :value="hasGoalReached(event.goals.monetaryDonation) ? 0 : event.goals.monetaryDonation.target"
+                            :label="getMonetaryDonationTargetLabel(event.goals.monetaryDonation)"
+                          />
+                        </b-progress>
+                      </b-col>
+                    </b-row>
+
+                    <b-row v-if="event.goals.numVolunteers.target !== 0">
+                      <b-col
+                        class="pt-2"
+                        cols="12"
+                      >
+                        <b-progress
+                          height="1.5rem"
+                          :max="event.goals.numVolunteers.target"
+                        >
+                          <b-progress-bar
+                            variant="success"
+                            :value="hasGoalReached(event.goals.numVolunteers) ? event.goals.numVolunteers.current : 0"
+                            :label="getVolunteerGoalCurrentLabel(event.goals.numVolunteers)"
+                          />
+
+                          <b-progress-bar
+                            variant="danger"
+                            :value="hasGoalReached(event.goals.numVolunteers) ? 0 : event.goals.numVolunteers.target"
+                            :label="getVolunteerGoalTargetLabel(event.goals.numVolunteers)"
+                          />
+                        </b-progress>
+                      </b-col>
                     </b-row>
                   </b-card>
-                </b-col>
-                <b-col>
-                  <b-card style="margin-left:50px; margin-right:50px; margin-bottom:20px; width: 250px; height:250px;" img-src="https://cdn.iconscout.com/icon/free/png-256/chart-growth-1913955-1624750.png" img-alt="Card image" img-top>
-                    <b-row>
-                      <label for="input-small" style="font-family:'Bebas Neue', cursive;">Quality Education</label>
-                    </b-row>
-                    <b-row>
-                      <b-button to="/edit-sdg4"  v-if="isDisabled">SDG #4</b-button>
-                    </b-row>
-                  </b-card>
-                </b-col>
-                <b-col>
-                  <b-card style="margin-right:100px; margin-bottom:20px; width: 250px; height:250px;" img-src="https://cdn.iconscout.com/icon/free/png-256/chart-growth-1913955-1624750.png" img-alt="Card image" img-top>
-                    <b-row>
-                      <label for="input-small" style="font-family:'Bebas Neue', cursive;">Climate Action</label>
-                    </b-row>
-                    <b-row>
-                      <b-button to="/edit-sdg13"  v-if="isDisabled">SDG #13</b-button>
-                    </b-row>
-                  </b-card>
-                  </b-col>
-              </b-row>
-              <b-row>
-                <b-col cols="10"></b-col>
-                <b-col>
-                    <b-button style="margin-top:60px;" @click="isDisabled = true"  pill variant="danger" v-show="!isDisabled">Edit SDG</b-button>
-                    <b-button style="margin-top:60px;" @click="isDisabled = false"  pill variant="danger" v-show="isDisabled">Cancel</b-button>
                 </b-col>
               </b-row>
             </b-container>
-        </b-card>
-       </b-col>
-     </b-row>
+          </b-card>
+        </b-col>
+      </b-row>
 
-     <b-row class="pb-5">
-       <b-col cols="12">
-         <b-card style="border-radius: 20px;">
-          <b-container fluid>
-              <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">Income & Expense Report</h2>
-              <b-img center src="https://www.syncfusion.com/blogs/wp-content/uploads/2021/02/Stacked-column-chart-showing-the-past-years%E2%80%99-income-and-expense-details-along-with-categories..jpg" style="width: 592px; height:390px;" alt="Center image"></b-img>
+      <b-row class="pb-5">
+        <b-col cols="12">
+          <b-card style="border-radius: 20px;">
+            <b-container fluid>
+              <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">
+                SDG Campaign
+              </h2>
+              <b-row>
+                <b-col>
+                  <b-card
+                    style="margin-left:100px; margin-bottom:20px; width: 250px; height:250px;"
+                    img-src="https://cdn.iconscout.com/icon/free/png-256/chart-growth-1913955-1624750.png"
+                    img-alt="Card image"
+                    img-top
+                  >
+                    <b-row>
+                      <label
+                        for="input-small"
+                        style="font-family:'Bebas Neue', cursive;"
+                      >No Poverty</label>
+                    </b-row>
+                    <b-row>
+                      <b-button
+                        v-if="isDisabled"
+                        to="/edit-sdg1"
+                      >
+                        SDG #1
+                      </b-button>
+                    </b-row>
+                  </b-card>
+                </b-col>
+                <b-col>
+                  <b-card
+                    style="margin-left:50px; margin-right:50px; margin-bottom:20px; width: 250px; height:250px;"
+                    img-src="https://cdn.iconscout.com/icon/free/png-256/chart-growth-1913955-1624750.png"
+                    img-alt="Card image"
+                    img-top
+                  >
+                    <b-row>
+                      <label
+                        for="input-small"
+                        style="font-family:'Bebas Neue', cursive;"
+                      >Quality Education</label>
+                    </b-row>
+                    <b-row>
+                      <b-button
+                        v-if="isDisabled"
+                        to="/edit-sdg4"
+                      >
+                        SDG #4
+                      </b-button>
+                    </b-row>
+                  </b-card>
+                </b-col>
+                <b-col>
+                  <b-card
+                    style="margin-right:100px; margin-bottom:20px; width: 250px; height:250px;"
+                    img-src="https://cdn.iconscout.com/icon/free/png-256/chart-growth-1913955-1624750.png"
+                    img-alt="Card image"
+                    img-top
+                  >
+                    <b-row>
+                      <label
+                        for="input-small"
+                        style="font-family:'Bebas Neue', cursive;"
+                      >Climate Action</label>
+                    </b-row>
+                    <b-row>
+                      <b-button
+                        v-if="isDisabled"
+                        to="/edit-sdg13"
+                      >
+                        SDG #13
+                      </b-button>
+                    </b-row>
+                  </b-card>
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col cols="10" />
+                <b-col>
+                  <b-button
+                    v-show="!isDisabled"
+                    style="margin-top:60px;"
+                    pill
+                    variant="danger"
+                    @click="isDisabled = true"
+                  >
+                    Edit SDG
+                  </b-button>
+                  <b-button
+                    v-show="isDisabled"
+                    style="margin-top:60px;"
+                    pill
+                    variant="danger"
+                    @click="isDisabled = false"
+                  >
+                    Cancel
+                  </b-button>
+                </b-col>
+              </b-row>
+            </b-container>
+          </b-card>
+        </b-col>
+      </b-row>
+
+      <b-row class="pb-5">
+        <b-col cols="12">
+          <b-card style="border-radius: 20px;">
+            <b-container fluid>
+              <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">
+                Income & Expense Report
+              </h2>
+              <b-img
+                center
+                src="https://www.syncfusion.com/blogs/wp-content/uploads/2021/02/Stacked-column-chart-showing-the-past-years%E2%80%99-income-and-expense-details-along-with-categories..jpg"
+                style="width: 592px; height:390px;"
+                alt="Center image"
+              />
               <h4>Sample Data Visualization</h4>
             </b-container>
-        </b-card>
-       </b-col>
-     </b-row>
+          </b-card>
+        </b-col>
+      </b-row>
 
-     <b-row>
-       <b-col cols="12">
-         <b-card style="border-radius: 20px;">
-          <b-container fluid>
+      <b-row>
+        <b-col cols="12">
+          <b-card style="border-radius: 20px;">
+            <b-container fluid>
               <h2 style="font-family:'Bebas Neue', cursive; text-align: left;">
                 Latest Donations Collected
               </h2>
@@ -176,7 +267,7 @@
                             show-empty
                             small
                             hover
-                          ></b-table>
+                          />
                         </b-col>
                       </b-row>
 
@@ -288,10 +379,10 @@
                 </b-col>
               </b-row>
             </b-container>
-        </b-card>
-       </b-col>
-     </b-row>
-   </b-container>
+          </b-card>
+        </b-col>
+      </b-row>
+    </b-container>
   </div>
 </template>
 

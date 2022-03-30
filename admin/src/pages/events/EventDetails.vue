@@ -1,34 +1,67 @@
 <template>
   <div>
     <div class="py-5">
-      <img :src="logo" style="width: 320px; height: 150px">
+      <img
+        :src="logo"
+        style="width: 320px; height: 150px"
+      >
     </div>
 
     <b-container class="pb-5">
       <b-row class="justify-content-md-center">
         <b-col cols="12">
-          <b-card bg-variant="light" style="border-radius: 20px;">
-            <b-container v-if="isLoadingEvent" style="height: 100vh">
-              <b-row class="vh-100" align-h="center">
-                <b-col cols="12" align-self="center">
+          <b-card
+            bg-variant="light"
+            style="border-radius: 20px;"
+          >
+            <b-container
+              v-if="isLoadingEvent"
+              style="height: 100vh"
+            >
+              <b-row
+                class="vh-100"
+                align-h="center"
+              >
+                <b-col
+                  cols="12"
+                  align-self="center"
+                >
                   <b-spinner style="width: 10rem; height: 10rem;" />
                 </b-col>
               </b-row>
             </b-container>
 
-            <b-container v-else fluid>
+            <b-container
+              v-else
+              fluid
+            >
               <b-row>
                 <b-col cols="12">
                   <b-card style="border-radius: 20px;">
                     <b-row>
-                      <b-col cols="12" md="6">
-                        <h1 class="text-start" style="font-family:'Bebas Neue', cursive;">
+                      <b-col
+                        cols="12"
+                        md="6"
+                      >
+                        <h1
+                          class="text-start"
+                          style="font-family:'Bebas Neue', cursive;"
+                        >
                           {{ event.name }}
                         </h1>
                       </b-col>
 
-                      <b-col v-if="event.status === 'UPCOMING'" class="text-end" cols="12" md="6">
-                        <b-button variant="success" class="mx-3" @click="updateEvent.modal = true">
+                      <b-col
+                        v-if="event.status === 'UPCOMING'"
+                        class="text-end"
+                        cols="12"
+                        md="6"
+                      >
+                        <b-button
+                          variant="success"
+                          class="mx-3"
+                          @click="updateEvent.modal = true"
+                        >
                           Edit Event
                         </b-button>
 
@@ -42,8 +75,8 @@
                           </b-dropdown-item>
 
                           <b-dropdown-item
-                            @click="preUpdateStatus('ENDED')"
                             :disabled="!canEndEvent"
+                            @click="preUpdateStatus('ENDED')"
                           >
                             <strong>END</strong>
                           </b-dropdown-item>
@@ -55,13 +88,19 @@
                       <b-col cols="12">
                         <b-container fluid>
                           <b-row>
-                            <b-col cols="12" md="6">
+                            <b-col
+                              cols="12"
+                              md="6"
+                            >
                               <p class="h4 mb-0">
                                 <b-icon icon="geo-alt" />&nbsp;{{ event.location.name }}
                               </p>
                             </b-col>
 
-                            <b-col cols="12" md="6">
+                            <b-col
+                              cols="12"
+                              md="6"
+                            >
                               <p class="h4 mb-0">
                                 <b-icon icon="calendar" />&nbsp;
                                 {{
@@ -86,21 +125,32 @@
                               </p>
                             </b-col>
 
-                            <b-col cols="12" md="6">
+                            <b-col
+                              cols="12"
+                              md="6"
+                            >
                               <p class="h4 mb-0">
                                 Status: <i>{{ event.status }}</i>
                               </p>
                             </b-col>
                           </b-row>
 
-                          <b-row v-if="Array.isArray(event.contacts)" align-h="start">
+                          <b-row
+                            v-if="Array.isArray(event.contacts)"
+                            align-h="start"
+                          >
                             <b-col cols="12">
                               <p class="h4">
                                 <b-icon icon="person-lines-fill" />&nbsp;Contacts
                               </p>
                             </b-col>
 
-                            <b-col v-for="(contact, index) in event.contacts" :key="index" cols="12" sm="3">
+                            <b-col
+                              v-for="(contact, index) in event.contacts"
+                              :key="index"
+                              cols="12"
+                              sm="3"
+                            >
                               <p class="h6 text-start">
                                 <b-icon
                                   :icon="contact.contactMethods[0].type === 'EMAIL' ? 'envelope' : 'telephone'"
@@ -118,7 +168,12 @@
                         <b-container fluid>
                           <b-row class="pt-3 pb-4">
                             <b-col cols="12">
-                              <b-img v-if="event.logoUrl !== undefined" :src="event.logoUrl" fluid alt="event logo" />
+                              <b-img
+                                v-if="event.logoUrl !== undefined"
+                                :src="event.logoUrl"
+                                fluid
+                                alt="event logo"
+                              />
 
                               <b-card v-else>
                                 <b-row>
@@ -134,36 +189,47 @@
 
                           <b-row v-if="event.goals.monetaryDonation.target !== 0">
                             <b-col cols="12">
-                              <b-progress height="2rem" style="border-radius:30px;" :max="event.goals.monetaryDonation.target">
+                              <b-progress
+                                height="2rem"
+                                style="border-radius:30px;"
+                                :max="event.goals.monetaryDonation.target"
+                              >
                                 <b-progress-bar
                                   variant="success"
                                   :value="event.goals.monetaryDonation.current"
                                   :label="monetaryDonationCurrentLabel"
-                                ></b-progress-bar>
+                                />
 
                                 <b-progress-bar
                                   variant="danger"
                                   :value="monetaryDonationReached ? 0 : event.goals.monetaryDonation.target"
                                   :label="monetaryDonationTargetLabel"
-                                ></b-progress-bar>
+                                />
                               </b-progress>
                             </b-col>
                           </b-row>
 
-                          <b-row v-if="event.goals.numVolunteers.target !== 0" class="pt-4">
+                          <b-row
+                            v-if="event.goals.numVolunteers.target !== 0"
+                            class="pt-4"
+                          >
                             <b-col cols="12">
-                              <b-progress height="2rem" style="border-radius:30px;" :max="event.goals.numVolunteers.target">
+                              <b-progress
+                                height="2rem"
+                                style="border-radius:30px;"
+                                :max="event.goals.numVolunteers.target"
+                              >
                                 <b-progress-bar
                                   variant="success"
                                   :value="event.goals.numVolunteers.current"
                                   :label="volunteerGoalCurrentLabel"
-                                ></b-progress-bar>
+                                />
 
                                 <b-progress-bar
                                   variant="danger"
                                   :value="volunteerGoalReached ? 0 : event.goals.numVolunteers.target"
                                   :label="volunteerGoalTargetLabel"
-                                ></b-progress-bar>
+                                />
                               </b-progress>
                             </b-col>
                           </b-row>
@@ -174,7 +240,10 @@
                 </b-col>
               </b-row>
 
-              <b-row v-if="event.description !== undefined" class="py-4 text-start">
+              <b-row
+                v-if="event.description !== undefined"
+                class="py-4 text-start"
+              >
                 <b-col cols="12">
                   <b-card style="border-radius: 20px;">
                     <h1 style="font-family:'Bebas Neue', cursive;">
@@ -182,25 +251,41 @@
                     </h1>
 
                     <b-form-textarea
-                      rows="15"
                       v-model="event.description"
+                      rows="15"
                       readonly
                     />
                   </b-card>
                 </b-col>
               </b-row>
 
-              <b-row v-if="Array.isArray(event.sdgs)" class="py-4">
+              <b-row
+                v-if="Array.isArray(event.sdgs)"
+                class="py-4"
+              >
                 <b-col cols="12">
                   <b-card style="border-radius: 20px;">
-                    <h1 class="text-start" style="font-family:'Bebas Neue', cursive;">
+                    <h1
+                      class="text-start"
+                      style="font-family:'Bebas Neue', cursive;"
+                    >
                       Sustainable Development Goals
                     </h1>
 
                     <b-row>
-                      <b-col v-for="(sdg, index) in event.sdgs" :key="index" cols="12" md="3">
-                        <b-avatar :src="sdg.imageUrl" :alt="sdg.name" size="150px" square />
-                        <br />
+                      <b-col
+                        v-for="(sdg, index) in event.sdgs"
+                        :key="index"
+                        cols="12"
+                        md="3"
+                      >
+                        <b-avatar
+                          :src="sdg.imageUrl"
+                          :alt="sdg.name"
+                          size="150px"
+                          square
+                        />
+                        <br>
                         <strong>{{ sdg.name }}</strong>
                       </b-col>
                     </b-row>
@@ -208,10 +293,16 @@
                 </b-col>
               </b-row>
 
-              <b-row v-if="Array.isArray(event.jobs)" class="py-4">
+              <b-row
+                v-if="Array.isArray(event.jobs)"
+                class="py-4"
+              >
                 <b-col cols="12">
                   <b-card style="border-radius: 20px;">
-                    <h5 class="text-start" style="font-family:'Bebas Neue', cursive;">
+                    <h5
+                      class="text-start"
+                      style="font-family:'Bebas Neue', cursive;"
+                    >
                       Roles
                     </h5>
 
@@ -244,10 +335,16 @@
                 </b-col>
               </b-row>
 
-              <b-row v-if="Array.isArray(event.questions)" class="py-4">
+              <b-row
+                v-if="Array.isArray(event.questions)"
+                class="py-4"
+              >
                 <b-col cols="12">
                   <b-card style="border-radius: 20px;">
-                    <h5 class="text-start" style="font-family:'Bebas Neue', cursive;">
+                    <h5
+                      class="text-start"
+                      style="font-family:'Bebas Neue', cursive;"
+                    >
                       Questionnaire
                     </h5>
 
@@ -260,17 +357,23 @@
                           responsive
                           striped
                           primary-key="label"
-                        ></b-table>
+                        />
                       </b-col>
                     </b-row>
                   </b-card>
                 </b-col>
               </b-row>
 
-              <b-row v-if="Array.isArray(event.ikds)" class="py-4">
+              <b-row
+                v-if="Array.isArray(event.ikds)"
+                class="py-4"
+              >
                 <b-col cols="12">
                   <b-card style="border-radius: 20px;">
-                    <h1 class="text-start" style="font-family:'Bebas Neue', cursive;">
+                    <h1
+                      class="text-start"
+                      style="font-family:'Bebas Neue', cursive;"
+                    >
                       Items for the Event
                     </h1>
 
@@ -302,7 +405,10 @@
               <b-row class="py-4">
                 <b-col cols="12">
                   <b-card style="border-radius: 20px;">
-                    <h1 class="text-start" style="font-family:'Bebas Neue', cursive;">
+                    <h1
+                      class="text-start"
+                      style="font-family:'Bebas Neue', cursive;"
+                    >
                       Expenses for the Event
                     </h1>
 
@@ -331,7 +437,10 @@
                     </b-row>
 
                     <b-row class="justify-content-md-center">
-                      <b-col cols="6" class="my-1">
+                      <b-col
+                        cols="6"
+                        class="my-1"
+                      >
                         <b-pagination
                           v-model="eventExpenses.pagination.currentPage"
                           :total-rows="eventExpenses.total"
@@ -339,7 +448,7 @@
                           align="fill"
                           size="sm"
                           class="my-0"
-                        ></b-pagination>
+                        />
                       </b-col>
                     </b-row>
                   </b-card>
@@ -349,7 +458,10 @@
               <b-row class="py-4">
                 <b-col cols="12">
                   <b-card style="border-radius: 20px;">
-                    <h1 class="text-start" style="font-family:'Bebas Neue', cursive;">
+                    <h1
+                      class="text-start"
+                      style="font-family:'Bebas Neue', cursive;"
+                    >
                       Volunteers
                     </h1>
 
@@ -372,7 +484,10 @@
                           </template>
 
                           <template #cell(action)="{ item }">
-                            <b-link v-if="item.eventEvaluation !== undefined" :to="`/event-evaluations/${item.eventEvaluation}/`">
+                            <b-link
+                              v-if="item.eventEvaluation !== undefined"
+                              :to="`/event-evaluations/${item.eventEvaluation}/`"
+                            >
                               See Evaluation
                             </b-link>
                           </template>
@@ -381,7 +496,10 @@
                     </b-row>
 
                     <b-row class="justify-content-md-center">
-                      <b-col cols="6" class="my-1">
+                      <b-col
+                        cols="6"
+                        class="my-1"
+                      >
                         <b-pagination
                           v-model="eventVolunteers.pagination.currentPage"
                           :total-rows="eventVolunteers.total"
@@ -389,7 +507,7 @@
                           align="fill"
                           size="sm"
                           class="my-0"
-                        ></b-pagination>
+                        />
                       </b-col>
                     </b-row>
                   </b-card>
@@ -401,7 +519,10 @@
       </b-row>
     </b-container>
 
-    <b-modal v-model="updateEventStatus.modal" size="xl">
+    <b-modal
+      v-model="updateEventStatus.modal"
+      size="xl"
+    >
       <b-container>
         <b-row v-if="hasIkdItems">
           <b-col cols="12">
@@ -420,10 +541,10 @@
             >
               <template #cell(quantity)="{ item }">
                 <b-form-input
+                  v-model="item['quantity']"
                   class="text-center"
                   type="number"
                   style="width: 30%; display: inline"
-                  v-model="item['quantity']"
                   :formatter="(value) => validateItemQuantity(value, item.maxQuantity)"
                 /> / {{ item.maxQuantity }}
               </template>
@@ -456,7 +577,10 @@
               </template>
 
               <template #cell(action)="{ index }">
-                <b-button variant="danger" @click="removeExpense(index)">
+                <b-button
+                  variant="danger"
+                  @click="removeExpense(index)"
+                >
                   <b-icon icon="trash" />
                 </b-button>
               </template>
@@ -488,10 +612,10 @@
                           </label>
 
                           <validation-provider
+                            v-slot="validationContext"
                             :rules="{
                               required: true
                             }"
-                            v-slot="validationContext"
                           >
                             <b-form-input
                               id="input-expense-type"
@@ -519,16 +643,16 @@
                           </label>
 
                           <validation-provider
+                            v-slot="validationContext"
                             :rules="{
                               required: true
                             }"
-                            v-slot="validationContext"
                           >
                             <b-form-input
                               id="input-expense-amount"
+                              v-model="updateEventStatus.expenseForm.amount"
                               type="number"
                               step="100"
-                              v-model="updateEventStatus.expenseForm.amount"
                               lazy-formatter
                               :formatter="toPositiveNumber"
                               :state="getValidationState(validationContext)"
@@ -542,7 +666,10 @@
                         </b-form-group>
                       </b-col>
 
-                      <b-col class="pt-2" cols="12">
+                      <b-col
+                        class="pt-2"
+                        cols="12"
+                      >
                         <b-form-group class="text-start">
                           <label
                             class="py-1"
@@ -553,16 +680,16 @@
                           </label>
 
                           <validation-provider
+                            v-slot="validationContext"
                             :rules="{
                               max: 300
                             }"
-                            v-slot="validationContext"
                           >
                             <b-form-textarea
                               id="textarea-expense-remarks"
+                              v-model="updateEventStatus.expenseForm.remarks"
                               rows="3"
                               max-rows="8"
-                              v-model="updateEventStatus.expenseForm.remarks"
                               placeholder="Ex: Used for cleaning"
                               :state="getValidationState(validationContext)"
                               aria-describedby="textarea-expense-remarks-feedback"
@@ -575,9 +702,15 @@
                         </b-form-group>
                       </b-col>
 
-                      <b-col class="pt-3" cols="12">
+                      <b-col
+                        class="pt-3"
+                        cols="12"
+                      >
                         <b-row>
-                          <b-col cols="12" md="6">
+                          <b-col
+                            cols="12"
+                            md="6"
+                          >
                             <b-button
                               class="w-100"
                               @click="updateEventStatus.showExpenseForm = false"
@@ -586,7 +719,10 @@
                             </b-button>
                           </b-col>
 
-                          <b-col cols="12" md="6">
+                          <b-col
+                            cols="12"
+                            md="6"
+                          >
                             <b-button
                               class="w-100"
                               variant="success"
@@ -610,7 +746,10 @@
       <template #modal-footer>
         <b-container>
           <b-row>
-            <b-col class="text-center" cols="12">
+            <b-col
+              class="text-center"
+              cols="12"
+            >
               <b-button
                 variant="outline-primary"
                 size="sm"
@@ -627,7 +766,10 @@
       </template>
     </b-modal>
 
-    <b-modal v-model="updateEventStatus.confirmModal" size="md">
+    <b-modal
+      v-model="updateEventStatus.confirmModal"
+      size="md"
+    >
       <b-container>
         <b-row>
           <b-col cols="12">
@@ -641,7 +783,10 @@
       <template #modal-footer>
         <b-container>
           <b-row>
-            <b-col class="text-center" cols="12">
+            <b-col
+              class="text-center"
+              cols="12"
+            >
               <b-button
                 variant="success"
                 size="sm"

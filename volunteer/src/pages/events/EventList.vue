@@ -4,7 +4,10 @@
       <div class="bg">
         <div class="wp-block-cover__inner-container">
           <div class="image">
-            <img :src="logo" style="width: 420px; height: 240px">
+            <img
+              :src="logo"
+              style="width: 420px; height: 240px"
+            >
           </div>
         </div>
       </div>
@@ -20,7 +23,10 @@
           <b-col cols="12">
             <b-card>
               <b-container>
-                <b-row align-h="around" align-v="center">
+                <b-row
+                  align-h="around"
+                  align-v="center"
+                >
                   <b-col cols="4">
                     <b-row align-v="center">
                       <b-col cols="3">
@@ -33,8 +39,15 @@
                       </b-col>
 
                       <b-col>
-                        <select v-model="eventsPagination.perPage" class="form-select form-select-sm" aria-label="Default select example">
-                          <option v-for="option in pageOptions" :key="option">
+                        <select
+                          v-model="eventsPagination.perPage"
+                          class="form-select form-select-sm"
+                          aria-label="Default select example"
+                        >
+                          <option
+                            v-for="option in pageOptions"
+                            :key="option"
+                          >
                             {{ option }}
                           </option>
                         </select>
@@ -56,12 +69,12 @@
                       <b-col>
                         <b-form-input
                           id="filter-eventName"
-                          class="form-control"
                           v-model="searchFilter"
+                          class="form-control"
                           type="search"
                           size="sm"
                           debounce="500"
-                        ></b-form-input>
+                        />
                       </b-col>
                     </b-row>
                   </b-col>
@@ -73,10 +86,14 @@
 
         <b-row class="pb-4">
           <template v-if="isLoadingEvents">
-            <b-col v-for="index in [0, 1, 2]" :key="index" cols="12" md="4">
+            <b-col
+              v-for="index in [0, 1, 2]"
+              :key="index"
+              cols="12"
+              md="4"
+            >
               <b-card no-body>
-                <b-skeleton-img height="350px">
-                </b-skeleton-img>
+                <b-skeleton-img height="350px" />
               </b-card>
             </b-col>
           </template>
@@ -106,18 +123,25 @@
                 <b-card-text v-if="event.description !== undefined">
                   {{
                     event.description.length > 175
-                    ? `${event.description.substring(0, 175)}...`
-                    : event.description
+                      ? `${event.description.substring(0, 175)}...`
+                      : event.description
                   }}
                 </b-card-text>
 
                 <b-row style="text-align: left">
-                  <b-col v-if="event.location !== undefined" class="pb-2" cols="12">
-                    <b-icon icon="geo-alt"></b-icon> {{ event.location.name }}
+                  <b-col
+                    v-if="event.location !== undefined"
+                    class="pb-2"
+                    cols="12"
+                  >
+                    <b-icon icon="geo-alt" /> {{ event.location.name }}
                   </b-col>
 
-                  <b-col class="pb-2" cols="12">
-                    <b-icon icon="calendar"></b-icon>
+                  <b-col
+                    class="pb-2"
+                    cols="12"
+                  >
+                    <b-icon icon="calendar" />
                     {{
                       new Date(event.date.start).toLocaleString('en-us', {
                         dateStyle: 'short',
@@ -127,53 +151,65 @@
                     -
                     {{
                       isSameDay(event.date.start, event.date.end)
-                      ? new Date(event.date.end).toLocaleString('en-us', {
+                        ? new Date(event.date.end).toLocaleString('en-us', {
                           timeStyle: 'short'
                         })
-                      : new Date(event.date.end).toLocaleString('en-us', {
+                        : new Date(event.date.end).toLocaleString('en-us', {
                           dateStyle: 'short',
                           timeStyle: 'short'
                         })
                     }}
                   </b-col>
 
-                  <b-col class="pb-3" cols="12">
-                    <b-icon icon="clock"></b-icon> {{ getDurationBetweenDates(event.date.start, event.date.end) }}
+                  <b-col
+                    class="pb-3"
+                    cols="12"
+                  >
+                    <b-icon icon="clock" /> {{ getDurationBetweenDates(event.date.start, event.date.end) }}
                   </b-col>
                 </b-row>
 
                 <b-row v-if="event.goals.monetaryDonation.target !== 0">
                   <b-col cols="12">
-                    <b-progress height="1.5rem" :max="event.goals.monetaryDonation.target">
+                    <b-progress
+                      height="1.5rem"
+                      :max="event.goals.monetaryDonation.target"
+                    >
                       <b-progress-bar
                         variant="success"
                         :value="event.goals.monetaryDonation.current"
                         :label="getMonetaryDonationCurrentLabel(event.goals.monetaryDonation)"
-                      ></b-progress-bar>
+                      />
 
                       <b-progress-bar
                         variant="danger"
                         :value="hasGoalReached(event.goals.monetaryDonation) ? 0 : event.goals.monetaryDonation.target"
                         :label="getMonetaryDonationTargetLabel(event.goals.monetaryDonation)"
-                      ></b-progress-bar>
+                      />
                     </b-progress>
                   </b-col>
                 </b-row>
 
                 <b-row v-if="event.goals.numVolunteers.target !== 0">
-                  <b-col class="pt-2" cols="12">
-                    <b-progress height="1.5rem" :max="event.goals.numVolunteers.target">
+                  <b-col
+                    class="pt-2"
+                    cols="12"
+                  >
+                    <b-progress
+                      height="1.5rem"
+                      :max="event.goals.numVolunteers.target"
+                    >
                       <b-progress-bar
                         variant="success"
                         :value="event.goals.numVolunteers.current"
                         :label="getVolunteerGoalCurrentLabel(event.goals.numVolunteers)"
-                      ></b-progress-bar>
+                      />
 
                       <b-progress-bar
                         variant="danger"
                         :value="hasGoalReached(event.goals.numVolunteers) ? 0 : event.goals.numVolunteers.target"
                         :label="getVolunteerGoalTargetLabel(event.goals.numVolunteers)"
-                      ></b-progress-bar>
+                      />
                     </b-progress>
                   </b-col>
                 </b-row>
@@ -187,7 +223,7 @@
                 :per-page="eventsPagination.perPage"
                 align="fill"
                 size="sm"
-              ></b-pagination>
+              />
             </b-col>
           </template>
         </b-row>
@@ -240,6 +276,17 @@ export default {
     },
     noImageSrc () {
       return 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/No_image_available_600_x_450.svg/1280px-No_image_available_600_x_450.svg.png'
+    }
+  },
+  watch: {
+    searchFilter () {
+      this.getEvents()
+    },
+    'eventsPagination.perPage' () {
+      this.getEvents()
+    },
+    'eventsPagination.currentPage' () {
+      this.getEvents()
     }
   },
   created () {
@@ -338,17 +385,6 @@ export default {
       })
 
       return formatDuration(duration)
-    }
-  },
-  watch: {
-    searchFilter () {
-      this.getEvents()
-    },
-    'eventsPagination.perPage' () {
-      this.getEvents()
-    },
-    'eventsPagination.currentPage' () {
-      this.getEvents()
     }
   }
 }

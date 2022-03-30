@@ -7,9 +7,23 @@
             <p>
               Connect with Us
             </p>
-            <Icon icon="logos:google-gmail" height="32"  style="margin: 20px;"/>
-            <Icon icon="fa-brands:facebook" color="#1877f2" height="40"  style="margin: 20px;"/>
-            <Icon icon="logos:twitter" color="#1877f2" height="35"  style="margin: 20px;"/>
+            <Icon
+              icon="logos:google-gmail"
+              height="32"
+              style="margin: 20px;"
+            />
+            <Icon
+              icon="fa-brands:facebook"
+              color="#1877f2"
+              height="40"
+              style="margin: 20px;"
+            />
+            <Icon
+              icon="logos:twitter"
+              color="#1877f2"
+              height="35"
+              style="margin: 20px;"
+            />
           </b-col>
 
           <b-col>
@@ -22,19 +36,38 @@
           </b-col>
 
           <b-col>
-            <b-button variant="warning" @click="donationModal = true">
-              <span class="h3" style="font-weight: 900">
+            <b-button
+              variant="warning"
+              @click="donationModal = true"
+            >
+              <span
+                class="h3"
+                style="font-weight: 900"
+              >
                 DONATE
               </span>
-              <b-row class="mt-2" align-h="around" align-v="center">
+              <b-row
+                class="mt-2"
+                align-h="around"
+                align-v="center"
+              >
                 <b-col>
-                  <Icon icon="logos:mastercard" height="36" />
+                  <Icon
+                    icon="logos:mastercard"
+                    height="36"
+                  />
                 </b-col>
                 <b-col>
-                  <Icon icon="logos:visa" height="28" />
+                  <Icon
+                    icon="logos:visa"
+                    height="28"
+                  />
                 </b-col>
                 <b-col>
-                  <Icon icon="logos:jcb" height="36" />
+                  <Icon
+                    icon="logos:jcb"
+                    height="36"
+                  />
                 </b-col>
               </b-row>
             </b-button>
@@ -48,10 +81,17 @@
       @close="donationModal = false"
     />
 
-    <b-modal v-model="donationStatus.modal" size="lg" hide-footer>
+    <b-modal
+      v-model="donationStatus.modal"
+      size="lg"
+      hide-footer
+    >
       <b-container>
         <b-row>
-          <b-col cols="12" style="text-align: center">
+          <b-col
+            cols="12"
+            style="text-align: center"
+          >
             <h1
               :style="donationStatus.success ? 'color: green;' : 'color: red'"
             >
@@ -70,8 +110,8 @@
             <h2 style="text-align: center">
               {{
                 donationStatus.success
-                ? 'Thank you for your donation!'
-                : 'It seems there was a problem with your transaction.'
+                  ? 'Thank you for your donation!'
+                  : 'It seems there was a problem with your transaction.'
               }}
             </h2>
           </b-col>
@@ -85,7 +125,10 @@
           </b-col>
         </b-row>
 
-        <b-row v-if="donationStatus.success" class="mb-3">
+        <b-row
+          v-if="donationStatus.success"
+          class="mb-3"
+        >
           <b-col cols="12">
             <h6 style="text-align: center">
               If you would also like to volunteer to our events, we have redirected you to our page.

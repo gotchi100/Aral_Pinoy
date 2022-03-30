@@ -1,43 +1,89 @@
 <template>
   <div>
     <div class="addskill">
-      <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 950px; border-radius: 20px; margin-top: 40px;">
+      <b-card
+        class="card"
+        style="display: inline-block; height: 100%; overflow: auto; width: 950px; border-radius: 20px; margin-top: 40px;"
+      >
         <b-container fluid>
-            <h1 style="font-family:'Bebas Neue', cursive;">
-                Send an In-kind Donation
-            </h1>
+          <h1 style="font-family:'Bebas Neue', cursive;">
+            Send an In-kind Donation
+          </h1>
           <b-row class="my-1">
-          <label class="skill" for="input-small">Item Name</label>
+            <label
+              class="skill"
+              for="input-small"
+            >Item Name</label>
             <b-col>
-                <b-form-input type="text" placeholder="Select Item" required></b-form-input>
+              <b-form-input
+                type="text"
+                placeholder="Select Item"
+                required
+              />
             </b-col>
-            <label class="skill" for="input-small">Quantity</label>
+            <label
+              class="skill"
+              for="input-small"
+            >Quantity</label>
             <b-col>
-                <b-form-input type="number" placeholder="Input Quantity" required></b-form-input>
+              <b-form-input
+                type="number"
+                placeholder="Input Quantity"
+                required
+              />
             </b-col>
-            <label class="skill" for="input-small">Receiver</label>
+            <label
+              class="skill"
+              for="input-small"
+            >Receiver</label>
             <b-col>
-                <b-form-input type="text" placeholder="Input Receiver" required></b-form-input>
+              <b-form-input
+                type="text"
+                placeholder="Input Receiver"
+                required
+              />
             </b-col>
-            <label class="skill" for="input-small">Contact Person</label>
+            <label
+              class="skill"
+              for="input-small"
+            >Contact Person</label>
             <b-col>
-                <b-form-input type="text" placeholder="Input Contact Person" required></b-form-input>
+              <b-form-input
+                type="text"
+                placeholder="Input Contact Person"
+                required
+              />
             </b-col>
-            <label class="skill" for="input-small">Contact Number</label>
+            <label
+              class="skill"
+              for="input-small"
+            >Contact Number</label>
             <b-col>
-                <b-form-input type="text" placeholder="Input Contact Number of Contact Person" required></b-form-input>
+              <b-form-input
+                type="text"
+                placeholder="Input Contact Number of Contact Person"
+                required
+              />
             </b-col>
           </b-row>
-          <b-button @click="showModal = !showModal" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
+          <b-button
+            pill
+            variant="danger"
+            style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;"
+            @click="showModal = !showModal"
+          >
             Donate
           </b-button>
         </b-container>
-        <b-modal v-model="showModal" size="xl">
-        <b-container fluid>
-              <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
-                  Are you sure with all the details?
-              </h1>
-              <!-- <b-row>
+        <b-modal
+          v-model="showModal"
+          size="xl"
+        >
+          <b-container fluid>
+            <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
+              Are you sure with all the details?
+            </h1>
+            <!-- <b-row>
                 <b-col cols="5"></b-col>
                 <b-col>
                   <b-button type="submit" variant="success">Yes</b-button>
@@ -46,7 +92,7 @@
                 </b-col>
               </b-row> -->
           </b-container>
-      </b-modal>
+        </b-modal>
       </b-card>
     </div>
   </div>
@@ -74,12 +120,6 @@ export default {
       value: []
     }
   },
-  methods: {
-    onOptionClick ({ options, addTag }) {
-      addTag(options)
-      this.search = ''
-    }
-  },
   computed: {
     criteria () {
       // Compute the search criteria
@@ -101,6 +141,12 @@ export default {
         return 'There are no tags matching your search criteria'
       }
       return ''
+    }
+  },
+  methods: {
+    onOptionClick ({ options, addTag }) {
+      addTag(options)
+      this.search = ''
     }
   }
 }

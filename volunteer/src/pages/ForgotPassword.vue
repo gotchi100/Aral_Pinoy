@@ -1,23 +1,44 @@
 <template>
   <div>
     <div class="py-5">
-      <img :src="logo" style="width: 320px; height: 150px">
+      <img
+        :src="logo"
+        style="width: 320px; height: 150px"
+      >
     </div>
 
     <b-container>
       <b-row class="justify-content-md-center">
-        <b-col cols="12" md="6">
-          <b-card class="card" bg-variant="light" style="border-radius: 20px;">
+        <b-col
+          cols="12"
+          md="6"
+        >
+          <b-card
+            class="card"
+            bg-variant="light"
+            style="border-radius: 20px;"
+          >
             <b-container fluid>
-              <b-alert :show="message.text !== ''" :variant="message.error ? 'danger' : 'success'">
+              <b-alert
+                :show="message.text !== ''"
+                :variant="message.error ? 'danger' : 'success'"
+              >
                 {{ message.text }}
               </b-alert>
 
               <b-row class="my-1">
-                <h4 style="font-family:'Bebas Neue', cursive; color: black; position: relative;">Please enter your email address you'd like your password resent information sent to</h4>
-                <label class="email" for="input-small">Email Address</label>
+                <h4 style="font-family:'Bebas Neue', cursive; color: black; position: relative;">
+                  Please enter your email address you'd like your password resent information sent to
+                </h4>
+                <label
+                  class="email"
+                  for="input-small"
+                >Email Address</label>
                 <b-col>
-                  <b-form-input v-model="email" placeholder="Ex: juandelacruz@gmail.com"></b-form-input>
+                  <b-form-input
+                    v-model="email"
+                    placeholder="Ex: juandelacruz@gmail.com"
+                  />
                 </b-col>
               </b-row>
 
@@ -28,12 +49,15 @@
                 :disabled="isLoading"
                 @click="requestPasswordReset"
               >
-                <b-spinner v-if="isLoading"></b-spinner>
+                <b-spinner v-if="isLoading" />
                 <span v-else>Send</span>
               </b-button>
 
               <b-row>
-                <label class="signup" for="input-small"><b-link to="/login">Return to Login</b-link></label>
+                <label
+                  class="signup"
+                  for="input-small"
+                ><b-link to="/login">Return to Login</b-link></label>
               </b-row>
             </b-container>
           </b-card>

@@ -16,7 +16,11 @@
               <b-row class="my-2">
                 <b-col cols="12">
                   <b-container>
-                    <b-row class="mb-4" align-v="center" align-h="around">
+                    <b-row
+                      class="mb-4"
+                      align-v="center"
+                      align-h="around"
+                    >
                       <b-col cols="4">
                         <b-row align-v="center">
                           <b-col cols="3">
@@ -29,8 +33,15 @@
                           </b-col>
 
                           <b-col>
-                            <select v-model="perPage" class="form-select form-select-sm" aria-label="Default select example">
-                              <option v-for="option in pageOptions" :key="option">
+                            <select
+                              v-model="perPage"
+                              class="form-select form-select-sm"
+                              aria-label="Default select example"
+                            >
+                              <option
+                                v-for="option in pageOptions"
+                                :key="option"
+                              >
                                 {{ option }}
                               </option>
                             </select>
@@ -52,12 +63,12 @@
                           <b-col>
                             <b-form-input
                               id="filter-eventName"
-                              class="form-control"
                               v-model="searchFilter"
+                              class="form-control"
                               type="search"
                               size="sm"
                               debounce="500"
-                            ></b-form-input>
+                            />
                           </b-col>
                         </b-row>
                       </b-col>
@@ -81,7 +92,9 @@
                     primary-key="_id"
                   >
                     <template #cell(email)="row">
-                      <b-link :to="`/volunteers/${row.item._id}`">{{ row.value }}</b-link>
+                      <b-link :to="`/volunteers/${row.item._id}`">
+                        {{ row.value }}
+                      </b-link>
                     </template>
 
                     <template #cell(name)="row">
@@ -98,9 +111,9 @@
                     :total-rows="total"
                     :per-page="perPage"
                     align="center"
-                  ></b-pagination>
+                  />
                 </b-col>
-                <b-col></b-col>
+                <b-col />
               </b-row>
             </b-container>
           </b-card>

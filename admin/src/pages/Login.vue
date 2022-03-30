@@ -1,35 +1,61 @@
 <template>
   <div>
     <div class="py-5">
-      <img :src="logo" style="width: 320px; height: 150px">
+      <img
+        :src="logo"
+        style="width: 320px; height: 150px"
+      >
     </div>
 
     <b-container class="pb-5">
       <b-row class="justify-content-md-center">
-        <b-col cols="12" md="4">
-          <b-card bg-variant="light" style="border-radius: 20px;">
+        <b-col
+          cols="12"
+          md="4"
+        >
+          <b-card
+            bg-variant="light"
+            style="border-radius: 20px;"
+          >
             <b-container fluid>
-              <b-alert :show="!!errorMessage" variant="danger">
+              <b-alert
+                :show="!!errorMessage"
+                variant="danger"
+              >
                 {{ errorMessage }}
               </b-alert>
 
               <b-row class="my-1">
-                <label class="email" for="input-small">Email Address</label>
+                <label
+                  class="email"
+                  for="input-small"
+                >Email Address</label>
                 <b-col>
-                  <b-form-input v-model="email"></b-form-input>
+                  <b-form-input v-model="email" />
                 </b-col>
               </b-row>
 
               <b-row class="my-1">
-                <label class="password" for="input-small">Password</label>
+                <label
+                  class="password"
+                  for="input-small"
+                >Password</label>
                 <b-col>
-                  <b-form-input v-model="password" type="password"></b-form-input>
+                  <b-form-input
+                    v-model="password"
+                    type="password"
+                  />
                 </b-col>
               </b-row>
 
               <b-row class="py-3">
                 <b-col cols="12">
-                  <b-button @click="login" pill variant="danger" style="font-size: 16px; width: 225px;">
+                  <b-button
+                    pill
+                    variant="danger"
+                    style="font-size: 16px; width: 225px;"
+                    @click="login"
+                  >
                     Login
                   </b-button>
                 </b-col>

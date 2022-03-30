@@ -3,7 +3,10 @@
     <b-container class="py-5">
       <b-row>
         <b-col cols="12">
-          <b-card class="card" style="border-radius: 20px;">
+          <b-card
+            class="card"
+            style="border-radius: 20px;"
+          >
             <b-container fluid>
               <b-row>
                 <b-col cols="12">
@@ -15,12 +18,22 @@
 
               <b-row>
                 <b-col cols="12">
-                  <b-tabs pills card>
-                    <b-tab title="Compiled View" active>
+                  <b-tabs
+                    pills
+                    card
+                  >
+                    <b-tab
+                      title="Compiled View"
+                      active
+                    >
                       <b-row class="my-2">
                         <b-col cols="12">
                           <b-container>
-                            <b-row class="mb-4" align-v="center" align-h="start">
+                            <b-row
+                              class="mb-4"
+                              align-v="center"
+                              align-h="start"
+                            >
                               <b-col cols="4">
                                 <b-row align-v="center">
                                   <b-col cols="3">
@@ -33,8 +46,15 @@
                                   </b-col>
 
                                   <b-col>
-                                    <select v-model="groupedIkdPerPage" class="form-select form-select-sm" aria-label="Default select example">
-                                      <option v-for="option in pageOptions" :key="option">
+                                    <select
+                                      v-model="groupedIkdPerPage"
+                                      class="form-select form-select-sm"
+                                      aria-label="Default select example"
+                                    >
+                                      <option
+                                        v-for="option in pageOptions"
+                                        :key="option"
+                                      >
                                         {{ option }}
                                       </option>
                                     </select>
@@ -57,12 +77,15 @@
                             style="background:white"
                             show-empty
                             primary-key="_id"
-                          ></b-table>
+                          />
                         </b-col>
                       </b-row>
 
                       <b-row class="pt-4 justify-content-md-center">
-                        <b-col cols="6" class="my-1">
+                        <b-col
+                          cols="6"
+                          class="my-1"
+                        >
                           <b-pagination
                             v-model="groupedIkdCurrentPage"
                             :total-rows="groupedIkdTotal"
@@ -70,7 +93,7 @@
                             align="fill"
                             size="sm"
                             class="my-0"
-                          ></b-pagination>
+                          />
                         </b-col>
                       </b-row>
                     </b-tab>
@@ -79,7 +102,11 @@
                       <b-row class="my-2">
                         <b-col cols="12">
                           <b-container>
-                            <b-row class="mb-4" align-v="center" align-h="around">
+                            <b-row
+                              class="mb-4"
+                              align-v="center"
+                              align-h="around"
+                            >
                               <b-col cols="4">
                                 <b-row align-v="center">
                                   <b-col cols="3">
@@ -92,8 +119,15 @@
                                   </b-col>
 
                                   <b-col>
-                                    <select v-model="inkindDonationPerPage" class="form-select form-select-sm" aria-label="Default select example">
-                                      <option v-for="option in pageOptions" :key="option">
+                                    <select
+                                      v-model="inkindDonationPerPage"
+                                      class="form-select form-select-sm"
+                                      aria-label="Default select example"
+                                    >
+                                      <option
+                                        v-for="option in pageOptions"
+                                        :key="option"
+                                      >
                                         {{ option }}
                                       </option>
                                     </select>
@@ -115,30 +149,41 @@
                                   <b-col>
                                     <b-form-input
                                       id="filter-ikd"
-                                      class="form-control"
                                       v-model="inkindDonationSearchFilter"
+                                      class="form-control"
                                       type="search"
                                       size="sm"
                                       debounce="500"
-                                    ></b-form-input>
+                                    />
                                   </b-col>
                                 </b-row>
                               </b-col>
 
                               <b-col cols="4">
-                                <b-dropdown class="w-50" size="sm" text="Filter Options">
+                                <b-dropdown
+                                  class="w-50"
+                                  size="sm"
+                                  text="Filter Options"
+                                >
                                   <b-dropdown-form style="width: 100%">
-                                    <div v-for="option in ikdCategoryCustomFieldsOptions" :key="option.value" class="form-check form-switch">
-                                      <label class="form-check-label" :for="`status-checkbox-${option}`">
+                                    <div
+                                      v-for="option in ikdCategoryCustomFieldsOptions"
+                                      :key="option.value"
+                                      class="form-check form-switch"
+                                    >
+                                      <label
+                                        class="form-check-label"
+                                        :for="`status-checkbox-${option}`"
+                                      >
                                         {{ option.label }}
                                       </label>
 
                                       <input
                                         :id="`status-checkbox-${option.value}`"
+                                        v-model="ikdCategoryCustomFieldFilters"
                                         class="form-check-input"
                                         type="checkbox"
                                         :value="option.value"
-                                        v-model="ikdCategoryCustomFieldFilters"
                                       >
                                     </div>
                                   </b-dropdown-form>
@@ -189,7 +234,10 @@
                       </b-row>
 
                       <b-row class="pt-4 justify-content-md-center">
-                        <b-col cols="6" class="my-1">
+                        <b-col
+                          cols="6"
+                          class="my-1"
+                        >
                           <b-pagination
                             v-model="inkindDonationCurrentPage"
                             :total-rows="inkindDonationTotal"
@@ -197,13 +245,16 @@
                             align="fill"
                             size="sm"
                             class="my-0"
-                          ></b-pagination>
+                          />
                         </b-col>
                       </b-row>
                     </b-tab>
                   </b-tabs>
 
-                  <b-row class="pt-4" align-h="end">
+                  <b-row
+                    class="pt-4"
+                    align-h="end"
+                  >
                     <b-col cols="2">
                       <b-button
                         style="font-size: 16px; width: 200px;"
@@ -333,6 +384,11 @@ export default {
       return (this.inkindDonationCurrentPage - 1) * this.inkindDonationPerPage
     }
   },
+  watch: {
+    ikdCategoryCustomFieldFilters (val) {
+      this.$refs.ikdsTable.refresh()
+    }
+  },
   created () {
     inkindDonationRepository.setAuthorizationHeader(`Bearer ${this.token}`)
   },
@@ -391,11 +447,6 @@ export default {
       }
 
       return value[field] !== undefined
-    }
-  },
-  watch: {
-    ikdCategoryCustomFieldFilters (val) {
-      this.$refs.ikdsTable.refresh()
     }
   }
 }

@@ -1,23 +1,50 @@
 <template>
-   <div class="editsdg">
-    <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
-     <b-container fluid>
-        <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: center;">Goal 1: No Poverty</h2>
-        <b-img center src="https://sustainabledevelopment.un.org/content/sdgsummit/images/E_SDG%20goals_icons-individual-rgb-01.png" style="width: 150px; height:150px;" alt="Center image"></b-img>
-        <b-card v-for="(role, index) in roles" :key="index" class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1200px; border-radius: 20px; margin-top:20px;">
+  <div class="editsdg">
+    <b-card
+      class="card"
+      style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;"
+    >
+      <b-container fluid>
+        <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: center;">
+          Goal 1: No Poverty
+        </h2>
+        <b-img
+          center
+          src="https://sustainabledevelopment.un.org/content/sdgsummit/images/E_SDG%20goals_icons-individual-rgb-01.png"
+          style="width: 150px; height:150px;"
+          alt="Center image"
+        />
+        <b-card
+          v-for="(role, index) in roles"
+          :key="index"
+          class="card"
+          style="display: inline-block; height: 100%; overflow: auto; width: 1200px; border-radius: 20px; margin-top:20px;"
+        >
           <b-row>
             <b-col>
-              <b-form-input style="width:1000px;" v-model="role.question" disabled placeholder="Enter your Question"></b-form-input>
+              <b-form-input
+                v-model="role.question"
+                style="width:1000px;"
+                disabled
+                placeholder="Enter your Question"
+              />
             </b-col>
             <b-col>
               <b-button>Delete</b-button>
             </b-col>
           </b-row>
         </b-card>
-        <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1200px; border-radius: 20px; margin-top:20px;">
+        <b-card
+          class="card"
+          style="display: inline-block; height: 100%; overflow: auto; width: 1200px; border-radius: 20px; margin-top:20px;"
+        >
           <b-row>
             <b-col>
-              <b-form-input style="width:1000px;" v-model="form.question" placeholder="Enter your Question"></b-form-input>
+              <b-form-input
+                v-model="form.question"
+                style="width:1000px;"
+                placeholder="Enter your Question"
+              />
             </b-col>
             <b-col>
               <b-button>Delete</b-button>
@@ -25,18 +52,29 @@
           </b-row>
         </b-card>
         <b-row>
-          <b-col cols="10">
-          </b-col>
+          <b-col cols="10" />
           <b-col>
-            <b-button style="margin-top:20px;" @click="addRole">Add Row</b-button>
+            <b-button
+              style="margin-top:20px;"
+              @click="addRole"
+            >
+              Add Row
+            </b-button>
           </b-col>
         </b-row>
       </b-container>
       <b-col>
-        <b-button pill variant="danger" to="dashboard" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 125px;">Save</b-button>
+        <b-button
+          pill
+          variant="danger"
+          to="dashboard"
+          style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 125px;"
+        >
+          Save
+        </b-button>
       </b-col>
-   </b-card>
-   </div>
+    </b-card>
+  </div>
 </template>
 
 <script>

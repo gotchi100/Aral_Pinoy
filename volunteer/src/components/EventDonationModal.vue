@@ -6,13 +6,16 @@
     :no-close-on-backdrop="isDonating"
     @hide="$emit('close')"
   >
-    <b-overlay :show="isDonating" rounded="sm">
+    <b-overlay
+      :show="isDonating"
+      rounded="sm"
+    >
       <b-container fluid>
         <b-row>
           <b-col cols="12">
-              <h2 style="font-family:'Bebas Neue', cursive; color: black; text-align: left;">
-                Payment Information
-              </h2>
+            <h2 style="font-family:'Bebas Neue', cursive; color: black; text-align: left;">
+              Payment Information
+            </h2>
           </b-col>
         </b-row>
 
@@ -26,44 +29,74 @@
 
         <template v-if="!isAnonymousDonation">
           <b-row>
-            <b-col cols="12" class="mb-2">
+            <b-col
+              cols="12"
+              class="mb-2"
+            >
               <label for="donation-form-firstname">
                 First Name
               </label>
 
-              <b-form-input id="donation-form-firstname" v-model="person.firstName" />
+              <b-form-input
+                id="donation-form-firstname"
+                v-model="person.firstName"
+              />
             </b-col>
 
-            <b-col cols="12" class="mb-2">
+            <b-col
+              cols="12"
+              class="mb-2"
+            >
               <label for="donation-form-middlename">
                 Middle Name
               </label>
 
-              <b-form-input id="donation-form-middlename" v-model="person.middleName" />
+              <b-form-input
+                id="donation-form-middlename"
+                v-model="person.middleName"
+              />
             </b-col>
 
-            <b-col cols="12" class="mb-2">
+            <b-col
+              cols="12"
+              class="mb-2"
+            >
               <label for="donation-form-lastname">
                 Last Name
               </label>
 
-              <b-form-input id="donation-form-lastname" v-model="person.lastName" />
+              <b-form-input
+                id="donation-form-lastname"
+                v-model="person.lastName"
+              />
             </b-col>
 
-            <b-col cols="12" class="mb-2">
+            <b-col
+              cols="12"
+              class="mb-2"
+            >
               <label for="donation-form-lastname">
                 Contact Email
               </label>
 
-              <b-form-input id="donation-form-lastname" v-model="person.contact.email" />
+              <b-form-input
+                id="donation-form-lastname"
+                v-model="person.contact.email"
+              />
             </b-col>
 
-            <b-col cols="12" class="mb-2">
+            <b-col
+              cols="12"
+              class="mb-2"
+            >
               <label for="donation-form-lastname">
                 Contact Phone
               </label>
 
-              <b-form-input id="donation-form-lastname" v-model="person.contact.phone" />
+              <b-form-input
+                id="donation-form-lastname"
+                v-model="person.contact.phone"
+              />
             </b-col>
           </b-row>
         </template>
@@ -76,8 +109,8 @@
 
             <b-form-input
               id="donation-form-amount"
-              type="number"
               v-model="amount"
+              type="number"
               :formatter="formatAmount"
             />
           </b-col>
@@ -146,6 +179,11 @@ export default {
       }
 
       return this.user._id
+    }
+  },
+  watch: {
+    show (val) {
+      this.modal = val
     }
   },
   created () {
@@ -300,11 +338,6 @@ export default {
       }
 
       return Number(parsedValue.toFixed(2))
-    }
-  },
-  watch: {
-    show (val) {
-      this.modal = val
     }
   }
 }

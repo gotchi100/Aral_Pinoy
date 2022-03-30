@@ -3,7 +3,10 @@
     <b-container class="py-5">
       <b-row>
         <b-col cols="12">
-          <b-card class="card" style="border-radius: 20px;">
+          <b-card
+            class="card"
+            style="border-radius: 20px;"
+          >
             <b-container fluid>
               <b-row>
                 <b-col cols="12">
@@ -13,30 +16,37 @@
                 </b-col>
 
                 <b-col cols="12">
-                  <b-button to="/event-templates/add" variant="success" class="mx-3">
+                  <b-button
+                    to="/event-templates/add"
+                    variant="success"
+                    class="mx-3"
+                  >
                     Create New Event Template
                   </b-button>
                 </b-col>
 
-                <b-col cols="12" class="my-3">
+                <b-col
+                  cols="12"
+                  class="my-3"
+                >
                   <b-skeleton-wrapper :loading="isFetchingTemplates">
                     <template #loading>
                       <b-card>
-                        <b-skeleton width="85%"></b-skeleton>
-                        <b-skeleton width="55%"></b-skeleton>
-                        <b-skeleton width="70%"></b-skeleton>
+                        <b-skeleton width="85%" />
+                        <b-skeleton width="55%" />
+                        <b-skeleton width="70%" />
                       </b-card>
 
                       <b-card>
-                        <b-skeleton width="85%"></b-skeleton>
-                        <b-skeleton width="55%"></b-skeleton>
-                        <b-skeleton width="70%"></b-skeleton>
+                        <b-skeleton width="85%" />
+                        <b-skeleton width="55%" />
+                        <b-skeleton width="70%" />
                       </b-card>
 
                       <b-card>
-                        <b-skeleton width="85%"></b-skeleton>
-                        <b-skeleton width="55%"></b-skeleton>
-                        <b-skeleton width="70%"></b-skeleton>
+                        <b-skeleton width="85%" />
+                        <b-skeleton width="55%" />
+                        <b-skeleton width="70%" />
                       </b-card>
                     </template>
 
@@ -81,9 +91,6 @@ const eventTemplateRepository = new EventTemplateRepository(apiClient)
 
 export default ({
   name: 'EventTemplateSelect',
-  computed: {
-    ...mapGetters(['token'])
-  },
   data () {
     return {
       isFetchingTemplates: false,
@@ -92,6 +99,9 @@ export default ({
         total: 0
       }
     }
+  },
+  computed: {
+    ...mapGetters(['token'])
   },
   async created () {
     eventTemplateRepository.setAuthorizationHeader(`Bearer ${this.token}`)

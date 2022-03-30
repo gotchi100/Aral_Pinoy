@@ -1,14 +1,24 @@
 <template>
   <div>
     <div class="py-5">
-      <img :src="logo" style="width: 320px; height: 150px">
+      <img
+        :src="logo"
+        style="width: 320px; height: 150px"
+      >
     </div>
 
     <b-container>
       <b-row>
         <b-col cols="12">
-          <b-overlay :show="isLoadingEventEvaluation && isLoadingEvent" rounded="sm">
-            <b-card class="mb-5" bg-variant="light" style="border-radius: 20px;">
+          <b-overlay
+            :show="isLoadingEventEvaluation && isLoadingEvent"
+            rounded="sm"
+          >
+            <b-card
+              class="mb-5"
+              bg-variant="light"
+              style="border-radius: 20px;"
+            >
               <template v-if="event !== null">
                 <div class="pb-3">
                   <h1 style="font-family:'Bebas Neue', cursive;">
@@ -63,8 +73,14 @@
                               v-if="question.type === 'matrix'"
                               :label="`${questionIndex + 1}. ${question.label}`"
                             >
-                              <b-col class="mb-3" cols="12">
-                                <b-form-input v-model="questionnaireAnswers[questionIndex]" readonly />
+                              <b-col
+                                class="mb-3"
+                                cols="12"
+                              >
+                                <b-form-input
+                                  v-model="questionnaireAnswers[questionIndex]"
+                                  readonly
+                                />
                               </b-col>
                             </b-form-group>
                           </b-row>
@@ -86,7 +102,11 @@
                           </b-row>
 
                           <b-row>
-                            <b-col v-for="(sdg, sdgIndex) in event.sdgs" :key="sdgIndex" cols="12">
+                            <b-col
+                              v-for="(sdg, sdgIndex) in event.sdgs"
+                              :key="sdgIndex"
+                              cols="12"
+                            >
                               <b-card class="mb-3">
                                 <b-container fluid>
                                   <b-row>
@@ -96,13 +116,20 @@
                                       </h4>
                                     </b-col>
 
-                                    <b-col class="mb-3" cols="12" style="text-align: left">
+                                    <b-col
+                                      class="mb-3"
+                                      cols="12"
+                                      style="text-align: left"
+                                    >
                                       <span>
                                         {{ sdg.description }}
                                       </span>
                                     </b-col>
 
-                                    <b-col cols="12" style="text-align: left">
+                                    <b-col
+                                      cols="12"
+                                      style="text-align: left"
+                                    >
                                       <b-row
                                         v-for="(question, questionIndex) in sdg.questions"
                                         :key="`${sdgIndex}-${questionIndex}`"
@@ -111,9 +138,18 @@
                                           v-if="question.type === 'polar'"
                                           :label="`${questionIndex + 1}. ${question.label}`"
                                         >
-                                          <b-col class="mb-3" cols="12">
-                                            <b-col class="mb-3" cols="12">
-                                              <b-form-input :value="convertPolarAnswer(sdgAnswers[sdgIndex][questionIndex])" readonly />
+                                          <b-col
+                                            class="mb-3"
+                                            cols="12"
+                                          >
+                                            <b-col
+                                              class="mb-3"
+                                              cols="12"
+                                            >
+                                              <b-form-input
+                                                :value="convertPolarAnswer(sdgAnswers[sdgIndex][questionIndex])"
+                                                readonly
+                                              />
                                             </b-col>
                                           </b-col>
                                         </b-form-group>
@@ -140,7 +176,7 @@
                         readonly
                         rows="10"
                         max-rows="6"
-                      ></b-form-textarea>
+                      />
                     </b-container>
                   </b-card>
                 </b-container>

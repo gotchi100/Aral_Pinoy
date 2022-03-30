@@ -1,28 +1,52 @@
 <template>
   <div>
     <div class="py-5">
-      <img :src="logo" style="width: 320px; height: 150px">
+      <img
+        :src="logo"
+        style="width: 320px; height: 150px"
+      >
     </div>
 
     <b-container class="pb-5">
       <b-row class="justify-content-md-center">
         <b-col cols="12">
-          <b-card bg-variant="light" style="border-radius: 20px;">
-            <b-container v-if="isLoadingEvent" style="height: 100vh">
-              <b-row class="vh-100" align-h="center">
-                <b-col cols="12" align-self="center">
+          <b-card
+            bg-variant="light"
+            style="border-radius: 20px;"
+          >
+            <b-container
+              v-if="isLoadingEvent"
+              style="height: 100vh"
+            >
+              <b-row
+                class="vh-100"
+                align-h="center"
+              >
+                <b-col
+                  cols="12"
+                  align-self="center"
+                >
                   <b-spinner style="width: 10rem; height: 10rem;" />
                 </b-col>
               </b-row>
             </b-container>
 
-            <b-container v-else-if="event !== null" fluid>
+            <b-container
+              v-else-if="event !== null"
+              fluid
+            >
               <b-row class="pb-4">
                 <b-col cols="12">
                   <b-card style="border-radius: 20px;">
                     <b-row>
-                      <b-col cols="12" md="6">
-                        <h1 class="text-start" style="font-family:'Bebas Neue', cursive;">
+                      <b-col
+                        cols="12"
+                        md="6"
+                      >
+                        <h1
+                          class="text-start"
+                          style="font-family:'Bebas Neue', cursive;"
+                        >
                           {{ event.name }}
                         </h1>
                       </b-col>
@@ -32,13 +56,19 @@
                       <b-col cols="12">
                         <b-container fluid>
                           <b-row>
-                            <b-col cols="12" md="6">
+                            <b-col
+                              cols="12"
+                              md="6"
+                            >
                               <p class="h4 mb-0">
                                 <b-icon icon="geo-alt" />&nbsp;{{ event.location.name }}
                               </p>
                             </b-col>
 
-                            <b-col cols="12" md="6">
+                            <b-col
+                              cols="12"
+                              md="6"
+                            >
                               <p class="h4 mb-0">
                                 <b-icon icon="calendar" />&nbsp;
                                 {{
@@ -63,21 +93,32 @@
                               </p>
                             </b-col>
 
-                            <b-col cols="12" md="6">
+                            <b-col
+                              cols="12"
+                              md="6"
+                            >
                               <p class="h4 mb-0">
                                 Status: <i>{{ event.status }}</i>
                               </p>
                             </b-col>
                           </b-row>
 
-                          <b-row v-if="Array.isArray(event.contacts)" align-h="start">
+                          <b-row
+                            v-if="Array.isArray(event.contacts)"
+                            align-h="start"
+                          >
                             <b-col cols="12">
                               <p class="h4">
                                 <b-icon icon="person-lines-fill" />&nbsp;Contacts
                               </p>
                             </b-col>
 
-                            <b-col v-for="(contact, index) in event.contacts" :key="index" cols="12" sm="3">
+                            <b-col
+                              v-for="(contact, index) in event.contacts"
+                              :key="index"
+                              cols="12"
+                              sm="3"
+                            >
                               <p class="h6 text-start">
                                 <b-icon
                                   :icon="contact.contactMethods[0].type === 'EMAIL' ? 'envelope' : 'telephone'"
@@ -115,38 +156,52 @@
                             </b-col>
                           </b-row>
 
-                          <b-row v-if="event.goals.monetaryDonation.target !== 0" class="pb-4">
+                          <b-row
+                            v-if="event.goals.monetaryDonation.target !== 0"
+                            class="pb-4"
+                          >
                             <b-col cols="12">
-                              <b-progress height="2rem" style="border-radius:30px;" :max="event.goals.monetaryDonation.target">
+                              <b-progress
+                                height="2rem"
+                                style="border-radius:30px;"
+                                :max="event.goals.monetaryDonation.target"
+                              >
                                 <b-progress-bar
                                   variant="success"
                                   :value="event.goals.monetaryDonation.current"
                                   :label="getMonetaryDonationCurrentLabel(event.goals.monetaryDonation.current, event.goals.monetaryDonation.target)"
-                                ></b-progress-bar>
+                                />
 
                                 <b-progress-bar
                                   variant="danger"
                                   :value="monetaryDonationReached ? 0 : event.goals.monetaryDonation.target"
                                   :label="getMonetaryDonationTargetLabel(event.goals.monetaryDonation.current, event.goals.monetaryDonation.target)"
-                                ></b-progress-bar>
+                                />
                               </b-progress>
                             </b-col>
                           </b-row>
 
-                          <b-row v-if="event.goals.numVolunteers.target !== 0" class="pb-4">
+                          <b-row
+                            v-if="event.goals.numVolunteers.target !== 0"
+                            class="pb-4"
+                          >
                             <b-col cols="12">
-                              <b-progress height="2rem" style="border-radius:30px;" :max="event.goals.numVolunteers.target">
+                              <b-progress
+                                height="2rem"
+                                style="border-radius:30px;"
+                                :max="event.goals.numVolunteers.target"
+                              >
                                 <b-progress-bar
                                   variant="success"
                                   :value="event.goals.numVolunteers.current"
                                   :label="getVolunteerGoalCurrentLabel(event.goals.numVolunteers.current, event.goals.numVolunteers.target)"
-                                ></b-progress-bar>
+                                />
 
                                 <b-progress-bar
                                   variant="danger"
                                   :value="volunteerGoalReached ? 0 : event.goals.numVolunteers.target"
                                   :label="getVolunteerGoalTargetLabel(event.goals.numVolunteers.current, event.goals.numVolunteers.target)"
-                                ></b-progress-bar>
+                                />
                               </b-progress>
                             </b-col>
                           </b-row>
@@ -155,7 +210,10 @@
                             <b-col cols="12">
                               <b-card>
                                 <b-container fluid>
-                                  <b-row class="text-center" align-h="center">
+                                  <b-row
+                                    class="text-center"
+                                    align-h="center"
+                                  >
                                     <template v-if="event.status === 'UPCOMING'">
                                       <b-col
                                         v-if="event.goals.numVolunteers.target !== 0 && !hasAlreadyVolunteered"
@@ -249,33 +307,55 @@
                 </b-col>
               </b-row>
 
-              <b-row v-if="event.description !== undefined" class="pb-4">
+              <b-row
+                v-if="event.description !== undefined"
+                class="pb-4"
+              >
                 <b-col cols="12">
                   <b-card style="border-radius: 20px;">
-                    <h1 class="text-start" style="font-family:'Bebas Neue', cursive;">
+                    <h1
+                      class="text-start"
+                      style="font-family:'Bebas Neue', cursive;"
+                    >
                       Event Description
                     </h1>
 
                     <b-form-textarea
-                      rows="15"
                       v-model="event.description"
+                      rows="15"
                       readonly
                     />
                   </b-card>
                 </b-col>
               </b-row>
 
-              <b-row v-if="Array.isArray(event.sdgs)" class="pb-4">
+              <b-row
+                v-if="Array.isArray(event.sdgs)"
+                class="pb-4"
+              >
                 <b-col cols="12">
                   <b-card style="border-radius: 20px;">
-                    <h1 class="text-start" style="font-family:'Bebas Neue', cursive;">
+                    <h1
+                      class="text-start"
+                      style="font-family:'Bebas Neue', cursive;"
+                    >
                       Sustainable Development Goals
                     </h1>
 
                     <b-row>
-                      <b-col v-for="(sdg, index) in event.sdgs" :key="index" cols="12" md="3">
-                        <b-avatar :src="sdg.imageUrl" :alt="sdg.name" size="150px" square />
-                        <br />
+                      <b-col
+                        v-for="(sdg, index) in event.sdgs"
+                        :key="index"
+                        cols="12"
+                        md="3"
+                      >
+                        <b-avatar
+                          :src="sdg.imageUrl"
+                          :alt="sdg.name"
+                          size="150px"
+                          square
+                        />
+                        <br>
                         <strong>{{ sdg.name }}</strong>
                       </b-col>
                     </b-row>
@@ -287,7 +367,7 @@
                 :event="{ _id: event._id, name: event.name}"
                 :show="donationModal"
                 @close="donationModal = false"
-              ></event-donation-modal>
+              />
             </b-container>
           </b-card>
         </b-col>
@@ -311,10 +391,19 @@
                   </b-col>
                 </b-row>
 
-                <b-row class="pb-5" v-for="job in event.jobs" :key="job.name">
+                <b-row
+                  v-for="job in event.jobs"
+                  :key="job.name"
+                  class="pb-5"
+                >
                   <b-col cols="12">
                     <h5>
-                      {{ job.name }} <b-icon v-if="job.description !== undefined" v-b-tooltip="job.description" icon="info-circle" font-scale=".75" />
+                      {{ job.name }} <b-icon
+                        v-if="job.description !== undefined"
+                        v-b-tooltip="job.description"
+                        icon="info-circle"
+                        font-scale=".75"
+                      />
                     </h5>
 
                     <b-row v-if="Array.isArray(job.skills)">
@@ -340,20 +429,26 @@
                       </b-col>
                     </b-row>
 
-                    <b-row align-v="center" align-h="center">
+                    <b-row
+                      align-v="center"
+                      align-h="center"
+                    >
                       <b-col cols="10">
-                        <b-progress height="2rem" :max="job.slots.max">
+                        <b-progress
+                          height="2rem"
+                          :max="job.slots.max"
+                        >
                           <b-progress-bar
                             variant="success"
                             :value="job.slots.current"
                             :label="getVolunteerGoalCurrentLabel(job.slots.current, job.slots.max)"
-                          ></b-progress-bar>
+                          />
 
                           <b-progress-bar
                             variant="danger"
                             :value="job.slots.max"
                             :label="getVolunteerGoalTargetLabel(job.slots.current, job.slots.max)"
-                          ></b-progress-bar>
+                          />
                         </b-progress>
                       </b-col>
 
@@ -402,7 +497,7 @@
           <b-col cols="12">
             <h5>
               Please confirm your registration:
-              <br /><br />
+              <br><br>
               Role: <strong>{{ eventJobName }}</strong>
             </h5>
           </b-col>
@@ -410,10 +505,17 @@
       </b-container>
     </b-modal>
 
-    <b-modal v-model="donationStatusModal" size="lg" hide-footer>
+    <b-modal
+      v-model="donationStatusModal"
+      size="lg"
+      hide-footer
+    >
       <b-container>
         <b-row>
-          <b-col cols="12" style="text-align: center">
+          <b-col
+            cols="12"
+            style="text-align: center"
+          >
             <h1
               :style="donationStatus.success ? 'color: green;' : 'color: red'"
             >
@@ -432,8 +534,8 @@
             <h2 style="text-align: center">
               {{
                 donationStatus.success
-                ? 'Thank you for your donation!'
-                : 'It seems there was a problem with your transaction.'
+                  ? 'Thank you for your donation!'
+                  : 'It seems there was a problem with your transaction.'
               }}
             </h2>
           </b-col>
@@ -480,17 +582,6 @@ export default {
       unjoinEventModal: false,
       confirmEventVolunteerModal: false,
       eventJobName: null
-    }
-  },
-  async created () {
-    if (this.user !== null) {
-      await this.getEventVolunteer()
-    }
-
-    this.getEvent()
-
-    if (this.hasDonationStatus) {
-      this.showDonationStatusModal()
     }
   },
   computed: {
@@ -554,6 +645,17 @@ export default {
       }
 
       return true
+    }
+  },
+  async created () {
+    if (this.user !== null) {
+      await this.getEventVolunteer()
+    }
+
+    this.getEvent()
+
+    if (this.hasDonationStatus) {
+      this.showDonationStatusModal()
     }
   },
   methods: {

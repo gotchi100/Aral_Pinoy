@@ -15,12 +15,22 @@
 
               <b-row>
                 <b-col cols="12">
-                  <b-tabs pills card>
-                    <b-tab title="Donated to Aral Pinoy Organization" active>
+                  <b-tabs
+                    pills
+                    card
+                  >
+                    <b-tab
+                      title="Donated to Aral Pinoy Organization"
+                      active
+                    >
                       <b-row class="my-2">
                         <b-col cols="12">
                           <b-container>
-                            <b-row class="mb-4" align-h="around" align-v="center">
+                            <b-row
+                              class="mb-4"
+                              align-h="around"
+                              align-v="center"
+                            >
                               <b-col cols="4">
                                 <b-row align-v="center">
                                   <b-col cols="3">
@@ -33,8 +43,15 @@
                                   </b-col>
 
                                   <b-col>
-                                    <select v-model="monetaryDonations.pagination.perPage" class="form-select form-select-sm" aria-label="Default select example">
-                                      <option v-for="option in pageOptions" :key="option">
+                                    <select
+                                      v-model="monetaryDonations.pagination.perPage"
+                                      class="form-select form-select-sm"
+                                      aria-label="Default select example"
+                                    >
+                                      <option
+                                        v-for="option in pageOptions"
+                                        :key="option"
+                                      >
                                         {{ option }}
                                       </option>
                                     </select>
@@ -43,19 +60,30 @@
                               </b-col>
 
                               <b-col cols="4">
-                                <b-dropdown class="w-50" size="sm" text="Filter by Status">
+                                <b-dropdown
+                                  class="w-50"
+                                  size="sm"
+                                  text="Filter by Status"
+                                >
                                   <b-dropdown-form style="width: 100%">
-                                    <div v-for="option in monetaryDonations.statusOptions" :key="option" class="form-check form-switch">
-                                      <label class="form-check-label" :for="`status-checkbox-${option}`">
+                                    <div
+                                      v-for="option in monetaryDonations.statusOptions"
+                                      :key="option"
+                                      class="form-check form-switch"
+                                    >
+                                      <label
+                                        class="form-check-label"
+                                        :for="`status-checkbox-${option}`"
+                                      >
                                         {{ option.toUpperCase() }}
                                       </label>
 
                                       <input
                                         :id="`status-checkbox-${option}`"
+                                        v-model="monetaryDonations.filters.statuses"
                                         class="form-check-input"
                                         type="checkbox"
                                         :value="option"
-                                        v-model="monetaryDonations.filters.statuses"
                                       >
                                     </div>
                                   </b-dropdown-form>
@@ -133,7 +161,10 @@
                       </b-row>
 
                       <b-row class="pt-4 justify-content-md-center">
-                        <b-col cols="6" class="my-1">
+                        <b-col
+                          cols="6"
+                          class="my-1"
+                        >
                           <b-pagination
                             v-model="monetaryDonations.pagination.currentPage"
                             :total-rows="monetaryDonations.total"
@@ -141,7 +172,7 @@
                             align="fill"
                             size="sm"
                             class="my-0"
-                          ></b-pagination>
+                          />
                         </b-col>
                       </b-row>
                     </b-tab>
@@ -150,7 +181,11 @@
                       <b-row class="my-2">
                         <b-col cols="12">
                           <b-container>
-                            <b-row class="mb-4" align-h="around" align-v="center">
+                            <b-row
+                              class="mb-4"
+                              align-h="around"
+                              align-v="center"
+                            >
                               <b-col cols="4">
                                 <b-row align-v="center">
                                   <b-col cols="3">
@@ -163,8 +198,15 @@
                                   </b-col>
 
                                   <b-col>
-                                    <select v-model="events.pagination.perPage" class="form-select form-select-sm" aria-label="Default select example">
-                                      <option v-for="option in pageOptions" :key="option">
+                                    <select
+                                      v-model="events.pagination.perPage"
+                                      class="form-select form-select-sm"
+                                      aria-label="Default select example"
+                                    >
+                                      <option
+                                        v-for="option in pageOptions"
+                                        :key="option"
+                                      >
                                         {{ option }}
                                       </option>
                                     </select>
@@ -232,7 +274,10 @@
                       />
 
                       <b-row class="pt-4 justify-content-md-center">
-                        <b-col cols="6" class="my-1">
+                        <b-col
+                          cols="6"
+                          class="my-1"
+                        >
                           <b-pagination
                             v-model="events.pagination.currentPage"
                             :total-rows="events.total"
@@ -240,7 +285,7 @@
                             align="fill"
                             size="sm"
                             class="my-0"
-                          ></b-pagination>
+                          />
                         </b-col>
                       </b-row>
                     </b-tab>
@@ -322,12 +367,6 @@ export default {
       }
     }
   },
-  created () {
-    const authHeader = `Bearer ${this.token}`
-
-    eventRepository.setAuthorizationHeader(authHeader)
-    monetaryDonationRepository.setAuthorizationHeader(authHeader)
-  },
   computed: {
     ...mapGetters(['token']),
     eventsPageOffset () {
@@ -336,6 +375,21 @@ export default {
     monetaryDonationsPageOffset () {
       return (this.monetaryDonations.pagination.currentPage - 1) * this.monetaryDonations.pagination.perPage
     }
+  },
+  watch: {
+    'monetaryDonations.filters.statuses' (val) {
+      if (val.length === 0) {
+        return
+      }
+
+      this.$refs.monetaryDonations.refresh()
+    }
+  },
+  created () {
+    const authHeader = `Bearer ${this.token}`
+
+    eventRepository.setAuthorizationHeader(authHeader)
+    monetaryDonationRepository.setAuthorizationHeader(authHeader)
   },
   methods: {
     async getEvents (ctx) {
@@ -399,15 +453,6 @@ export default {
     },
     getValueFromPath (object, path, defaultValue) {
       return get(object, path, defaultValue)
-    }
-  },
-  watch: {
-    'monetaryDonations.filters.statuses' (val) {
-      if (val.length === 0) {
-        return
-      }
-
-      this.$refs.monetaryDonations.refresh()
     }
   }
 }

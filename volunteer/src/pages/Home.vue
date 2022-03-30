@@ -1,11 +1,13 @@
 <template>
   <div style="background-color: white">
     <div class="wp-block-cover is-style-bottom-wave">
-
       <div class="bg">
-      <div class="wp-block-cover__inner-container">
+        <div class="wp-block-cover__inner-container">
           <div class="image">
-            <img :src="logo" style="width: 420px; height: 240px">
+            <img
+              :src="logo"
+              style="width: 420px; height: 240px"
+            >
           </div>
         </div>
       </div>
@@ -16,8 +18,8 @@
         <p>Featured</p>
 
         <b-carousel
-          class="mb-5"
           v-model="slide"
+          class="mb-5"
           :interval="10000"
           controls
           indicators
@@ -34,16 +36,28 @@
         </b-carousel>
 
         <b-row class="text-start">
-          <b-col class="mb-3" cols="12">
-            <b-skeleton v-if="sliding" type="input" />
+          <b-col
+            class="mb-3"
+            cols="12"
+          >
+            <b-skeleton
+              v-if="sliding"
+              type="input"
+            />
 
-            <h3 v-else style="font-family:'Bebas Neue', cursive;">
+            <h3
+              v-else
+              style="font-family:'Bebas Neue', cursive;"
+            >
               {{ carouselImages[slide].title }}
             </h3>
           </b-col>
 
           <b-col cols="12">
-            <b-skeleton v-if="sliding" type="input" />
+            <b-skeleton
+              v-if="sliding"
+              type="input"
+            />
 
             <h5 v-else>
               {{ carouselImages[slide].caption }}
@@ -56,16 +70,23 @@
     <div class="wp-block-cover is-style-bottom-wave">
       <div class="events">
         <b-container>
-          <p class="text" id="events">
+          <p
+            id="events"
+            class="text"
+          >
             Events
           </p>
 
           <b-row>
             <template v-if="isLoadingEvents">
-              <b-col v-for="index in [0, 1, 2]" :key="index" cols="12" md="4">
+              <b-col
+                v-for="index in [0, 1, 2]"
+                :key="index"
+                cols="12"
+                md="4"
+              >
                 <b-card no-body>
-                  <b-skeleton-img height="350px">
-                  </b-skeleton-img>
+                  <b-skeleton-img height="350px" />
                 </b-card>
               </b-col>
             </template>
@@ -95,18 +116,25 @@
                   <b-card-text v-if="event.description !== undefined">
                     {{
                       event.description.length > 175
-                      ? `${event.description.substring(0, 175)}...`
-                      : event.description
+                        ? `${event.description.substring(0, 175)}...`
+                        : event.description
                     }}
                   </b-card-text>
 
                   <b-row style="text-align: left">
-                    <b-col v-if="event.location !== undefined" class="pb-2" cols="12">
-                      <b-icon icon="geo-alt"></b-icon> {{ event.location.name }}
+                    <b-col
+                      v-if="event.location !== undefined"
+                      class="pb-2"
+                      cols="12"
+                    >
+                      <b-icon icon="geo-alt" /> {{ event.location.name }}
                     </b-col>
 
-                    <b-col class="pb-2" cols="12">
-                      <b-icon icon="calendar"></b-icon>
+                    <b-col
+                      class="pb-2"
+                      cols="12"
+                    >
+                      <b-icon icon="calendar" />
                       {{
                         new Date(event.date.start).toLocaleString('en-us', {
                           dateStyle: 'short',
@@ -116,53 +144,65 @@
                       -
                       {{
                         isSameDay(event.date.start, event.date.end)
-                        ? new Date(event.date.end).toLocaleString('en-us', {
+                          ? new Date(event.date.end).toLocaleString('en-us', {
                             timeStyle: 'short'
                           })
-                        : new Date(event.date.end).toLocaleString('en-us', {
+                          : new Date(event.date.end).toLocaleString('en-us', {
                             dateStyle: 'short',
                             timeStyle: 'short'
                           })
                       }}
                     </b-col>
 
-                    <b-col class="pb-3" cols="12">
-                      <b-icon icon="clock"></b-icon> {{ getDurationBetweenDates(event.date.start, event.date.end) }}
+                    <b-col
+                      class="pb-3"
+                      cols="12"
+                    >
+                      <b-icon icon="clock" /> {{ getDurationBetweenDates(event.date.start, event.date.end) }}
                     </b-col>
                   </b-row>
 
                   <b-row v-if="event.goals.monetaryDonation.target !== 0">
                     <b-col cols="12">
-                      <b-progress height="1.5rem" :max="event.goals.monetaryDonation.target">
+                      <b-progress
+                        height="1.5rem"
+                        :max="event.goals.monetaryDonation.target"
+                      >
                         <b-progress-bar
                           variant="success"
                           :value="event.goals.monetaryDonation.current"
                           :label="getMonetaryDonationCurrentLabel(event.goals.monetaryDonation)"
-                        ></b-progress-bar>
+                        />
 
                         <b-progress-bar
                           variant="danger"
                           :value="hasGoalReached(event.goals.monetaryDonation) ? 0 : event.goals.monetaryDonation.target"
                           :label="getMonetaryDonationTargetLabel(event.goals.monetaryDonation)"
-                        ></b-progress-bar>
+                        />
                       </b-progress>
                     </b-col>
                   </b-row>
 
                   <b-row v-if="event.goals.numVolunteers.target !== 0">
-                    <b-col class="pt-2" cols="12">
-                      <b-progress height="1.5rem" :max="event.goals.numVolunteers.target">
+                    <b-col
+                      class="pt-2"
+                      cols="12"
+                    >
+                      <b-progress
+                        height="1.5rem"
+                        :max="event.goals.numVolunteers.target"
+                      >
                         <b-progress-bar
                           variant="success"
                           :value="event.goals.numVolunteers.current"
                           :label="getVolunteerGoalCurrentLabel(event.goals.numVolunteers)"
-                        ></b-progress-bar>
+                        />
 
                         <b-progress-bar
                           variant="danger"
                           :value="hasGoalReached(event.goals.numVolunteers) ? 0 : event.goals.numVolunteers.target"
                           :label="getVolunteerGoalTargetLabel(event.goals.numVolunteers)"
-                        ></b-progress-bar>
+                        />
                       </b-progress>
                     </b-col>
                   </b-row>
@@ -171,20 +211,28 @@
             </template>
           </b-row>
 
-          <p v-if="hasMoreEvents" class="more">
+          <p
+            v-if="hasMoreEvents"
+            class="more"
+          >
             <b-link to="/events">
-              View More Events <b-icon icon="chevron-right"></b-icon>
+              View More Events <b-icon icon="chevron-right" />
             </b-link>
           </p>
         </b-container>
 
-        <br v-for="i in Array(15)" :key="i" />
+        <br
+          v-for="i in Array(15)"
+          :key="i"
+        >
       </div>
     </div>
 
     <div class="about">
       <b-container class="bv-example-row">
-        <p id="about">About Us</p>
+        <p id="about">
+          About Us
+        </p>
         <b-row>
           <b-col>
             <div class="info">
@@ -214,14 +262,27 @@
     </div>
     <Footer />
     <transition name="fade">
-    <div id="pagetop" class="fixed right-0 bottom-0" v-show="scY > 300" @click="toTop">
-      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
-           stroke="#4a5568"
-           stroke-width="1" stroke-linecap="square" stroke-linejoin="arcs">
-        <path d="M18 15l-6-6-6 6"/>
-      </svg>
-    </div>
-  </transition>
+      <div
+        v-show="scY > 300"
+        id="pagetop"
+        class="fixed right-0 bottom-0"
+        @click="toTop"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="48"
+          height="48"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#4a5568"
+          stroke-width="1"
+          stroke-linecap="square"
+          stroke-linejoin="arcs"
+        >
+          <path d="M18 15l-6-6-6 6" />
+        </svg>
+      </div>
+    </transition>
   </div>
 </template>
 

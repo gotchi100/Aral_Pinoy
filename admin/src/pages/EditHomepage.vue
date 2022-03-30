@@ -2,26 +2,30 @@
   <div style="background-color: white">
     <div class="wp-block-cover alignfull has-background-dim-40 has-background-dim is-style-bottom-wave">
       <div class="bg">
-      <div class="wp-block-cover__inner-container">
+        <div class="wp-block-cover__inner-container">
           <div class="image">
-            <img :src="logo" style="width: 420px; height: 240px">
+            <img
+              :src="logo"
+              style="width: 420px; height: 240px"
+            >
           </div>
         </div>
       </div>
     </div>
     <div class="featured mb-5">
       <b-container>
-        <p>Featured&nbsp;&nbsp;
+        <p>
+          Featured&nbsp;&nbsp;
           <b-icon
-            @click="showModal = !showModal"
             :icon="isAboutTextEditable2 ? 'file-check' : 'pencil'"
             font-scale="0.75"
-          ></b-icon>
+            @click="showModal = !showModal"
+          />
         </p>
 
         <b-carousel
-          class="mb-5"
           v-model="slide"
+          class="mb-5"
           :interval="10000"
           controls
           indicators
@@ -40,16 +44,28 @@
         </b-carousel>
 
         <b-row class="text-start">
-          <b-col class="mb-3" cols="12">
-            <b-skeleton v-if="sliding" type="input" />
+          <b-col
+            class="mb-3"
+            cols="12"
+          >
+            <b-skeleton
+              v-if="sliding"
+              type="input"
+            />
 
-            <h3 v-else style="font-family:'Bebas Neue', cursive;">
+            <h3
+              v-else
+              style="font-family:'Bebas Neue', cursive;"
+            >
               {{ carouselImages[slide].title }}
             </h3>
           </b-col>
 
           <b-col cols="12">
-            <b-skeleton v-if="sliding" type="input" />
+            <b-skeleton
+              v-if="sliding"
+              type="input"
+            />
 
             <h5 v-else>
               {{ carouselImages[slide].caption }}
@@ -59,144 +75,185 @@
       </b-container>
     </div>
     <div class="wp-block-cover alignfull has-background-dim-40 has-background-dim is-style-bottom-wave">
-    <div class="events">
-      <b-container>
-        <p class="text" id="events">
-          Events
-        </p>
-        <b-card-group columns>
-           <b-row>
-            <b-col>
-              <b-card
-          title="Card Title"
-          img-src="https://picsum.photos/600/300/?image=25"
-          img-alt="Image"
-          img-top
-          tag="article"
-          style="max-width: 24rem;"
-          class="mb-2"
-        >
-          <b-card-text>
-            Some quick example text to build on the card title and make up the bulk of the card's.
-          </b-card-text>
-           <b-icon icon="geo-alt"></b-icon><br>
-           <b-icon icon="calendar"></b-icon><br>
-           <b-icon icon="clock"></b-icon><br>
-          <b-progress :value="value" class="mb-3"></b-progress>
-          <b-progress :value="value" class="mb-3"></b-progress>
-          </b-card>
-            </b-col>
-            <b-col>
-          <b-card
-          title="Card Title"
-          img-src="https://picsum.photos/600/300/?image=25"
-          img-alt="Image"
-          img-top
-          tag="article"
-          style="max-width: 24rem;"
-          class="mb-2"
-        >
-          <b-card-text>
-            Some quick example text to build on the card title and make up the bulk of the card's content.
-          </b-card-text>
-          <b-icon icon="geo-alt"></b-icon><br>
-           <b-icon icon="calendar"></b-icon><br>
-           <b-icon icon="clock"></b-icon><br>
-          <b-progress :value="value" class="mb-3"></b-progress>
-          <b-progress :value="value" class="mb-3"></b-progress>
-          </b-card>
-            </b-col>
-            <b-col>
-          <b-card
-          title="Card Title"
-          img-src="https://picsum.photos/600/300/?image=25"
-          img-alt="Image"
-          img-top
-          tag="article"
-          style="max-width: 24rem;"
-          class="mb-2"
-        >
-          <b-card-text>
-            Some quick example text to build on the card title and make up the bulk of the card's content.
-          </b-card-text>
-          <b-icon icon="geo-alt"></b-icon><br>
-           <b-icon icon="calendar"></b-icon><br>
-           <b-icon icon="clock"></b-icon><br>
-          <b-progress :value="value" class="mb-3"></b-progress>
-          <b-progress :value="value" class="mb-3"></b-progress>
-          </b-card>
-            </b-col>
-           </b-row>
-        </b-card-group><br>
-         <b-card-group columns>
-           <b-row>
-            <b-col>
-              <b-card
-          title="Card Title"
-          img-src="https://picsum.photos/600/300/?image=25"
-          img-alt="Image"
-          img-top
-          tag="article"
-          style="max-width: 24rem;"
-          class="mb-2"
-        >
-          <b-card-text>
-            Some quick example text to build on the card title and make up the bulk of the card's content.
-          </b-card-text>
-          <b-icon icon="geo-alt"></b-icon><br>
-           <b-icon icon="calendar"></b-icon><br>
-           <b-icon icon="clock"></b-icon><br>
-          <b-progress :value="value" class="mb-3"></b-progress>
-          <b-progress :value="value" class="mb-3"></b-progress>
-          </b-card>
-            </b-col>
-            <b-col>
-          <b-card
-          title="Card Title"
-          img-src="https://picsum.photos/600/300/?image=25"
-          img-alt="Image"
-          img-top
-          tag="article"
-          style="max-width: 24rem;"
-          class="mb-2"
-        >
-          <b-card-text>
-            Some quick example text to build on the card title and make up the bulk of the card's content.
-          </b-card-text>
-          <b-icon icon="geo-alt"></b-icon><br>
-           <b-icon icon="calendar"></b-icon><br>
-           <b-icon icon="clock"></b-icon><br>
-          <b-progress :value="value" class="mb-3"></b-progress>
-          <b-progress :value="value" class="mb-3"></b-progress>
-          </b-card>
-            </b-col>
-            <b-col>
-          <b-card
-          title="Card Title"
-          img-src="https://picsum.photos/600/300/?image=25"
-          img-alt="Image"
-          img-top
-          tag="article"
-          style="max-width: 24rem;"
-          class="mb-2"
-        >
-          <b-card-text>
-            Some quick example text to build on the card title and make up the bulk of the card's content.
-          </b-card-text>
-          <b-icon icon="geo-alt"></b-icon><br>
-           <b-icon icon="calendar"></b-icon><br>
-           <b-icon icon="clock"></b-icon><br>
-          <b-progress :value="value" class="mb-3"></b-progress>
-          <b-progress :value="value" class="mb-3"></b-progress>
-          </b-card>
-            </b-col>
-           </b-row>
-        </b-card-group>
-        <p class="more"> <b-link to="/events">
-          View More Events</b-link>
-          <b-icon icon="chevron-right"></b-icon>
-        </p>
-      </b-container>
+      <div class="events">
+        <b-container>
+          <p
+            id="events"
+            class="text"
+          >
+            Events
+          </p>
+          <b-card-group columns>
+            <b-row>
+              <b-col>
+                <b-card
+                  title="Card Title"
+                  img-src="https://picsum.photos/600/300/?image=25"
+                  img-alt="Image"
+                  img-top
+                  tag="article"
+                  style="max-width: 24rem;"
+                  class="mb-2"
+                >
+                  <b-card-text>
+                    Some quick example text to build on the card title and make up the bulk of the card's.
+                  </b-card-text>
+                  <b-icon icon="geo-alt" /><br>
+                  <b-icon icon="calendar" /><br>
+                  <b-icon icon="clock" /><br>
+                  <b-progress
+                    :value="value"
+                    class="mb-3"
+                  />
+                  <b-progress
+                    :value="value"
+                    class="mb-3"
+                  />
+                </b-card>
+              </b-col>
+              <b-col>
+                <b-card
+                  title="Card Title"
+                  img-src="https://picsum.photos/600/300/?image=25"
+                  img-alt="Image"
+                  img-top
+                  tag="article"
+                  style="max-width: 24rem;"
+                  class="mb-2"
+                >
+                  <b-card-text>
+                    Some quick example text to build on the card title and make up the bulk of the card's content.
+                  </b-card-text>
+                  <b-icon icon="geo-alt" /><br>
+                  <b-icon icon="calendar" /><br>
+                  <b-icon icon="clock" /><br>
+                  <b-progress
+                    :value="value"
+                    class="mb-3"
+                  />
+                  <b-progress
+                    :value="value"
+                    class="mb-3"
+                  />
+                </b-card>
+              </b-col>
+              <b-col>
+                <b-card
+                  title="Card Title"
+                  img-src="https://picsum.photos/600/300/?image=25"
+                  img-alt="Image"
+                  img-top
+                  tag="article"
+                  style="max-width: 24rem;"
+                  class="mb-2"
+                >
+                  <b-card-text>
+                    Some quick example text to build on the card title and make up the bulk of the card's content.
+                  </b-card-text>
+                  <b-icon icon="geo-alt" /><br>
+                  <b-icon icon="calendar" /><br>
+                  <b-icon icon="clock" /><br>
+                  <b-progress
+                    :value="value"
+                    class="mb-3"
+                  />
+                  <b-progress
+                    :value="value"
+                    class="mb-3"
+                  />
+                </b-card>
+              </b-col>
+            </b-row>
+          </b-card-group><br>
+          <b-card-group columns>
+            <b-row>
+              <b-col>
+                <b-card
+                  title="Card Title"
+                  img-src="https://picsum.photos/600/300/?image=25"
+                  img-alt="Image"
+                  img-top
+                  tag="article"
+                  style="max-width: 24rem;"
+                  class="mb-2"
+                >
+                  <b-card-text>
+                    Some quick example text to build on the card title and make up the bulk of the card's content.
+                  </b-card-text>
+                  <b-icon icon="geo-alt" /><br>
+                  <b-icon icon="calendar" /><br>
+                  <b-icon icon="clock" /><br>
+                  <b-progress
+                    :value="value"
+                    class="mb-3"
+                  />
+                  <b-progress
+                    :value="value"
+                    class="mb-3"
+                  />
+                </b-card>
+              </b-col>
+              <b-col>
+                <b-card
+                  title="Card Title"
+                  img-src="https://picsum.photos/600/300/?image=25"
+                  img-alt="Image"
+                  img-top
+                  tag="article"
+                  style="max-width: 24rem;"
+                  class="mb-2"
+                >
+                  <b-card-text>
+                    Some quick example text to build on the card title and make up the bulk of the card's content.
+                  </b-card-text>
+                  <b-icon icon="geo-alt" /><br>
+                  <b-icon icon="calendar" /><br>
+                  <b-icon icon="clock" /><br>
+                  <b-progress
+                    :value="value"
+                    class="mb-3"
+                  />
+                  <b-progress
+                    :value="value"
+                    class="mb-3"
+                  />
+                </b-card>
+              </b-col>
+              <b-col>
+                <b-card
+                  title="Card Title"
+                  img-src="https://picsum.photos/600/300/?image=25"
+                  img-alt="Image"
+                  img-top
+                  tag="article"
+                  style="max-width: 24rem;"
+                  class="mb-2"
+                >
+                  <b-card-text>
+                    Some quick example text to build on the card title and make up the bulk of the card's content.
+                  </b-card-text>
+                  <b-icon icon="geo-alt" /><br>
+                  <b-icon icon="calendar" /><br>
+                  <b-icon icon="clock" /><br>
+                  <b-progress
+                    :value="value"
+                    class="mb-3"
+                  />
+                  <b-progress
+                    :value="value"
+                    class="mb-3"
+                  />
+                </b-card>
+              </b-col>
+            </b-row>
+          </b-card-group>
+          <p class="more">
+            <b-link to="/events">
+              View More Events
+            </b-link>
+            <b-icon icon="chevron-right" />
+          </p>
+        </b-container>
       </div>
     </div>
     <div class="about">
@@ -204,15 +261,18 @@
         <p id="about">
           <span>About Us</span>&nbsp;
           <b-icon
-            @click="isAboutTextEditable = !isAboutTextEditable"
             :icon="isAboutTextEditable ? 'file-check' : 'pencil'"
             font-scale="0.75"
-          ></b-icon>
+            @click="isAboutTextEditable = !isAboutTextEditable"
+          />
         </p>
         <b-row>
           <b-col>
             <div class="info">
-              <div v-if="!isAboutTextEditable" style="white-space: pre">
+              <div
+                v-if="!isAboutTextEditable"
+                style="white-space: pre"
+              >
                 {{ aboutText }}
               </div>
               <b-form-textarea
@@ -220,68 +280,100 @@
                 v-model="aboutText"
                 rows="7"
                 max-rows="7"
-              ></b-form-textarea>
+              />
             </div>
           </b-col>
         </b-row>
       </b-container>
-      <b-modal v-model="showModal" size="xl">
-        <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 100%; border-radius: 20px; margin-top: 40px;">
+      <b-modal
+        v-model="showModal"
+        size="xl"
+      >
+        <b-card
+          class="card"
+          style="display: inline-block; height: 100%; overflow: auto; width: 100%; border-radius: 20px; margin-top: 40px;"
+        >
           <b-container fluid>
-              <h1 style="font-family:'Bebas Neue', cursive;">
-                  Select events to be featured
-              </h1>
-            <b-form-group label="Events:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
-                <b-form-tags id="tags-with-dropdown" v-model="values" no-outer-focus class="mb-2" style="text-align:center;">
-                  <template v-slot="{ tags, disabled, addTag, removeTag }" style="display: inline-block; height: 100%; overflow: auto;">
-                    <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
-                      <li v-for="tag in tags" :key="tag" class="list-inline-item">
-                        <b-form-tag
-                          @remove="removeTag(tag)"
-                          :title="tag"
-                          :disabled="disabled"
-                          variant="info"
-                        >{{ tag }}</b-form-tag>
-                      </li>
-                    </ul>
-
-                    <b-dropdown size="sm" variant="outline-secondary" block menu-class="w-100">
-                      <template #button-content>
-                        <b-icon icon="tag-fill"></b-icon> Events Provided
-                      </template>
-                      <b-dropdown-form @submit.stop.prevent="() => {}">
-                        <b-form-group
-                          label="Search Events"
-                          label-for="tag-search-input"
-                          label-cols-md="auto"
-                          class="mb-0"
-                          label-size="sm"
-                          :description="searchDesc"
-                          :disabled="disabled"
-                        >
-                          <b-form-input
-                            v-model="search"
-                            id="tag-search-input"
-                            type="search"
-                            size="sm"
-                            autocomplete="off"
-                            ></b-form-input>
-                        </b-form-group>
-                      </b-dropdown-form>
-                      <b-dropdown-divider></b-dropdown-divider>
-                      <b-dropdown-item-button
-                        v-for="options in availableOptions"
-                        :key="options"
-                        @click="onOptionClick({ options, addTag })"
+            <h1 style="font-family:'Bebas Neue', cursive;">
+              Select events to be featured
+            </h1>
+            <b-form-group
+              label="Events:"
+              style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;"
+            >
+              <b-form-tags
+                id="tags-with-dropdown"
+                v-model="values"
+                no-outer-focus
+                class="mb-2"
+                style="text-align:center;"
+              >
+                <template
+                  v-slot="{ tags, disabled, addTag, removeTag }"
+                  style="display: inline-block; height: 100%; overflow: auto;"
+                >
+                  <ul
+                    v-if="tags.length > 0"
+                    class="list-inline d-inline-block mb-2"
+                  >
+                    <li
+                      v-for="tag in tags"
+                      :key="tag"
+                      class="list-inline-item"
+                    >
+                      <b-form-tag
+                        :title="tag"
+                        :disabled="disabled"
+                        variant="info"
+                        @remove="removeTag(tag)"
                       >
-                        {{ options }}
-                      </b-dropdown-item-button>
-                      <b-dropdown-text v-if="availableOptions.length === 0">
-                        There are no tags available to select
-                      </b-dropdown-text>
-                    </b-dropdown>
-                  </template>
-                </b-form-tags>
+                        {{ tag }}
+                      </b-form-tag>
+                    </li>
+                  </ul>
+
+                  <b-dropdown
+                    size="sm"
+                    variant="outline-secondary"
+                    block
+                    menu-class="w-100"
+                  >
+                    <template #button-content>
+                      <b-icon icon="tag-fill" /> Events Provided
+                    </template>
+                    <b-dropdown-form @submit.stop.prevent="() => {}">
+                      <b-form-group
+                        label="Search Events"
+                        label-for="tag-search-input"
+                        label-cols-md="auto"
+                        class="mb-0"
+                        label-size="sm"
+                        :description="searchDesc"
+                        :disabled="disabled"
+                      >
+                        <b-form-input
+                          id="tag-search-input"
+                          v-model="search"
+                          type="search"
+                          size="sm"
+                          autocomplete="off"
+                        />
+                      </b-form-group>
+                    </b-dropdown-form>
+                    <b-dropdown-divider />
+                    <b-dropdown-item-button
+                      v-for="filteredOptions in availableOptions"
+                      :key="filteredOptions"
+                      @click="onOptionClick({ filteredOptions, addTag })"
+                    >
+                      {{ filteredOptions }}
+                    </b-dropdown-item-button>
+                    <b-dropdown-text v-if="filteredOptions.length === 0">
+                      There are no tags available to select
+                    </b-dropdown-text>
+                  </b-dropdown>
+                </template>
+              </b-form-tags>
             </b-form-group>
           </b-container>
         </b-card>
@@ -335,18 +427,6 @@ export default {
       values: []
     }
   },
-  methods: {
-    onSlideStart (slide) {
-      this.sliding = true
-    },
-    onSlideEnd (slide) {
-      this.sliding = false
-    },
-    onOptionClick ({ options, addTag }) {
-      addTag(options)
-      this.search = ''
-    }
-  },
   computed: {
     criteria () {
       // Compute the search criteria
@@ -373,6 +453,18 @@ export default {
   watch: {
     aboutText (val) {
       console.log(val)
+    }
+  },
+  methods: {
+    onSlideStart (slide) {
+      this.sliding = true
+    },
+    onSlideEnd (slide) {
+      this.sliding = false
+    },
+    onOptionClick ({ options, addTag }) {
+      addTag(options)
+      this.search = ''
     }
   }
 }

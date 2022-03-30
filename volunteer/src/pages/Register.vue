@@ -1,27 +1,38 @@
 <template>
   <div>
     <div class="py-5">
-      <img :src="logo" style="width: 320px; height: 150px">
+      <img
+        :src="logo"
+        style="width: 320px; height: 150px"
+      >
     </div>
 
-    <b-card v-if="step === 0" class="mb-5" bg-variant="light" style="display: inline-block; max-height:75rem; width: 415px; border-radius: 20px;">
+    <b-card
+      v-if="step === 0"
+      class="mb-5"
+      bg-variant="light"
+      style="display: inline-block; max-height:75rem; width: 415px; border-radius: 20px;"
+    >
       <b-container fluid>
         <validation-observer v-slot="{ invalid }">
           <b-row class="my-1">
-            <label class="lname" for="input-small">Last Name</label>
+            <label
+              class="lname"
+              for="input-small"
+            >Last Name</label>
             <b-col>
               <validation-provider
+                v-slot="validationContext"
                 :rules="{
                   required: true,
                   regex: regexRules.filipinoCharacters
                 }"
-                v-slot="validationContext"
               >
                 <b-form-input
                   v-model="user.lastName"
                   :state="getValidationState(validationContext)"
                   aria-describedby="input-user-lastname-feedback"
-                ></b-form-input>
+                />
 
                 <b-form-invalid-feedback
                   v-if="validationContext.failedRules.regex !== undefined"
@@ -30,7 +41,10 @@
                   This field does not have a valid format
                 </b-form-invalid-feedback>
 
-                <b-form-invalid-feedback v-else id="input-user-lastname-feedback">
+                <b-form-invalid-feedback
+                  v-else
+                  id="input-user-lastname-feedback"
+                >
                   {{ validationContext.errors[0] }}
                 </b-form-invalid-feedback>
               </validation-provider>
@@ -38,21 +52,24 @@
           </b-row>
 
           <b-row class="my-1">
-            <label class="fname" for="input-user-firstname">First Name</label>
+            <label
+              class="fname"
+              for="input-user-firstname"
+            >First Name</label>
             <b-col>
               <validation-provider
+                v-slot="validationContext"
                 :rules="{
                   required: true,
                   regex: regexRules.filipinoCharacters
                 }"
-                v-slot="validationContext"
               >
                 <b-form-input
-                  v-model="user.firstName"
                   id="input-user-firstname"
+                  v-model="user.firstName"
                   :state="getValidationState(validationContext)"
                   aria-describedby="input-user-firstname-feedback"
-                ></b-form-input>
+                />
 
                 <b-form-invalid-feedback
                   v-if="validationContext.failedRules.regex !== undefined"
@@ -61,7 +78,10 @@
                   This field does not have a valid format
                 </b-form-invalid-feedback>
 
-                <b-form-invalid-feedback v-else id="input-user-firstname-feedback">
+                <b-form-invalid-feedback
+                  v-else
+                  id="input-user-firstname-feedback"
+                >
                   {{ validationContext.errors[0] }}
                 </b-form-invalid-feedback>
               </validation-provider>
@@ -69,39 +89,55 @@
           </b-row>
 
           <b-row class="my-1">
-            <label class="gender" for="input-small">Gender</label>
+            <label
+              class="gender"
+              for="input-small"
+            >Gender</label>
             <b-col>
-              <b-form-select v-model="user.gender" :options="options" style="width: 100%"></b-form-select>
+              <b-form-select
+                v-model="user.gender"
+                :options="options"
+                style="width: 100%"
+              />
             </b-col>
           </b-row>
 
           <b-row class="my-1">
-            <label class="birthdate" for="input-small">Date of Birth</label>
+            <label
+              class="birthdate"
+              for="input-small"
+            >Date of Birth</label>
             <b-col>
               <b-form-datepicker
                 id="start-datepicker"
                 v-model="user.birthDate"
                 class="mb-2"
                 :max="maxBirthDate"
-              ></b-form-datepicker>
+              />
             </b-col>
           </b-row>
 
           <b-row class="my-1">
-            <label class="cnum" for="input-small">Mobile Number</label>
+            <label
+              class="cnum"
+              for="input-small"
+            >Mobile Number</label>
             <b-col>
               <validation-provider
+                v-slot="validationContext"
                 :rules="{
                   regex: regexRules.phContactNumber
                 }"
-                v-slot="validationContext"
               >
                 <b-form-input
                   v-model="user.contactNumber"
                   :state="getValidationState(validationContext)"
                   aria-describedby="input-user-contactnumber-feedback"
-                ></b-form-input>
-                <b-form-invalid-feedback v-if="!!validationContext.errors[0]" id="input-user-contactnumber-feedback">
+                />
+                <b-form-invalid-feedback
+                  v-if="!!validationContext.errors[0]"
+                  id="input-user-contactnumber-feedback"
+                >
                   This field must be a valid Philippine mobile number
                 </b-form-invalid-feedback>
               </validation-provider>
@@ -109,18 +145,23 @@
           </b-row>
 
           <b-row class="my-1">
-            <label class="homeAddress" for="input-small">Home Address</label>
+            <label
+              class="homeAddress"
+              for="input-small"
+            >Home Address</label>
             <b-col>
               <validation-provider
-                :rules="{ max: 256 }"
                 v-slot="validationContext"
+                :rules="{ max: 256 }"
               >
                 <b-form-input
                   v-model="user.address.home"
                   :state="getValidationState(validationContext)"
                   aria-describedby="input-user-home-address-feedback"
-                ></b-form-input>
-                <b-form-invalid-feedback id="input-user-home-address-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                />
+                <b-form-invalid-feedback id="input-user-home-address-feedback">
+                  {{ validationContext.errors[0] }}
+                </b-form-invalid-feedback>
               </validation-provider>
             </b-col>
           </b-row>
@@ -138,77 +179,100 @@
 
         <div class="col-md-12">
           <p class="signin">
-            Already have an account? <b-link to="login">Sign in</b-link>
+            Already have an account? <b-link to="login">
+              Sign in
+            </b-link>
           </p>
         </div>
       </b-container>
     </b-card>
 
-    <b-card v-if="step === 1" class="mb-5" bg-variant="light" style="display: inline-block; max-height:75rem; width: 415px; border-radius: 20px;">
+    <b-card
+      v-if="step === 1"
+      class="mb-5"
+      bg-variant="light"
+      style="display: inline-block; max-height:75rem; width: 415px; border-radius: 20px;"
+    >
       <b-container fluid>
         <validation-observer v-slot="{ invalid }">
           <b-row class="my-1">
-            <label class="email" for="input-small">Email Address</label>
+            <label
+              class="email"
+              for="input-small"
+            >Email Address</label>
             <b-col>
               <validation-provider
+                v-slot="validationContext"
                 :rules="{
                   required: true,
                   email: true,
                   max: 256
                 }"
-                v-slot="validationContext"
               >
                 <b-form-input
                   v-model="user.email"
                   :state="getValidationState(validationContext)"
                   aria-describedby="input-user-email-feedback"
-                ></b-form-input>
+                />
 
-                <b-form-invalid-feedback id="input-user-email-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                <b-form-invalid-feedback id="input-user-email-feedback">
+                  {{ validationContext.errors[0] }}
+                </b-form-invalid-feedback>
               </validation-provider>
             </b-col>
           </b-row>
 
           <b-row class="my-1">
-            <label class="password" for="input-small">Password</label>
+            <label
+              class="password"
+              for="input-small"
+            >Password</label>
             <b-col>
               <validation-provider
+                v-slot="validationContext"
                 :rules="{
                   required: true,
                   min: 8,
                   max: 64
                 }"
-                v-slot="validationContext"
               >
                 <b-form-input
                   v-model="user.password"
                   type="password"
                   :state="getValidationState(validationContext)"
                   aria-describedby="input-user-password-feedback"
-                ></b-form-input>
-                <b-form-invalid-feedback id="input-user-password-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                />
+                <b-form-invalid-feedback id="input-user-password-feedback">
+                  {{ validationContext.errors[0] }}
+                </b-form-invalid-feedback>
               </validation-provider>
             </b-col>
           </b-row>
 
           <b-row class="my-1">
-            <label class="cpassword" for="input-small">Confirm Password</label>
+            <label
+              class="cpassword"
+              for="input-small"
+            >Confirm Password</label>
             <b-col>
               <validation-provider
+                v-slot="validationContext"
                 :rules="{
                   required: true,
                   is: user.password
                 }"
-                v-slot="validationContext"
               >
                 <b-form-input
                   v-model="confirmPassword"
                   type="password"
                   :state="getValidationState(validationContext)"
                   aria-describedby="input-user-confirmpassword-feedback"
-                ></b-form-input>
+                />
 
-                <b-form-invalid-feedback v-if="validationContext.errors[0]" id="input-user-confirmpassword-feedback">
+                <b-form-invalid-feedback
+                  v-if="validationContext.errors[0]"
+                  id="input-user-confirmpassword-feedback"
+                >
                   Passwords do not match!
                 </b-form-invalid-feedback>
               </validation-provider>
@@ -239,16 +303,23 @@
               </b-button>
             </b-col>
           </b-row>
-
         </validation-observer>
       </b-container>
     </b-card>
 
-    <b-card v-if="step === 2" class="mb-5" bg-variant="light" style="display: inline-block; max-height:75rem; width: 415px; border-radius: 20px;">
+    <b-card
+      v-if="step === 2"
+      class="mb-5"
+      bg-variant="light"
+      style="display: inline-block; max-height:75rem; width: 415px; border-radius: 20px;"
+    >
       <b-container fluid>
         <b-row>
           <b-col cols="12">
-            <b-form-group label="Skills:" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+            <b-form-group
+              label="Skills:"
+              style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;"
+            >
               <b-form-tags
                 id="tags-with-dropdown"
                 class="mb-2"
@@ -258,12 +329,19 @@
                 disabled
               >
                 <template v-slot="{ tags }">
-                  <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
-                    <li v-for="tag in tags" :key="tag" class="list-inline-item">
+                  <ul
+                    v-if="tags.length > 0"
+                    class="list-inline d-inline-block mb-2"
+                  >
+                    <li
+                      v-for="tag in tags"
+                      :key="tag"
+                      class="list-inline-item"
+                    >
                       <b-form-tag
                         class="badge bg-success"
-                        @remove="removeSkill(JSON.parse(tag))"
                         variant="success"
+                        @remove="removeSkill(JSON.parse(tag))"
                       >
                         {{ JSON.parse(tag).name }}
                       </b-form-tag>
@@ -275,9 +353,14 @@
           </b-col>
 
           <b-col cols="12">
-            <b-dropdown size="sm" variant="outline-secondary" menu-class="w-100" style="width: 100%">
+            <b-dropdown
+              size="sm"
+              variant="outline-secondary"
+              menu-class="w-100"
+              style="width: 100%"
+            >
               <template #button-content>
-                <b-icon icon="tag-fill"></b-icon> Choose a skill
+                <b-icon icon="tag-fill" /> Choose a skill
               </template>
               <b-dropdown-form @submit.stop.prevent="() => {}">
                 <b-form-group
@@ -285,18 +368,18 @@
                   label-for="tag-search-input"
                   style="width: 100%"
                 >
-                    <b-form-input
-                      v-model="skillNameSearch"
-                      id="tag-search-input"
-                      type="search"
-                      autocomplete="off"
-                      @update="onSkillSearchChange"
-                      style="width: 100%"
-                    ></b-form-input>
+                  <b-form-input
+                    id="tag-search-input"
+                    v-model="skillNameSearch"
+                    type="search"
+                    autocomplete="off"
+                    style="width: 100%"
+                    @update="onSkillSearchChange"
+                  />
                 </b-form-group>
               </b-dropdown-form>
 
-              <b-dropdown-divider></b-dropdown-divider>
+              <b-dropdown-divider />
 
               <b-dropdown-item-button
                 v-for="skill in skills"
@@ -313,18 +396,34 @@
           </b-col>
         </b-row>
 
-        <br />
+        <br>
 
         <b-container class="bv-example-row">
-          <span class="text"> By clicking Register, you agree to the <a href="/#/terms-and-conditions" target="_blank">Terms and Condition</a> and <a href="/#/privacy-policy" target="_blank">Privacy Policy</a> of AralPinoy Org Inc.</span>
+          <span class="text"> By clicking Register, you agree to the <a
+            href="/#/terms-and-conditions"
+            target="_blank"
+          >Terms and Condition</a> and <a
+            href="/#/privacy-policy"
+            target="_blank"
+          >Privacy Policy</a> of AralPinoy Org Inc.</span>
           <b-row>
             <b-col>
-              <b-button @click="updateStep(-1)" pill variant="danger" style="margin-top: 15px; display: inline-block; font-size: 16px; padding: 8px; width: 152px;">
+              <b-button
+                pill
+                variant="danger"
+                style="margin-top: 15px; display: inline-block; font-size: 16px; padding: 8px; width: 152px;"
+                @click="updateStep(-1)"
+              >
                 Previous
               </b-button>
             </b-col>
             <b-col>
-              <b-button @click="register" pill variant="danger" style="margin-top: 15px; display: inline-block; font-size: 16px; padding: 8px; width: 152px;">
+              <b-button
+                pill
+                variant="danger"
+                style="margin-top: 15px; display: inline-block; font-size: 16px; padding: 8px; width: 152px;"
+                @click="register"
+              >
                 Register
               </b-button>
             </b-col>
@@ -370,11 +469,6 @@ export default {
     ValidationObserver,
     ValidationProvider
   },
-  created () {
-    if (this.skills.length === 0) {
-      this.getSkills()
-    }
-  },
   data () {
     return {
       logo,
@@ -405,6 +499,16 @@ export default {
         filipinoCharacters: /^[a-zA-Z\u00f1\u00d1 -]+$/,
         phContactNumber: /^(09|\+639)\d{9}$/
       }
+    }
+  },
+  computed: {
+    debounceGetSkills () {
+      return _.debounce(this.getSkills, 500)
+    }
+  },
+  created () {
+    if (this.skills.length === 0) {
+      this.getSkills()
     }
   },
   methods: {
@@ -471,11 +575,6 @@ export default {
       if (index !== -1) {
         this.user.skills.splice(index, 1)
       }
-    }
-  },
-  computed: {
-    debounceGetSkills () {
-      return _.debounce(this.getSkills, 500)
     }
   }
 }

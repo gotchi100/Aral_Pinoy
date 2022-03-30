@@ -1,7 +1,10 @@
 <template>
   <b-container fluid>
     <b-row>
-      <b-col class="px-0" cols="12">
+      <b-col
+        class="px-0"
+        cols="12"
+      >
         <b-card bg-variant="light">
           <FullCalendar :options="calendarOptions" />
         </b-card>

@@ -1,120 +1,148 @@
 <template>
- <div class="suggestion">
-  <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
-  <b-container fluid>
-    <!-- User Interface controls -->
-    <h1 style="font-family:'Bebas Neue', cursive;">
-        Volunteer Suggestion List
-    </h1>
-    <b-row>
-      <b-container class="bv-example-row">
+  <div class="suggestion">
+    <b-card
+      class="card"
+      style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;"
+    >
+      <b-container fluid>
+        <!-- User Interface controls -->
+        <h1 style="font-family:'Bebas Neue', cursive;">
+          Volunteer Suggestion List
+        </h1>
         <b-row>
-          <b-col>
-            <br>
+          <b-container class="bv-example-row">
             <b-row>
-                <b-col>
+              <b-col>
+                <br>
+                <b-row>
+                  <b-col>
                     <b-row class="my-1">
-                        <b-col sm="2">
+                      <b-col sm="2">
                         <label for="input-small">Location:</label>
-                        </b-col>
-                        <b-col sm="10">
-                        <b-form-input id="input-small" size="sm" placeholder="Batangas" disabled></b-form-input>
-                        </b-col>
+                      </b-col>
+                      <b-col sm="10">
+                        <b-form-input
+                          id="input-small"
+                          size="sm"
+                          placeholder="Batangas"
+                          disabled
+                        />
+                      </b-col>
                     </b-row>
-                </b-col>
+                  </b-col>
+                </b-row>
+              </b-col>
+              <b-col />
+              <b-col>
+                <br>
+                <b-input-group size="sm">
+                  <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">
+                    Search &nbsp; &nbsp;
+                  </p>
+                  <b-form-input
+                    id="filter-input"
+                    v-model="filter"
+                    type="search"
+                    placeholder="Type to Search"
+                    style="height:30px; width:300px; border-radius: 10px;"
+                  />
+                </b-input-group>
+                <br>
+              </b-col>
             </b-row>
-          </b-col>
-          <b-col>
-          </b-col>
-          <b-col>
-            <br>
-            <b-input-group size="sm">
-              <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
-              <b-form-input
-                id="filter-input"
-                v-model="filter"
-                type="search"
-                placeholder="Type to Search" style="height:30px; width:300px; border-radius: 10px;"
-              ></b-form-input>
-            </b-input-group>
-            <br>
-          </b-col>
+          </b-container>
         </b-row>
 
-      </b-container>
-    </b-row>
-
-    <!-- Main table element -->
-    <b-table
-      :items="items"
-      :fields="fields"
-      :current-page="currentPage"
-      :per-page="perPage"
-      :filter="filter"
-      :filter-included-fields="filterOn"
-      :sort-by.sync="sortBy"
-      :sort-desc.sync="sortDesc"
-      :sort-direction="sortDirection"
-      stacked="md"
-      show-empty
-      small
-      @filtered="onFiltered"
-      style="background:white"
-    >
-      <!-- <template #cell(email)="row">
+        <!-- Main table element -->
+        <b-table
+          :items="items"
+          :fields="fields"
+          :current-page="currentPage"
+          :per-page="perPage"
+          :filter="filter"
+          :filter-included-fields="filterOn"
+          :sort-by.sync="sortBy"
+          :sort-desc.sync="sortDesc"
+          :sort-direction="sortDirection"
+          stacked="md"
+          show-empty
+          small
+          style="background:white"
+          @filtered="onFiltered"
+        >
+          <!-- <template #cell(email)="row">
         <b-link :to="`/officers/${row.item._id}`">{{ row.value }}</b-link>
       </template> -->
 
-      <template #cell(name)="row">
-        {{ row.item.firstName }} {{ row.item.lastName }}
-      </template>
-    </b-table>
-    <b-row>
-        <b-col cols="8"></b-col>
-        <b-col>
-        <b-button pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;">
-            Email Blast
-        </b-button>
-        </b-col>
-    </b-row>
-    <b-row>
-        <b-col></b-col>
-        <b-col>
+          <template #cell(name)="row">
+            {{ row.item.firstName }} {{ row.item.lastName }}
+          </template>
+        </b-table>
+        <b-row>
+          <b-col cols="8" />
+          <b-col>
+            <b-button
+              pill
+              variant="danger"
+              style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;"
+            >
+              Email Blast
+            </b-button>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col />
+          <b-col>
             <b-col class="my-1">
-            <b-pagination
+              <b-pagination
                 v-model="currentPage"
                 :total-rows="totalRows"
                 :per-page="perPage"
                 align="fill"
                 size="sm"
                 class="my-0"
-            ></b-pagination>
+              />
             </b-col>
-        </b-col>
-        <b-col></b-col>
-    </b-row>
-  </b-container>
-</b-card>
-<b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;">
-    <h1>Skills Needed</h1>
-    <b-row class="my-1">
+          </b-col>
+          <b-col />
+        </b-row>
+      </b-container>
+    </b-card>
+    <b-card
+      class="card"
+      style="display: inline-block; height: 100%; overflow: auto; width: 1300px; border-radius: 20px; margin-top:40px;"
+    >
+      <h1>Skills Needed</h1>
+      <b-row class="my-1">
         <b-col sm="2">
-        <label for="input-small">Math Tutor:</label>
+          <label for="input-small">Math Tutor:</label>
         </b-col>
         <b-col sm="10">
-        <b-form-input id="input-small" size="sm" placeholder="5" disabled style="width:100px"></b-form-input>
+          <b-form-input
+            id="input-small"
+            size="sm"
+            placeholder="5"
+            disabled
+            style="width:100px"
+          />
         </b-col>
-    </b-row>
-    <b-row class="my-1">
+      </b-row>
+      <b-row class="my-1">
         <b-col sm="2">
-        <label for="input-small">English Tutor:</label>
+          <label for="input-small">English Tutor:</label>
         </b-col>
         <b-col sm="10">
-        <b-form-input id="input-small" size="sm" placeholder="5" disabled style="width:100px"></b-form-input>
+          <b-form-input
+            id="input-small"
+            size="sm"
+            placeholder="5"
+            disabled
+            style="width:100px"
+          />
         </b-col>
-    </b-row>
-</b-card>
- </div>
+      </b-row>
+    </b-card>
+  </div>
 </template>
 
 <script>

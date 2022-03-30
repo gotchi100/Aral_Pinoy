@@ -3,7 +3,10 @@
     <b-container class="py-5">
       <b-row>
         <b-col cols="12">
-          <b-card class="card" style="border-radius: 20px;">
+          <b-card
+            class="card"
+            style="border-radius: 20px;"
+          >
             <b-container fluid>
               <b-row>
                 <b-col cols="12">
@@ -26,10 +29,10 @@
                         >
                           <b-form-select
                             id="per-page-select"
-                            class="w-25"
                             v-model="perPage"
+                            class="w-25"
                             :options="pageOptions"
-                          ></b-form-select>
+                          />
                         </b-form-group>
                       </b-col>
                       <!-- TODO: Search by email or full name -->
@@ -65,7 +68,9 @@
                     primary-key="_id"
                   >
                     <template #cell(email)="row">
-                      <b-link :to="`/officers/${row.item._id}`">{{ row.value }}</b-link>
+                      <b-link :to="`/officers/${row.item._id}`">
+                        {{ row.value }}
+                      </b-link>
                     </template>
 
                     <template #cell(name)="row">
@@ -76,10 +81,15 @@
               </b-row>
 
               <b-row>
-                <b-col cols="9"></b-col>
+                <b-col cols="9" />
                 <b-col>
-                  <b-button to="/officers/add" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;">
-                      Add an Officer
+                  <b-button
+                    to="/officers/add"
+                    pill
+                    variant="danger"
+                    style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;"
+                  >
+                    Add an Officer
                   </b-button>
                 </b-col>
               </b-row>
@@ -91,9 +101,9 @@
                     :total-rows="total"
                     :per-page="perPage"
                     align="center"
-                  ></b-pagination>
+                  />
                 </b-col>
-                <b-col></b-col>
+                <b-col />
               </b-row>
             </b-container>
           </b-card>

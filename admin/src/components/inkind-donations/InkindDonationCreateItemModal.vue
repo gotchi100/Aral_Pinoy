@@ -1,33 +1,55 @@
 <template>
-  <b-modal v-model="modal" size="xl" hide-footer @hide="$emit('close')">
-    <b-overlay :show="isLoading" rounded="sm">
+  <b-modal
+    v-model="modal"
+    size="xl"
+    hide-footer
+    @hide="$emit('close')"
+  >
+    <b-overlay
+      :show="isLoading"
+      rounded="sm"
+    >
       <b-card>
         <validation-observer v-slot="{ invalid }">
           <b-container fluid>
             <b-row>
               <b-col cols="12">
-                <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
+                <h1
+                  style="font-family:'Bebas Neue', cursive;"
+                  no-body
+                  class="text-center"
+                >
                   Add an in-kind donation
                 </h1>
               </b-col>
             </b-row>
 
-            <b-alert :show="!!errorMessage" variant="danger">
+            <b-alert
+              :show="!!errorMessage"
+              variant="danger"
+            >
               {{ errorMessage }}
             </b-alert>
 
             <b-row class="pt-1">
-              <b-col cols="12" md="6">
+              <b-col
+                cols="12"
+                md="6"
+              >
                 <label for="item-sku">
-                  Stock Keeping Unit (SKU) <b-icon v-b-tooltip="'Unique identifier of the item'" icon="info-circle" font-scale=".85"></b-icon>
+                  Stock Keeping Unit (SKU) <b-icon
+                    v-b-tooltip="'Unique identifier of the item'"
+                    icon="info-circle"
+                    font-scale=".85"
+                  />
                 </label>
 
                 <validation-provider
+                  v-slot="validationContext"
                   :rules="{
                     required: true,
                     max: 100
                   }"
-                  v-slot="validationContext"
                 >
                   <b-form-input
                     v-model="form.sku"
@@ -43,15 +65,18 @@
                 </validation-provider>
               </b-col>
 
-              <b-col cols="12" md="6">
+              <b-col
+                cols="12"
+                md="6"
+              >
                 <label for="item-name">Item Name</label>
 
                 <validation-provider
+                  v-slot="validationContext"
                   :rules="{
                     required: true,
                     max: 100
                   }"
-                  v-slot="validationContext"
                 >
                   <b-form-input
                     v-model="form.name"
@@ -82,16 +107,20 @@
                   no-flip
                 >
                   <b-dropdown-form>
-                    <b-form-group label="Search Group" label-for="item-group" @submit.stop.prevent>
+                    <b-form-group
+                      label="Search Group"
+                      label-for="item-group"
+                      @submit.stop.prevent
+                    >
                       <b-form-input
                         id="item-group"
                         v-model="itemGroupSearch"
                         debounce="250"
                         @update="searchInkindDonationGroups"
-                      ></b-form-input>
+                      />
                     </b-form-group>
                   </b-dropdown-form>
-                  <b-dropdown-divider></b-dropdown-divider>
+                  <b-dropdown-divider />
                   <b-dropdown-item
                     v-for="group in groupOptions"
                     :key="group._id"
@@ -109,8 +138,8 @@
 
                   <b-dropdown-item
                     v-if="form.group !== ''"
-                    @click="unselectGroup()"
                     style="background-color: #f2f2f2"
+                    @click="unselectGroup()"
                   >
                     Unset `{{ form.group }}` group
                   </b-dropdown-item>
@@ -126,10 +155,10 @@
                   </label>
 
                   <validation-provider
+                    v-slot="validationContext"
                     :rules="{
                       max: 200
                     }"
-                    v-slot="validationContext"
                   >
                     <b-form-textarea
                       id="item-description"
@@ -149,7 +178,10 @@
             </b-row>
 
             <b-row class="pt-3">
-              <b-col cols="12" md="6">
+              <b-col
+                cols="12"
+                md="6"
+              >
                 <label for="item-quantity">Initial Quantity</label>
 
                 <b-form-input
@@ -160,7 +192,10 @@
                 />
               </b-col>
 
-              <b-col cols="12" md="6">
+              <b-col
+                cols="12"
+                md="6"
+              >
                 <label for="item-uom">Unit of Measurement</label>
                 <b-form-select
                   v-model="form.unit"
@@ -169,7 +204,7 @@
                   :options="unitOptions"
                   size="lg"
                   :disabled="preselectGroupUnit"
-                ></b-form-select>
+                />
               </b-col>
             </b-row>
 
@@ -185,15 +220,19 @@
                   no-flip
                 >
                   <b-dropdown-form>
-                    <b-form-group label="Search Category" label-for="item-category" @submit.stop.prevent>
+                    <b-form-group
+                      label="Search Category"
+                      label-for="item-category"
+                      @submit.stop.prevent
+                    >
                       <b-form-input
                         id="item-category"
                         debounce="500"
                         @update="searchInkindDonationCategories"
-                      ></b-form-input>
+                      />
                     </b-form-group>
                   </b-dropdown-form>
-                  <b-dropdown-divider></b-dropdown-divider>
+                  <b-dropdown-divider />
                   <b-dropdown-item
                     v-for="category in categoryOptions"
                     :key="category._id"
@@ -205,11 +244,21 @@
               </b-col>
             </b-row>
 
-            <b-row v-if="form.categoryCustomFields.length > 0" class="pt-3">
-              <b-col v-for="customField in form.categoryCustomFields" :key="customField.key">
+            <b-row
+              v-if="form.categoryCustomFields.length > 0"
+              class="pt-3"
+            >
+              <b-col
+                v-for="customField in form.categoryCustomFields"
+                :key="customField.key"
+              >
                 <template v-if="customField.dataType === 'DATE'">
                   <label :for="customField.key">{{ customField.label }}</label>
-                  <b-form-datepicker :label="customField.key" v-model="customField.value" value-as-date></b-form-datepicker>
+                  <b-form-datepicker
+                    v-model="customField.value"
+                    :label="customField.key"
+                    value-as-date
+                  />
                 </template>
               </b-col>
             </b-row>
@@ -229,16 +278,20 @@
                   no-flip
                 >
                   <b-dropdown-form>
-                    <b-form-group label="Search Donor" label-for="item-donor" @submit.stop.prevent>
+                    <b-form-group
+                      label="Search Donor"
+                      label-for="item-donor"
+                      @submit.stop.prevent
+                    >
                       <b-form-input
                         id="item-donor"
                         v-model="itemDonorSearch"
                         debounce="250"
                         @update="searchInkindDonationDonors"
-                      ></b-form-input>
+                      />
                     </b-form-group>
                   </b-dropdown-form>
-                  <b-dropdown-divider></b-dropdown-divider>
+                  <b-dropdown-divider />
                   <b-dropdown-item
                     v-for="donor in donorOptions"
                     :key="donor._id"
@@ -256,8 +309,8 @@
 
                   <b-dropdown-item
                     v-if="form.donor !== ''"
-                    @click="unselectDonor()"
                     style="background-color: #f2f2f2"
+                    @click="unselectDonor()"
                   >
                     Unset `{{ form.donor }}` donor
                   </b-dropdown-item>
@@ -265,17 +318,26 @@
               </b-col>
             </b-row>
 
-            <b-row v-if="form.donor" class="pt-1">
+            <b-row
+              v-if="form.donor"
+              class="pt-1"
+            >
               <b-col cols="12">
                 <label for="item-donor">
                   Acknowledgement Email <span style="color: grey">(for Donor)</span>
                 </label>
 
-                <b-form-input v-model="form.donorEmail" name="item-donorEmail"></b-form-input>
+                <b-form-input
+                  v-model="form.donorEmail"
+                  name="item-donorEmail"
+                />
               </b-col>
             </b-row>
 
-            <b-row class="pt-4 pb-3" align-h="center">
+            <b-row
+              class="pt-4 pb-3"
+              align-h="center"
+            >
               <b-col cols="2">
                 <b-button
                   style="font-size: 16px; padding: 8px; width: 150px;"
@@ -392,6 +454,11 @@ export default {
   },
   computed: {
     ...mapGetters(['token'])
+  },
+  watch: {
+    show (val) {
+      this.modal = val
+    }
   },
   created () {
     const authHeader = `Bearer ${this.token}`
@@ -541,11 +608,6 @@ export default {
           }
         }
       }
-    }
-  },
-  watch: {
-    show (val) {
-      this.modal = val
     }
   }
 }

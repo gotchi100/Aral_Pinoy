@@ -1,15 +1,28 @@
 <template>
   <div>
     <div class="py-5">
-      <img :src="logo" style="width: 320px; height: 150px">
+      <img
+        :src="logo"
+        style="width: 320px; height: 150px"
+      >
     </div>
 
     <b-container>
       <b-row class="justify-content-md-center">
-        <b-col cols="12" md="6">
-          <b-card class="card" bg-variant="light" style="border-radius: 20px;">
+        <b-col
+          cols="12"
+          md="6"
+        >
+          <b-card
+            class="card"
+            bg-variant="light"
+            style="border-radius: 20px;"
+          >
             <b-container fluid>
-              <b-alert :show="message.text !== ''" :variant="message.error ? 'danger' : 'success'">
+              <b-alert
+                :show="message.text !== ''"
+                :variant="message.error ? 'danger' : 'success'"
+              >
                 {{ message.text }}
               </b-alert>
 
@@ -17,21 +30,24 @@
                 <b-row class="my-1">
                   <b-col cols="12">
                     <validation-provider
+                      v-slot="validationContext"
                       :rules="{
                         required: true,
                         min: 8,
                         max: 64
                       }"
-                      v-slot="validationContext"
                     >
-                      <label class="input-password" for="input-password">New Password</label>
+                      <label
+                        class="input-password"
+                        for="input-password"
+                      >New Password</label>
                       <b-form-input
                         id="input-password"
                         v-model="password"
                         type="password"
                         :state="getValidationState(validationContext)"
                         aria-describedby="input-password-feedback"
-                      ></b-form-input>
+                      />
 
                       <b-form-invalid-feedback id="input-password-feedback">
                         {{ validationContext.errors[0] }}
@@ -41,22 +57,28 @@
 
                   <b-col cols="12">
                     <validation-provider
+                      v-slot="validationContext"
                       :rules="{
                         required: true,
                         is: password
                       }"
-                      v-slot="validationContext"
                     >
-                      <label class="input-password" for="input-confirm-password">Confirm Password</label>
+                      <label
+                        class="input-password"
+                        for="input-confirm-password"
+                      >Confirm Password</label>
                       <b-form-input
                         id="input-confirm-password"
                         v-model="confirmPassword"
                         type="password"
                         :state="getValidationState(validationContext)"
                         aria-describedby="input-confirm-password-feedback"
-                      ></b-form-input>
+                      />
 
-                      <b-form-invalid-feedback v-if="validationContext.errors[0]" id="input-confirm-password-feedback">
+                      <b-form-invalid-feedback
+                        v-if="validationContext.errors[0]"
+                        id="input-confirm-password-feedback"
+                      >
                         Passwords do not match!
                       </b-form-invalid-feedback>
                     </validation-provider>
@@ -70,7 +92,7 @@
                   :disabled="invalid || isLoading"
                   @click="resetPassword"
                 >
-                  <b-spinner v-if="isLoading"></b-spinner>
+                  <b-spinner v-if="isLoading" />
                   <span v-else>Submit</span>
                 </b-button>
               </validation-observer>

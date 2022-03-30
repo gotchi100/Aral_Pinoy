@@ -3,7 +3,10 @@
     <b-container class="py-5">
       <b-row>
         <b-col cols="12">
-          <b-card class="card" style="border-radius: 20px;">
+          <b-card
+            class="card"
+            style="border-radius: 20px;"
+          >
             <b-container fluid>
               <b-row>
                 <b-col cols="12">
@@ -16,7 +19,10 @@
               <b-row class="my-2">
                 <b-col cols="12">
                   <b-container>
-                    <b-row class="mb-4" align-v="center">
+                    <b-row
+                      class="mb-4"
+                      align-v="center"
+                    >
                       <b-col cols="4">
                         <b-row align-v="center">
                           <b-col cols="3">
@@ -29,8 +35,15 @@
                           </b-col>
 
                           <b-col>
-                            <select v-model="perPage" class="form-select form-select-sm" aria-label="Default select example">
-                              <option v-for="option in pageOptions" :key="option">
+                            <select
+                              v-model="perPage"
+                              class="form-select form-select-sm"
+                              aria-label="Default select example"
+                            >
+                              <option
+                                v-for="option in pageOptions"
+                                :key="option"
+                              >
                                 {{ option }}
                               </option>
                             </select>
@@ -52,30 +65,41 @@
                           <b-col>
                             <b-form-input
                               id="filter-eventName"
-                              class="form-control"
                               v-model="searchFilter"
+                              class="form-control"
                               type="search"
                               size="sm"
                               debounce="500"
-                            ></b-form-input>
+                            />
                           </b-col>
                         </b-row>
                       </b-col>
 
                       <b-col cols="4">
-                        <b-dropdown class="w-50" size="sm" text="Filter by Status">
+                        <b-dropdown
+                          class="w-50"
+                          size="sm"
+                          text="Filter by Status"
+                        >
                           <b-dropdown-form style="width: 100%">
-                            <div v-for="option in statusOptions" :key="option" class="form-check form-switch">
-                              <label class="form-check-label" :for="`status-checkbox-${option}`">
+                            <div
+                              v-for="option in statusOptions"
+                              :key="option"
+                              class="form-check form-switch"
+                            >
+                              <label
+                                class="form-check-label"
+                                :for="`status-checkbox-${option}`"
+                              >
                                 {{ option }}
                               </label>
 
                               <input
                                 :id="`status-checkbox-${option}`"
+                                v-model="statusFilters"
                                 class="form-check-input"
                                 type="checkbox"
                                 :value="option"
-                                v-model="statusFilters"
                               >
                             </div>
                           </b-dropdown-form>
@@ -102,7 +126,9 @@
                     style="background:white"
                   >
                     <template #cell(name)="row">
-                      <b-link :to="`/events/${row.item._id}`">{{ row.value }}</b-link>
+                      <b-link :to="`/events/${row.item._id}`">
+                        {{ row.value }}
+                      </b-link>
                     </template>
 
                     <template #cell(date)="row">
@@ -126,14 +152,22 @@
 
               <b-row align-h="end">
                 <b-col cols="2">
-                  <b-button to="/events/pre-add" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 145px;">
+                  <b-button
+                    to="/events/pre-add"
+                    pill
+                    variant="danger"
+                    style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 145px;"
+                  >
                     Create an Event
                   </b-button>
                 </b-col>
               </b-row>
 
               <b-row class="justify-content-md-center">
-                <b-col cols="6" class="my-1">
+                <b-col
+                  cols="6"
+                  class="my-1"
+                >
                   <b-pagination
                     v-model="currentPage"
                     :total-rows="total"
@@ -141,7 +175,7 @@
                     align="fill"
                     size="sm"
                     class="my-0"
-                  ></b-pagination>
+                  />
                 </b-col>
               </b-row>
             </b-container>
@@ -189,6 +223,15 @@ export default {
       return (this.currentPage - 1) * this.perPage
     }
   },
+  watch: {
+    statusFilters (val) {
+      if (val.length === 0) {
+        return
+      }
+
+      this.$refs.eventsTable.refresh()
+    }
+  },
   created () {
     eventRepository.setAuthorizationHeader(`Bearer ${this.token}`)
   },
@@ -221,15 +264,6 @@ export default {
       this.total = total
 
       return results
-    }
-  },
-  watch: {
-    statusFilters (val) {
-      if (val.length === 0) {
-        return
-      }
-
-      this.$refs.eventsTable.refresh()
     }
   }
 }

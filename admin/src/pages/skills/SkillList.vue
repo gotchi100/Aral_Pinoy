@@ -26,10 +26,10 @@
                         >
                           <b-form-select
                             id="per-page-select"
-                            class="w-25"
                             v-model="perPage"
+                            class="w-25"
                             :options="pageOptions"
-                          ></b-form-select>
+                          />
                         </b-form-group>
                       </b-col>
 
@@ -49,7 +49,7 @@
                             type="search"
                             size="sm"
                             debounce="500"
-                          ></b-form-input>
+                          />
                         </b-form-group>
                       </b-col>
                     </b-row>
@@ -93,10 +93,15 @@
               </b-row>
 
               <b-row>
-                <b-col cols="9"></b-col>
+                <b-col cols="9" />
                 <b-col>
-                  <b-button @click="showModal = !showModal" pill variant="danger" style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;">
-                      Add a Skill
+                  <b-button
+                    pill
+                    variant="danger"
+                    style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 150px;"
+                    @click="showModal = !showModal"
+                  >
+                    Add a Skill
                   </b-button>
                 </b-col>
               </b-row>
@@ -108,9 +113,9 @@
                     :total-rows="total"
                     :per-page="perPage"
                     align="center"
-                  ></b-pagination>
+                  />
                 </b-col>
-                <b-col></b-col>
+                <b-col />
               </b-row>
             </b-container>
           </b-card>
@@ -118,30 +123,44 @@
       </b-row>
     </b-container>
 
-    <b-modal v-model="showModal" size="xl" hide-footer>
+    <b-modal
+      v-model="showModal"
+      size="xl"
+      hide-footer
+    >
       <b-overlay :show="isLoading">
         <validation-observer v-slot="{ invalid }">
           <b-container fluid>
-            <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
+            <h1
+              style="font-family:'Bebas Neue', cursive;"
+              no-body
+              class="text-center"
+            >
               Add a Skill
             </h1>
 
-            <b-alert :show="!!errorMessage" variant="danger">
+            <b-alert
+              :show="!!errorMessage"
+              variant="danger"
+            >
               {{ errorMessage }}
             </b-alert>
 
             <b-row class="my-1">
-              <label class="skill" for="input-skill-name">
+              <label
+                class="skill"
+                for="input-skill-name"
+              >
                 Skill Label
               </label>
 
               <b-col>
                 <validation-provider
+                  v-slot="validationContext"
                   :rules="{
                     required: true,
                     max: 50
                   }"
-                  v-slot="validationContext"
                 >
                   <b-form-input
                     id="input-skill-name"
@@ -164,8 +183,8 @@
 
               <b-col>
                 <validation-provider
-                  :rules="{ max: 200 }"
                   v-slot="validationContext"
+                  :rules="{ max: 200 }"
                 >
                   <b-form-input
                     id="input-skill-description"
@@ -177,7 +196,7 @@
                   <b-form-invalid-feedback id="input-skill-description-feedback">
                     {{ validationContext.errors[0] }}
                   </b-form-invalid-feedback>
-                  </validation-provider>
+                </validation-provider>
               </b-col>
             </b-row>
 
@@ -202,26 +221,36 @@
       <b-overlay :show="isLoading">
         <validation-observer v-slot="{ invalid }">
           <b-container fluid>
-            <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
+            <h1
+              style="font-family:'Bebas Neue', cursive;"
+              no-body
+              class="text-center"
+            >
               Edit Skill
             </h1>
 
-            <b-alert :show="!!editSkillForm.errorMessage" variant="danger">
+            <b-alert
+              :show="!!editSkillForm.errorMessage"
+              variant="danger"
+            >
               {{ editSkillForm.errorMessage }}
             </b-alert>
 
             <b-row class="my-1">
-              <label class="skill" for="input-skill-name">
+              <label
+                class="skill"
+                for="input-skill-name"
+              >
                 Skill Label
               </label>
 
               <b-col>
                 <validation-provider
+                  v-slot="validationContext"
                   :rules="{
                     required: true,
                     max: 50
                   }"
-                  v-slot="validationContext"
                 >
                   <b-form-input
                     id="edit-input-skill-name"
@@ -244,8 +273,8 @@
 
               <b-col>
                 <validation-provider
-                  :rules="{ max: 200 }"
                   v-slot="validationContext"
+                  :rules="{ max: 200 }"
                 >
                   <b-form-input
                     id="edit-input-skill-description"
@@ -261,7 +290,10 @@
               </b-col>
             </b-row>
 
-            <b-row class="mt-4" align-h="center">
+            <b-row
+              class="mt-4"
+              align-h="center"
+            >
               <b-col cols="6">
                 <b-button
                   class="w-100"
@@ -280,10 +312,10 @@
 
     <b-modal
       v-model="deleteSkillForm.modal"
-      @ok="deleteSkill"
-      @cancel="deleteSkillForm.modal = false"
       hide-header
       :busy="isLoading"
+      @ok="deleteSkill"
+      @cancel="deleteSkillForm.modal = false"
     >
       <b-overlay :show="isLoading">
         <b-container fluid>
@@ -291,7 +323,7 @@
             Are you sure you want to delete the following skill?
           </h4>
 
-          <br />
+          <br>
 
           <h5 style="font-family:'Bebas Neue', cursive; text-align:center;">
             {{ deleteSkillForm.skillToDelete.name }}
@@ -325,9 +357,6 @@ export default {
   components: {
     ValidationObserver,
     ValidationProvider
-  },
-  created () {
-    skillRepository.setAuthorizationHeader(`Bearer ${this.token}`)
   },
   data () {
     return {
@@ -367,6 +396,9 @@ export default {
     pageOffset () {
       return (this.currentPage - 1) * this.perPage
     }
+  },
+  created () {
+    skillRepository.setAuthorizationHeader(`Bearer ${this.token}`)
   },
   methods: {
     getValidationState ({ dirty, validated, valid = null }) {

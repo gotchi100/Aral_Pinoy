@@ -1,38 +1,87 @@
 <template>
   <b-navbar class="navbar">
     <b-navbar-brand to="/">
-      <img :src="logo" style="margin-left: 25px; width: 55px; height: 32px">
+      <img
+        :src="logo"
+        style="margin-left: 25px; width: 55px; height: 32px"
+      >
     </b-navbar-brand>
 
     <b-navbar-nav>
-      <b-nav-item style="margin-left: 18px;" class="events" v-bind="eventNavigationLink">Events</b-nav-item>
+      <b-nav-item
+        style="margin-left: 18px;"
+        class="events"
+        v-bind="eventNavigationLink"
+      >
+        Events
+      </b-nav-item>
     </b-navbar-nav>
 
     <b-navbar-nav>
-      <b-nav-item style="margin-left: 18px;" class="about" v-bind="aboutNavigationLink">About Us</b-nav-item>
+      <b-nav-item
+        style="margin-left: 18px;"
+        class="about"
+        v-bind="aboutNavigationLink"
+      >
+        About Us
+      </b-nav-item>
     </b-navbar-nav>
 
-     <b-navbar-nav v-if="$store.getters.isLoggedIn">
-      <b-nav-item style="margin-left: 18px;" class="calendar" to="/event-calendar">Events Calendar</b-nav-item>
+    <b-navbar-nav v-if="$store.getters.isLoggedIn">
+      <b-nav-item
+        style="margin-left: 18px;"
+        class="calendar"
+        to="/event-calendar"
+      >
+        Events Calendar
+      </b-nav-item>
     </b-navbar-nav>
 
-    <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+    <b-navbar-toggle target="nav-collapse" />
 
-    <b-collapse id="nav-collapse" is-nav>
-    </b-collapse>
+    <b-collapse
+      id="nav-collapse"
+      is-nav
+    />
 
-    <b-navbar-nav class="ml-auto" v-if="!$store.getters.isLoggedIn">
+    <b-navbar-nav
+      v-if="!$store.getters.isLoggedIn"
+      class="ml-auto"
+    >
       <b-navbar-nav right>
-        <b-nav-item to="/login" style="margin-right: 8px;" class="login">Login</b-nav-item>
-        <b-nav-item to="/register" style="margin-right: 10px;" class="register">Register</b-nav-item>
+        <b-nav-item
+          to="/login"
+          style="margin-right: 8px;"
+          class="login"
+        >
+          Login
+        </b-nav-item>
+        <b-nav-item
+          to="/register"
+          style="margin-right: 10px;"
+          class="register"
+        >
+          Register
+        </b-nav-item>
       </b-navbar-nav>
     </b-navbar-nav>
 
-    <b-navbar-nav class="ml-auto" v-else>
+    <b-navbar-nav
+      v-else
+      class="ml-auto"
+    >
       <b-navbar-nav right>
-        <b-nav-item-dropdown style="margin-right: 40px; color: black;" class="user" :text="$store.state.user.firstName">
-            <b-dropdown-item to="/profile">Profile</b-dropdown-item>
-            <b-dropdown-item @click="logout">Logout</b-dropdown-item>
+        <b-nav-item-dropdown
+          style="margin-right: 40px; color: black;"
+          class="user"
+          :text="$store.state.user.firstName"
+        >
+          <b-dropdown-item to="/profile">
+            Profile
+          </b-dropdown-item>
+          <b-dropdown-item @click="logout">
+            Logout
+          </b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
     </b-navbar-nav>
@@ -47,15 +96,6 @@ export default {
   data () {
     return {
       logo
-    }
-  },
-  methods: {
-    logout () {
-      this.$store.dispatch('logout')
-
-      this.$router.push({
-        path: '/login'
-      })
     }
   },
   computed: {
@@ -80,6 +120,15 @@ export default {
       return {
         href: '#about'
       }
+    }
+  },
+  methods: {
+    logout () {
+      this.$store.dispatch('logout')
+
+      this.$router.push({
+        path: '/login'
+      })
     }
   }
 }

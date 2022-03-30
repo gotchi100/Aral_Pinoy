@@ -2,49 +2,78 @@
   <div>
     <b-container class="py-5">
       <b-row class="justify-content-md-center">
-        <b-col cols="12" md="6">
-          <b-card bg-variant="light" style="border-radius: 20px;">
+        <b-col
+          cols="12"
+          md="6"
+        >
+          <b-card
+            bg-variant="light"
+            style="border-radius: 20px;"
+          >
             <b-container fluid>
               <h1 style="font-family:'Bebas Neue', cursive;">
-                  Add Officer
+                Add Officer
               </h1>
 
               <b-row class="my-1">
-                <label class="lname" for="input-small">Last Name</label>
+                <label
+                  class="lname"
+                  for="input-small"
+                >Last Name</label>
                 <b-col>
-                  <b-form-input v-model="lastName"></b-form-input>
+                  <b-form-input v-model="lastName" />
                 </b-col>
               </b-row>
 
               <b-row class="my-1">
-                <label class="fname" for="input-small">First Name</label>
+                <label
+                  class="fname"
+                  for="input-small"
+                >First Name</label>
                 <b-col>
-                  <b-form-input v-model="firstName"></b-form-input>
+                  <b-form-input v-model="firstName" />
                 </b-col>
               </b-row>
 
               <b-row class="my-1">
-                <label class="cnum" for="input-small">Contact Number</label>
+                <label
+                  class="cnum"
+                  for="input-small"
+                >Contact Number</label>
                 <b-col>
-                  <b-form-input v-model="contactNumber"></b-form-input>
+                  <b-form-input v-model="contactNumber" />
                 </b-col>
               </b-row>
 
               <b-row class="my-1">
-                <label class="email" for="input-small">Email Address</label>
+                <label
+                  class="email"
+                  for="input-small"
+                >Email Address</label>
                 <b-col>
-                  <b-form-input v-model="email"></b-form-input>
+                  <b-form-input v-model="email" />
                 </b-col>
               </b-row>
 
               <b-row class="my-1">
-                <label class="password" for="input-small">Password</label>
+                <label
+                  class="password"
+                  for="input-small"
+                >Password</label>
                 <b-col>
-                  <b-form-input v-model="password" type="password"></b-form-input>
+                  <b-form-input
+                    v-model="password"
+                    type="password"
+                  />
                 </b-col>
               </b-row>
 
-              <b-button @click="showModal = !showModal" pill variant="danger" style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
+              <b-button
+                pill
+                variant="danger"
+                style="margin: 12px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;"
+                @click="showModal = !showModal"
+              >
                 Register Officer
               </b-button>
             </b-container>
@@ -53,19 +82,33 @@
       </b-row>
     </b-container>
 
-    <b-modal v-model="showModal" size="xl">
+    <b-modal
+      v-model="showModal"
+      size="xl"
+    >
       <b-container fluid>
-          <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
-              Are you sure with all the details?
-          </h1>
-          <b-row>
-            <b-col cols="5"></b-col>
-            <b-col>
-              <b-button @click="register" type="submit" variant="success">Yes</b-button>
+        <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
+          Are you sure with all the details?
+        </h1>
+        <b-row>
+          <b-col cols="5" />
+          <b-col>
+            <b-button
+              type="submit"
+              variant="success"
+              @click="register"
+            >
+              Yes
+            </b-button>
               &nbsp;
-              <b-button type="reset" variant="danger">No</b-button>
-            </b-col>
-          </b-row>
+            <b-button
+              type="reset"
+              variant="danger"
+            >
+              No
+            </b-button>
+          </b-col>
+        </b-row>
       </b-container>
     </b-modal>
   </div>

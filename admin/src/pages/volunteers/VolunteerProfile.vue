@@ -1,12 +1,24 @@
 <template>
   <div>
     <div class="py-5">
-      <img :src="logo" style="width: 320px; height: 150px">
+      <img
+        :src="logo"
+        style="width: 320px; height: 150px"
+      >
     </div>
 
-    <b-container v-if="isLoadingUser" style="height: 100vh">
-      <b-row class="vh-100" align-h="center">
-        <b-col cols="12" align-self="center">
+    <b-container
+      v-if="isLoadingUser"
+      style="height: 100vh"
+    >
+      <b-row
+        class="vh-100"
+        align-h="center"
+      >
+        <b-col
+          cols="12"
+          align-self="center"
+        >
           <b-spinner style="width: 10rem; height: 10rem;" />
         </b-col>
       </b-row>
@@ -22,58 +34,128 @@
 
             <b-container fluid>
               <b-row class="my-1">
-                <label for="input-small" style="font-family:'Bebas Neue', cursive;">First Name</label>
+                <label
+                  for="input-small"
+                  style="font-family:'Bebas Neue', cursive;"
+                >First Name</label>
                 <b-col>
-                  <b-skeleton v-if="isLoadingUser" type="input"></b-skeleton>
-                  <b-form-input v-else v-model="user.firstName" disabled></b-form-input>
+                  <b-skeleton
+                    v-if="isLoadingUser"
+                    type="input"
+                  />
+                  <b-form-input
+                    v-else
+                    v-model="user.firstName"
+                    disabled
+                  />
                 </b-col>
               </b-row>
 
               <b-row class="my-1">
-                <label for="input-small" style="font-family:'Bebas Neue', cursive;">Last Name</label>
+                <label
+                  for="input-small"
+                  style="font-family:'Bebas Neue', cursive;"
+                >Last Name</label>
                 <b-col>
-                  <b-skeleton v-if="isLoadingUser" type="input"></b-skeleton>
-                  <b-form-input v-else v-model="user.lastName" disabled></b-form-input>
+                  <b-skeleton
+                    v-if="isLoadingUser"
+                    type="input"
+                  />
+                  <b-form-input
+                    v-else
+                    v-model="user.lastName"
+                    disabled
+                  />
                 </b-col>
               </b-row>
 
               <b-row class="my-1">
-                <label for="input-small" style="font-family:'Bebas Neue', cursive;">Contact Number</label>
+                <label
+                  for="input-small"
+                  style="font-family:'Bebas Neue', cursive;"
+                >Contact Number</label>
                 <b-col>
-                  <b-skeleton v-if="isLoadingUser" type="input"></b-skeleton>
-                  <b-form-input v-else v-model="user.contactNumber" disabled></b-form-input>
+                  <b-skeleton
+                    v-if="isLoadingUser"
+                    type="input"
+                  />
+                  <b-form-input
+                    v-else
+                    v-model="user.contactNumber"
+                    disabled
+                  />
                 </b-col>
               </b-row>
 
               <b-row class="my-1">
-                <label for="input-small" style="font-family:'Bebas Neue', cursive;">Gender</label>
+                <label
+                  for="input-small"
+                  style="font-family:'Bebas Neue', cursive;"
+                >Gender</label>
                 <b-col>
-                  <b-skeleton v-if="isLoadingUser" type="input"></b-skeleton>
-                  <b-form-input v-else v-model="user.gender" disabled></b-form-input>
+                  <b-skeleton
+                    v-if="isLoadingUser"
+                    type="input"
+                  />
+                  <b-form-input
+                    v-else
+                    v-model="user.gender"
+                    disabled
+                  />
                 </b-col>
               </b-row>
 
               <b-row class="my-1">
-                <label for="input-small" style="font-family:'Bebas Neue', cursive;">Date of Birth</label>
+                <label
+                  for="input-small"
+                  style="font-family:'Bebas Neue', cursive;"
+                >Date of Birth</label>
                 <b-col>
-                  <b-skeleton v-if="isLoadingUser" type="input"></b-skeleton>
-                  <b-form-input v-else v-model="birthDate" disabled></b-form-input>
+                  <b-skeleton
+                    v-if="isLoadingUser"
+                    type="input"
+                  />
+                  <b-form-input
+                    v-else
+                    v-model="birthDate"
+                    disabled
+                  />
                 </b-col>
               </b-row>
 
               <b-row class="my-1">
-                <label for="input-small" style="font-family:'Bebas Neue', cursive;">Home Address</label>
+                <label
+                  for="input-small"
+                  style="font-family:'Bebas Neue', cursive;"
+                >Home Address</label>
                 <b-col>
-                  <b-skeleton v-if="isLoadingUser" type="input"></b-skeleton>
-                  <b-form-input v-else v-model="homeAddress" disabled></b-form-input>
+                  <b-skeleton
+                    v-if="isLoadingUser"
+                    type="input"
+                  />
+                  <b-form-input
+                    v-else
+                    v-model="homeAddress"
+                    disabled
+                  />
                 </b-col>
               </b-row>
 
               <b-row class="my-1">
-                <label for="input-small" style="font-family:'Bebas Neue', cursive;">Email Address</label>
+                <label
+                  for="input-small"
+                  style="font-family:'Bebas Neue', cursive;"
+                >Email Address</label>
                 <b-col>
-                  <b-skeleton v-if="isLoadingUser" type="input"></b-skeleton>
-                  <b-form-input v-else v-model="user.email" disabled></b-form-input>
+                  <b-skeleton
+                    v-if="isLoadingUser"
+                    type="input"
+                  />
+                  <b-form-input
+                    v-else
+                    v-model="user.email"
+                    disabled
+                  />
                 </b-col>
               </b-row>
               <!-- <b-row class="my-1">
@@ -116,7 +198,8 @@
 
               <b-row class="pb-4">
                 <b-col cols="4">
-                  <b-form-group style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                  <b-form-group
+                    style="font-size: 15px; font-family:'Bebas Neue', cursive;"
                     label="Per page"
                     label-for="per-page-select"
                     label-cols-sm="6"
@@ -130,7 +213,7 @@
                       v-model="eventVolunteers.pagination.perPage"
                       :options="pageOptions"
                       style="width: 25%"
-                    ></b-form-select>
+                    />
                   </b-form-group>
                 </b-col>
               </b-row>
@@ -174,7 +257,10 @@
               </b-row>
 
               <b-row class="justify-content-md-center">
-                <b-col cols="6" class="my-1">
+                <b-col
+                  cols="6"
+                  class="my-1"
+                >
                   <b-pagination
                     v-model="eventVolunteers.pagination.currentPage"
                     :total-rows="eventVolunteers.total"
@@ -182,7 +268,7 @@
                     align="fill"
                     size="sm"
                     class="my-0"
-                  ></b-pagination>
+                  />
                 </b-col>
               </b-row>
             </b-container>
@@ -204,7 +290,8 @@
 
               <b-row class="pb-4">
                 <b-col cols="4">
-                  <b-form-group style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                  <b-form-group
+                    style="font-size: 15px; font-family:'Bebas Neue', cursive;"
                     label="Per page"
                     label-for="per-page-select"
                     label-cols-sm="6"
@@ -218,7 +305,7 @@
                       v-model="eventDonations.pagination.perPage"
                       :options="pageOptions"
                       style="width: 25%"
-                    ></b-form-select>
+                    />
                   </b-form-group>
                 </b-col>
               </b-row>
@@ -273,7 +360,10 @@
               </b-row>
 
               <b-row class="justify-content-md-center">
-                <b-col cols="6" class="my-1">
+                <b-col
+                  cols="6"
+                  class="my-1"
+                >
                   <b-pagination
                     v-model="eventDonations.pagination.currentPage"
                     :total-rows="eventDonations.total"
@@ -281,7 +371,7 @@
                     align="fill"
                     size="sm"
                     class="my-0"
-                  ></b-pagination>
+                  />
                 </b-col>
               </b-row>
             </b-container>
@@ -343,12 +433,6 @@ export default {
       }
     }
   },
-  async created () {
-    await this.getUser()
-
-    eventDonationRepository.setAuthorizationHeader(`Bearer ${this.token}`)
-    eventVolunteerRepository.setAuthorizationHeader(`Bearer ${this.token}`)
-  },
   computed: {
     ...mapGetters(['token']),
     birthDate () {
@@ -383,6 +467,12 @@ export default {
     eventVolunteersPageOffset () {
       return (this.eventVolunteers.pagination.currentPage - 1) * this.eventVolunteers.pagination.perPage
     }
+  },
+  async created () {
+    await this.getUser()
+
+    eventDonationRepository.setAuthorizationHeader(`Bearer ${this.token}`)
+    eventVolunteerRepository.setAuthorizationHeader(`Bearer ${this.token}`)
   },
   methods: {
     async getUser () {

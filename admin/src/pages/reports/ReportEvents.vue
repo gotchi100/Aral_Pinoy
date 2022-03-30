@@ -7,14 +7,19 @@
             <b-container fluid>
               <!-- User Interface controls -->
               <h2 style="font-family:'Bebas Neue', cursive;">
-                  Completed Events
+                Completed Events
               </h2>
               <b-row>
                 <b-container class="bv-example-row">
                   <b-row>
                     <b-col>
-                      <b-col sm="5" md="6" class="my-1">
-                        <b-form-group style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                      <b-col
+                        sm="5"
+                        md="6"
+                        class="my-1"
+                      >
+                        <b-form-group
+                          style="font-size: 15px; font-family:'Bebas Neue', cursive;"
                           label="Per page"
                           label-for="per-page-select"
                           label-cols-sm="6"
@@ -29,22 +34,24 @@
                             v-model="perPage"
                             :options="pageOptions"
                             size="sm"
-                          ></b-form-select>
+                          />
                         </b-form-group>
                       </b-col>
                     </b-col>
-                    <b-col>
-                    </b-col>
+                    <b-col />
                     <b-col>
                       <br>
                       <b-input-group size="sm">
-                        <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">Search &nbsp; &nbsp; </p>
+                        <p style="font-size: 20px; font-family:'Bebas Neue', cursive;">
+                          Search &nbsp; &nbsp;
+                        </p>
                         <b-form-input
                           id="filter-input"
                           v-model="filter"
                           type="search"
-                          placeholder="Type to Search for Events" style="height:30px; width:300px; border-radius: 10px;"
-                        ></b-form-input>
+                          placeholder="Type to Search for Events"
+                          style="height:30px; width:300px; border-radius: 10px;"
+                        />
                       </b-input-group>
                       <br>
                     </b-col>
@@ -66,18 +73,25 @@
                 stacked="md"
                 show-empty
                 small
-                @filtered="onFiltered"
                 style="background:white"
+                @filtered="onFiltered"
               >
                 <template #cell(name)="row">
                   {{ row.value.first }} {{ row.value.last }}
                 </template>
 
                 <template #cell(actions)="row">
-                  <b-button size="sm" @click="info(row.item, row.index, $event.target)" class="mr-1">
+                  <b-button
+                    size="sm"
+                    class="mr-1"
+                    @click="info(row.item, row.index, $event.target)"
+                  >
                     Info modal
                   </b-button>
-                  <b-button size="sm" @click="row.toggleDetails">
+                  <b-button
+                    size="sm"
+                    @click="row.toggleDetails"
+                  >
                     {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
                   </b-button>
                 </template>
@@ -85,14 +99,19 @@
                 <template #row-details="row">
                   <b-card>
                     <ul>
-                      <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
+                      <li
+                        v-for="(value, key) in row.item"
+                        :key="key"
+                      >
+                        {{ key }}: {{ value }}
+                      </li>
                     </ul>
                   </b-card>
                 </template>
               </b-table>
-            <b-row>
-              <b-col></b-col>
-              <b-col>
+              <b-row>
+                <b-col />
+                <b-col>
                   <b-col class="my-1">
                     <b-pagination
                       v-model="currentPage"
@@ -101,14 +120,13 @@
                       align="fill"
                       size="sm"
                       class="my-0"
-                    ></b-pagination>
+                    />
                   </b-col>
-              </b-col>
-              <b-col></b-col>
-            </b-row>
-
+                </b-col>
+                <b-col />
+              </b-row>
             </b-container>
-            </b-card>
+          </b-card>
         </b-col>
       </b-row>
     </b-container>

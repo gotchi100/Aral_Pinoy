@@ -3,7 +3,10 @@
     <b-container class="py-5">
       <b-row>
         <b-col cols="12">
-          <b-card class="card" style="border-radius: 20px;">
+          <b-card
+            class="card"
+            style="border-radius: 20px;"
+          >
             <b-container fluid>
               <b-row>
                 <b-col cols="12">
@@ -16,7 +19,11 @@
               <b-row class="my-2">
                 <b-col cols="12">
                   <b-container>
-                    <b-row class="mb-4" align-v="center" align-h="around">
+                    <b-row
+                      class="mb-4"
+                      align-v="center"
+                      align-h="around"
+                    >
                       <b-col cols="4">
                         <b-row align-v="center">
                           <b-col cols="3">
@@ -29,8 +36,15 @@
                           </b-col>
 
                           <b-col>
-                            <select v-model="perPage" class="form-select form-select-sm" aria-label="Default select example">
-                              <option v-for="option in pageOptions" :key="option">
+                            <select
+                              v-model="perPage"
+                              class="form-select form-select-sm"
+                              aria-label="Default select example"
+                            >
+                              <option
+                                v-for="option in pageOptions"
+                                :key="option"
+                              >
                                 {{ option }}
                               </option>
                             </select>
@@ -52,12 +66,12 @@
                           <b-col>
                             <b-form-input
                               id="filter-eventName"
-                              class="form-control"
                               v-model="searchFilter"
+                              class="form-control"
                               type="search"
                               size="sm"
                               debounce="500"
-                            ></b-form-input>
+                            />
                           </b-col>
                         </b-row>
                       </b-col>
@@ -84,14 +98,14 @@
                       <b-icon
                         :icon="hasCustomField(row.item, 'bestBeforeDate') ? 'check-circle' : 'circle'"
                         font-scale="1"
-                      ></b-icon>
+                      />
                     </template>
 
                     <template #cell(expirationDate)="row">
                       <b-icon
                         :icon="hasCustomField(row.item, 'expirationDate') ? 'check-circle' : 'circle'"
                         font-scale="1"
-                      ></b-icon>
+                      />
                     </template>
 
                     <template #cell(actions)="{ item }">
@@ -107,7 +121,10 @@
                 </b-col>
               </b-row>
 
-              <b-row class="pt-4" align-h="end">
+              <b-row
+                class="pt-4"
+                align-h="end"
+              >
                 <b-col cols="4">
                   <b-button
                     style="margin-top: 12px; margin-bottom: 12px; display: inline-block; font-size: 16px; width: 200px;"
@@ -121,7 +138,10 @@
               </b-row>
 
               <b-row class="pt-4 justify-content-md-center">
-                <b-col cols="6" class="my-1">
+                <b-col
+                  cols="6"
+                  class="my-1"
+                >
                   <b-pagination
                     v-model="currentPage"
                     :total-rows="total"
@@ -129,7 +149,7 @@
                     align="fill"
                     size="sm"
                     class="my-0"
-                  ></b-pagination>
+                  />
                 </b-col>
               </b-row>
             </b-container>
@@ -138,13 +158,24 @@
       </b-row>
     </b-container>
 
-    <b-modal v-model="showAddModal" size="xl" hide-footer>
+    <b-modal
+      v-model="showAddModal"
+      size="xl"
+      hide-footer
+    >
       <b-overlay :show="isLoading">
-        <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1100px; border-radius: 20px; margin-top: 40px;">
+        <b-card
+          class="card"
+          style="display: inline-block; height: 100%; overflow: auto; width: 1100px; border-radius: 20px; margin-top: 40px;"
+        >
           <b-container fluid>
             <b-row>
               <b-col cols="12">
-                <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
+                <h1
+                  style="font-family:'Bebas Neue', cursive;"
+                  no-body
+                  class="text-center"
+                >
                   Add a Category Entry
                 </h1>
               </b-col>
@@ -153,7 +184,10 @@
             <b-row class="pt-1">
               <b-col cols="12">
                 <label for="category-name">Category Name</label>
-                <b-form-input name="category-name" v-model="addCategoryForm.name"></b-form-input>
+                <b-form-input
+                  v-model="addCategoryForm.name"
+                  name="category-name"
+                />
               </b-col>
             </b-row>
 
@@ -175,7 +209,10 @@
               </b-col>
             </b-row>
 
-            <b-row class="pt-4 pb-3" align-h="center">
+            <b-row
+              class="pt-4 pb-3"
+              align-h="center"
+            >
               <b-col cols="2">
                 <b-button
                   style="font-size: 16px; padding: 8px; width: 150px;"
@@ -206,10 +243,10 @@
 
     <b-modal
       v-model="deleteCategoryForm.modal"
-      @ok="deleteCategory"
-      @cancel="deleteCategoryForm.modal = false"
       hide-header
       :busy="isLoading"
+      @ok="deleteCategory"
+      @cancel="deleteCategoryForm.modal = false"
     >
       <b-overlay :show="isLoading">
         <b-container fluid>
@@ -217,7 +254,7 @@
             Are you sure you want to delete the following category?
           </h4>
 
-          <br />
+          <br>
 
           <h5 style="font-family:'Bebas Neue', cursive; text-align:center;">
             {{ deleteCategoryForm.category.name }}

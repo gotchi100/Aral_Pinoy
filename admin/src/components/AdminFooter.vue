@@ -1,30 +1,49 @@
 <template>
-    <footer id="footer">
-        <div class="container">
-            <b-container>
-            <b-row>
-            <b-col><p>
-            Connect with Us&nbsp;&nbsp;
-            <b-icon
-              @click="showModal = !showModal"
-              :icon="isAboutTextEditable3 ? 'file-check' : 'pencil'"
-              font-scale="0.75"
-            ></b-icon>
+  <footer id="footer">
+    <div class="container">
+      <b-container>
+        <b-row>
+          <b-col>
+            <p>
+              Connect with Us&nbsp;&nbsp;
+              <b-icon
+                :icon="isAboutTextEditable3 ? 'file-check' : 'pencil'"
+                font-scale="0.75"
+                @click="showModal = !showModal"
+              />
             </p>
-            <Icon icon="logos:google-gmail" height="32"  style="margin: 20px;"/>
-            <Icon icon="fa-brands:facebook" color="#1877f2" height="40"  style="margin: 20px;"/>
-            <Icon icon="logos:twitter" color="#1877f2" height="35"  style="margin: 20px;"/>
-            </b-col>
-            <b-col><p>
-            Location&nbsp;&nbsp;
-            <b-icon
-              @click="isAboutTextEditable = !isAboutTextEditable"
-              :icon="isAboutTextEditable ? 'file-check' : 'pencil'"
-              font-scale="0.75"
-            ></b-icon>
+            <Icon
+              icon="logos:google-gmail"
+              height="32"
+              style="margin: 20px;"
+            />
+            <Icon
+              icon="fa-brands:facebook"
+              color="#1877f2"
+              height="40"
+              style="margin: 20px;"
+            />
+            <Icon
+              icon="logos:twitter"
+              color="#1877f2"
+              height="35"
+              style="margin: 20px;"
+            />
+          </b-col>
+          <b-col>
+            <p>
+              Location&nbsp;&nbsp;
+              <b-icon
+                :icon="isAboutTextEditable ? 'file-check' : 'pencil'"
+                font-scale="0.75"
+                @click="isAboutTextEditable = !isAboutTextEditable"
+              />
             </p>
             <div class="info">
-              <div v-if="!isAboutTextEditable" style="white-space: pre">
+              <div
+                v-if="!isAboutTextEditable"
+                style="white-space: pre"
+              >
                 {{ aboutText }}
               </div>
               <b-form-textarea
@@ -32,19 +51,23 @@
                 v-model="aboutText"
                 rows="7"
                 max-rows="7"
-              ></b-form-textarea>
+              />
             </div>
-            </b-col>
-            <b-col><p>
-            Donate&nbsp;&nbsp;
-            <b-icon
-              @click="isAboutTextEditable2 = !isAboutTextEditable2"
-              :icon="isAboutTextEditable2 ? 'file-check' : 'pencil'"
-              font-scale="0.75"
-            ></b-icon>
+          </b-col>
+          <b-col>
+            <p>
+              Donate&nbsp;&nbsp;
+              <b-icon
+                :icon="isAboutTextEditable2 ? 'file-check' : 'pencil'"
+                font-scale="0.75"
+                @click="isAboutTextEditable2 = !isAboutTextEditable2"
+              />
             </p>
             <div class="info">
-              <div v-if="!isAboutTextEditable2" style="white-space: pre">
+              <div
+                v-if="!isAboutTextEditable2"
+                style="white-space: pre"
+              >
                 {{ aboutText2 }}
               </div>
               <b-form-textarea
@@ -52,40 +75,55 @@
                 v-model="aboutText2"
                 rows="7"
                 max-rows="7"
-              ></b-form-textarea>
+              />
             </div>
-            </b-col>
+          </b-col>
+        </b-row>
+      </b-container>
+      <b-modal
+        v-model="showModal"
+        size="xl"
+      >
+        <b-card
+          class="card"
+          style="display: inline-block; height: 100%; overflow: auto; width: 100%; border-radius: 20px; margin-top: 40px;"
+        >
+          <b-container fluid>
+            <h1 style="font-family:'Bebas Neue', cursive;">
+              Edit Contact Details
+            </h1>
+            <b-row class="my-1">
+              <label
+                class="skill"
+                for="input-small"
+              >Gmail Address:</label>
+              <b-col>
+                <b-form-input v-model="skill" />
+              </b-col>
             </b-row>
-            </b-container>
-            <b-modal v-model="showModal" size="xl">
-              <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 100%; border-radius: 20px; margin-top: 40px;">
-                <b-container fluid>
-                    <h1 style="font-family:'Bebas Neue', cursive;">
-                        Edit Contact Details
-                    </h1>
-                  <b-row class="my-1">
-                    <label class="skill" for="input-small">Gmail Address:</label>
-                    <b-col>
-                      <b-form-input v-model="skill"></b-form-input>
-                    </b-col>
-                  </b-row>
-                  <b-row class="my-1">
-                    <label class="description" for="input-small">Facebook Profile Link:</label>
-                    <b-col>
-                      <b-form-input v-model="description"></b-form-input>
-                    </b-col>
-                  </b-row>
-                  <b-row class="my-1">
-                    <label class="description" for="input-small">Twitter Profile Link:</label>
-                    <b-col>
-                      <b-form-input v-model="description"></b-form-input>
-                    </b-col>
-                  </b-row>
-                </b-container>
-              </b-card>
-            </b-modal>
-        </div>
-    </footer>
+            <b-row class="my-1">
+              <label
+                class="description"
+                for="input-small"
+              >Facebook Profile Link:</label>
+              <b-col>
+                <b-form-input v-model="description" />
+              </b-col>
+            </b-row>
+            <b-row class="my-1">
+              <label
+                class="description"
+                for="input-small"
+              >Twitter Profile Link:</label>
+              <b-col>
+                <b-form-input v-model="description" />
+              </b-col>
+            </b-row>
+          </b-container>
+        </b-card>
+      </b-modal>
+    </div>
+  </footer>
 </template>
 
 <script>

@@ -3,61 +3,130 @@
     <b-container>
       <b-row class="py-5">
         <b-col cols="12">
-          <img :src="logo" style="width: 320px; height: 150px">
+          <img
+            :src="logo"
+            style="width: 320px; height: 150px"
+          >
         </b-col>
       </b-row>
 
       <b-row class="pb-4">
         <b-col cols="12">
-          <b-card bg-variant="light" style="border-radius: 20px;">
-            <h3 style="font-family:'Bebas Neue', cursive; color: black; position: relative;">User Profile</h3>
+          <b-card
+            bg-variant="light"
+            style="border-radius: 20px;"
+          >
+            <h3 style="font-family:'Bebas Neue', cursive; color: black; position: relative;">
+              User Profile
+            </h3>
             <b-container fluid>
               <b-row class="my-1">
-                <label class="name" for="input-small" style="font-family:'Bebas Neue', cursive;">First Name</label>
+                <label
+                  class="name"
+                  for="input-small"
+                  style="font-family:'Bebas Neue', cursive;"
+                >First Name</label>
                 <b-col>
-                  <b-form-input v-model="profile.firstName" :disabled="!isDisabled"></b-form-input>
+                  <b-form-input
+                    v-model="profile.firstName"
+                    :disabled="!isDisabled"
+                  />
                 </b-col>
               </b-row>
               <b-row class="my-1">
-                <label class="name" for="input-small" style="font-family:'Bebas Neue', cursive;">Last Name</label>
+                <label
+                  class="name"
+                  for="input-small"
+                  style="font-family:'Bebas Neue', cursive;"
+                >Last Name</label>
                 <b-col>
-                  <b-form-input v-model="profile.lastName" :disabled="!isDisabled"></b-form-input>
+                  <b-form-input
+                    v-model="profile.lastName"
+                    :disabled="!isDisabled"
+                  />
                 </b-col>
               </b-row>
               <b-row class="my-1">
-                <label class="cnum" for="input-small" style="font-family:'Bebas Neue', cursive;">Contact Number</label>
+                <label
+                  class="cnum"
+                  for="input-small"
+                  style="font-family:'Bebas Neue', cursive;"
+                >Contact Number</label>
                 <b-col>
-                  <b-form-input v-model="profile.contactNumber" :disabled="!isDisabled"></b-form-input>
+                  <b-form-input
+                    v-model="profile.contactNumber"
+                    :disabled="!isDisabled"
+                  />
                 </b-col>
               </b-row>
               <b-row class="my-1">
-                <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Gender</label>
+                <label
+                  class="email"
+                  for="input-small"
+                  style="font-family:'Bebas Neue', cursive;"
+                >Gender</label>
                 <b-col>
-                  <b-form-input v-model="profile.gender" :disabled="!isDisabled"></b-form-input>
+                  <b-form-input
+                    v-model="profile.gender"
+                    :disabled="!isDisabled"
+                  />
                 </b-col>
               </b-row>
               <b-row class="my-1">
-                <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Home Address</label>
+                <label
+                  class="email"
+                  for="input-small"
+                  style="font-family:'Bebas Neue', cursive;"
+                >Home Address</label>
                 <b-col>
-                  <b-form-input v-model="profile.address.home" :disabled="!isDisabled"></b-form-input>
+                  <b-form-input
+                    v-model="profile.address.home"
+                    :disabled="!isDisabled"
+                  />
                 </b-col>
               </b-row>
               <b-row class="my-1">
-                <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Skills</label>
+                <label
+                  class="email"
+                  for="input-small"
+                  style="font-family:'Bebas Neue', cursive;"
+                >Skills</label>
                 <b-col>
-                  <b-form-input :value="skillNames" disabled></b-form-input>
+                  <b-form-input
+                    :value="skillNames"
+                    disabled
+                  />
                 </b-col>
               </b-row>
               <b-row class="my-1">
-                <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Email Address</label>
+                <label
+                  class="email"
+                  for="input-small"
+                  style="font-family:'Bebas Neue', cursive;"
+                >Email Address</label>
                 <b-col>
-                  <b-form-input v-model="profile.email" :disabled="!isDisabled"></b-form-input>
+                  <b-form-input
+                    v-model="profile.email"
+                    :disabled="!isDisabled"
+                  />
                 </b-col>
               </b-row>
-              <b-button pill variant="danger" @click="isDisabled = true" v-show="!isDisabled" style="margin: 8px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
+              <b-button
+                v-show="!isDisabled"
+                pill
+                variant="danger"
+                style="margin: 8px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;"
+                @click="isDisabled = true"
+              >
                 Edit
               </b-button>
-              <b-button pill variant="danger" @click="isDisabled = false" v-show="isDisabled" style="margin: 8px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
+              <b-button
+                v-show="isDisabled"
+                pill
+                variant="danger"
+                style="margin: 8px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;"
+                @click="isDisabled = false"
+              >
                 Save
               </b-button>
             </b-container>
@@ -67,7 +136,10 @@
 
       <b-row class="pb-4">
         <b-col cols="12">
-          <b-card class="mb-5" style="border-radius: 20px;">
+          <b-card
+            class="mb-5"
+            style="border-radius: 20px;"
+          >
             <b-container fluid>
               <b-row>
                 <b-col cols="12">
@@ -79,7 +151,8 @@
 
               <b-row class="pb-4">
                 <b-col cols="4">
-                  <b-form-group style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                  <b-form-group
+                    style="font-size: 15px; font-family:'Bebas Neue', cursive;"
                     label="Per page"
                     label-for="per-page-select"
                     label-cols-sm="6"
@@ -93,7 +166,7 @@
                       v-model="eventVolunteers.pagination.perPage"
                       :options="pageOptions"
                       style="width: 25%"
-                    ></b-form-select>
+                    />
                   </b-form-group>
                 </b-col>
               </b-row>
@@ -153,7 +226,10 @@
               </b-row>
 
               <b-row class="justify-content-md-center">
-                <b-col cols="6" class="my-1">
+                <b-col
+                  cols="6"
+                  class="my-1"
+                >
                   <b-pagination
                     v-model="eventVolunteers.pagination.currentPage"
                     :total-rows="eventVolunteers.total"
@@ -161,7 +237,7 @@
                     align="fill"
                     size="sm"
                     class="my-0"
-                  ></b-pagination>
+                  />
                 </b-col>
               </b-row>
             </b-container>
@@ -171,7 +247,10 @@
 
       <b-row>
         <b-col cols="12">
-          <b-card class="mb-5" style="border-radius: 20px;">
+          <b-card
+            class="mb-5"
+            style="border-radius: 20px;"
+          >
             <b-container fluid>
               <b-row>
                 <b-col cols="12">
@@ -183,7 +262,8 @@
 
               <b-row class="pb-4">
                 <b-col cols="4">
-                  <b-form-group style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                  <b-form-group
+                    style="font-size: 15px; font-family:'Bebas Neue', cursive;"
                     label="Per page"
                     label-for="per-page-select"
                     label-cols-sm="6"
@@ -197,7 +277,7 @@
                       v-model="eventDonations.pagination.perPage"
                       :options="pageOptions"
                       style="width: 25%"
-                    ></b-form-select>
+                    />
                   </b-form-group>
                 </b-col>
               </b-row>
@@ -252,7 +332,10 @@
               </b-row>
 
               <b-row class="justify-content-md-center">
-                <b-col cols="6" class="my-1">
+                <b-col
+                  cols="6"
+                  class="my-1"
+                >
                   <b-pagination
                     v-model="eventDonations.pagination.currentPage"
                     :total-rows="eventDonations.total"
@@ -260,7 +343,7 @@
                     align="fill"
                     size="sm"
                     class="my-0"
-                  ></b-pagination>
+                  />
                 </b-col>
               </b-row>
             </b-container>

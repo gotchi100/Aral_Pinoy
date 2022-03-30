@@ -1,42 +1,69 @@
 <template>
   <div>
     <div class="py-5">
-      <img :src="logo" style="width: 320px; height: 150px">
+      <img
+        :src="logo"
+        style="width: 320px; height: 150px"
+      >
     </div>
 
     <b-container>
       <b-row class="justify-content-md-center">
-        <b-col cols="12" md="4">
-          <b-card bg-variant="light" style="border-radius: 20px;">
+        <b-col
+          cols="12"
+          md="4"
+        >
+          <b-card
+            bg-variant="light"
+            style="border-radius: 20px;"
+          >
             <b-container fluid>
-              <b-alert :show="!!errorMessage" variant="danger">
+              <b-alert
+                :show="!!errorMessage"
+                variant="danger"
+              >
                 {{ errorMessage }}
               </b-alert>
 
               <b-row class="my-1">
-                <label class="email" for="input-small">Email Address</label>
+                <label
+                  class="email"
+                  for="input-small"
+                >Email Address</label>
                 <b-col cols="12">
-                  <b-form-input v-model="email"></b-form-input>
+                  <b-form-input v-model="email" />
                 </b-col>
               </b-row>
 
               <b-row class="my-1">
-                <label class="password" for="input-small">Password</label>
+                <label
+                  class="password"
+                  for="input-small"
+                >Password</label>
                 <b-col cols="12">
-                  <b-form-input v-model="password" type="password"></b-form-input>
+                  <b-form-input
+                    v-model="password"
+                    type="password"
+                  />
                 </b-col>
               </b-row>
 
               <b-row class="my-3">
                 <b-col cols="12">
-                  <label class="signup" for="input-small">
+                  <label
+                    class="signup"
+                    for="input-small"
+                  >
                     <b-link to="/forgot-password">Forgot Password?</b-link>
                   </label>
                 </b-col>
               </b-row>
 
               <b-row class="my-1 justify-content-md-center">
-                <b-col cols="12" md="8">
+                <b-col
+                  cols="12"
+                  md="8"
+                >
                   <b-button
                     pill
                     variant="danger"
@@ -58,14 +85,20 @@
               </b-row>
 
               <b-row class="my-1 justify-content-md-center">
-                <b-col cols="12" md="8">
+                <b-col
+                  cols="12"
+                  md="8"
+                >
                   <b-button
-                    @click="googleSignIn"
                     pill
                     variant="danger"
                     style="font-size: 16px; width: 100%"
+                    @click="googleSignIn"
                   >
-                    <font-awesome-icon style="margin-right: 4px;" :icon="['fab', 'google']" />
+                    <font-awesome-icon
+                      style="margin-right: 4px;"
+                      :icon="['fab', 'google']"
+                    />
                     Sign in with Google
                   </b-button>
                 </b-col>
@@ -73,7 +106,10 @@
 
               <b-row class="mt-3">
                 <b-col cols="12">
-                  <label class="signup" for="input-small">
+                  <label
+                    class="signup"
+                    for="input-small"
+                  >
                     Don't have an account? <b-link to="/register">Sign up here</b-link>
                   </label>
                 </b-col>

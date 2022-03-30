@@ -1,66 +1,150 @@
 <template>
   <div>
-    <div class="image" style="padding: 28px;">
-        <img :src="logo" style="width: 320px; height: 150px">
+    <div
+      class="image"
+      style="padding: 28px;"
+    >
+      <img
+        :src="logo"
+        style="width: 320px; height: 150px"
+      >
     </div>
 
     <b-container fluid>
       <b-row class="justify-content-md-center">
         <b-col cols="8">
           <b-card bg-variant="light">
-            <h3 style="font-family:'Bebas Neue', cursive; color: black; position: relative;">Officer Profile</h3>
+            <h3 style="font-family:'Bebas Neue', cursive; color: black; position: relative;">
+              Officer Profile
+            </h3>
             <b-container fluid>
               <b-row class="my-1">
-                <label class="name" for="input-small" style="font-family:'Bebas Neue', cursive;">First Name</label>
+                <label
+                  class="name"
+                  for="input-small"
+                  style="font-family:'Bebas Neue', cursive;"
+                >First Name</label>
                 <b-col>
-                  <b-skeleton v-if="isLoadingUser" type="input"></b-skeleton>
-                  <b-form-input v-else v-model="user.firstName" disabled></b-form-input>
+                  <b-skeleton
+                    v-if="isLoadingUser"
+                    type="input"
+                  />
+                  <b-form-input
+                    v-else
+                    v-model="user.firstName"
+                    disabled
+                  />
                 </b-col>
               </b-row>
               <b-row class="my-1">
-                <label class="name" for="input-small" style="font-family:'Bebas Neue', cursive;">Last Name</label>
+                <label
+                  class="name"
+                  for="input-small"
+                  style="font-family:'Bebas Neue', cursive;"
+                >Last Name</label>
                 <b-col>
-                  <b-skeleton v-if="isLoadingUser" type="input"></b-skeleton>
-                  <b-form-input v-else v-model="user.lastName" disabled></b-form-input>
+                  <b-skeleton
+                    v-if="isLoadingUser"
+                    type="input"
+                  />
+                  <b-form-input
+                    v-else
+                    v-model="user.lastName"
+                    disabled
+                  />
                 </b-col>
               </b-row>
               <b-row class="my-1">
-                <label for="input-small" style="font-family:'Bebas Neue', cursive;">Contact Number</label>
+                <label
+                  for="input-small"
+                  style="font-family:'Bebas Neue', cursive;"
+                >Contact Number</label>
                 <b-col>
-                  <b-skeleton v-if="isLoadingUser" type="input"></b-skeleton>
-                  <b-form-input v-else v-model="user.contactNumber" disabled></b-form-input>
+                  <b-skeleton
+                    v-if="isLoadingUser"
+                    type="input"
+                  />
+                  <b-form-input
+                    v-else
+                    v-model="user.contactNumber"
+                    disabled
+                  />
                 </b-col>
               </b-row>
 
               <b-row class="my-1">
-                <label for="gender" style="font-family:'Bebas Neue', cursive;">Gender</label>
+                <label
+                  for="gender"
+                  style="font-family:'Bebas Neue', cursive;"
+                >Gender</label>
                 <b-col>
-                  <b-skeleton v-if="isLoadingUser" type="input"></b-skeleton>
-                  <b-form-input v-else id="gender" v-model="user.gender" disabled></b-form-input>
+                  <b-skeleton
+                    v-if="isLoadingUser"
+                    type="input"
+                  />
+                  <b-form-input
+                    v-else
+                    id="gender"
+                    v-model="user.gender"
+                    disabled
+                  />
                 </b-col>
               </b-row>
 
               <b-row class="my-1">
-                <label for="birthDate" style="font-family:'Bebas Neue', cursive;">Date of Birth</label>
+                <label
+                  for="birthDate"
+                  style="font-family:'Bebas Neue', cursive;"
+                >Date of Birth</label>
                 <b-col>
-                  <b-skeleton v-if="isLoadingUser" type="input"></b-skeleton>
-                  <b-form-input v-else id="birthDate" :value="birthDate" disabled></b-form-input>
+                  <b-skeleton
+                    v-if="isLoadingUser"
+                    type="input"
+                  />
+                  <b-form-input
+                    v-else
+                    id="birthDate"
+                    :value="birthDate"
+                    disabled
+                  />
                 </b-col>
               </b-row>
 
               <b-row class="my-1">
-                <label for="homeAddress" style="font-family:'Bebas Neue', cursive;">Home Address</label>
+                <label
+                  for="homeAddress"
+                  style="font-family:'Bebas Neue', cursive;"
+                >Home Address</label>
                 <b-col>
-                  <b-skeleton v-if="isLoadingUser" type="input"></b-skeleton>
-                  <b-form-input v-else id="homeAddress" :value="homeAddress" disabled></b-form-input>
+                  <b-skeleton
+                    v-if="isLoadingUser"
+                    type="input"
+                  />
+                  <b-form-input
+                    v-else
+                    id="homeAddress"
+                    :value="homeAddress"
+                    disabled
+                  />
                 </b-col>
               </b-row>
 
               <b-row class="my-1">
-                <label class="email" for="input-small" style="font-family:'Bebas Neue', cursive;">Email Address</label>
+                <label
+                  class="email"
+                  for="input-small"
+                  style="font-family:'Bebas Neue', cursive;"
+                >Email Address</label>
                 <b-col>
-                  <b-skeleton v-if="isLoadingUser" type="input"></b-skeleton>
-                  <b-form-input v-else v-model="user.email" disabled></b-form-input>
+                  <b-skeleton
+                    v-if="isLoadingUser"
+                    type="input"
+                  />
+                  <b-form-input
+                    v-else
+                    v-model="user.email"
+                    disabled
+                  />
                 </b-col>
               </b-row>
               <!-- <b-row class="my-1">
@@ -85,7 +169,7 @@
                     Save
               </b-button> -->
             </b-container>
-        </b-card>
+          </b-card>
         </b-col>
       </b-row>
     </b-container>
@@ -105,9 +189,6 @@ export default {
       user: null,
       isLoadingUser: true
     }
-  },
-  created () {
-    this.getUser()
   },
   computed: {
     ...mapGetters(['token']),
@@ -137,6 +218,9 @@ export default {
 
       return this.user.address.home
     }
+  },
+  created () {
+    this.getUser()
   },
   methods: {
     async getUser () {

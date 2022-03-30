@@ -1,11 +1,23 @@
 <template>
-  <b-modal v-model="modal" size="xl" hide-footer @hide="$emit('close')">
-    <b-overlay :show="isLoading" rounded="sm">
+  <b-modal
+    v-model="modal"
+    size="xl"
+    hide-footer
+    @hide="$emit('close')"
+  >
+    <b-overlay
+      :show="isLoading"
+      rounded="sm"
+    >
       <b-card>
         <b-container fluid>
           <b-row>
             <b-col cols="12">
-              <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
+              <h1
+                style="font-family:'Bebas Neue', cursive;"
+                no-body
+                class="text-center"
+              >
                 {{ event.name }}
               </h1>
             </b-col>
@@ -13,7 +25,10 @@
 
           <b-row>
             <b-col cols="12">
-              <h4 style="font-family:'Bebas Neue', cursive;" no-body>
+              <h4
+                style="font-family:'Bebas Neue', cursive;"
+                no-body
+              >
                 Total Amount Received:
                 {{
                   new Intl.NumberFormat('en-us', {
@@ -83,7 +98,10 @@
           </b-row>
 
           <b-row class="pt-4 justify-content-md-center">
-            <b-col cols="6" class="my-1">
+            <b-col
+              cols="6"
+              class="my-1"
+            >
               <b-pagination
                 v-model="eventDonations.pagination.currentPage"
                 :total-rows="eventDonations.total"
@@ -91,24 +109,38 @@
                 align="fill"
                 size="sm"
                 class="my-0"
-              ></b-pagination>
+              />
             </b-col>
           </b-row>
         </b-container>
       </b-card>
     </b-overlay>
 
-    <b-modal v-model="donationReceipt.modal" size="xl" hide-footer>
+    <b-modal
+      v-model="donationReceipt.modal"
+      size="xl"
+      hide-footer
+    >
       <div>
         <div class="addskill">
-          <b-card class="card" style="display: inline-block; height: 100%; overflow: auto; width: 1100px; border-radius: 20px; margin-top: 40px;">
+          <b-card
+            class="card"
+            style="display: inline-block; height: 100%; overflow: auto; width: 1100px; border-radius: 20px; margin-top: 40px;"
+          >
             <b-container fluid>
-              <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
+              <h1
+                style="font-family:'Bebas Neue', cursive;"
+                no-body
+                class="text-center"
+              >
                 <b-row>
                   <b-col>Donation Detail</b-col>
-                  <b-col></b-col>
+                  <b-col />
                   <b-col>
-                    <img :src="logo" style="margin-left: 25px; width: 200px; height: 60px">
+                    <img
+                      :src="logo"
+                      style="margin-left: 25px; width: 200px; height: 60px"
+                    >
                   </b-col>
                 </b-row>
               </h1>
@@ -116,76 +148,113 @@
               <hr style="height:20px;">
 
               <b-row class="mb-4">
-                <b-col cols="6" class="text-center">
+                <b-col
+                  cols="6"
+                  class="text-center"
+                >
                   Reference Number
                 </b-col>
 
                 <b-col cols="6">
-                  <b-form-input v-model="donationReceipt.form.referenceNumber" readonly></b-form-input>
+                  <b-form-input
+                    v-model="donationReceipt.form.referenceNumber"
+                    readonly
+                  />
                 </b-col>
               </b-row>
 
               <b-row>
-                <b-col cols="6" class="text-center">
+                <b-col
+                  cols="6"
+                  class="text-center"
+                >
                   Sent To
                 </b-col>
 
                 <b-col cols="6">
-                  <b-form-input v-model="donationReceipt.form.eventName" readonly></b-form-input>
+                  <b-form-input
+                    v-model="donationReceipt.form.eventName"
+                    readonly
+                  />
                 </b-col>
               </b-row>
 
               <hr style="height:20px;">
 
               <b-row class="mb-4">
-                <b-col cols="6" class="text-center">
+                <b-col
+                  cols="6"
+                  class="text-center"
+                >
                   Date Received
                 </b-col>
 
                 <b-col cols="6">
-                  <b-form-input v-model="donationReceipt.form.createdAt" readonly></b-form-input>
+                  <b-form-input
+                    v-model="donationReceipt.form.createdAt"
+                    readonly
+                  />
                 </b-col>
               </b-row>
 
               <b-row class="mb-4">
-                <b-col cols="6" class="text-center">
+                <b-col
+                  cols="6"
+                  class="text-center"
+                >
                   Donated By
                 </b-col>
 
                 <b-col cols="6">
-                  <b-form-input v-model="donationReceipt.form.donor.name" readonly></b-form-input>
+                  <b-form-input
+                    v-model="donationReceipt.form.donor.name"
+                    readonly
+                  />
                 </b-col>
               </b-row>
 
               <b-row>
-                <b-col cols="6" class="text-center">
+                <b-col
+                  cols="6"
+                  class="text-center"
+                >
                   Contact Details
                 </b-col>
 
                 <b-col>
-                  <b-form-input v-model="donationReceipt.form.donor.contact" readonly></b-form-input>
+                  <b-form-input
+                    v-model="donationReceipt.form.donor.contact"
+                    readonly
+                  />
                 </b-col>
               </b-row>
 
               <hr style="height:20px;">
 
               <b-row>
-                <b-col cols="6" class="text-center">
+                <b-col
+                  cols="6"
+                  class="text-center"
+                >
                   Amount
                 </b-col>
 
                 <b-col>
-                  <b-form-input v-model="donationReceipt.form.amount" readonly></b-form-input>
+                  <b-form-input
+                    v-model="donationReceipt.form.amount"
+                    readonly
+                  />
                 </b-col>
               </b-row>
 
               <hr style="height:20px;">
 
               <b-row>
-                <b-col></b-col>
-                <b-col class="text-center">Thank you for the donation!</b-col>
-                <b-col>
+                <b-col />
+                <b-col class="text-center">
+                  Thank you for the donation!
                 </b-col>
+                <b-col />
               </b-row>
             </b-container>
           </b-card>
@@ -261,6 +330,11 @@ export default {
       return this.event.totalDonation
     }
   },
+  watch: {
+    show (val) {
+      this.modal = val
+    }
+  },
   created () {
     eventDonationRepository.setAuthorizationHeader(`Bearer ${this.token}`)
   },
@@ -319,11 +393,6 @@ export default {
 
       this.donationReceipt.form = form
       this.donationReceipt.modal = true
-    }
-  },
-  watch: {
-    show (val) {
-      this.modal = val
     }
   }
 }

@@ -1,28 +1,53 @@
 <template>
-  <b-modal v-model="modal" size="xl" hide-footer @hide="$emit('close')">
-    <b-overlay :show="isLoading" rounded="sm">
+  <b-modal
+    v-model="modal"
+    size="xl"
+    hide-footer
+    @hide="$emit('close')"
+  >
+    <b-overlay
+      :show="isLoading"
+      rounded="sm"
+    >
       <div>
         <b-row>
           <b-col cols="12">
-            <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
+            <h1
+              style="font-family:'Bebas Neue', cursive;"
+              no-body
+              class="text-center"
+            >
               Enter a Transaction
             </h1>
           </b-col>
         </b-row>
 
         <b-row>
-          <b-col cols="12" class="text-center">
-            <b-form-select v-model="transactionChoice" :options="transactionChoices"></b-form-select>
+          <b-col
+            cols="12"
+            class="text-center"
+          >
+            <b-form-select
+              v-model="transactionChoice"
+              :options="transactionChoices"
+            />
           </b-col>
         </b-row>
 
-        <b-row v-if="transactionChoice === 'send-donation'" class="pt-3">
+        <b-row
+          v-if="transactionChoice === 'send-donation'"
+          class="pt-3"
+        >
           <b-col cols="12">
             <b-card>
               <b-container fluid>
                 <b-row>
                   <b-col cols="12">
-                    <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
+                    <h1
+                      style="font-family:'Bebas Neue', cursive;"
+                      no-body
+                      class="text-center"
+                    >
                       Send an In-Kind Donation to an Organization
                     </h1>
                   </b-col>
@@ -43,16 +68,20 @@
                       no-flip
                     >
                       <b-dropdown-form>
-                        <b-form-group label="Search Organization" label-for="outbound-transaction-receiver-org-name" @submit.stop.prevent>
+                        <b-form-group
+                          label="Search Organization"
+                          label-for="outbound-transaction-receiver-org-name"
+                          @submit.stop.prevent
+                        >
                           <b-form-input
                             id="outbound-transaction-receiver-org-name"
                             v-model="outboundTransactionOrgSearch"
                             debounce="250"
                             @update="searchInkindDonationOrganizations"
-                          ></b-form-input>
+                          />
                         </b-form-group>
                       </b-dropdown-form>
-                      <b-dropdown-divider></b-dropdown-divider>
+                      <b-dropdown-divider />
                       <b-dropdown-item
                         v-for="organization in orgOptions"
                         :key="organization._id"
@@ -70,8 +99,8 @@
 
                       <b-dropdown-item
                         v-if="outboundTransactionForm.receiver.organization.name !== ''"
-                        @click="unselectOrganization()"
                         style="background-color: #f2f2f2"
+                        @click="unselectOrganization()"
                       >
                         Unset `{{ outboundTransactionForm.receiver.organization.name }}` organization
                       </b-dropdown-item>
@@ -83,9 +112,19 @@
                   <b-col cols="12">
                     <b-form-tags>
                       <template>
-                        <ul v-if="outboundTransactionForm.receiver.organization.contacts.length > 0" class="list-inline d-inline-block mb-2">
-                          <li v-for="(contact, index) in outboundTransactionForm.receiver.organization.contacts" :key="index" class="list-inline-item">
-                            <b-form-tag class="bg-success" @remove="removeOrgContact(index)">
+                        <ul
+                          v-if="outboundTransactionForm.receiver.organization.contacts.length > 0"
+                          class="list-inline d-inline-block mb-2"
+                        >
+                          <li
+                            v-for="(contact, index) in outboundTransactionForm.receiver.organization.contacts"
+                            :key="index"
+                            class="list-inline-item"
+                          >
+                            <b-form-tag
+                              class="bg-success"
+                              @remove="removeOrgContact(index)"
+                            >
                               {{ contact.name }} - {{ contact.contactMethods[0].value }}
                             </b-form-tag>
                           </li>
@@ -101,14 +140,18 @@
                         >
                           <b-dropdown-form>
                             <validation-observer v-slot="{ invalid }">
-                              <b-form-group label="Name" label-for="outbound-transaction-receiver-contact-name" @submit.stop.prevent>
+                              <b-form-group
+                                label="Name"
+                                label-for="outbound-transaction-receiver-contact-name"
+                                @submit.stop.prevent
+                              >
                                 <validation-provider
+                                  v-slot="validationContext"
                                   :rules="{
                                     required: true,
                                     max: 100,
                                     regex: regexRules.filipinoCharacters
                                   }"
-                                  v-slot="validationContext"
                                 >
                                   <b-form-input
                                     id="outbound-transaction-receiver-contact-name"
@@ -124,13 +167,21 @@
                                     This field does not have a valid format
                                   </b-form-invalid-feedback>
 
-                                  <b-form-invalid-feedback v-else id="outbound-transaction-receiver-contact-name-feedback">
+                                  <b-form-invalid-feedback
+                                    v-else
+                                    id="outbound-transaction-receiver-contact-name-feedback"
+                                  >
                                     {{ validationContext.errors[0] }}
                                   </b-form-invalid-feedback>
                                 </validation-provider>
                               </b-form-group>
 
-                              <b-form-group class="pt-3" label="Contact Method" label-for="outbound-transaction-receiver-contact-method-type" @submit.stop.prevent>
+                              <b-form-group
+                                class="pt-3"
+                                label="Contact Method"
+                                label-for="outbound-transaction-receiver-contact-method-type"
+                                @submit.stop.prevent
+                              >
                                 <b-input-group>
                                   <b-form-select
                                     id="outbound-transaction-receiver-contact-method-type"
@@ -138,18 +189,23 @@
                                     style="width: 100%; padding: 0.5rem 0.75rem"
                                     :options="['EMAIL', 'MOBILE']"
                                     size="lg"
-                                  ></b-form-select>
+                                  />
                                 </b-input-group>
                               </b-form-group>
 
-                              <b-form-group class="pt-3" label="Contact Details" label-for="outbound-transaction-receiver-contact-method-value" @submit.stop.prevent>
+                              <b-form-group
+                                class="pt-3"
+                                label="Contact Details"
+                                label-for="outbound-transaction-receiver-contact-method-value"
+                                @submit.stop.prevent
+                              >
                                 <validation-provider
+                                  v-slot="validationContext"
                                   :rules="{
                                     max: 255,
                                     email: orgContactForm.contactMethods[0].type === 'EMAIL',
                                     regex: orgContactForm.contactMethods[0].type === 'MOBILE' ? regexRules.phContactNumber : false
                                   }"
-                                  v-slot="validationContext"
                                 >
                                   <b-form-input
                                     id="outbound-transaction-receiver-contact-method-value"
@@ -165,7 +221,10 @@
                                     This field must be a valid Philippine mobile number
                                   </b-form-invalid-feedback>
 
-                                  <b-form-invalid-feedback v-else id="outbound-transaction-receiver-contact-method-value-feedback">
+                                  <b-form-invalid-feedback
+                                    v-else
+                                    id="outbound-transaction-receiver-contact-method-value-feedback"
+                                  >
                                     {{ validationContext.errors[0] }}
                                   </b-form-invalid-feedback>
                                 </validation-provider>
@@ -174,8 +233,8 @@
                               <b-button
                                 class="mt-4"
                                 variant="success"
-                                @click="addOutboundTransactionContact"
                                 :disabled="invalid"
+                                @click="addOutboundTransactionContact"
                               >
                                 Submit
                               </b-button>
@@ -192,7 +251,11 @@
                     <label for="inventory-adj-date">
                       Date
                     </label>
-                    <b-form-datepicker label="Date" v-model="outboundTransactionForm.date" value-as-date></b-form-datepicker>
+                    <b-form-datepicker
+                      v-model="outboundTransactionForm.date"
+                      label="Date"
+                      value-as-date
+                    />
                   </b-col>
                 </b-row>
 
@@ -208,15 +271,19 @@
                       no-flip
                     >
                       <b-dropdown-form>
-                        <b-form-group label="Search Item" label-for="inventory-adj-item-search" @submit.stop.prevent>
+                        <b-form-group
+                          label="Search Item"
+                          label-for="inventory-adj-item-search"
+                          @submit.stop.prevent
+                        >
                           <b-form-input
                             id="inventory-adj-item-search"
                             debounce="500"
                             @update="searchInkindDonations"
-                          ></b-form-input>
+                          />
                         </b-form-group>
                       </b-dropdown-form>
-                      <b-dropdown-divider></b-dropdown-divider>
+                      <b-dropdown-divider />
                       <b-dropdown-item
                         v-for="item in inkindDonationOptions"
                         :key="item._id"
@@ -228,22 +295,35 @@
                   </b-col>
                 </b-row>
 
-                <b-row v-if="outboundTransactionForm.item !== null" class="pt-3">
-                  <b-col cols="12" md="4">
+                <b-row
+                  v-if="outboundTransactionForm.item !== null"
+                  class="pt-3"
+                >
+                  <b-col
+                    cols="12"
+                    md="4"
+                  >
                     <label for="inventory-adj-item-quantity">
                       Current Quantity
                     </label>
-                    <b-form-input label="inventory-adj-item-quantity" :value="outboundTransactionForm.item.quantity" disabled></b-form-input>
+                    <b-form-input
+                      label="inventory-adj-item-quantity"
+                      :value="outboundTransactionForm.item.quantity"
+                      disabled
+                    />
                   </b-col>
 
-                  <b-col cols="12" md="4">
+                  <b-col
+                    cols="12"
+                    md="4"
+                  >
                     <label for="inventory-adj-item-quantity">
                       How many to donate
                     </label>
                     <b-form-input
+                      v-model="outboundTransactionForm.quantity"
                       type="number"
                       label="inventory-adj-item-quantity"
-                      v-model="outboundTransactionForm.quantity"
                       :formatter="(value) => {
                         const positiveValue = toPositiveNumber(value)
 
@@ -253,10 +333,13 @@
 
                         return positiveValue
                       }"
-                    ></b-form-input>
+                    />
                   </b-col>
 
-                  <b-col cols="12" md="4">
+                  <b-col
+                    cols="12"
+                    md="4"
+                  >
                     <label for="inventory-adj-item-quantity">
                       New Quantity
                     </label>
@@ -264,11 +347,14 @@
                       label="inventory-adj-item-quantity"
                       :value="Number(outboundTransactionForm.item.quantity) - Number(outboundTransactionForm.quantity)"
                       disabled
-                    ></b-form-input>
+                    />
                   </b-col>
                 </b-row>
 
-                <b-row class="pt-4 pb-3" align-h="center">
+                <b-row
+                  class="pt-4 pb-3"
+                  align-h="center"
+                >
                   <b-col cols="2">
                     <b-button
                       style="font-size: 16px; padding: 8px; width: 150px;"
@@ -286,14 +372,21 @@
           </b-col>
         </b-row>
 
-        <b-row v-if="transactionChoice === 'inventory-adjustment'" class="pt-3">
+        <b-row
+          v-if="transactionChoice === 'inventory-adjustment'"
+          class="pt-3"
+        >
           <b-col cols="12">
             <b-card>
               <validation-observer v-slot="{ invalid }">
                 <b-container fluid>
                   <b-row>
                     <b-col cols="12">
-                      <h1 style="font-family:'Bebas Neue', cursive;" no-body class="text-center">
+                      <h1
+                        style="font-family:'Bebas Neue', cursive;"
+                        no-body
+                        class="text-center"
+                      >
                         Inventory Adjustment
                       </h1>
                     </b-col>
@@ -305,11 +398,11 @@
                         Date
                       </label>
                       <b-form-datepicker
-                        label="Date"
                         v-model="inventoryAdjForm.date"
+                        label="Date"
                         value-as-date
                         :max="new Date()"
-                      ></b-form-datepicker>
+                      />
                     </b-col>
                   </b-row>
 
@@ -320,10 +413,10 @@
                       </label>
 
                       <validation-provider
+                        v-slot="validationContext"
                         :rules="{
                           required: true,
                         }"
-                        v-slot="validationContext"
                       >
                         <b-form-input
                           id="inventory-adj-reason"
@@ -339,7 +432,10 @@
                       </validation-provider>
 
                       <datalist id="inventory-adj-reason-list">
-                        <option v-for="(choice, index) in reasonChoices" :key="index">
+                        <option
+                          v-for="(choice, index) in reasonChoices"
+                          :key="index"
+                        >
                           {{ choice }}
                         </option>
                       </datalist>
@@ -358,15 +454,19 @@
                         no-flip
                       >
                         <b-dropdown-form>
-                          <b-form-group label="Search Item" label-for="inventory-adj-item-search" @submit.stop.prevent>
+                          <b-form-group
+                            label="Search Item"
+                            label-for="inventory-adj-item-search"
+                            @submit.stop.prevent
+                          >
                             <b-form-input
                               id="inventory-adj-item-search"
                               debounce="500"
                               @update="searchInkindDonations"
-                            ></b-form-input>
+                            />
                           </b-form-group>
                         </b-dropdown-form>
-                        <b-dropdown-divider></b-dropdown-divider>
+                        <b-dropdown-divider />
                         <b-dropdown-item
                           v-for="item in inkindDonationOptions"
                           :key="item._id"
@@ -378,37 +478,60 @@
                     </b-col>
                   </b-row>
 
-                  <b-row v-if="inventoryAdjForm.item !== null" class="pt-3">
-                    <b-col cols="12" md="4">
+                  <b-row
+                    v-if="inventoryAdjForm.item !== null"
+                    class="pt-3"
+                  >
+                    <b-col
+                      cols="12"
+                      md="4"
+                    >
                       <label for="inventory-adj-item-quantity">
                         Current Quantity
                       </label>
-                      <b-form-input label="inventory-adj-item-quantity" :value="inventoryAdjForm.item.quantity" disabled></b-form-input>
+                      <b-form-input
+                        label="inventory-adj-item-quantity"
+                        :value="inventoryAdjForm.item.quantity"
+                        disabled
+                      />
                     </b-col>
 
-                    <b-col cols="12" md="4">
+                    <b-col
+                      cols="12"
+                      md="4"
+                    >
                       <label for="inventory-adj-item-quantity">
                         New Quantity
                       </label>
                       <b-form-input
+                        v-model="inventoryAdjForm.newQuantity"
                         type="number"
                         label="inventory-adj-item-quantity"
-                        v-model="inventoryAdjForm.newQuantity"
                         lazy-formatter
                         :formatter="toNumber"
                         @blur="inventoryAdjForm.quantity = Number(inventoryAdjForm.newQuantity) - Number(inventoryAdjForm.item.quantity)"
-                      ></b-form-input>
+                      />
                     </b-col>
 
-                    <b-col cols="12" md="4">
+                    <b-col
+                      cols="12"
+                      md="4"
+                    >
                       <label for="inventory-adj-item-quantity">
                         Adjusted Quantity
                       </label>
-                      <b-form-input label="inventory-adj-item-quantity" :value="inventoryAdjForm.quantity" disabled></b-form-input>
+                      <b-form-input
+                        label="inventory-adj-item-quantity"
+                        :value="inventoryAdjForm.quantity"
+                        disabled
+                      />
                     </b-col>
                   </b-row>
 
-                  <b-row class="pt-4 pb-3" align-h="center">
+                  <b-row
+                    class="pt-4 pb-3"
+                    align-h="center"
+                  >
                     <b-col cols="2">
                       <b-button
                         style="font-size: 16px; padding: 8px; width: 150px;"
@@ -498,17 +621,17 @@ export default {
     ValidationObserver,
     ValidationProvider
   },
+  mixins: [
+    validationMixins,
+    regexRulesMixins,
+    formattersMixins
+  ],
   props: {
     show: {
       type: Boolean,
       required: true
     }
   },
-  mixins: [
-    validationMixins,
-    regexRulesMixins,
-    formattersMixins
-  ],
   data () {
     return {
       modal: false,
@@ -564,6 +687,11 @@ export default {
   },
   computed: {
     ...mapGetters(['token'])
+  },
+  watch: {
+    show (val) {
+      this.modal = val
+    }
   },
   created () {
     const authHeader = `Bearer ${this.token}`
@@ -702,11 +830,6 @@ export default {
       } catch {
         this.isLoading = false
       }
-    }
-  },
-  watch: {
-    show (val) {
-      this.modal = val
     }
   }
 }

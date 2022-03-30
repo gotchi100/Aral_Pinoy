@@ -4,7 +4,10 @@
       <b-row>
         <b-col cols="12">
           <b-card style="border-radius: 20px;">
-            <validation-observer ref="mainObs" v-slot="{ invalid }">
+            <validation-observer
+              ref="mainObs"
+              v-slot="{ invalid }"
+            >
               <b-container>
                 <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; text-align: center;">
                   Create Event Template
@@ -25,16 +28,16 @@
                             </label>
 
                             <validation-provider
+                              v-slot="validationContext"
                               :rules="{
                                 required: true,
                                 max: 100
                               }"
-                              v-slot="validationContext"
                             >
                               <b-form-input
                                 id="input-event-name"
-                                :state="getValidationState(validationContext)"
                                 v-model="event.name"
+                                :state="getValidationState(validationContext)"
                                 placeholder="Enter Event Name"
                                 aria-describedby="input-event-name-feedback"
                               />
@@ -58,22 +61,22 @@
                               </label>
 
                               <validation-provider
+                                v-slot="validationContext"
                                 :rules="{
                                   max: 500
                                 }"
-                                v-slot="validationContext"
                               >
                                 <b-form-input
                                   id="input-event-location-name"
-                                :state="getValidationState(validationContext)"
                                   v-model="event.location.name"
+                                  :state="getValidationState(validationContext)"
                                   placeholder="Enter Location of the Event"
-                                aria-describedby="input-event-location-name-feedback"
+                                  aria-describedby="input-event-location-name-feedback"
                                 />
 
                                 <b-form-invalid-feedback id="input-event-location-name-feedback">
-                                {{ validationContext.errors[0] }}
-                              </b-form-invalid-feedback>
+                                  {{ validationContext.errors[0] }}
+                                </b-form-invalid-feedback>
                               </validation-provider>
                             </b-form-group>
                           </b-col>
@@ -95,24 +98,24 @@
                           </label>
 
                           <validation-provider
-                              :rules="{
-                                max: 5000
-                              }"
-                              v-slot="validationContext"
-                            >
-                              <b-form-textarea
-                                id="textarea-event-description"
-                                rows="3"
-                                max-rows="8"
-                                v-model="event.description"
-                                :state="getValidationState(validationContext)"
-                                aria-describedby="textarea-event-description-feedback"
-                                placeholder="Enter event description and other important details"
-                              />
+                            v-slot="validationContext"
+                            :rules="{
+                              max: 5000
+                            }"
+                          >
+                            <b-form-textarea
+                              id="textarea-event-description"
+                              v-model="event.description"
+                              rows="3"
+                              max-rows="8"
+                              :state="getValidationState(validationContext)"
+                              aria-describedby="textarea-event-description-feedback"
+                              placeholder="Enter event description and other important details"
+                            />
 
-                              <b-form-invalid-feedback id="textarea-event-description-feedback">
-                                {{ validationContext.errors[0] }}
-                              </b-form-invalid-feedback>
+                            <b-form-invalid-feedback id="textarea-event-description-feedback">
+                              {{ validationContext.errors[0] }}
+                            </b-form-invalid-feedback>
                           </validation-provider>
                         </b-form-group>
                       </b-card>
@@ -124,7 +127,10 @@
                       <b-card style="border-radius: 20px;">
                         <b-row>
                           <b-col cols="12">
-                            <b-form-group label="Donation needed (in PHP):" style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;">
+                            <b-form-group
+                              label="Donation needed (in PHP):"
+                              style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;"
+                            >
                               <b-form-input
                                 v-model="event.goals.monetaryDonation"
                                 type="number"
@@ -133,7 +139,7 @@
                                 lazy-formatter
                                 :formatter="validateFloat"
                                 required
-                              ></b-form-input>
+                              />
                             </b-form-group>
                           </b-col>
                         </b-row>
@@ -144,19 +150,28 @@
                   <b-row class="pt-4">
                     <b-col cols="12">
                       <b-card style="border-radius: 20px;">
-                        <h5 class="text-start" style="font-family:'Bebas Neue', cursive;">
+                        <h5
+                          class="text-start"
+                          style="font-family:'Bebas Neue', cursive;"
+                        >
                           Sustainable Development Goals
                         </h5>
                         <b-row class="text-center">
-                          <b-col cols="4" v-for="sdg in sdgOptions" :key="sdg._id">
-                            <b-form-checkbox v-model="event.sdgIds" :value="sdg._id">
+                          <b-col
+                            v-for="sdg in sdgOptions"
+                            :key="sdg._id"
+                            cols="4"
+                          >
+                            <b-form-checkbox
+                              v-model="event.sdgIds"
+                              :value="sdg._id"
+                            >
                               &nbsp;
                               <b-avatar
                                 :src="sdg.imageUrl"
                                 size="150px"
                                 square
-                              >
-                              </b-avatar>
+                              />
                             </b-form-checkbox>
                           </b-col>
                         </b-row>
@@ -167,39 +182,45 @@
                   <b-row class="pt-4">
                     <b-col cols="12">
                       <b-card style="border-radius: 20px;">
-                        <h5 class="text-start" style="font-family:'Bebas Neue', cursive;">
+                        <h5
+                          class="text-start"
+                          style="font-family:'Bebas Neue', cursive;"
+                        >
                           Roles
                         </h5>
 
                         <b-row class="pt-2">
                           <b-col cols="12">
-                              <b-table
-                                :items="event.jobs"
-                                :fields="jobFields"
-                                show-empty
-                                responsive
-                                striped
-                                primary-key="name"
-                              >
-                                <template #cell(skills)="{ item }">
-                                  <template v-if="item.skills.length > 0">
-                                    <b-form-tag
-                                      v-for="jobSkill in item.skills"
-                                      :key="jobSkill._id"
-                                      class="bg-success"
-                                      disabled
-                                    >
-                                      {{ jobSkill.name }}
-                                    </b-form-tag>
-                                  </template>
+                            <b-table
+                              :items="event.jobs"
+                              :fields="jobFields"
+                              show-empty
+                              responsive
+                              striped
+                              primary-key="name"
+                            >
+                              <template #cell(skills)="{ item }">
+                                <template v-if="item.skills.length > 0">
+                                  <b-form-tag
+                                    v-for="jobSkill in item.skills"
+                                    :key="jobSkill._id"
+                                    class="bg-success"
+                                    disabled
+                                  >
+                                    {{ jobSkill.name }}
+                                  </b-form-tag>
                                 </template>
+                              </template>
 
-                                <template #cell(actions)="{ index }">
-                                  <b-button variant="danger" @click="removeEventJob(index)">
-                                    <b-icon icon="trash" />
-                                  </b-button>
-                                </template>
-                              </b-table>
+                              <template #cell(actions)="{ index }">
+                                <b-button
+                                  variant="danger"
+                                  @click="removeEventJob(index)"
+                                >
+                                  <b-icon icon="trash" />
+                                </b-button>
+                              </template>
+                            </b-table>
                           </b-col>
 
                           <b-col cols="12">
@@ -213,7 +234,10 @@
 
                             <b-collapse v-model="showJobForm">
                               <b-card>
-                                <validation-observer ref="jobObs" v-slot="{ invalid: invalidRole }">
+                                <validation-observer
+                                  ref="jobObs"
+                                  v-slot="{ invalid: invalidRole }"
+                                >
                                   <b-container>
                                     <b-row>
                                       <b-col cols="12">
@@ -227,11 +251,11 @@
                                           </label>
 
                                           <validation-provider
+                                            v-slot="validationContext"
                                             :rules="{
                                               required: showJobForm === true,
                                               max: 50
                                             }"
-                                            v-slot="validationContext"
                                           >
                                             <b-form-input
                                               id="input-job-name"
@@ -248,7 +272,10 @@
                                         </b-form-group>
                                       </b-col>
 
-                                      <b-col class="pt-2" cols="12">
+                                      <b-col
+                                        class="pt-2"
+                                        cols="12"
+                                      >
                                         <b-form-group class="text-start">
                                           <label
                                             class="py-1"
@@ -259,16 +286,16 @@
                                           </label>
 
                                           <validation-provider
+                                            v-slot="validationContext"
                                             :rules="{
                                               max: 100
                                             }"
-                                            v-slot="validationContext"
                                           >
                                             <b-form-textarea
                                               id="textarea-job-description"
+                                              v-model="jobForm.description"
                                               rows="3"
                                               max-rows="8"
-                                              v-model="jobForm.description"
                                               placeholder="Ex: Picks up and remove waste from locations and takes the waste to a designated location for proper disposal"
                                               :state="getValidationState(validationContext)"
                                               aria-describedby="textarea-job-description-feedback"
@@ -281,7 +308,10 @@
                                         </b-form-group>
                                       </b-col>
 
-                                      <b-col class="pt-2" cols="12">
+                                      <b-col
+                                        class="pt-2"
+                                        cols="12"
+                                      >
                                         <b-form-group
                                           label="Number of Volunteers Needed"
                                           style="font-family:'Bebas Neue', cursive; text-align:left; margin-top:10px; margin-bottom:10px;"
@@ -293,16 +323,29 @@
                                             lazy-formatter
                                             :formatter="validatePositive"
                                             required
-                                          ></b-form-input>
+                                          />
                                         </b-form-group>
                                       </b-col>
 
-                                      <b-col class="pt-2" cols="12">
+                                      <b-col
+                                        class="pt-2"
+                                        cols="12"
+                                      >
                                         <b-form-tags>
                                           <template>
-                                            <ul v-if="jobForm.skills.length > 0" class="list-inline d-inline-block mb-2">
-                                              <li v-for="(jobSkill, index) in jobForm.skills" :key="index" class="list-inline-item">
-                                                <b-form-tag class="bg-success" @remove="removeJobSkill(index)">
+                                            <ul
+                                              v-if="jobForm.skills.length > 0"
+                                              class="list-inline d-inline-block mb-2"
+                                            >
+                                              <li
+                                                v-for="(jobSkill, index) in jobForm.skills"
+                                                :key="index"
+                                                class="list-inline-item"
+                                              >
+                                                <b-form-tag
+                                                  class="bg-success"
+                                                  @remove="removeJobSkill(index)"
+                                                >
                                                   {{ jobSkill.name }}
                                                 </b-form-tag>
                                               </li>
@@ -316,15 +359,19 @@
                                             variant="primary"
                                           >
                                             <b-dropdown-form>
-                                              <b-form-group label="Search Skill" label-for="skill-search" @submit.stop.prevent>
+                                              <b-form-group
+                                                label="Search Skill"
+                                                label-for="skill-search"
+                                                @submit.stop.prevent
+                                              >
                                                 <b-form-input
                                                   id="skill-search"
                                                   debounce="500"
                                                   @update="searchSkills"
-                                                ></b-form-input>
+                                                />
                                               </b-form-group>
                                             </b-dropdown-form>
-                                            <b-dropdown-divider></b-dropdown-divider>
+                                            <b-dropdown-divider />
                                             <b-dropdown-item
                                               v-for="skill in skillOptions"
                                               :key="skill._id"
@@ -336,7 +383,10 @@
                                         </b-form-tags>
                                       </b-col>
 
-                                      <b-col cols="12" md="6">
+                                      <b-col
+                                        cols="12"
+                                        md="6"
+                                      >
                                         <b-button
                                           class="w-50 mt-3"
                                           @click="showJobForm = false"
@@ -345,7 +395,10 @@
                                         </b-button>
                                       </b-col>
 
-                                      <b-col cols="12" md="6">
+                                      <b-col
+                                        cols="12"
+                                        md="6"
+                                      >
                                         <b-button
                                           class="w-50 mt-3"
                                           variant="success"
@@ -369,7 +422,10 @@
                   <b-row class="pt-4">
                     <b-col cols="12">
                       <b-card style="border-radius: 20px;">
-                        <h5 class="text-start" style="font-family:'Bebas Neue', cursive;">
+                        <h5
+                          class="text-start"
+                          style="font-family:'Bebas Neue', cursive;"
+                        >
                           Questionnaire
                         </h5>
 
@@ -384,7 +440,10 @@
                               primary-key="label"
                             >
                               <template #cell(actions)="{ index }">
-                                <b-button variant="danger" @click="removeEventQuestion(index)">
+                                <b-button
+                                  variant="danger"
+                                  @click="removeEventQuestion(index)"
+                                >
                                   <b-icon icon="trash" />
                                 </b-button>
                               </template>
@@ -402,7 +461,10 @@
 
                             <b-collapse v-model="showQuestionForm">
                               <b-card>
-                                <validation-observer ref="questionObs" v-slot="{ invalid: invalidQuestion }">
+                                <validation-observer
+                                  ref="questionObs"
+                                  v-slot="{ invalid: invalidQuestion }"
+                                >
                                   <b-container>
                                     <b-row>
                                       <b-col cols="12">
@@ -415,29 +477,32 @@
                                             Question:
                                           </label>
 
-                                           <validation-provider
-                                              :rules="{
-                                                required: showQuestionForm === true,
-                                                max: 255
-                                              }"
-                                              v-slot="validationContext"
-                                            >
-                                              <b-form-input
-                                                id="input-question-label"
-                                                v-model="questionForm.label"
-                                                placeholder="Ex: How satisfied are you with the event?"
-                                                :state="getValidationState(validationContext)"
-                                                aria-describedby="input-question-label-feedback"
-                                              />
+                                          <validation-provider
+                                            v-slot="validationContext"
+                                            :rules="{
+                                              required: showQuestionForm === true,
+                                              max: 255
+                                            }"
+                                          >
+                                            <b-form-input
+                                              id="input-question-label"
+                                              v-model="questionForm.label"
+                                              placeholder="Ex: How satisfied are you with the event?"
+                                              :state="getValidationState(validationContext)"
+                                              aria-describedby="input-question-label-feedback"
+                                            />
 
-                                              <b-form-invalid-feedback id="input-question-label-feedback">
-                                                {{ validationContext.errors[0] }}
-                                              </b-form-invalid-feedback>
-                                           </validation-provider>
+                                            <b-form-invalid-feedback id="input-question-label-feedback">
+                                              {{ validationContext.errors[0] }}
+                                            </b-form-invalid-feedback>
+                                          </validation-provider>
                                         </b-form-group>
                                       </b-col>
 
-                                      <b-col cols="12" md="6">
+                                      <b-col
+                                        cols="12"
+                                        md="6"
+                                      >
                                         <b-button
                                           class="w-50 mt-3"
                                           @click="showQuestionForm = false"
@@ -446,7 +511,10 @@
                                         </b-button>
                                       </b-col>
 
-                                      <b-col cols="12" md="6">
+                                      <b-col
+                                        cols="12"
+                                        md="6"
+                                      >
                                         <b-button
                                           class="w-50 mt-3"
                                           variant="success"
@@ -468,10 +536,16 @@
                   </b-row>
                 </b-form>
 
-                <b-row class="py-3" align-h="end">
+                <b-row
+                  class="py-3"
+                  align-h="end"
+                >
                   <b-col cols="2">
                     <b-row align-v="center">
-                      <b-col cols="1" v-if="invalid && (showJobForm || showQuestionForm)">
+                      <b-col
+                        v-if="invalid && (showJobForm || showQuestionForm)"
+                        cols="1"
+                      >
                         <b-icon
                           v-b-tooltip="'Please complete or close the Roles or Questionnaire form'"
                           icon="exclamation-triangle"
@@ -603,6 +677,60 @@ export default ({
         label: ''
       },
       skillOptions: []
+    }
+  },
+  computed: {
+    ...mapGetters(['token'])
+  },
+  watch: {
+    'startDate.date' (value) {
+      const startDate = new Date(value)
+
+      this.setEventStartDate(startDate, this.startDate.time)
+
+      const endDate = new Date(this.endDate.date)
+
+      if (endDate < startDate) {
+        this.endDate.date = value
+      }
+    },
+    'startDate.time' (value) {
+      const startDate = new Date(this.startDate.date)
+      const endDate = new Date(this.endDate.date)
+
+      this.setEventStartDate(startDate, value)
+
+      if (!isSameDay(startDate, endDate)) {
+        return
+      }
+
+      const startTimeParts = value.split(':')
+      const startHours = Number(startTimeParts[0])
+      const startMinutes = Number(startTimeParts[1])
+
+      const endTimeParts = this.endDate.time.split(':')
+      const endHours = Number(endTimeParts[0])
+
+      if (startHours >= endHours) {
+        const addedHours = startHours + 1
+        let hours = addedHours.toString().padStart(2, '0')
+
+        if (addedHours > 23) {
+          hours = '00'
+
+          this.endDate.date = addDays(endDate, 1)
+        }
+
+        const minutes = startMinutes.toString().padStart(2, '0')
+
+        this.endDate.time = `${hours}:${minutes}:00`
+      }
+    },
+    'endDate.date' (value) {
+      this.setEventEndDate(new Date(value), this.endDate.time)
+    },
+    'endDate.time' (value) {
+      this.setEventEndDate(new Date(this.endDate.date), value)
     }
   },
   created () {
@@ -789,60 +917,6 @@ export default ({
     },
     removeEventQuestion (index) {
       this.event.questions.splice(index, 1)
-    }
-  },
-  computed: {
-    ...mapGetters(['token'])
-  },
-  watch: {
-    'startDate.date' (value) {
-      const startDate = new Date(value)
-
-      this.setEventStartDate(startDate, this.startDate.time)
-
-      const endDate = new Date(this.endDate.date)
-
-      if (endDate < startDate) {
-        this.endDate.date = value
-      }
-    },
-    'startDate.time' (value) {
-      const startDate = new Date(this.startDate.date)
-      const endDate = new Date(this.endDate.date)
-
-      this.setEventStartDate(startDate, value)
-
-      if (!isSameDay(startDate, endDate)) {
-        return
-      }
-
-      const startTimeParts = value.split(':')
-      const startHours = Number(startTimeParts[0])
-      const startMinutes = Number(startTimeParts[1])
-
-      const endTimeParts = this.endDate.time.split(':')
-      const endHours = Number(endTimeParts[0])
-
-      if (startHours >= endHours) {
-        const addedHours = startHours + 1
-        let hours = addedHours.toString().padStart(2, '0')
-
-        if (addedHours > 23) {
-          hours = '00'
-
-          this.endDate.date = addDays(endDate, 1)
-        }
-
-        const minutes = startMinutes.toString().padStart(2, '0')
-
-        this.endDate.time = `${hours}:${minutes}:00`
-      }
-    },
-    'endDate.date' (value) {
-      this.setEventEndDate(new Date(value), this.endDate.time)
-    },
-    'endDate.time' (value) {
-      this.setEventEndDate(new Date(this.endDate.date), value)
     }
   }
 })
