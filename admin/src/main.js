@@ -35,6 +35,7 @@ import OfficerAdd from './pages/officers/OfficerAdd'
 // /events
 import EventList from './pages/events/EventList'
 import EventDetails from './pages/events/EventDetails'
+import EventSummary from './pages/events/EventSummary'
 import EventPreAdd from './pages/events/EventPreAdd'
 import EventAdd from './pages/events/EventAdd'
 import EventEvaluation from './pages/events/EventEvaluation'
@@ -164,6 +165,13 @@ const routes = [
   {
     path: '/events/:id',
     component: EventDetails,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/events/:id/summary',
+    component: EventSummary,
     meta: {
       requiresAuth: true
     }

@@ -52,35 +52,45 @@
                       </b-col>
 
                       <b-col
-                        v-if="event.status === 'UPCOMING'"
                         class="text-end"
                         cols="12"
                         md="6"
                       >
-                        <b-button
-                          variant="success"
-                          class="mx-3"
-                          @click="updateEvent.modal = true"
-                        >
-                          Edit Event
-                        </b-button>
-
-                        <b-dropdown
-                          text="Update Status"
-                          variant="primary"
-                          no-flip
-                        >
-                          <b-dropdown-item @click="preUpdateStatus('CANCELED')">
-                            <strong style="color: red">CANCEL</strong>
-                          </b-dropdown-item>
-
-                          <b-dropdown-item
-                            :disabled="!canEndEvent"
-                            @click="preUpdateStatus('ENDED')"
+                        <template v-if="event.status === 'UPCOMING'">
+                          <b-button
+                            variant="success"
+                            class="mx-3"
+                            @click="updateEvent.modal = true"
                           >
-                            <strong>END</strong>
-                          </b-dropdown-item>
-                        </b-dropdown>
+                            Edit Event
+                          </b-button>
+
+                          <b-dropdown
+                            text="Update Status"
+                            variant="primary"
+                            no-flip
+                          >
+                            <b-dropdown-item @click="preUpdateStatus('CANCELED')">
+                              <strong style="color: red">CANCEL</strong>
+                            </b-dropdown-item>
+
+                            <b-dropdown-item
+                              :disabled="!canEndEvent"
+                              @click="preUpdateStatus('ENDED')"
+                            >
+                              <strong>END</strong>
+                            </b-dropdown-item>
+                          </b-dropdown>
+                        </template>
+
+                        <b-button
+                          v-else-if="event.status === 'ENDED'"
+                          variant="primary"
+                          class="mx-3"
+                          @click="$router.push({ path: `/events/${eventId}/summary` })"
+                        >
+                          See Summary Report
+                        </b-button>
                       </b-col>
                     </b-row>
 
