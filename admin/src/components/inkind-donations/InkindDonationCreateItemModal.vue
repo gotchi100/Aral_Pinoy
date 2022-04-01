@@ -335,6 +335,27 @@
             </b-row>
 
             <b-row
+              v-if="form.quantity > 0"
+              class="pt-3"
+            >
+              <b-col cols="12">
+                <label
+                  for="item-file-upload"
+                  class="form-label"
+                >
+                  Item Receipt
+                </label>
+
+                <input
+                  id="item-file-upload"
+                  class="form-control"
+                  type="file"
+                  @change="handleFileUpload"
+                >
+              </b-col>
+            </b-row>
+
+            <b-row
               class="pt-4 pb-3"
               align-h="center"
             >
@@ -435,7 +456,8 @@ export default {
         donorEmail: '',
         category: null,
         categoryCustomFields: [],
-        group: ''
+        group: '',
+        file: null
       },
       unitOptions: [
         { value: 'boxes', text: 'Boxes' },
@@ -569,7 +591,8 @@ export default {
         donorEmail,
         category,
         categoryCustomFields,
-        group
+        group,
+        file
       } = this.form
 
       let categoryId
@@ -591,6 +614,7 @@ export default {
       }, identity)
 
       inkindDonation.quantity = quantity
+      inkindDonation.file = file
 
       try {
         await inkindDonationRepository.create(inkindDonation)
@@ -608,6 +632,19 @@ export default {
           }
         }
       }
+    },
+    handleFileUpload (event) {
+      const files = event.target.files
+
+      if (files.length === 0) {
+        this.form.file = null
+
+        return
+      }
+
+      const [file] = files
+
+      this.form.file = file
     }
   }
 }

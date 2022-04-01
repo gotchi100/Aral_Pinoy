@@ -3,15 +3,22 @@
 const express = require('express')
 const { Types } = require('mongoose')
 const Joi = require('joi')
+const multer  = require('multer')
 
 const IkdTransactionController = require('../../controllers/inkind-donations/transactions')
 const { TRANSACTION_STATUSES } = require('../../constants/inkind-donations')
+
+const upload = multer({
+  limits: {
+    fileSize: 5000000 // 5 MB
+  }
+})
 
 const createTransactionValidator = Joi.object({
   sku: Joi.string().trim().max(100).uppercase().required(),
   quantity: Joi.number().integer().required(),
   date: Joi.string().isoDate().required(),
-  reason: Joi.string().required()
+  reason: Joi.string().required(),
 }).options({
   stripUnknown: true
 })
@@ -46,8 +53,21 @@ function validateCreateTransaction(req, res, next) {
 }
 
 async function create(req, res, next) {
+  const {
+    sku,
+    quantity,
+    date,
+    reason
+  } = req.body
+
   try {
-    const results = await IkdTransactionController.create(req.body)
+    const results = await IkdTransactionController.create({
+      sku,
+      quantity,
+      date,
+      reason,
+      file: req.file
+    })
 
     return res.status(201).json(results)
   } catch (error) {
@@ -175,7 +195,7 @@ async function updateStatus(req, res, next) {
 
 const router = express.Router()
 
-router.post('/', validateCreateTransaction, create)
+router.post('/', upload.single('file'), validateCreateTransaction, create)
 router.get('/', validateListTransaction, list)
 router.get('/:id', validateGetTransaction, get)
 router.put('/:id/status', validateUpdateTransactionStatus, updateStatus)

@@ -528,6 +528,24 @@
                     </b-col>
                   </b-row>
 
+                  <b-row class="pt-3">
+                    <b-col cols="12">
+                      <label
+                        for="inventory-adj-file-upload"
+                        class="form-label"
+                      >
+                        Item Receipt
+                      </label>
+
+                      <input
+                        id="inventory-adj-file-upload"
+                        class="form-control"
+                        type="file"
+                        @change="handleInventoryAdjFileUpload"
+                      >
+                    </b-col>
+                  </b-row>
+
                   <b-row
                     class="pt-4 pb-3"
                     align-h="center"
@@ -671,7 +689,8 @@ export default {
         newQuantity: 0,
         quantity: 0,
         date: new Date(),
-        reason: null
+        reason: null,
+        file: null
       },
       reasonChoices: [
         'Arrival of New Items',
@@ -813,15 +832,17 @@ export default {
         item,
         quantity,
         date,
-        reason
+        reason,
+        file
       } = this.inventoryAdjForm
 
       try {
         await inkindDonationTransactionRepository.create({
           sku: item.sku,
           quantity,
-          date,
-          reason
+          date: new Date(date).toJSON(),
+          reason,
+          file
         })
 
         this.$router.push({
@@ -830,6 +851,19 @@ export default {
       } catch {
         this.isLoading = false
       }
+    },
+    handleInventoryAdjFileUpload (event) {
+      const files = event.target.files
+
+      if (files.length === 0) {
+        this.inventoryAdjForm.file = null
+
+        return
+      }
+
+      const [file] = files
+
+      this.inventoryAdjForm.file = file
     }
   }
 }

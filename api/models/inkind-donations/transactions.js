@@ -17,7 +17,8 @@ const schema = new mongoose.Schema({
   },
   reason: String,
   quantity: Number,
-  date: Date
+  date: Date,
+  receiptImageUrl: String
 }, {
   collection: 'inkindDonationTransactions',
   validateBeforeSave: false

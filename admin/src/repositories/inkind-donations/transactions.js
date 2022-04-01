@@ -4,6 +4,8 @@ const axios = require('axios')
 
 /** @typedef {import('axios').Axios} Axios */
 
+const REPOSITORY_ROUTE_PREFIX = '/inkind-donation-transactions'
+
 class InkindDonationTransactionRepository {
   /**
    *
@@ -22,7 +24,33 @@ class InkindDonationTransactionRepository {
   }
 
   async create (payload) {
-    const { data } = await this.apiClient.post('/inkind-donation-transactions', payload)
+    const {
+      sku,
+      quantity,
+      date,
+      reason,
+      file
+    } = payload
+
+    const form = new FormData()
+
+    form.set('sku', sku)
+    form.set('quantity', quantity)
+    form.set('date', date)
+
+    if (reason !== null) {
+      form.set('reason', reason)
+    }
+
+    if (file !== null) {
+      form.set('file', file)
+    }
+
+    const { data } = await this.apiClient.post(REPOSITORY_ROUTE_PREFIX, form, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
 
     return data
   }

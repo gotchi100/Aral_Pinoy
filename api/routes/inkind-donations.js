@@ -2,12 +2,19 @@
 
 const express = require('express')
 const { Types } = require('mongoose')
+const multer  = require('multer')
 const Joi = require('joi')
 const joiObjectId = require('joi-objectid')
 
 Joi.objectId = joiObjectId(Joi)
 
 const InkindDonationController = require('../controllers/inkind-donations')
+
+const upload = multer({
+  limits: {
+    fileSize: 5000000 // 5 MB
+  }
+})
 
 const createInkindDonationValidator = Joi.object({
   sku: Joi.string().trim().max(100).uppercase().required(),
@@ -61,7 +68,10 @@ function validateCreateInkindDonation(req, res, next) {
 
 async function create(req, res, next) {
   try {
-    const results = await InkindDonationController.create(req.body)
+    const results = await InkindDonationController.create({
+      ...req.body,
+      file: req.file
+    })
 
     return res.status(201).json(results)
   } catch (error) {
@@ -148,7 +158,7 @@ async function get(req, res, next) {
 
 const router = express.Router()
 
-router.post('/', validateCreateInkindDonation, create)
+router.post('/', upload.single('file'), validateCreateInkindDonation, create)
 router.get('/', validateListInkindDonation, list)
 router.get('/:id', validateGetInkindDonation, get)
 

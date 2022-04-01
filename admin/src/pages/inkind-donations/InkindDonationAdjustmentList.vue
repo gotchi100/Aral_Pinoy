@@ -76,6 +76,16 @@
                     <template #cell(sumQuantity)="{ item }">
                       {{ item.item.quantity + item.quantity }}
                     </template>
+
+                    <template #cell(receipt)="{ item }">
+                      <a
+                        v-if="!!item.receiptImageUrl"
+                        :href="item.receiptImageUrl"
+                        target="_blank"
+                      >
+                        See Image
+                      </a>
+                    </template>
                   </b-table>
                 </b-col>
               </b-row>
@@ -120,7 +130,8 @@ export default {
         { key: 'reason', label: 'Reason' },
         { key: 'item.quantity', label: 'Previous Quantity' },
         { key: 'quantity', label: 'Adjustment' },
-        { key: 'sumQuantity', label: 'New Quantity' }
+        { key: 'sumQuantity', label: 'New Quantity' },
+        { key: 'receipt', label: 'Receipt' }
       ],
       total: 0,
       currentPage: 1,

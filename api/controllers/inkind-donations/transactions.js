@@ -1,5 +1,10 @@
 'use strict'
 
+const { Storage } = require('@google-cloud/storage')
+const { Types } = require('mongoose')
+
+const config = require('../../config')
+
 const InkindDonationTransactionModel = require('../../models/inkind-donations/transactions')
 const InkindDonationModel = require('../../models/inkind-donations')
 
@@ -11,11 +16,19 @@ const {
   ConflictError
 } = require('../../errors')
 
+const storage = new Storage({
+  keyFilename: config.google.cloud.serviceAccount,
+  projectId: 'aral-pinoy'
+})
+
+const INKIND_DONATION_RECEIPTS_BUCKET_URL = 'aral-pinoy-inkind-donation-receipts'
+
+const ikdReceiptsBucket = storage.bucket(INKIND_DONATION_RECEIPTS_BUCKET_URL)
+
 const SORT_ORDER_MAPPING = {
   asc : 1,
   desc: -1
 }
-
 
 class InkindDonationTransactionsController {
   static async create(transaction) {
@@ -23,8 +36,25 @@ class InkindDonationTransactionsController {
       sku,
       quantity,
       date,
-      reason
+      reason,
+      file
     } = transaction
+
+    const coercedDate = new Date(date)
+
+    const transactionId = new Types.ObjectId()
+
+    let receiptImageUrl
+
+    if (file !== undefined) {
+      const { originalname, buffer} = file
+
+      const filename = `${transactionId.toString()}/receipt-${coercedDate.valueOf().toString(36)}-${originalname}`
+
+      await InkindDonationTransactionsController.uploadFile(filename, buffer)
+
+      receiptImageUrl = `https://storage.googleapis.com/${INKIND_DONATION_RECEIPTS_BUCKET_URL}/${filename}`
+    }
     
     const item = await InkindDonationModel.findOne({
       sku
@@ -60,7 +90,8 @@ class InkindDonationTransactionsController {
       },
       reason,
       quantity,
-      date: new Date(date),
+      date: coercedDate,
+      receiptImageUrl
     })
     
     return createdTransaction.toObject({ 
@@ -177,6 +208,14 @@ class InkindDonationTransactionsController {
     if (transactionResults.matchedCount === 0) {
       throw new ConflictError('Transaction was already updated, please try again')
     }
+  }
+
+  static uploadFile(filename, buffer) {
+    const bucketFile = ikdReceiptsBucket.file(filename)
+
+    return bucketFile.save(buffer, {
+      public: true
+    })
   }
 }
 

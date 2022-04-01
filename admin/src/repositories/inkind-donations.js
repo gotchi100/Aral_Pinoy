@@ -1,8 +1,11 @@
 'use strict'
 
 const axios = require('axios')
+const { isObject } = require('lodash')
 
 /** @typedef {import('axios').Axios} Axios */
+
+const REPOSITORY_ROUTE_PREFIX = '/inkind-donations'
 
 class InkindDonationRepository {
   /**
@@ -22,7 +25,39 @@ class InkindDonationRepository {
   }
 
   async create (payload) {
-    const { data } = await this.apiClient.post('/inkind-donations', payload)
+    const form = new FormData()
+
+    for (const [key, value] of Object.entries(payload)) {
+      if (value === null) {
+        continue
+      }
+
+      if (!Array.isArray(value)) {
+        form.set(key, value)
+
+        continue
+      }
+
+      for (let i = 0; i < value.length; i++) {
+        const item = value[i]
+
+        if (!isObject(item)) {
+          form.set(`${key}[${i}]`, item)
+
+          continue
+        }
+
+        for (const [itemKey, itemValue] of Object.entries(item)) {
+          form.set(`${key}[${i}][${itemKey}]`, itemValue)
+        }
+      }
+    }
+
+    const { data } = await this.apiClient.post(REPOSITORY_ROUTE_PREFIX, form, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
 
     return data
   }
@@ -56,7 +91,7 @@ class InkindDonationRepository {
       queryString.set('sort.order', sort.order)
     }
 
-    const { data } = await this.apiClient.get(`/inkind-donations?${queryString.toString()}`)
+    const { data } = await this.apiClient.get(`${REPOSITORY_ROUTE_PREFIX}?${queryString.toString()}`)
 
     return {
       results: data.results,

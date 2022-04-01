@@ -1,19 +1,34 @@
 'use strict'
 
+const { Storage } = require('@google-cloud/storage')
+const { Types } = require('mongoose')
+
+const config = require('../config')
+
 const InkindDonationModel = require('../models/inkind-donations')
 const InkindDonationCategoryModel = require('../models/inkind-donations/categories')
 const InkindDonationDonorModel = require('../models/inkind-donations/donors')
 const InkindDonationGroupModel = require('../models/inkind-donations/groups')
+const IkdTransactionModel = require('../models/inkind-donations/transactions')
 
 const SendgridMailController = require('../controllers/mail/sendgrid')
 
-const { CATEGORY_CUSTOM_FIELD_DATA_TYPES } = require('../constants/inkind-donations')
+const { CATEGORY_CUSTOM_FIELD_DATA_TYPES, TRANSACTION_STATUSES } = require('../constants/inkind-donations')
 
 const { 
   ConflictError,
   BadRequestError,
   NotFoundError
 } = require('../errors')
+
+const storage = new Storage({
+  keyFilename: config.google.cloud.serviceAccount,
+  projectId: 'aral-pinoy'
+})
+
+const INKIND_DONATION_RECEIPTS_BUCKET_URL = 'aral-pinoy-inkind-donation-receipts'
+
+const ikdReceiptsBucket = storage.bucket(INKIND_DONATION_RECEIPTS_BUCKET_URL)
 
 const SORT_ORDER_MAPPING = {
   asc : 1,
@@ -38,7 +53,8 @@ class InkindDonationsController {
       donorEmail,
       categoryId,
       categoryCustomFields = [],
-      group
+      group,
+      file
     } = inkindDonation
 
     let category
@@ -128,6 +144,21 @@ class InkindDonationsController {
         category,
         group
       })
+
+      if (quantity > 0) {
+        await InkindDonationsController.createTransaction({
+          item: {
+            sku,
+            name,
+            category,
+            quantity: 0
+          },
+          date: new Date(),
+          reason: 'Added new items',
+          quantity,
+          file
+        }).catch((error) => console.log(error))
+      }
       
       return results.toObject({ 
         minimize: true,
@@ -272,6 +303,48 @@ class InkindDonationsController {
     }
 
     return inkindDonation
+  }
+
+  static async createTransaction(transaction) {
+    const {
+      item,
+      date,
+      reason,
+      quantity,
+      file
+    } = transaction
+
+    const transactionId = new Types.ObjectId()
+
+    let receiptImageUrl
+
+    if (file !== undefined) {
+      const { originalname, buffer} = file
+
+      const filename = `${transactionId.toString()}/receipt-${date.valueOf().toString(36)}-${originalname}`
+
+      await InkindDonationsController.uploadFile(filename, buffer)
+
+      receiptImageUrl = `https://storage.googleapis.com/${INKIND_DONATION_RECEIPTS_BUCKET_URL}/${filename}`
+    }
+    
+    await IkdTransactionModel.create({
+      _id: transactionId,
+      status: TRANSACTION_STATUSES.COMPLETE,
+      item,
+      reason,
+      quantity,
+      date,
+      receiptImageUrl
+    })
+  }
+
+  static uploadFile(filename, buffer) {
+    const bucketFile = ikdReceiptsBucket.file(filename)
+
+    return bucketFile.save(buffer, {
+      public: true
+    })
   }
 }
 
