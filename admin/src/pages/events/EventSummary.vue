@@ -7,226 +7,399 @@
             class="card"
             style="border-radius: 20px;"
           >
-            <b-container fluid>
-              <b-row>
-                <b-col cols="12">
-                  <h1 style="font-family:'Bebas Neue', cursive;">
-                    Event Summary
-                  </h1>
-                </b-col>
-              </b-row>
+            <b-skeleton-wrapper :loading="!isFullyLoaded">
+              <template #loading>
+                <b-card class="mb-3">
+                  <b-skeleton width="85%" />
+                  <b-skeleton width="55%" />
+                  <b-skeleton width="70%" />
+                </b-card>
 
-              <b-row
-                v-if="eventVolunteers.length > 0"
-                class="mb-3"
+                <b-card class="mb-3">
+                  <b-skeleton-img
+                    no-aspect
+                    height="150px"
+                  />
+                </b-card>
+
+                <b-card class="mb-3">
+                  <b-skeleton width="85%" />
+                  <b-skeleton width="55%" />
+                  <b-skeleton width="70%" />
+                </b-card>
+              </template>
+
+              <b-container
+                v-if="isFullyLoaded"
+                fluid
               >
-                <b-col cols="12">
-                  <b-card
-                    title="Attendance"
-                    style="text-align: left"
-                  >
-                    <b-list-group flush>
-                      <b-list-group-item
-                        v-for="item in eventVolunteers"
-                        :key="item._id"
-                        href="#"
-                      >
-                        <b-icon
-                          :class="item.present ? 'text-success' : 'text-danger'"
-                          :icon="item.present ? 'check-circle' : 'x-circle'"
-                        />  {{ `${item.user.firstName} ${item.user.lastName}` }}
-                      </b-list-group-item>
-                    </b-list-group>
-                  </b-card>
-                </b-col>
-              </b-row>
+                <b-row>
+                  <b-col cols="12">
+                    <h1 style="font-family:'Bebas Neue', cursive;">
+                      {{ event.name }}
+                    </h1>
+                  </b-col>
 
-              <b-row class="mb-3">
-                <b-col cols="12">
-                  <b-card
-                    title="Items Used"
-                    style="text-align: left"
-                  >
-                    <b-list-group flush>
-                      <b-list-group-item href="#">
-                        2 Water Bottles
-                      </b-list-group-item>
+                  <b-col cols="12">
+                    <h3 style="font-family:'Bebas Neue', cursive;">
+                      Event Summary
+                    </h3>
+                  </b-col>
+                </b-row>
 
-                      <b-list-group-item href="#">
-                        4 Brooms
-                      </b-list-group-item>
-
-                      <b-list-group-item href="#">
-                        10 Shirts
-                      </b-list-group-item>
-
-                      <b-list-group-item href="#">
-                        2 Corned Beef Cans
-                      </b-list-group-item>
-                    </b-list-group>
-                  </b-card>
-                </b-col>
-              </b-row>
-
-              <b-row class="mb-3">
-                <b-col cols="12">
-                  <b-card
-                    title="Expenses"
-                    style="text-align: left"
-                  >
-                    <b-row>
-                      <b-col cols="12">
-                        <b-container
-                          fluid
-                          style="width: 500px; height: 500px"
-                        >
-                          <b-row>
-                            <b-col cols="12">
-                              <pie-chart
-                                :height="100"
-                                :width="100"
-                                :chart-data="{
-                                  labels: eventExpenses.labels,
-                                  datasets: eventExpenses.datasets
-                                }"
-                                :options="{
-                                  responsive: true,
-                                  plugins: {
-                                    legend: {
-                                      position: 'top',
-                                    }
-                                  }
-                                }"
-                              />
-                            </b-col>
-                          </b-row>
-                        </b-container>
-                      </b-col>
-                    </b-row>
-                  </b-card>
-                </b-col>
-              </b-row>
-
-              <b-row class="mb-3">
-                <b-col cols="12">
-                  <b-card
-                    title="Incidents"
-                    style="text-align: left"
-                  >
-                    <b-list-group flush>
-                      <b-list-group-item
-                        href="#"
-                      >
-                        Test Person got injured
-                      </b-list-group-item>
-
-                      <b-list-group-item
-                        href="#"
-                      >
-                        Ran out of food
-                      </b-list-group-item>
-                    </b-list-group>
-                  </b-card>
-                </b-col>
-              </b-row>
-
-              <b-row class="mb-3">
-                <b-col cols="12">
-                  <b-card
-                    title="Goals"
-                    style="text-align: left"
-                  >
-                    <b-row
-                      v-for="(goal, i) in goals"
-                      :key="`evaluation-${i}`"
+                <b-row
+                  v-if="eventVolunteers.length > 0"
+                  class="mb-3"
+                >
+                  <b-col cols="12">
+                    <b-card
+                      title="Attendance"
+                      style="text-align: left"
                     >
-                      <b-col cols="12">
-                        <b-container fluid>
-                          <b-row
-                            class="py-5"
-                          >
-                            <b-col cols="12">
-                              <bar-chart
-                                :height="100"
-                                :chart-data="{
-                                  labels: goal.labels,
-                                  datasets: goal.datasets
-                                }"
-                                :options="{
-                                  indexAxis: 'y',
-                                  datasets: {
-                                    bar: {
-                                      barPercentage: '0.4',
-                                    }
-                                  },
-                                  tooltips: {
-                                    enabled: false
-                                  },
-                                  elements: {
-                                    bar: {
-                                      borderWidth: 2,
-                                    }
-                                  },
-                                  scales: {
-                                    yAxes: {
-                                      display: false,
-                                      stacked: true,
-                                    },
-                                    xAxes: {
-                                      stacked: true,
-                                      ticks: {
-                                        min: 0,
-                                        beginAtZero: true,
-                                        precision: 0
-                                      }
-                                    }
-                                  },
-                                  responsive: true,
-                                  plugins: {
-                                    legend: {
-                                      position: 'top',
-                                    },
-                                    title: {
-                                      display: true,
-                                      text: goal.title
-                                    }
-                                  }
-                                }"
-                              />
-                            </b-col>
-                          </b-row>
-                        </b-container>
-                      </b-col>
-                    </b-row>
-                  </b-card>
-                </b-col>
-              </b-row>
-
-              <b-row class="mb-3">
-                <b-col cols="12">
-                  <b-card
-                    title="SDG Evaluations"
-                    style="text-align: left"
-                  >
-                    <b-row
-                      v-for="(evaluation, i) in sdgEvaluations"
-                      :key="`evaluation-${i}`"
-                      class="mb-4"
-                    >
-                      <b-col cols="12">
-                        <b-card
-                          :title="evaluation.name"
-                          style="text-align: left"
-                        >
+                      <b-row>
+                        <b-col cols="12">
                           <b-container fluid>
                             <b-row
-                              v-for="(question, j) in evaluation.questions"
-                              :key="`question-${j}`"
                               class="py-5"
                             >
                               <b-col cols="12">
                                 <bar-chart
                                   :height="100"
+                                  :chart-data="{
+                                    labels: volunteerAttendanceChart.labels,
+                                    datasets: volunteerAttendanceChart.datasets
+                                  }"
+                                  :options="{
+                                    indexAxis: 'y',
+                                    datasets: {
+                                      bar: {
+                                        barPercentage: '0.4',
+                                      }
+                                    },
+                                    tooltips: {
+                                      enabled: false
+                                    },
+                                    elements: {
+                                      bar: {
+                                        borderWidth: 2,
+                                      }
+                                    },
+                                    scales: {
+                                      yAxes: {
+                                        display: false,
+                                        stacked: true,
+                                      },
+                                      xAxes: {
+                                        stacked: true,
+                                        ticks: {
+                                          min: 0,
+                                          beginAtZero: true,
+                                          precision: 0
+                                        }
+                                      }
+                                    },
+                                    responsive: true,
+                                    plugins: {
+                                      legend: {
+                                        position: 'top',
+                                      },
+                                      title: {
+                                        display: true,
+                                        text: volunteerAttendanceChart.title
+                                      }
+                                    }
+                                  }"
+                                />
+                              </b-col>
+                            </b-row>
+                          </b-container>
+                        </b-col>
+                      </b-row>
+
+                      <b-row>
+                        <b-col cols="12">
+                          <h4>
+                            List of Volunteers
+                          </h4>
+                        </b-col>
+                      </b-row>
+
+                      <b-list-group flush>
+                        <b-list-group-item
+                          v-for="item in eventVolunteers"
+                          :key="item._id"
+                          href="#"
+                        >
+                          <b-icon
+                            :class="item.present ? 'text-success' : 'text-danger'"
+                            :icon="item.present ? 'check-circle' : 'x-circle'"
+                          />  {{ `${item.user.firstName} ${item.user.lastName}` }}
+                        </b-list-group-item>
+                      </b-list-group>
+                    </b-card>
+                  </b-col>
+                </b-row>
+
+                <b-row
+                  v-if="usedItems.length > 0"
+                  class="mb-3"
+                >
+                  <b-col cols="12">
+                    <b-card
+                      title="Items Used"
+                      style="text-align: left"
+                    >
+                      <b-list-group flush>
+                        <b-list-group-item
+                          v-for="(item, index) in usedItems"
+                          :key="index"
+                          href="#"
+                        >
+                          {{ item.usedQuantity }} {{ item.name }}
+                        </b-list-group-item>
+                      </b-list-group>
+                    </b-card>
+                  </b-col>
+                </b-row>
+
+                <b-row
+                  v-if="eventExpenses.length > 0"
+                  class="mb-3"
+                >
+                  <b-col cols="12">
+                    <b-card
+                      title="Expenses"
+                      style="text-align: left"
+                    >
+                      <b-row>
+                        <b-col cols="12">
+                          <b-container
+                            fluid
+                            style="width: 500px; height: 500px"
+                          >
+                            <b-row>
+                              <b-col cols="12">
+                                <pie-chart
+                                  :height="100"
+                                  :width="100"
+                                  :chart-data="{
+                                    labels: eventExpensesChart.labels,
+                                    datasets: eventExpensesChart.datasets
+                                  }"
+                                  :options="{
+                                    responsive: true,
+                                    plugins: {
+                                      legend: {
+                                        position: 'top',
+                                      }
+                                    }
+                                  }"
+                                />
+                              </b-col>
+                            </b-row>
+                          </b-container>
+                        </b-col>
+                      </b-row>
+                    </b-card>
+                  </b-col>
+                </b-row>
+
+                <b-row
+                  v-if="incidents.length > 0"
+                  class="mb-3"
+                >
+                  <b-col cols="12">
+                    <b-card
+                      title="Incidents"
+                      style="text-align: left"
+                    >
+                      <b-list-group flush>
+                        <b-list-group-item
+                          v-for="(incident, index) of incidents"
+                          :key="index"
+                          href="#"
+                        >
+                          {{ incident }}
+                        </b-list-group-item>
+                      </b-list-group>
+                    </b-card>
+                  </b-col>
+                </b-row>
+
+                <b-row
+                  v-if="goalsChart.length > 0"
+                  class="mb-3"
+                >
+                  <b-col cols="12">
+                    <b-card
+                      title="Goals"
+                      style="text-align: left"
+                    >
+                      <b-row
+                        v-for="(goal, i) in goalsChart"
+                        :key="`evaluation-${i}`"
+                      >
+                        <b-col cols="12">
+                          <b-container fluid>
+                            <b-row
+                              class="py-5"
+                            >
+                              <b-col cols="12">
+                                <bar-chart
+                                  :height="100"
+                                  :chart-data="{
+                                    labels: goal.labels,
+                                    datasets: goal.datasets
+                                  }"
+                                  :options="{
+                                    indexAxis: 'y',
+                                    datasets: {
+                                      bar: {
+                                        barPercentage: '0.4',
+                                      }
+                                    },
+                                    tooltips: {
+                                      enabled: false
+                                    },
+                                    elements: {
+                                      bar: {
+                                        borderWidth: 2,
+                                      }
+                                    },
+                                    scales: {
+                                      yAxes: {
+                                        display: false,
+                                        stacked: true,
+                                      },
+                                      xAxes: {
+                                        stacked: true,
+                                        ticks: {
+                                          min: 0,
+                                          beginAtZero: true,
+                                          precision: 0
+                                        }
+                                      }
+                                    },
+                                    responsive: true,
+                                    plugins: {
+                                      legend: {
+                                        position: 'top',
+                                      },
+                                      title: {
+                                        display: true,
+                                        text: goal.title
+                                      }
+                                    }
+                                  }"
+                                />
+                              </b-col>
+                            </b-row>
+                          </b-container>
+                        </b-col>
+                      </b-row>
+                    </b-card>
+                  </b-col>
+                </b-row>
+
+                <b-row
+                  v-if="sdgEvaluationChart.length > 0"
+                  class="mb-3"
+                >
+                  <b-col cols="12">
+                    <b-card
+                      title="SDG Evaluations"
+                      style="text-align: left"
+                    >
+                      <b-row
+                        v-for="(evaluation, i) in sdgEvaluationChart"
+                        :key="`evaluation-${i}`"
+                        class="mb-4"
+                      >
+                        <b-col cols="12">
+                          <b-card
+                            :title="evaluation.name"
+                            style="text-align: left"
+                          >
+                            <b-container fluid>
+                              <b-row
+                                v-for="(question, j) in evaluation.questions"
+                                :key="`question-${j}`"
+                                class="py-5"
+                              >
+                                <b-col cols="12">
+                                  <bar-chart
+                                    :height="100"
+                                    :chart-data="{
+                                      labels: question.labels,
+                                      datasets: question.datasets
+                                    }"
+                                    :options="{
+                                      indexAxis: 'y',
+                                      datasets: {
+                                        bar: {
+                                          barPercentage: '0.5',
+                                        }
+                                      },
+                                      elements: {
+                                        bar: {
+                                          borderWidth: 2,
+                                        }
+                                      },
+                                      scales: {
+                                        yAxes: {
+                                          display: false
+                                        },
+                                        xAxes: {
+                                          ticks: {
+                                            min: 0,
+                                            beginAtZero: true,
+                                            precision: 0
+                                          }
+                                        }
+                                      },
+                                      responsive: true,
+                                      plugins: {
+                                        legend: {
+                                          position: 'top',
+                                        },
+                                        title: {
+                                          display: true,
+                                          text: question.title
+                                        }
+                                      }
+                                    }"
+                                  />
+                                </b-col>
+                              </b-row>
+                            </b-container>
+                          </b-card>
+                        </b-col>
+                      </b-row>
+                    </b-card>
+                  </b-col>
+                </b-row>
+
+                <b-row
+                  v-if="eventQuestionnaireChart.length > 0"
+                  class="mb-3"
+                >
+                  <b-col cols="12">
+                    <b-card
+                      title="Event Questionnaire"
+                      style="text-align: left"
+                    >
+                      <b-row
+                        v-for="(question, i) in eventQuestionnaireChart"
+                        :key="`evaluation-${i}`"
+                      >
+                        <b-col cols="12">
+                          <b-container fluid>
+                            <b-row
+                              class="py-5"
+                            >
+                              <b-col cols="12">
+                                <bar-chart
+                                  :height="150"
                                   :chart-data="{
                                     labels: question.labels,
                                     datasets: question.datasets
@@ -235,7 +408,7 @@
                                     indexAxis: 'y',
                                     datasets: {
                                       bar: {
-                                        barPercentage: '0.5',
+                                        barPercentage: '0.65',
                                       }
                                     },
                                     elements: {
@@ -270,80 +443,13 @@
                               </b-col>
                             </b-row>
                           </b-container>
-                        </b-card>
-                      </b-col>
-                    </b-row>
-                  </b-card>
-                </b-col>
-              </b-row>
-
-              <b-row class="mb-3">
-                <b-col cols="12">
-                  <b-card
-                    title="Event Questionnaire"
-                    style="text-align: left"
-                  >
-                    <b-row
-                      v-for="(question, i) in eventQuestionnaire"
-                      :key="`evaluation-${i}`"
-                    >
-                      <b-col cols="12">
-                        <b-container fluid>
-                          <b-row
-                            class="py-5"
-                          >
-                            <b-col cols="12">
-                              <bar-chart
-                                :height="150"
-                                :chart-data="{
-                                  labels: question.labels,
-                                  datasets: question.datasets
-                                }"
-                                :options="{
-                                  indexAxis: 'y',
-                                  datasets: {
-                                    bar: {
-                                      barPercentage: '0.65',
-                                    }
-                                  },
-                                  elements: {
-                                    bar: {
-                                      borderWidth: 2,
-                                    }
-                                  },
-                                  scales: {
-                                    yAxes: {
-                                      display: false
-                                    },
-                                    xAxes: {
-                                      ticks: {
-                                        min: 0,
-                                        beginAtZero: true,
-                                        precision: 0
-                                      }
-                                    }
-                                  },
-                                  responsive: true,
-                                  plugins: {
-                                    legend: {
-                                      position: 'top',
-                                    },
-                                    title: {
-                                      display: true,
-                                      text: question.title
-                                    }
-                                  }
-                                }"
-                              />
-                            </b-col>
-                          </b-row>
-                        </b-container>
-                      </b-col>
-                    </b-row>
-                  </b-card>
-                </b-col>
-              </b-row>
-            </b-container>
+                        </b-col>
+                      </b-row>
+                    </b-card>
+                  </b-col>
+                </b-row>
+              </b-container>
+            </b-skeleton-wrapper>
           </b-card>
         </b-col>
       </b-row>
@@ -358,6 +464,17 @@ import * as randomColor from 'randomcolor'
 import BarChart from '../../components/charts/Bar'
 import PieChart from '../../components/charts/Pie'
 
+import { apiClient } from '../../axios'
+import EventRepository from '../../repositories/events'
+import EventExpenseRepository from '../../repositories/events/expenses'
+import EventVolunteerRepository from '../../repositories/events/volunteers'
+import EventEvaluationRepository from '../../repositories/events/evaluations'
+
+const eventRepository = new EventRepository(apiClient)
+const eventExpenseRepository = new EventExpenseRepository(apiClient)
+const eventVolunteerRepository = new EventVolunteerRepository(apiClient)
+const eventEvaluationRepository = new EventEvaluationRepository(apiClient)
+
 const successColor = '#198754'
 const dangerColor = '#dc3545'
 
@@ -369,6 +486,11 @@ const polarQuestionColors = {
   'Very Dissatisfied': '#9c2531'
 }
 
+const POLAR_QUESTION_MAP = {
+  1: 'Yes',
+  0: 'No'
+}
+
 export default {
   components: {
     BarChart,
@@ -376,201 +498,486 @@ export default {
   },
   data () {
     return {
-      fields: [
-        { key: 'name', label: 'Event Name', sortable: true },
-        { key: 'date', label: 'Date', sortable: true },
-        { key: 'location.name', label: 'Venue' },
-        { key: 'status', label: 'Status' }
-      ],
-      events: [],
-      total: 0,
-      currentPage: 1,
-      perPage: 5,
-      pageOptions: [5, 10, 20],
-      searchFilter: '',
-      statusFilters: ['UPCOMING'],
-      statusOptions: ['UPCOMING', 'ENDED', 'CANCELED'],
-      eventVolunteers: [{
-        _id: '1234',
-        present: false,
-        user: {
-          _id: '5678',
-          firstName: 'Test',
-          lastName: 'Person'
-        }
-      }, {
-        _id: '5678',
-        present: true,
-        user: {
-          _id: 'abadwa',
-          firstName: 'Test',
-          lastName: 'Person 2'
-        }
-      }]
+      event: null,
+      eventExpenses: [],
+      eventVolunteers: [],
+      eventEvaluations: [],
+      eventSdgAnswersMap: {},
+      eventEvaluationAnswersMap: {},
+      isLoadingEvent: false,
+      isLoadingEventExpenses: false,
+      isLoadingEventVolunteers: false,
+      isLoadingEventEvaluations: false
     }
   },
   computed: {
     ...mapGetters(['token']),
-    goals () {
-      return [{
+    eventId () {
+      return this.$route.params.id
+    },
+    isFullyLoaded () {
+      return !this.isLoadingEvent && !this.isLoadingEventExpenses && !this.isLoadingEventVolunteers && !this.isLoadingEventEvaluations
+    },
+    incidents () {
+      const event = this.event
+
+      if (event === null) {
+        return []
+      }
+
+      return Array.isArray(event.incidents) ? event.incidents : []
+    },
+    usedItems () {
+      if (this.event === null) {
+        return []
+      }
+
+      const items = this.event.ikds
+
+      if (!Array.isArray(items) || items.length === 0) {
+        return []
+      }
+
+      const usedItems = []
+
+      for (const item of items) {
+        const {
+          item: {
+            name
+          },
+          usedQuantity
+        } = item
+
+        if (usedQuantity === undefined || usedQuantity === 0) {
+          continue
+        }
+
+        usedItems.push({
+          usedQuantity,
+          name
+        })
+      }
+
+      return usedItems
+    },
+    volunteerAttendanceChart () {
+      const volunteers = this.eventVolunteers
+
+      let present = 0
+      let absent = 0
+
+      for (const volunteer of volunteers) {
+        if (volunteer.present) {
+          present += 1
+        } else {
+          absent += 1
+        }
+      }
+
+      return {
         title: 'Volunteer Attendance',
         labels: [''],
         datasets: [
           {
             label: 'Present',
             backgroundColor: successColor,
-            data: [2]
+            data: [present]
           },
           {
             label: 'Absent',
             backgroundColor: dangerColor,
-            data: [3]
-          }
-        ]
-      }, {
-        title: 'Monetary Donation',
-        labels: [''],
-        datasets: [
-          {
-            label: 'Current',
-            backgroundColor: successColor,
-            data: [4000]
-          },
-          {
-            label: 'Remaining Target',
-            backgroundColor: dangerColor,
-            data: [1000]
-          }
-        ]
-      }]
-    },
-    eventExpenses () {
-      const backgroundColor = randomColor({
-        count: 3,
-        format: 'rgb'
-      })
-
-      return {
-        labels: ['Food', 'Seeds', 'Misc'],
-        datasets: [
-          {
-            backgroundColor,
-            data: [1000, 7000, 500]
+            data: [absent]
           }
         ]
       }
     },
-    sdgEvaluations () {
-      return [{
-        name: '#13 Climate Action',
-        questions: [{
-          title: 'Did this strengthen resilience and adaptive capacity to climate related hazards and natural disasters in the area?',
+    goalsChart () {
+      if (!this.event.goals) {
+        return
+      }
+
+      const { current, target } = this.event.goals.monetaryDonation
+      const jobs = this.event.jobs
+
+      const goals = []
+
+      if (current !== 0 || target !== 0) {
+        const datasets = []
+
+        const remainder = target - current
+
+        if (remainder < 0) {
+          const absRemainder = Math.abs(remainder)
+
+          datasets.push({
+            label: 'Current',
+            backgroundColor: successColor,
+            data: [current - absRemainder]
+          })
+
+          datasets.push({
+            label: 'Excess',
+            backgroundColor: '#198587',
+            data: [absRemainder]
+          })
+        } else if (remainder > 0) {
+          datasets.push({
+            label: 'Current',
+            backgroundColor: successColor,
+            data: [current]
+          })
+
+          datasets.push({
+            label: 'Remaining Target',
+            backgroundColor: dangerColor,
+            data: [remainder]
+          })
+        } else {
+          datasets.push({
+            label: 'Current',
+            backgroundColor: successColor,
+            data: [current]
+          })
+        }
+
+        goals.push({
+          title: 'Monetary Donation',
           labels: [''],
-          datasets: [
+          datasets
+        })
+      }
+
+      if (Array.isArray(jobs)) {
+        for (const job of jobs) {
+          const datasets = [
             {
-              label: 'Yes',
+              label: 'Joined',
               backgroundColor: successColor,
-              data: [1]
-            }, {
-              label: 'No',
-              backgroundColor: dangerColor,
-              data: [3]
+              data: [job.slots.current]
             }
           ]
-        }, {
-          title: 'Did this Integrate climate change measures into strategies and planning in the area?',
-          labels: [''],
-          datasets: [
-            {
-              label: 'Yes',
-              backgroundColor: successColor,
-              data: [4]
-            }, {
-              label: 'No',
+
+          const remainingTarget = job.slots.max - job.slots.current
+
+          if (remainingTarget > 0) {
+            datasets.push({
+              label: 'Remaining Target',
               backgroundColor: dangerColor,
-              data: [0]
-            }
-          ]
-        }, {
-          title: 'Did this Improve education, awareness-raising and human and institutional capacity on climate change mitigation, adaptation, impact reduction and early warning in the area?',
-          labels: [''],
-          datasets: [
-            {
-              label: 'Yes',
-              backgroundColor: successColor,
-              data: [0]
-            }, {
-              label: 'No',
-              backgroundColor: dangerColor,
-              data: [4]
-            }
-          ]
-        }]
-      }, {
-        name: '#4 Quality Education',
-        questions: [{
-          title: 'Did this help in reducing gender disparities in education and ensure equal access to all levels of education and vocational training for the vulnerable, including persons with disabilities, indigenous peoples and children in vulnerable situations?',
-          labels: [''],
-          datasets: [
-            {
-              label: 'Yes',
-              backgroundColor: successColor,
-              data: [2]
-            }, {
-              label: 'No',
-              backgroundColor: dangerColor,
-              data: [2]
-            }
-          ]
-        }, {
-          title: 'Did this teach knowledge and skills needed to promote sustainable development, including, among others, through education for sustainable development and sustainable lifestyles, human rights, gender equality, promotion of a culture of peace and non-violence, global citizenship and appreciation of cultural diversity and of culture’s contribution to sustainable development?',
-          labels: [''],
-          datasets: [
-            {
-              label: 'Yes',
-              backgroundColor: successColor,
-              data: [3]
-            }, {
-              label: 'No',
-              backgroundColor: dangerColor,
-              data: [1]
-            }
-          ]
-        }]
-      }]
+              data: [remainingTarget]
+            })
+          }
+
+          goals.push({
+            title: `Role: ${job.name}`,
+            labels: [''],
+            datasets
+          })
+        }
+      }
+
+      return goals
     },
-    eventQuestionnaire () {
-      return [{
-        title: 'How satisfied are you with the event?',
-        labels: [''],
+    eventExpensesChart () {
+      const expenses = this.eventExpenses
+
+      const backgroundColor = randomColor({
+        count: expenses.length,
+        format: 'rgb'
+      })
+
+      const labels = []
+      const data = []
+
+      for (const expense of expenses) {
+        labels.push(expense.type)
+        data.push(expense.amount)
+      }
+
+      return {
+        labels,
         datasets: [
           {
-            label: 'Very Satisfied',
-            backgroundColor: polarQuestionColors['Very Satisfied'],
-            data: [1]
-          },
-          {
-            label: 'Satisfied',
-            backgroundColor: polarQuestionColors.Satisfied,
-            data: [2]
-          },
-          {
-            label: 'Neutral',
-            backgroundColor: polarQuestionColors.Neutral,
-            data: [3]
-          },
-          {
-            label: 'Dissatisfied',
-            backgroundColor: polarQuestionColors.Dissatisfied,
-            data: [4]
-          },
-          {
-            label: 'Very Dissatisfied',
-            backgroundColor: polarQuestionColors['Very Dissatisfied'],
-            data: [5]
+            backgroundColor,
+            data
           }
         ]
-      }]
+      }
+    },
+    sdgEvaluationChart () {
+      const charts = []
+
+      for (const [, value] of Object.entries(this.eventSdgAnswersMap)) {
+        const questions = []
+
+        for (const [, question] of Object.entries(value.questionMap)) {
+          const yData = question.data.Yes
+          const nData = question.data.No
+
+          questions.push({
+            title: question.label,
+            labels: [''],
+            datasets: [
+              {
+                label: 'Yes',
+                backgroundColor: successColor,
+                data: [yData]
+              }, {
+                label: 'No',
+                backgroundColor: dangerColor,
+                data: [nData]
+              }
+            ]
+          })
+        }
+
+        charts.push({
+          name: value.name,
+          questions
+        })
+      }
+
+      return charts
+    },
+    eventQuestionnaireChart () {
+      const charts = []
+
+      for (const [, value] of Object.entries(this.eventEvaluationAnswersMap)) {
+        const { label, data } = value
+
+        const vsData = data['Very Satisfied']
+        const sData = data.Satisfied
+        const nData = data.Neutral
+        const dData = data.Dissatisfied
+        const vdData = data['Very Dissatisfied']
+
+        charts.push({
+          title: label,
+          labels: [''],
+          datasets: [
+            {
+              label: 'Very Satisfied',
+              backgroundColor: polarQuestionColors['Very Satisfied'],
+              data: [vsData]
+            },
+            {
+              label: 'Satisfied',
+              backgroundColor: polarQuestionColors.Satisfied,
+              data: [sData]
+            },
+            {
+              label: 'Neutral',
+              backgroundColor: polarQuestionColors.Neutral,
+              data: [nData]
+            },
+            {
+              label: 'Dissatisfied',
+              backgroundColor: polarQuestionColors.Dissatisfied,
+              data: [dData]
+            },
+            {
+              label: 'Very Dissatisfied',
+              backgroundColor: polarQuestionColors['Very Dissatisfied'],
+              data: [vdData]
+            }
+          ]
+        })
+      }
+
+      return charts
+    }
+  },
+  async created () {
+    const authHeader = `Bearer ${this.token}`
+
+    eventRepository.setAuthorizationHeader(authHeader)
+    eventExpenseRepository.setAuthorizationHeader(authHeader)
+    eventVolunteerRepository.setAuthorizationHeader(authHeader)
+    eventEvaluationRepository.setAuthorizationHeader(authHeader)
+
+    await this.getEvent()
+
+    if (this.event !== null) {
+      await Promise.all([
+        this.getEventExpenses(),
+        this.getEventVolunteers(),
+        this.getEventEvaluations()
+      ])
+    }
+  },
+  methods: {
+    async getEvent () {
+      const eventId = this.eventId
+
+      this.isLoadingEvent = true
+
+      try {
+        const event = await eventRepository.get(eventId)
+
+        this.event = event
+      } finally {
+        this.isLoadingEvent = false
+      }
+    },
+    async getEventExpenses () {
+      const eventId = this.eventId
+
+      this.isLoadingEventExpenses = true
+
+      let hasMore = false
+      let expenses = []
+
+      try {
+        do {
+          const { results, total } = await eventExpenseRepository.list({
+            eventId
+          }, {
+            limit: 100
+          })
+
+          expenses = expenses.concat(results)
+
+          if (expenses.length >= total) {
+            hasMore = false
+          }
+        } while (hasMore)
+
+        this.eventExpenses = expenses
+      } finally {
+        this.isLoadingEventExpenses = false
+      }
+    },
+    async getEventVolunteers () {
+      const eventId = this.eventId
+
+      this.isLoadingEventVolunteers = true
+
+      let volunteers = []
+      let hasMore = true
+
+      try {
+        do {
+          const { results, total } = await eventVolunteerRepository.list({
+            eventId
+          }, {
+            limit: 100,
+            expand: true
+          })
+
+          volunteers = volunteers.concat(results)
+
+          if (volunteers.length >= total) {
+            hasMore = false
+          }
+        } while (hasMore)
+
+        this.eventVolunteers = volunteers
+      } finally {
+        this.isLoadingEventVolunteers = false
+      }
+    },
+    async getEventEvaluations () {
+      const event = this.event
+
+      this.isLoadingEventEvaluations = true
+
+      let evaluations = []
+      let hasMore = true
+
+      try {
+        do {
+          const { results, total } = await eventEvaluationRepository.list({
+            eventId: event._id
+          }, {
+            limit: 100,
+            expand: true
+          })
+
+          evaluations = evaluations.concat(results)
+
+          if (evaluations.length >= total) {
+            hasMore = false
+          }
+        } while (hasMore)
+
+        this.eventEvaluations = evaluations
+
+        const { questions, sdgs } = event
+
+        const eventEvaluationAnswersMap = {}
+        const eventSdgAnswersMap = {}
+
+        for (const evaluation of evaluations) {
+          if (Array.isArray(evaluation.questionnaireAnswers)) {
+            for (let i = 0; i < evaluation.questionnaireAnswers.length; i++) {
+              const answer = evaluation.questionnaireAnswers[i]
+              const question = questions[i]
+
+              let map = eventEvaluationAnswersMap[i]
+
+              if (map === undefined) {
+                map = {
+                  label: question.label,
+                  data: {
+                    'Very Satisfied': 0,
+                    Satisfied: 0,
+                    Neutral: 0,
+                    Dissatisfied: 0,
+                    'Very Dissatisfied': 0
+                  }
+                }
+              }
+
+              map.data[answer] += 1
+
+              eventEvaluationAnswersMap[i] = map
+            }
+          }
+
+          if (Array.isArray(evaluation.sdgAnswers)) {
+            for (let i = 0; i < evaluation.sdgAnswers.length; i++) {
+              const answers = evaluation.sdgAnswers[i]
+              const sdg = sdgs[i]
+
+              let sdgMap = eventSdgAnswersMap[i]
+
+              if (sdgMap === undefined) {
+                sdgMap = {
+                  name: sdg.name,
+                  questionMap: {}
+                }
+              }
+
+              for (let j = 0; j < answers.length; j++) {
+                const answer = answers[j]
+                const question = sdg.questions[j]
+
+                let questionMap = sdgMap.questionMap[j]
+
+                if (questionMap === undefined) {
+                  questionMap = {
+                    label: question.label,
+                    data: {
+                      Yes: 0,
+                      No: 0
+                    }
+                  }
+                }
+
+                questionMap.data[POLAR_QUESTION_MAP[answer]] += 1
+
+                sdgMap.questionMap[j] = questionMap
+              }
+
+              eventSdgAnswersMap[i] = sdgMap
+            }
+          }
+        }
+
+        this.eventEvaluationAnswersMap = eventEvaluationAnswersMap
+        this.eventSdgAnswersMap = eventSdgAnswersMap
+      } finally {
+        this.isLoadingEventEvaluations = false
+      }
     }
   }
 }
