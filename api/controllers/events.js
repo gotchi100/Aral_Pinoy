@@ -8,6 +8,7 @@ const config = require('../config')
 const EventModel = require('../models/events')
 const EventJobModel = require('../models/event-jobs')
 const EventExpenseModel = require('../models/events/expenses')
+const EventTemplateModel = require('../models/events/templates')
 const SkillModel = require('../models/skills')
 const SdgModel = require('../models/sdgs')
 const InkindDonationModel = require('../models/inkind-donations')
@@ -73,7 +74,8 @@ class EventsController {
       sdgIds,
       ikdItems,
       jobs: eventJobs,
-      questions: eventQuestions
+      questions: eventQuestions,
+      saveAsTemplate = false
     } = event
 
     const sanitizedName = sanitize(name)
@@ -274,10 +276,26 @@ class EventsController {
 
     await EventsController.createGoogleEvent(eventDocument).catch((error) => console.dir(error, { depth: null }))
 
+    if (saveAsTemplate) {
+      await EventsController.createTemplate({
+        name: sanitizedName,
+        description,
+        location,
+        goals,
+        sdgIds,
+        jobs: eventJobs,
+        questions: eventQuestions
+      }).catch((error) => console.error(error))
+    }
+
     return eventDocument
   }
 
   static async createGoogleEvent(event) {
+    if (config.environment.isDevelopment) {
+      return
+    }
+
     const {
       _id,
       name,
@@ -306,6 +324,43 @@ class EventsController {
       attendees,
       startDate: date.start,
       endDate: date.end,
+    })
+  }
+
+  static async createTemplate(template) {
+    const {
+      name,
+      description,
+      goals,
+      location,
+      sdgIds,
+      jobs: eventJobs,
+      questions
+    } = template
+
+    let jobs
+
+    if (Array.isArray(eventJobs) && eventJobs.length > 0) {
+      jobs = []
+
+      for (const job of eventJobs) {
+        jobs.push({
+          name: sanitize(job.name),
+          description: job.description,
+          requirements: job.requirements,
+          skills: job.skillIds
+        })
+      }
+    }
+
+    await EventTemplateModel.create({
+      name,
+      description,
+      location,
+      goals,
+      sdgIds,
+      jobs,
+      questions
     })
   }
 

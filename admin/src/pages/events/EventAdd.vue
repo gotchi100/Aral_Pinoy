@@ -816,33 +816,65 @@
                       </b-row>
                     </b-form>
 
-                    <b-row
-                      class="py-3"
-                      align-h="end"
-                    >
-                      <b-col cols="2">
-                        <b-row align-v="center">
-                          <b-col
-                            v-if="invalid && (showJobForm || showQuestionForm)"
-                            cols="1"
-                          >
-                            <b-icon
-                              v-b-tooltip="'Please complete or close the Roles or Questionnaire form'"
-                              icon="exclamation-triangle"
-                              font-scale=".85"
-                            />
+                    <b-row class="py-3">
+                      <b-col cols="12">
+                        <b-row
+                          align-h="end"
+                          align-v="center"
+                        >
+                          <b-col cols="2">
+                            <b-form-group class="pt-2 text-start">
+                              <div class="form-check form-switch">
+                                <label
+                                  class="form-check-label"
+                                  for="is-urgent-event-checkbox"
+                                  style="font-family: 'Bebas Neue', cursive;"
+                                >
+                                  Save as Template
+                                </label>
+
+                                <input
+                                  id="is-urgent-event-checkbox"
+                                  v-model="event.saveAsTemplate"
+                                  class="form-check-input"
+                                  type="checkbox"
+                                >
+                              </div>
+                            </b-form-group>
                           </b-col>
 
-                          <b-col cols="10">
+                          <b-col cols="2">
                             <b-button
                               id="create-button"
                               class="w-100"
                               variant="danger"
-                              :disabled="invalid"
-                              @click="showModal = !showModal"
+                              :disabled="invalid && !(showJobForm || showQuestionForm)"
+                              @click="() => {
+                                if (showJobForm || showQuestionForm) {
+                                  return
+                                }
+
+                                showModal = !showModal
+                              }"
                             >
-                              Create
+                              <b-icon
+                                v-if="showJobForm || showQuestionForm"
+                                icon="exclamation-triangle"
+                                font-scale=".85"
+                                style="vertical-align: baseline"
+                              />
+
+                              <span v-else>
+                                Create
+                              </span>
                             </b-button>
+
+                            <b-tooltip
+                              :disabled="!(showJobForm || showQuestionForm)"
+                              target="create-button"
+                            >
+                              Please complete or close the Roles or Questionnaire form
+                            </b-tooltip>
                           </b-col>
                         </b-row>
                       </b-col>
@@ -932,7 +964,8 @@ export default ({
         sdgIds: [],
         ikdItems: [],
         jobs: [],
-        questions: []
+        questions: [],
+        saveAsTemplate: false
       },
       contactForm: {
         name: '',
@@ -944,11 +977,8 @@ export default ({
       displayLogo: '',
       showModal: false,
       roles: [],
-      options: ['Teaches at Math', 'Fluent in English', 'Heavy Lifter', 'Playing the guitar'],
       search: '',
-      searcher: '',
       value: [],
-      values: [],
       sdgOptions: [],
       ikdFields: [
         { key: 'name', label: 'Item' },
@@ -1112,37 +1142,40 @@ export default ({
       return dirty || validated ? valid : null
     },
     async createEvent () {
+      const event = this.event
+
       const form = new FormData()
 
-      form.set('name', this.event.name)
-      form.set('description', this.event.description)
-      form.set('location[name]', this.event.location.name)
-      form.set('date[start]', new Date(this.event.date.start).toISOString())
-      form.set('date[end]', new Date(this.event.date.end).toISOString())
-      form.set('goals[monetaryDonation]', parseFloat(this.event.goals.monetaryDonation))
+      form.set('name', event.name)
+      form.set('description', event.description)
+      form.set('location[name]', event.location.name)
+      form.set('date[start]', new Date(event.date.start).toISOString())
+      form.set('date[end]', new Date(event.date.end).toISOString())
+      form.set('goals[monetaryDonation]', parseFloat(event.goals.monetaryDonation))
+      form.set('saveAsTemplate', event.saveAsTemplate)
 
-      if (this.event.logo !== null) {
-        form.set('logo', this.event.logo)
+      if (event.logo !== null) {
+        form.set('logo', event.logo)
       }
 
-      if (this.event.sdgIds.length > 0) {
-        for (const id of this.event.sdgIds) {
+      if (event.sdgIds.length > 0) {
+        for (const id of event.sdgIds) {
           form.append('sdgIds[]', id)
         }
       }
 
-      if (this.event.ikdItems.length > 0) {
-        for (let i = 0; i < this.event.ikdItems.length; i++) {
-          const ikdItem = this.event.ikdItems[i]
+      if (event.ikdItems.length > 0) {
+        for (let i = 0; i < event.ikdItems.length; i++) {
+          const ikdItem = event.ikdItems[i]
 
           form.set(`ikdItems[${i}][ikdId]`, ikdItem._id)
           form.set(`ikdItems[${i}][quantity]`, ikdItem.quantity)
         }
       }
 
-      if (this.event.jobs.length > 0) {
-        for (let i = 0; i < this.event.jobs.length; i++) {
-          const job = this.event.jobs[i]
+      if (event.jobs.length > 0) {
+        for (let i = 0; i < event.jobs.length; i++) {
+          const job = event.jobs[i]
 
           form.set(`jobs[${i}][name]`, job.name)
           form.set(`jobs[${i}][description]`, job.description)
@@ -1156,9 +1189,9 @@ export default ({
         }
       }
 
-      if (this.event.contacts.length > 0) {
-        for (let i = 0; i < this.event.contacts.length; i++) {
-          const contact = this.event.contacts[i]
+      if (event.contacts.length > 0) {
+        for (let i = 0; i < event.contacts.length; i++) {
+          const contact = event.contacts[i]
 
           form.set(`contacts[${i}][name]`, contact.name)
           form.set(`contacts[${i}][contactMethods][0][type]`, contact.contactMethods[0].type)
@@ -1166,9 +1199,9 @@ export default ({
         }
       }
 
-      if (this.event.questions.length > 0) {
-        for (let i = 0; i < this.event.questions.length; i++) {
-          const question = this.event.questions[i]
+      if (event.questions.length > 0) {
+        for (let i = 0; i < event.questions.length; i++) {
+          const question = event.questions[i]
 
           form.set(`questions[${i}][label]`, question.label)
           form.set(`questions[${i}][type]`, question.type)
@@ -1198,10 +1231,6 @@ export default ({
       this.form.roleName = ''
       this.form.roleDescription = ''
       this.form.roleNumber = ''
-    },
-    onOptionClick ({ options, addTag }) {
-      addTag(options)
-      this.search = ''
     },
     setEventStartDate (date, time) {
       const year = date.getFullYear()

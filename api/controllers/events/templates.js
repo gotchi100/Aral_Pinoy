@@ -14,7 +14,7 @@ const SORT_ORDER_MAPPING = {
 }
 
 function sanitize(name) {
-  return name.replace(whitespaceRegex,' ')
+  return name.replace(whitespaceRegex, ' ')
 }
 
 class EventTemplateController {
@@ -37,7 +37,7 @@ class EventTemplateController {
       for (const job of eventJobs) {
         jobs.push({
           name: sanitize(job.name),
-          description: sanitize(job.description),
+          description: job.description,
           requirements: job.requirements,
           skills: job.skillIds
         })
@@ -47,7 +47,7 @@ class EventTemplateController {
     /** @type {Document} */
     const result = await EventTemplateModel.create({
       name: sanitize(name),
-      description: sanitize(description),
+      description,
       location,
       goals: {
         monetaryDonation: goals.monetaryDonation

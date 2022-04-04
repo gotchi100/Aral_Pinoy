@@ -73,6 +73,11 @@ if (GOOGLE_OAUTH_TOKEN !== '') {
 }
 
 module.exports = {
+  environment: {
+    isProduction: NODE_ENV === 'production',
+    isStaging: NODE_ENV === 'staging',
+    isDevelopment: NODE_ENV === 'development',
+  },
   mongodb: {
     uri: MONGODB_URI
   },

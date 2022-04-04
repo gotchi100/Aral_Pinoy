@@ -69,7 +69,8 @@ const createEventValidator = Joi.object({
       quantity: Joi.number().min(1).required()
     })
   ),
-  questions: questionsSchema
+  questions: questionsSchema,
+  saveAsTemplate: Joi.boolean().default(false)
 })
 
 function validateCreateEventBody(req, res, next) {
