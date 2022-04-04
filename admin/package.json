@@ -8,6 +8,7 @@
     "build": "vue-cli-service build",
     "build:staging": "vue-cli-service build --mode staging",
     "start:staging": "npm run build:staging && npm run serve:staging",
+    "start:dev": "cross-env PORT=8081 vue-cli-service serve",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -39,6 +40,7 @@
     "@vue/cli-service": "^4.5.0",
     "@vue/eslint-config-standard": "^5.1.2",
     "babel-eslint": "^10.1.0",
+    "cross-env": "^7.0.3",
     "eslint": "^6.7.2",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-node": "^11.1.0",
