@@ -36,7 +36,7 @@
                                 mmd="6"
                               >
                                 <h3 style="font-family:'Bebas Neue', cursive;">
-                                  Create Blank Event
+                                  Create Event From Scratch
                                 </h3>
                               </b-col>
 
