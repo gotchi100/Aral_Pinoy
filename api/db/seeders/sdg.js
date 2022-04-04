@@ -1,8 +1,10 @@
 'use strict'
 
+const debug = require('debug')
+
 const SdgModel = require('../../models/sdgs')
 
-
+const logger = debug('api:server')
 
 const sdgs = [
   {
@@ -61,13 +63,17 @@ const sdgs = [
 
 async function initialize() {
   for (const sdg of sdgs) {
-    await SdgModel.updateOne({
+    const { upsertedCount } = await SdgModel.updateOne({
       norm: sdg.norm
     }, {
       $setOnInsert: sdg
     }, {
       upsert: true
     })
+
+    if (upsertedCount > 0) {
+      logger(`Seeded SDG: ${sdg.norm}`)
+    }
   }
 }
 

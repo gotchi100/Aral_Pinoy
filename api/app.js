@@ -44,12 +44,8 @@ const logger = debug('api:server')
 async function connectDatabase () {
   await mongoose.connect(config.mongodb.uri)
 
-  logger('Connected to database')
-
-  await seedSdgs()
+  logger('Connected to MongoDB Database')
 }
-
-connectDatabase()
 
 const publicRoutes = [
   '/login', 
@@ -162,5 +158,14 @@ app.use(function (err, req, res, next) {
 
   next()
 })
+
+async function onSetup() {
+  await connectDatabase()
+  await seedSdgs()
+
+  app.emit('ready')
+}
+
+app.once('setup', onSetup)
 
 module.exports = app
