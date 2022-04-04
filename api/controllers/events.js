@@ -32,7 +32,9 @@ const storage = new Storage({
   projectId: 'aral-pinoy'
 })
 
-const eventsBucket = storage.bucket('aral-pinoy-events')
+const EVENTS_BUCKET_URL = config.google.cloud.storage.bucketNames.events
+
+const eventsBucket = storage.bucket(EVENTS_BUCKET_URL)
 
 const whitespaceRegex = /\s+/g
 
@@ -91,7 +93,7 @@ class EventsController {
 
       await EventsController.uploadFile(filename, buffer)
 
-      logoUrl = `https://storage.googleapis.com/aral-pinoy-events/${filename}`
+      logoUrl = `https://storage.googleapis.com/${EVENTS_BUCKET_URL}/${filename}`
     }
 
     if (Array.isArray(ikdItems) && ikdItems.length > 0) {

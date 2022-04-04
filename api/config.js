@@ -4,6 +4,7 @@ const fs = require('fs')
 const path = require('path')
 
 const {
+  NODE_ENV = 'development',
   MONGODB_URI,
 
   JWT_SECRET,
@@ -104,7 +105,13 @@ module.exports = {
       }
     },
     cloud: {
-      serviceAccount: credentialsPath
+      serviceAccount: credentialsPath,
+      storage: {
+        bucketNames: {
+          events: NODE_ENV + '_aral-pinoy-events',
+          inkindDonationReceipts: NODE_ENV + '_aral-pinoy-inkind-donation-receipts'
+        }
+      }
     }
   },
   paymaya: {

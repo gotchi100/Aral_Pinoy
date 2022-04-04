@@ -21,7 +21,7 @@ const storage = new Storage({
   projectId: 'aral-pinoy'
 })
 
-const INKIND_DONATION_RECEIPTS_BUCKET_URL = 'aral-pinoy-inkind-donation-receipts'
+const INKIND_DONATION_RECEIPTS_BUCKET_URL = config.google.cloud.storage.bucketNames.inkindDonationReceipts
 
 const ikdReceiptsBucket = storage.bucket(INKIND_DONATION_RECEIPTS_BUCKET_URL)
 
