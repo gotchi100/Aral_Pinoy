@@ -1,5 +1,7 @@
 'use strict'
 
+const { Types } = require('mongoose')
+
 const UserModel = require('../models/users')
 const SkillModel = require('../models/skills')
 
@@ -7,6 +9,8 @@ const SORT_ORDER_MAPPING = {
   asc : 1,
   desc: -1
 }
+
+const { NotFoundError } = require('../errors')
 
 class UsersController {
   static async create(req, res, next) {
@@ -125,7 +129,9 @@ class UsersController {
   static async get(req, res) {
     const { id } = req.params
 
-    const user = await UserModel.findById(id, undefined, { lean: true })
+    const user = await UserModel.findById(id, undefined, { 
+      lean: true,
+    })
 
     if (user === null) {
       return res.status(404).json({
@@ -136,6 +142,78 @@ class UsersController {
     }
 
     return res.json(user)
+  }
+
+  static async update(id, update) {
+    const {
+      email, // TODO: Remove email from user update
+      firstName,
+      middleName,
+      lastName,
+      gender,
+      birthDate,
+      address,
+      contactNumber,
+      skillIds
+    } = update
+
+    const $set = {}
+    const $unset = {}
+
+    if (email !== undefined) {
+      $set.email = email
+    }
+
+    if (firstName !== undefined) {
+      $set.firstName = firstName
+    }
+
+    if (middleName === null) {
+      $unset.middleName = ''
+    } else {
+      $set.middleName = middleName
+    }
+
+    if (lastName !== undefined) {
+      $set.lastName = lastName
+    }
+
+    if (gender !== undefined) {
+      $set.gender = gender
+    }
+
+    if (birthDate !== undefined) {
+      $set.birthDate = new Date(birthDate)
+    }
+
+    if (address !== undefined) {
+      if (address.home === null) {
+        $unset['address.home'] = ''
+      } else {
+        $set['address.home'] = address.home
+      }
+    }
+
+    if (contactNumber === null) {
+      $unset.contactNumber = ''
+    } else {
+      $set.contactNumber = contactNumber
+    }
+
+    if (skillIds !== undefined) {
+      $set.skills = skillIds.map((skillId) => Types.ObjectId(skillId))
+    }
+
+    const { matchedCount } = await UserModel.updateOne({
+      _id: id
+    }, {
+      $set,
+      $unset
+    })
+
+    if (matchedCount === 0) {
+      throw new NotFoundError('user')
+    }
   }
 }
 

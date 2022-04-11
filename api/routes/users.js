@@ -8,9 +8,8 @@ Joi.objectId = require('joi-objectid')(Joi)
 const UsersController = require('../controllers/users')
 
 const createUserValidator = Joi.object({
-  email: Joi.string().email().trim().lowercase().max(256).required(),
+  email: Joi.string().email().trim().lowercase().max(256).required(), // TODO: Remove email from user update validation
   password: Joi.string().max(64).required(),
-  contactNumber: Joi.string().trim().max(20),
   firstName: Joi.string().trim().max(100).required(),
   middleName: Joi.string().trim().max(100),
   lastName: Joi.string().trim().max(100).required(),
@@ -19,6 +18,7 @@ const createUserValidator = Joi.object({
   address: Joi.object({
     home: Joi.string().trim().max(256)
   }),
+  contactNumber: Joi.string().trim().max(20),
   skills: Joi.array().items(Joi.objectId()).unique()
 })
 
@@ -31,6 +31,20 @@ const paginationValidator = Joi.object({
   'sort.order': Joi.string().valid('asc', 'desc')
 }).options({ 
   stripUnknown: true
+})
+
+const updateUserValidator = Joi.object({
+  email: Joi.string().email().trim().lowercase().max(256).empty(''),
+  firstName: Joi.string().trim().max(100).empty(''),
+  middleName: Joi.string().trim().max(100).empty('').allow(null),
+  lastName: Joi.string().trim().max(100).empty(''),
+  gender: Joi.string().valid('Male', 'Female'),
+  birthDate: Joi.date().iso(),
+  address: Joi.object({
+    home: Joi.string().trim().max(256).empty('').allow(null)
+  }).empty({}),
+  contactNumber: Joi.string().trim().max(20).empty('').allow(null),
+  skillIds: Joi.array().items(Joi.objectId()).unique()
 })
 
 function validateCreateUserBody(req, res, next) {
@@ -98,7 +112,7 @@ async function list(req, res, next) {
   }
 }
 
-function validateGetUserBody(req, res, next) {
+function validateIdParams(req, res, next) {
   const { id } = req.params
 
   if (!Types.ObjectId.isValid(id)) {
@@ -112,10 +126,62 @@ function validateGetUserBody(req, res, next) {
   next()
 }
 
+function validateUpdateUser(req, res, next) {
+  const { value: validatedBody, error } = updateUserValidator.validate(req.body)
+
+  if (error !== undefined) {      
+    return res.status(400).json({
+      code: 'BadRequest',
+      status: 400,
+      message: error.message
+    })
+  }
+
+  req.body = validatedBody
+
+  next()
+}
+
+async function updateUser(req, res, next) {
+  const { id } = req.params
+  const {
+    email,
+    firstName,
+    middleName,
+    lastName,
+    gender,
+    birthDate,
+    address,
+    contactNumber,
+    skillIds
+  } = req.body
+
+  try {
+    await UsersController.update(id, {
+      email,
+      firstName,
+      middleName,
+      lastName,
+      gender,
+      birthDate,
+      address,
+      contactNumber,
+      skillIds
+    })
+
+    return res.status(200).json({
+      ok: true
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 const router = express.Router()
 
 router.post('/', validateCreateUserBody, UsersController.create)
 router.get('/', validateListUsers, list)
-router.get('/:id', validateGetUserBody, UsersController.get)
+router.get('/:id', validateIdParams, UsersController.get)
+router.patch('/:id', validateIdParams, validateUpdateUser, updateUser)
 
 module.exports = router
