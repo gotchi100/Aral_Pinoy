@@ -131,6 +131,7 @@ class UsersController {
 
     const user = await UserModel.findById(id, undefined, { 
       lean: true,
+      populate: ['skills']
     })
 
     if (user === null) {

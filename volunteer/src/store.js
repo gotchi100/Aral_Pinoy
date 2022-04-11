@@ -38,6 +38,14 @@ export default {
     logout (context) {
       context.commit('setUser', null)
       context.commit('setToken', null)
+    },
+    updateUser (context, payload) {
+      const user = {
+        ...context.state.user,
+        ...payload
+      }
+
+      context.commit('setUser', user)
     }
   },
   getters: {

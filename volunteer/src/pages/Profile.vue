@@ -1,16 +1,7 @@
 <template>
   <div>
     <b-container>
-      <b-row class="py-5">
-        <b-col cols="12">
-          <img
-            :src="logo"
-            style="width: 320px; height: 150px"
-          >
-        </b-col>
-      </b-row>
-
-      <b-row class="pb-4">
+      <b-row class="py-4">
         <b-col cols="12">
           <b-card
             bg-variant="light"
@@ -19,116 +10,463 @@
             <h3 style="font-family:'Bebas Neue', cursive; color: black; position: relative;">
               User Profile
             </h3>
+
             <b-container fluid>
-              <b-row class="my-1">
-                <label
-                  class="name"
-                  for="input-small"
-                  style="font-family:'Bebas Neue', cursive;"
-                >First Name</label>
-                <b-col>
-                  <b-form-input
-                    v-model="profile.firstName"
-                    :disabled="!isDisabled"
-                  />
-                </b-col>
-              </b-row>
-              <b-row class="my-1">
-                <label
-                  class="name"
-                  for="input-small"
-                  style="font-family:'Bebas Neue', cursive;"
-                >Last Name</label>
-                <b-col>
-                  <b-form-input
-                    v-model="profile.lastName"
-                    :disabled="!isDisabled"
-                  />
-                </b-col>
-              </b-row>
-              <b-row class="my-1">
-                <label
-                  class="cnum"
-                  for="input-small"
-                  style="font-family:'Bebas Neue', cursive;"
-                >Contact Number</label>
-                <b-col>
-                  <b-form-input
-                    v-model="profile.contactNumber"
-                    :disabled="!isDisabled"
-                  />
-                </b-col>
-              </b-row>
-              <b-row class="my-1">
-                <label
-                  class="email"
-                  for="input-small"
-                  style="font-family:'Bebas Neue', cursive;"
-                >Gender</label>
-                <b-col>
-                  <b-form-input
-                    v-model="profile.gender"
-                    :disabled="!isDisabled"
-                  />
-                </b-col>
-              </b-row>
-              <b-row class="my-1">
-                <label
-                  class="email"
-                  for="input-small"
-                  style="font-family:'Bebas Neue', cursive;"
-                >Home Address</label>
-                <b-col>
-                  <b-form-input
-                    v-model="profile.address.home"
-                    :disabled="!isDisabled"
-                  />
-                </b-col>
-              </b-row>
-              <b-row class="my-1">
-                <label
-                  class="email"
-                  for="input-small"
-                  style="font-family:'Bebas Neue', cursive;"
-                >Skills</label>
-                <b-col>
-                  <b-form-input
-                    :value="skillNames"
-                    disabled
-                  />
-                </b-col>
-              </b-row>
-              <b-row class="my-1">
-                <label
-                  class="email"
-                  for="input-small"
-                  style="font-family:'Bebas Neue', cursive;"
-                >Email Address</label>
-                <b-col>
-                  <b-form-input
-                    v-model="profile.email"
-                    :disabled="!isDisabled"
-                  />
-                </b-col>
-              </b-row>
-              <b-button
-                v-show="!isDisabled"
-                pill
+              <b-alert
+                :show="!!errorMessage"
                 variant="danger"
-                style="margin: 8px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;"
-                @click="isDisabled = true"
               >
-                Edit
-              </b-button>
-              <b-button
-                v-show="isDisabled"
-                pill
-                variant="danger"
-                style="margin: 8px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;"
-                @click="isDisabled = false"
-              >
-                Save
-              </b-button>
+                {{ errorMessage }}
+              </b-alert>
+
+              <b-row>
+                <b-col cols="12">
+                  <validation-observer v-slot="{ invalid, changed, reset }">
+                    <validation-provider
+                      v-slot="validationContext"
+                      :rules="{
+                        required: true,
+                        email: true,
+                      }"
+                    >
+                      <label
+                        for="update-profile-email"
+                        style="font-family:'Bebas Neue', cursive;"
+                      >
+                        Email Address
+                      </label>
+
+                      <div class="input-group mb-3">
+                        <b-form-input
+                          id="update-profile-email"
+                          v-model="profile.email"
+                          type="text"
+                          class="form-control"
+                          :state="getValidationState(validationContext)"
+                          aria-describedby="update-profile-email-feedback"
+                          :disabled="loading.email"
+                        />
+
+                        <button
+                          class="btn btn-outline-success"
+                          type="button"
+                          :disabled="invalid || !changed || loading.email"
+                          @click="updateProfile({ email: profile.email }, 'email', reset)"
+                        >
+                          <b-spinner
+                            v-if="loading.email"
+                            style="width: 1rem; height: 1rem;"
+                          />
+                          <template v-else>
+                            <b-icon icon="file-earmark-check-fill" />
+                          </template>
+                        </button>
+
+                        <b-form-invalid-feedback id="update-profile-email-feedback">
+                          {{ validationContext.errors[0] }}
+                        </b-form-invalid-feedback>
+                      </div>
+                    </validation-provider>
+                  </validation-observer>
+                </b-col>
+              </b-row>
+
+              <b-row>
+                <b-col cols="12">
+                  <validation-observer v-slot="{ invalid, changed, reset }">
+                    <validation-provider
+                      v-slot="validationContext"
+                      :rules="{
+                        required: true,
+                        max: 100,
+                        regex: regexRules.filipinoCharacters
+                      }"
+                    >
+                      <label
+                        for="update-profile-firstName"
+                        style="font-family:'Bebas Neue', cursive;"
+                      >
+                        First Name
+                      </label>
+
+                      <div class="input-group mb-3">
+                        <b-form-input
+                          id="update-profile-firstName"
+                          v-model="profile.firstName"
+                          type="text"
+                          class="form-control"
+                          :state="getValidationState(validationContext)"
+                          aria-describedby="update-profile-firstName-feedback"
+                          :disabled="loading.firstName"
+                        />
+
+                        <button
+                          class="btn btn-outline-success"
+                          type="button"
+                          :disabled="invalid || !changed || loading.firstName"
+                          @click="updateProfile({ firstName: profile.firstName }, 'firstName', reset)"
+                        >
+                          <b-spinner
+                            v-if="loading.firstName"
+                            style="width: 1rem; height: 1rem;"
+                          />
+                          <template v-else>
+                            <b-icon icon="file-earmark-check-fill" />
+                          </template>
+                        </button>
+
+                        <b-form-invalid-feedback id="update-profile-firstName-feedback">
+                          {{
+                            validationContext.failedRules.regex !== undefined
+                              ? 'This field does not have a valid format'
+                              : validationContext.errors[0]
+                          }}
+                        </b-form-invalid-feedback>
+                      </div>
+                    </validation-provider>
+                  </validation-observer>
+                </b-col>
+              </b-row>
+
+              <b-row>
+                <b-col cols="12">
+                  <validation-observer v-slot="{ invalid, changed, reset }">
+                    <validation-provider
+                      v-slot="validationContext"
+                      :rules="{
+                        max: 100,
+                        regex: regexRules.filipinoCharacters
+                      }"
+                    >
+                      <label
+                        for="update-profile-middleName"
+                        style="font-family:'Bebas Neue', cursive;"
+                      >
+                        Middle Name
+                      </label>
+
+                      <div class="input-group mb-3">
+                        <b-form-input
+                          id="update-profile-middleName"
+                          v-model="profile.middleName"
+                          type="text"
+                          class="form-control"
+                          :state="getValidationState(validationContext)"
+                          aria-describedby="update-profile-middleName-feedback"
+                          :disabled="loading.middleName"
+                        />
+
+                        <button
+                          class="btn btn-outline-success"
+                          type="button"
+                          :disabled="invalid || !changed || loading.middleName"
+                          @click="updateProfile({ middleName: profile.middleName }, 'middleName', reset)"
+                        >
+                          <b-spinner
+                            v-if="loading.middleName"
+                            style="width: 1rem; height: 1rem;"
+                          />
+                          <template v-else>
+                            <b-icon icon="file-earmark-check-fill" />
+                          </template>
+                        </button>
+
+                        <b-form-invalid-feedback id="update-profile-middleName-feedback">
+                          {{
+                            validationContext.failedRules.regex !== undefined
+                              ? 'This field does not have a valid format'
+                              : validationContext.errors[0]
+                          }}
+                        </b-form-invalid-feedback>
+                      </div>
+                    </validation-provider>
+                  </validation-observer>
+                </b-col>
+              </b-row>
+
+              <b-row>
+                <b-col cols="12">
+                  <validation-observer v-slot="{ invalid, changed, reset }">
+                    <validation-provider
+                      v-slot="validationContext"
+                      :rules="{
+                        required: true,
+                        max: 100,
+                        regex: regexRules.filipinoCharacters
+                      }"
+                    >
+                      <label
+                        for="update-profile-lastName"
+                        style="font-family:'Bebas Neue', cursive;"
+                      >
+                        Last Name
+                      </label>
+
+                      <div class="input-group mb-3">
+                        <b-form-input
+                          id="update-profile-lastName"
+                          v-model="profile.lastName"
+                          type="text"
+                          class="form-control"
+                          :state="getValidationState(validationContext)"
+                          aria-describedby="update-profile-lastName-feedback"
+                          :disabled="loading.lastName"
+                        />
+
+                        <button
+                          class="btn btn-outline-success"
+                          type="button"
+                          :disabled="invalid || !changed || loading.lastName"
+                          @click="updateProfile({ lastName: profile.lastName }, 'lastName', reset)"
+                        >
+                          <b-spinner
+                            v-if="loading.lastName"
+                            style="width: 1rem; height: 1rem;"
+                          />
+                          <template v-else>
+                            <b-icon icon="file-earmark-check-fill" />
+                          </template>
+                        </button>
+
+                        <b-form-invalid-feedback id="update-profile-lastName-feedback">
+                          {{
+                            validationContext.failedRules.regex !== undefined
+                              ? 'This field does not have a valid format'
+                              : validationContext.errors[0]
+                          }}
+                        </b-form-invalid-feedback>
+                      </div>
+                    </validation-provider>
+                  </validation-observer>
+                </b-col>
+              </b-row>
+
+              <b-row>
+                <b-col cols="12">
+                  <validation-observer v-slot="{ changed, reset }">
+                    <validation-provider
+                      v-slot="validationContext"
+                    >
+                      <label
+                        for="update-profile-gender"
+                        style="font-family:'Bebas Neue', cursive;"
+                      >
+                        Gender
+                      </label>
+
+                      <div class="input-group mb-3">
+                        <b-form-select
+                          id="update-profile-gender"
+                          v-model="profile.gender"
+                          class="form-control"
+                          :state="getValidationState(validationContext)"
+                          aria-describedby="update-profile-gender-feedback"
+                          :disabled="loading.gender"
+                          :options="genderOptions"
+                        />
+
+                        <button
+                          class="btn btn-outline-success"
+                          type="button"
+                          :disabled="!changed || loading.gender"
+                          @click="updateProfile({ gender: profile.gender }, 'gender', reset)"
+                        >
+                          <b-spinner
+                            v-if="loading.gender"
+                            style="width: 1rem; height: 1rem;"
+                          />
+                          <template v-else>
+                            <b-icon icon="file-earmark-check-fill" />
+                          </template>
+                        </button>
+
+                        <b-form-invalid-feedback id="update-profile-gender-feedback">
+                          {{ validationContext.errors[0] }}
+                        </b-form-invalid-feedback>
+                      </div>
+                    </validation-provider>
+                  </validation-observer>
+                </b-col>
+              </b-row>
+
+              <b-row>
+                <b-col cols="12">
+                  <validation-observer v-slot="{ invalid, changed, reset }">
+                    <validation-provider
+                      v-slot="validationContext"
+                      :rules="{
+                        regex: regexRules.phContactNumber
+                      }"
+                    >
+                      <label
+                        for="update-profile-contactNumber"
+                        style="font-family:'Bebas Neue', cursive;"
+                      >
+                        Contact Number
+                      </label>
+
+                      <div class="input-group mb-3">
+                        <b-form-input
+                          id="update-profile-contactNumber"
+                          v-model="profile.contactNumber"
+                          type="text"
+                          class="form-control"
+                          :state="getValidationState(validationContext)"
+                          aria-describedby="update-profile-contactNumber-feedback"
+                          :disabled="loading.contactNumber"
+                        />
+
+                        <button
+                          class="btn btn-outline-success"
+                          type="button"
+                          :disabled="invalid || !changed || loading.contactNumber"
+                          @click="updateProfile({ contactNumber: profile.contactNumber }, 'contactNumber', reset)"
+                        >
+                          <b-spinner
+                            v-if="loading.contactNumber"
+                            style="width: 1rem; height: 1rem;"
+                          />
+                          <template v-else>
+                            <b-icon icon="file-earmark-check-fill" />
+                          </template>
+                        </button>
+
+                        <b-form-invalid-feedback id="update-profile-contactNumber-feedback">
+                          This field must be a valid Philippine mobile number
+                        </b-form-invalid-feedback>
+                      </div>
+                    </validation-provider>
+                  </validation-observer>
+                </b-col>
+              </b-row>
+
+              <b-row>
+                <b-col cols="12">
+                  <validation-observer v-slot="{ invalid, changed, reset }">
+                    <validation-provider
+                      v-slot="validationContext"
+                      :rules="{
+                        max: 256
+                      }"
+                    >
+                      <label
+                        for="update-profile-address-home"
+                        style="font-family:'Bebas Neue', cursive;"
+                      >
+                        Home Address
+                      </label>
+
+                      <div class="input-group mb-3">
+                        <b-form-input
+                          id="update-profile-address-home"
+                          v-model="profile.address.home"
+                          type="text"
+                          class="form-control"
+                          :state="getValidationState(validationContext)"
+                          aria-describedby="update-profile-address-home-feedback"
+                          :disabled="loading['address.home']"
+                        />
+
+                        <button
+                          class="btn btn-outline-success"
+                          type="button"
+                          :disabled="invalid || !changed || loading['address.home']"
+                          @click="updateProfile({ address: { home: profile.address.home } }, 'address.home', reset)"
+                        >
+                          <b-spinner
+                            v-if="loading['address.home']"
+                            style="width: 1rem; height: 1rem;"
+                          />
+                          <template v-else>
+                            <b-icon icon="file-earmark-check-fill" />
+                          </template>
+                        </button>
+
+                        <b-form-invalid-feedback id="update-profile-address-home-feedback">
+                          {{ validationContext.errors[0] }}
+                        </b-form-invalid-feedback>
+                      </div>
+                    </validation-provider>
+                  </validation-observer>
+                </b-col>
+              </b-row>
+
+              <b-row>
+                <b-col cols="12">
+                  <label
+                    for="update-profile-skills"
+                    style="font-family:'Bebas Neue', cursive;"
+                  >
+                    Skills
+                  </label>
+
+                  <div class="input-group mb-3">
+                    <b-form-tags>
+                      <template>
+                        <ul
+                          v-if="profile.skills.length > 0"
+                          class="list-inline d-inline-block mb-2"
+                        >
+                          <li
+                            v-for="(skill, index) in profile.skills"
+                            :key="index"
+                            class="list-inline-item"
+                          >
+                            <b-form-tag
+                              class="bg-success"
+                              @remove="removeSkill(index)"
+                            >
+                              {{ skill.name }}
+                            </b-form-tag>
+                          </li>
+                        </ul>
+                      </template>
+
+                      <b-dropdown
+                        text="Add Skill"
+                        style="width: 100%"
+                        menu-class="w-100"
+                        :disabled="loading.skills"
+                        variant="primary"
+                      >
+                        <template
+                          v-if="loading.skills"
+                          #button-content
+                        >
+                          <b-spinner
+                            style="width: 1rem; height: 1rem;"
+                          />
+                        </template>
+
+                        <template v-else>
+                          <b-dropdown-form>
+                            <b-form-group
+                              label="Search Skill"
+                              label-for="skill-search"
+                              @submit.stop.prevent
+                            >
+                              <b-form-input
+                                id="skill-search"
+                                debounce="500"
+                                @update="searchSkills"
+                              />
+                            </b-form-group>
+                          </b-dropdown-form>
+                          <b-dropdown-divider />
+
+                          <b-dropdown-item
+                            v-for="skill in skillOptions"
+                            :key="skill._id"
+                            @click="selectSkill(skill)"
+                          >
+                            {{ skill.name }} <span style="color: grey; font-size: 12px">{{ skill.description }}</span>
+                          </b-dropdown-item>
+                        </template>
+                      </b-dropdown>
+                    </b-form-tags>
+                  </div>
+                </b-col>
+              </b-row>
             </b-container>
           </b-card>
         </b-col>
@@ -136,10 +474,7 @@
 
       <b-row class="pb-4">
         <b-col cols="12">
-          <b-card
-            class="mb-5"
-            style="border-radius: 20px;"
-          >
+          <b-card style="border-radius: 20px;">
             <b-container fluid>
               <b-row>
                 <b-col cols="12">
@@ -245,10 +580,9 @@
         </b-col>
       </b-row>
 
-      <b-row>
+      <b-row class="pb-4">
         <b-col cols="12">
           <b-card
-            class="mb-5"
             style="border-radius: 20px;"
           >
             <b-container fluid>
@@ -350,6 +684,63 @@
           </b-card>
         </b-col>
       </b-row>
+
+      <b-row class="pb-4">
+        <b-col cols="12">
+          <b-card
+            bg-variant="light"
+            style="border-radius: 20px;"
+          >
+            <h3 style="font-family:'Bebas Neue', cursive; color: black; position: relative;">
+              Settings
+            </h3>
+
+            <b-container fluid>
+              <b-row>
+                <b-col cols="12">
+                  <b-list-group style="text-align: left">
+                    <b-list-group-item class="mb-4 flex-column align-items-start">
+                      <div class="d-flex w-100 justify-content-between">
+                        <div>
+                          <h5 class="mb-1">
+                            Change your password
+                          </h5>
+
+                          <p class="mb-1">
+                            Request for a password reset to change your password.
+                          </p>
+                        </div>
+
+                        <button
+                          :class="
+                            !!resetPasswordMsg ? 'btn btn-outline-danger' : 'btn btn-danger'
+                          "
+                          type="button"
+                          :disabled="isResettingPassword || !!resetPasswordMsg"
+                          @click="sendPasswordReset"
+                        >
+                          <b-spinner
+                            v-if="isResettingPassword"
+                            style="width: 1rem; height: 1rem;"
+                          />
+
+                          <span v-else-if="!!resetPasswordMsg">
+                            {{ resetPasswordMsg }}
+                          </span>
+
+                          <span v-else>
+                            Reset Password
+                          </span>
+                        </button>
+                      </div>
+                    </b-list-group-item>
+                  </b-list-group>
+                </b-col>
+              </b-row>
+            </b-container>
+          </b-card>
+        </b-col>
+      </b-row>
     </b-container>
 
     <Footer />
@@ -357,36 +748,79 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
+import { isPlainObject } from 'lodash'
+import { ValidationObserver, ValidationProvider, extend } from 'vee-validate'
+import { required, max, regex, email } from 'vee-validate/dist/rules'
 
 import { apiClient } from '../axios'
 import Footer from '../components/Footer.vue'
+import UserRepository from '../repositories/users'
+import SkillRepository from '../repositories/skills'
 import EventDonationRepository from '../repositories/events/donations'
 import EventVolunteerRepository from '../repositories/events/volunteers'
+import validationMixins from '../mixins/validation'
 
 const logo = require('../assets/aralpinoywords.png')
 
+extend('required', {
+  ...required,
+  message: 'This field is required'
+})
+extend('max', {
+  ...max,
+  message: 'This field must be less than or equal to {length} characters'
+})
+extend('email', {
+  ...email,
+  message: 'This field must be a valid email'
+})
+
+extend('regex', regex)
+
+const userRepository = new UserRepository(apiClient)
+const skillRepository = new SkillRepository(apiClient)
 const eventDonationRepository = new EventDonationRepository(apiClient)
 const eventVolunteerRepository = new EventVolunteerRepository(apiClient)
 
+function toSkillId (skill) {
+  return skill._id
+}
+
 export default {
+  name: 'UserProfile',
   components: {
-    Footer
+    Footer,
+    ValidationObserver,
+    ValidationProvider
   },
+  mixins: [validationMixins],
   data () {
     return {
       logo,
-      isDisabled: false,
+      errorMessage: '',
       profile: {
         firstName: '',
+        middleName: '',
         lastName: '',
         contactNumber: '',
         email: '',
         gender: '',
         skills: [],
+        skillIds: [],
         address: {
           home: ''
         }
+      },
+      loading: {
+        firstName: false,
+        middleName: false,
+        lastName: false,
+        contactNumber: false,
+        email: false,
+        gender: false,
+        skills: false,
+        'address.home': false
       },
       pageOptions: [5, 10, 15],
       eventVolunteers: {
@@ -418,24 +852,19 @@ export default {
           { key: 'event', label: 'Event' },
           { key: 'status', label: 'Status' }
         ]
+      },
+      resetPasswordMsg: '',
+      isResettingPassword: false,
+      genderOptions: ['Male', 'Female'],
+      skillOptions: [],
+      regexRules: {
+        filipinoCharacters: /^[a-zA-Z\u00f1\u00d1 -]+$/,
+        phContactNumber: /^(09|\+639)\d{9}$/
       }
     }
   },
   computed: {
     ...mapGetters(['user', 'token']),
-    skillNames () {
-      const skillNames = []
-
-      if (!Array.isArray(this.profile.skills)) {
-        return ''
-      }
-
-      for (const skill of this.profile.skills) {
-        skillNames.push(skill.name)
-      }
-
-      return skillNames.join(', ')
-    },
     eventDonationsPageOffset () {
       return (this.eventDonations.pagination.currentPage - 1) * this.eventDonations.pagination.perPage
     },
@@ -444,23 +873,30 @@ export default {
     }
   },
   created () {
-    eventDonationRepository.setAuthorizationHeader(`Bearer ${this.token}`)
-    eventVolunteerRepository.setAuthorizationHeader(`Bearer ${this.token}`)
+    const authHeader = `Bearer ${this.token}`
+
+    userRepository.setAuthorizationHeader(authHeader)
+    skillRepository.setAuthorizationHeader(authHeader)
+    eventDonationRepository.setAuthorizationHeader(authHeader)
+    eventVolunteerRepository.setAuthorizationHeader(authHeader)
 
     const user = this.user
 
     this.profile.firstName = user.firstName
+    this.profile.middleName = user.middleName
     this.profile.lastName = user.lastName
     this.profile.contactNumber = user.contactNumber
     this.profile.email = user.email
     this.profile.gender = user.gender
-    this.profile.skills = user.skills
+    this.profile.skills = user.skills || []
+    this.profile.skillIds = [].concat(this.profile.skills).map(toSkillId)
 
     if (user.address !== undefined && user.address.home !== undefined) {
       this.profile.address.home = user.address.home
     }
   },
   methods: {
+    ...mapActions(['updateUser']),
     async getEventVolunteers (ctx) {
       const userId = this.user._id
 
@@ -501,6 +937,117 @@ export default {
       this.eventDonations.total = total
 
       return results
+    },
+    async updateProfile (update = {}, loadField, reset) {
+      this.errorMessage = ''
+
+      this.updateLoading(loadField, true)
+      const payload = {}
+
+      for (const [key, value] of Object.entries(update)) {
+        if (typeof value === 'string' && value.trim().length === 0) {
+          payload[key] = null
+
+          continue
+        }
+
+        if (isPlainObject(value)) {
+          payload[key] = {}
+
+          for (const [innerKey, innerValue] of Object.entries(update[key])) {
+            if (innerValue === '') {
+              payload[key][innerKey] = null
+            } else {
+              payload[key][innerKey] = innerValue
+            }
+          }
+
+          continue
+        }
+
+        payload[key] = value
+      }
+
+      try {
+        await userRepository.update(this.user._id, payload)
+        const currentUser = await userRepository.get(this.user._id)
+
+        await this.updateUser(currentUser)
+
+        if (reset !== undefined) {
+          reset()
+        }
+      } catch (error) {
+        console.log(error)
+      } finally {
+        this.updateLoading(loadField, false)
+      }
+    },
+    updateLoading (loadField, flag) {
+      if (!Array.isArray(loadField)) {
+        this.loading[loadField] = flag
+
+        return
+      }
+
+      for (const field of loadField) {
+        this.loading[field] = flag
+      }
+    },
+    async searchSkills (value) {
+      const { results } = await skillRepository.list({
+        name: value
+      }, {
+        limit: 10,
+        offset: 0,
+        sort: {
+          field: 'name',
+          order: 'asc'
+        }
+      })
+
+      this.skillOptions = results
+    },
+    selectSkill (skill) {
+      if (this.profile.skillIds.includes(skill._id)) {
+        return
+      }
+
+      this.profile.skillIds.push(skill._id)
+      this.profile.skills.push({
+        _id: skill._id,
+        name: skill.name
+      })
+
+      this.updateProfile({
+        skillIds: this.profile.skillIds
+      }, 'skills')
+    },
+    removeSkill (index) {
+      this.profile.skillIds.splice(index, 1)
+      this.profile.skills.splice(index, 1)
+
+      this.updateProfile({
+        skillIds: this.profile.skillIds
+      }, 'skills')
+    },
+    async sendPasswordReset () {
+      const email = this.user.email
+
+      this.isResettingPassword = true
+
+      try {
+        await apiClient.post('/forgot-password', {
+          email,
+          origin: 'volunteer'
+        })
+
+        this.resetPasswordMsg = 'Password reset has been requested! Please check your inbox or spam folder'
+      } catch {
+        this.resetPasswordMsg = 'Unable to request for a password reset.'
+      } finally {
+        this.isResettingPassword = false
+      }
     }
   }
 }
