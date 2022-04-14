@@ -254,13 +254,17 @@
                                       md="4"
                                     >
                                       <b-button
-                                        variant="primary"
+                                        :variant="isAbsent ? 'danger' : 'primary'"
                                         style="width: 100%"
-                                        :disabled="hasAlreadyEvaluation"
+                                        :disabled="isAbsent || hasAlreadyEvaluation"
                                         @click="$router.push({ path: `/events/${eventId}/evaluation` })"
                                       >
                                         {{
-                                          hasAlreadyEvaluation ? 'Thank you for the evaluation' : 'Answer Evaluation'
+                                          isAbsent
+                                            ? 'You were absent'
+                                            : hasAlreadyEvaluation
+                                              ? 'Thank you for the evaluation'
+                                              : 'Answer Evaluation'
                                         }}
                                       </b-button>
                                     </b-col>
@@ -599,11 +603,10 @@ export default {
       return this.eventVolunteer !== null
     },
     hasAlreadyEvaluation () {
-      if (this.eventVolunteer === null) {
-        return false
-      }
-
-      return this.eventVolunteer.eventEvaluation !== undefined
+      return this.hasAlreadyVolunteered && this.eventVolunteer.eventEvaluation !== undefined
+    },
+    isAbsent () {
+      return this.hasAlreadyVolunteered && this.eventVolunteer.absent === true
     },
     monetaryDonationReached () {
       if (this.event === null) {

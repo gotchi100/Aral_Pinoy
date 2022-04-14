@@ -104,7 +104,6 @@ class EventVolunteerController {
       filters: {
         userId,
         eventId,
-        eventStatuses
       }
     } = options
 
@@ -123,35 +122,14 @@ class EventVolunteerController {
       matchQuery.event = new Types.ObjectId(eventId)
     }
 
-    let shouldRemoveNullEvents = false
-
     if (expand === true) {
-      const userPopulate = {
-        path: 'user'
-      }
-
-      const eventPopulate = {
-        path: 'event',
-      }
-
-      if (eventStatuses !== undefined) {
-        eventPopulate.match = {
-          $or: [
-            {
-              status: eventStatuses
-            },
-            {
-              status: {
-                $exists: false
-              }
-            }
-          ]
-        }
-
-        shouldRemoveNullEvents = true
-      }
-
-      queryOptions.populate = [userPopulate, eventPopulate]
+      queryOptions.populate = [
+        {
+          path: 'user'
+        }, 
+        {
+          path: 'event',
+        }]
     }
 
     const [eventVolunteers, eventVolunteersTotal] = await Promise.all([
@@ -159,30 +137,29 @@ class EventVolunteerController {
       EventVolunteerModel.countDocuments(matchQuery)
     ])
 
-    if (!shouldRemoveNullEvents) {
-      return {
-        results: eventVolunteers,
-        total: eventVolunteersTotal
-      }
-    }
-
-    const results = []
-    let total = eventVolunteersTotal
-
-    for (const eventVolunteer of eventVolunteers) {
-      if (eventVolunteer.event === null) {
-        total -= 1
-
-        continue
-      }
-
-      results.push(eventVolunteer)
-    }
-
     return {
-      results,
-      total
+      results: eventVolunteers,
+      total: eventVolunteersTotal
     }
+
+    // const results = []
+    // let total = eventVolunteersTotal
+
+    // for (const eventVolunteer of eventVolunteers) {
+    //   console.log(eventVolunteer._id)
+    //   if (eventVolunteer.event === null) {
+    //     total -= 1
+
+    //     continue
+    //   }
+
+    //   results.push(eventVolunteer)
+    // }
+
+    // return {
+    //   results,
+    //   total
+    // }
   }
 
   static async delete(id, options = {}) {

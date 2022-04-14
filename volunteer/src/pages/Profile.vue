@@ -543,7 +543,7 @@
 
                     <template #cell(action)="{ item }">
                       <b-link
-                        v-if="item.event.status === 'ENDED' && item.eventEvaluation === undefined"
+                        v-if="item.event.status === 'ENDED' && item.eventEvaluation === undefined && item.absent !== true"
                         :to="`/events/${item.event._id}/evaluation`"
                       >
                         Evaluation
@@ -904,8 +904,7 @@ export default {
       const pageOffset = this.eventVolunteersPageOffset
 
       const { results, total } = await eventVolunteerRepository.list({
-        userId,
-        eventStatuses: ['UPCOMING', 'ENDED']
+        userId
       }, {
         limit: perPage,
         offset: pageOffset,

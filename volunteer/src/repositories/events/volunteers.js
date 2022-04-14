@@ -42,12 +42,6 @@ class EventVolunteerRepository {
       queryString.set('expand', expand)
     }
 
-    if (filters.eventStatuses !== undefined) {
-      for (const status of filters.eventStatuses) {
-        queryString.append('filters.eventStatuses[]', status)
-      }
-    }
-
     if (filters.userId !== undefined) {
       queryString.set('filters.userId', filters.userId)
     }

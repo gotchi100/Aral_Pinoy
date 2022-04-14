@@ -66,8 +66,7 @@ export default {
       const userId = this.user._id
 
       const { results, total } = await eventVolunteerRepository.list({
-        userId,
-        eventStatuses: ['UPCOMING', 'ENDED']
+        userId
       }, {
         expand: true
       })

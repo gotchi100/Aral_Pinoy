@@ -6,7 +6,6 @@ const Joi = require('joi')
 const joiObjectId = require('joi-objectid')
 
 const EventVolunteerController = require('../../controllers/events/volunteers')
-const { STATUSES: EVENT_STATUSES } = require('../../constants/events')
 
 Joi.objectId = joiObjectId(Joi)
 
@@ -22,7 +21,6 @@ const listEventVolunteersValidator = Joi.object({
   offset: Joi.number().min(0).default(0),
   limit: Joi.number().min(1).default(25),
   expand: Joi.boolean().default(false),
-  'filters.eventStatuses': Joi.array().items(Joi.string().valid(EVENT_STATUSES.UPCOMING, EVENT_STATUSES.ENDED, EVENT_STATUSES.CANCELED)),
   'filters.userId': Joi.objectId(),
   'filters.eventId': Joi.objectId(),
 }).options({ 

@@ -19,7 +19,7 @@
               bg-variant="light"
               style="border-radius: 20px;"
             >
-              <template v-if="isLoadingEvent">
+              <template v-if="!isFullyLoaded">
                 <b-container style="height: 100vh">
                   <b-row
                     class="vh-100"
@@ -35,7 +35,25 @@
                 </b-container>
               </template>
 
-              <template v-else-if="hasEventEvaluation">
+              <template v-else-if="!doesEventExist">
+                <b-container>
+                  <b-row
+                    align-h="center"
+                    style="height: 60vh"
+                  >
+                    <b-col
+                      cols="12"
+                      align-self="center"
+                    >
+                      <b-button @click="$router.go(-1)">
+                        Go back
+                      </b-button>
+                    </b-col>
+                  </b-row>
+                </b-container>
+              </template>
+
+              <template v-else-if="!hasEventEnded">
                 <b-container>
                   <b-row
                     align-h="center"
@@ -46,7 +64,7 @@
                       align-self="center"
                     >
                       <h1 class="mb-5">
-                        Thank you for your evaluation!
+                        Event has not yet ended
                       </h1>
 
                       <b-button @click="$router.go(-1)">
@@ -57,7 +75,7 @@
                 </b-container>
               </template>
 
-              <template v-else-if="eventVolunteer === null">
+              <template v-else-if="!isVolunteered || isAbsent">
                 <b-container>
                   <b-row
                     align-h="center"
@@ -68,7 +86,11 @@
                       align-self="center"
                     >
                       <h1 class="mb-5">
-                        You have not volunteered to this event
+                        {{
+                          isAbsent
+                            ? 'You were absent to this event'
+                            : 'You have not volunteered to this event'
+                        }}
                       </h1>
 
                       <b-button @click="$router.go(-1)">
@@ -79,7 +101,7 @@
                 </b-container>
               </template>
 
-              <template v-else-if="event !== null">
+              <template v-else-if="!hasEventEvaluation">
                 <div class="pb-3">
                   <h1 style="font-family:'Bebas Neue', cursive;">
                     {{ event.name }}
@@ -328,6 +350,28 @@
                   </b-container>
                 </b-modal>
               </template>
+
+              <template v-else>
+                <b-container>
+                  <b-row
+                    align-h="center"
+                    style="height: 60vh"
+                  >
+                    <b-col
+                      cols="12"
+                      align-self="center"
+                    >
+                      <h1 class="mb-5">
+                        Thank you for your evaluation!
+                      </h1>
+
+                      <b-button @click="$router.go(-1)">
+                        Go back
+                      </b-button>
+                    </b-col>
+                  </b-row>
+                </b-container>
+              </template>
             </b-card>
           </b-overlay>
         </b-col>
@@ -357,6 +401,7 @@ export default {
     return {
       logo,
       isLoadingEvent: false,
+      isLoadingEventVolunteer: false,
       event: null,
       eventVolunteer: null,
       eventEvaluation: null,
@@ -372,38 +417,50 @@ export default {
     eventId () {
       return this.$route.params.id
     },
+    doesEventExist () {
+      return this.event !== null
+    },
+    hasEventEnded () {
+      return this.doesEventExist && this.event.status === 'ENDED'
+    },
     hasEventSdgs () {
-      if (this.event === null) {
+      if (!this.doesEventExist) {
         return false
       }
 
       return Array.isArray(this.event.sdgs) && this.event.sdgs.length > 0
     },
     hasEventQuestions () {
-      if (this.event === null) {
+      if (!this.doesEventExist) {
         return false
       }
 
       return Array.isArray(this.event.questions) && this.event.questions.length > 0
     },
+    isVolunteered () {
+      return this.eventVolunteer !== null
+    },
+    isAbsent () {
+      return this.isVolunteered && this.eventVolunteer.absent === true
+    },
     hasEventEvaluation () {
-      if (this.eventVolunteer === null) {
-        return false
-      }
-
-      return this.eventVolunteer.eventEvaluation !== undefined
+      return this.isVolunteered && this.eventVolunteer.eventEvaluation !== undefined
+    },
+    isFullyLoaded () {
+      return !this.isLoadingEvent && !this.isLoadingEventVolunteer
     }
   },
   async created () {
-    if (this.user !== null) {
-      this.eventVolunteer = await this.getEventVolunteer()
+    await this.getEvent()
+    this.eventVolunteer = await this.getEventVolunteer()
+
+    if (!this.doesEventExist) {
+      return
     }
 
     if (this.hasEventEvaluation) {
       return
     }
-
-    await this.getEvent()
 
     if (this.event.goals.numVolunteers.target === 0) {
       return this.$router.push({
@@ -415,7 +472,10 @@ export default {
   },
   methods: {
     async getEvent () {
-      this.isLoadingEvent = true
+      if (!this.eventId) {
+        return
+      }
+
       const eventId = this.eventId
 
       try {
@@ -435,6 +495,8 @@ export default {
         return
       }
 
+      this.isLoadingEventVolunteer = true
+
       const userId = this.user._id
       const eventId = this.eventId
 
@@ -444,17 +506,21 @@ export default {
       queryString.set('filters.userId', userId)
       queryString.set('filters.eventId', eventId)
 
-      const { data } = await apiClient.get(`/event-volunteers?${queryString.toString()}`, {
-        headers: {
-          Authorization: `Bearer ${this.token}`
+      try {
+        const { data } = await apiClient.get(`/event-volunteers?${queryString.toString()}`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`
+          }
+        })
+
+        if (data.total === 0) {
+          return
         }
-      })
 
-      if (data.total === 0) {
-        return
+        return data.results[0]
+      } finally {
+        this.isLoadingEventVolunteer = false
       }
-
-      return data.results[0]
     },
     formatForm () {
       if (this.hasEventSdgs) {
