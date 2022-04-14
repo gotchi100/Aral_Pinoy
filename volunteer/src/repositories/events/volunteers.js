@@ -63,6 +63,10 @@ class EventVolunteerRepository {
       total: data.total
     }
   }
+
+  async replace (id, payload) {
+    await this.apiClient.put(`/event-volunteers/${id}`, payload)
+  }
 }
 
 module.exports = EventVolunteerRepository

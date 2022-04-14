@@ -501,6 +501,10 @@ class EventsController {
   }
 
   static async updateGoogleEvent(id, event, options = {}) {
+    if (config.environment.isDevelopment) {
+      return
+    }
+
     const {
       name,
       description,
@@ -620,7 +624,7 @@ class EventsController {
       throw new ConflictError('Event was recently updated, please try again')
     }
 
-    if (status === STATUSES.CANCELED) {
+    if (status === STATUSES.CANCELED && !config.environment.isDevelopment) {
       await GoogleCalendarController.updateEventStatus(id, status).catch((error) => console.dir(error, { depth: null }))
     }
 

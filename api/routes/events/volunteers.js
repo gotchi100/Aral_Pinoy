@@ -29,6 +29,12 @@ const listEventVolunteersValidator = Joi.object({
   stripUnknown: true
 })
 
+const replaceEventVolunteerValidator = Joi.object({
+  eventJobName: Joi.string().trim().required()
+}).options({
+  stripUnknown: true
+})
+
 function validateCreateEventVolunteerBody(req, res, next) {
   const { value: validatedBody, error } = createEventVolunteerValidator.validate(req.body)
 
@@ -113,7 +119,7 @@ async function list(req, res, next) {
   }
 }
 
-function validateDeleteEventVolunteersBody(req, res, next) {
+function validateParamsId(req, res, next) {
   const { id } = req.params
 
   if (!Types.ObjectId.isValid(id)) {
@@ -125,6 +131,37 @@ function validateDeleteEventVolunteersBody(req, res, next) {
   }
 
   next()
+}
+
+function validateReplaceRequest(req, res, next) {
+  const { value: validatedBody, error } = replaceEventVolunteerValidator.validate(req.body)
+
+  if (error !== undefined) {      
+    return res.status(400).json({
+      code: 'BadRequest',
+      status: 400,
+      message: error.message
+    })
+  }
+
+  req.body = validatedBody
+
+  next()
+}
+
+async function replaceEventVolunteer(req, res, next) {
+  const { id } = req.params
+  const { eventJobName } = req.body
+
+  try {
+    await EventVolunteerController.replace(id, eventJobName)
+
+    return res.json({
+      ok: true
+    })
+  } catch (error) {
+    next(error)
+  }
 }
 
 async function deleteEventVolunteer(req, res, next) {
@@ -145,6 +182,7 @@ const router = express.Router()
 
 router.post('/', validateCreateEventVolunteerBody, create)
 router.get('/', validateListEventVolunteersBody, list)
-router.delete('/:id', validateDeleteEventVolunteersBody, deleteEventVolunteer)
+router.put('/:id', validateParamsId, validateReplaceRequest, replaceEventVolunteer)
+router.delete('/:id', validateParamsId, deleteEventVolunteer)
 
 module.exports = router

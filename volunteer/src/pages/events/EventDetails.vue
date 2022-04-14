@@ -216,7 +216,6 @@
                                   >
                                     <template v-if="event.status === 'UPCOMING'">
                                       <b-col
-                                        v-if="event.goals.numVolunteers.target !== 0 && !hasAlreadyVolunteered"
                                         class="m-1"
                                         cols="12"
                                         md="4"
@@ -224,25 +223,10 @@
                                         <b-button
                                           variant="primary"
                                           style="width: 100%"
-                                          :disabled="volunteerGoalReached || hasAlreadyVolunteered"
+                                          :disabled="volunteerGoalReached && !hasAlreadyVolunteered"
                                           @click="volunteerModal = true"
                                         >
-                                          VOLUNTEER
-                                        </b-button>
-                                      </b-col>
-
-                                      <b-col
-                                        v-if="hasAlreadyVolunteered"
-                                        class="m-1"
-                                        cols="12"
-                                        md="4"
-                                      >
-                                        <b-button
-                                          variant="outline-danger"
-                                          style="width: 100%"
-                                          @click="unjoinEventModal = true"
-                                        >
-                                          UNJOIN
+                                          SEE ROLES
                                         </b-button>
                                       </b-col>
 
@@ -446,7 +430,7 @@
 
                           <b-progress-bar
                             variant="danger"
-                            :value="job.slots.max"
+                            :value="job.slots.max - job.slots.current"
                             :label="getVolunteerGoalTargetLabel(job.slots.current, job.slots.max)"
                           />
                         </b-progress>
@@ -454,11 +438,22 @@
 
                       <b-col cols="2">
                         <b-button
-                          variant="success"
+                          v-if="!isCurrentJob(job.name)"
+                          :variant="hasAlreadyVolunteered ? 'primary' : 'success'"
                           :disabled="job.slots.current >= job.slots.max"
                           @click="selectEventJob(job.name)"
                         >
-                          JOIN THIS ROLE
+                          {{
+                            hasAlreadyVolunteered ? 'SWITCH ROLE' : 'JOIN THIS ROLE'
+                          }}
+                        </b-button>
+
+                        <b-button
+                          v-else
+                          variant="danger"
+                          @click="unjoinEventModal = true"
+                        >
+                          UNJOIN ROLE
                         </b-button>
                       </b-col>
                     </b-row>
@@ -489,7 +484,7 @@
 
     <b-modal
       v-model="confirmEventVolunteerModal"
-      @ok="createEventVolunteer(eventJobName)"
+      @ok="hasAlreadyVolunteered ? replaceEventVolunteer(eventJobName) : createEventVolunteer(eventJobName)"
       @cancel="eventJobName = null"
     >
       <b-container>
@@ -559,7 +554,11 @@ import { mapGetters } from 'vuex'
 import EventDonationModal from '../../components/EventDonationModal'
 import { apiClient } from '../../axios'
 
+import EventVolunteerRepository from '../../repositories/events/volunteers'
+
 const logo = require('../../assets/aralpinoywords.png')
+
+const eventVolunteerRepository = new EventVolunteerRepository(apiClient)
 
 export default {
   name: 'EventDetails',
@@ -648,6 +647,8 @@ export default {
     }
   },
   async created () {
+    eventVolunteerRepository.setAuthorizationHeader(`Bearer ${this.token}`)
+
     if (this.user !== null) {
       await this.getEventVolunteer()
     }
@@ -734,6 +735,23 @@ export default {
 
       this.$router.go()
     },
+    async replaceEventVolunteer (eventJobName) {
+      if (this.user === null) {
+        return this.$router.push({ path: '/login' })
+      }
+
+      const eventVolunteer = this.eventVolunteer
+
+      if (eventVolunteer === null) {
+        return this.$router.go()
+      }
+
+      await eventVolunteerRepository.replace(eventVolunteer._id, {
+        eventJobName
+      })
+
+      this.$router.go()
+    },
     async unjoinEvent () {
       if (this.user === null) {
         return this.$router.push({ path: '/login' })
@@ -813,6 +831,13 @@ export default {
       const volunteerNoun = difference === 1 ? 'volunteer' : 'volunteers'
 
       return `We still need ${difference} ${volunteerNoun}!`
+    },
+    isCurrentJob (jobName) {
+      if (this.eventVolunteer === null) {
+        return
+      }
+
+      return this.eventVolunteer.eventJob.name === jobName
     }
   }
 }

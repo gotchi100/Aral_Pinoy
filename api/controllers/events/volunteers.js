@@ -2,6 +2,8 @@
 
 const { Types } = require('mongoose')
 
+const config = require('../../config')
+
 const EventVolunteerModel = require('../../models/events/volunteers')
 const UserModel = require('../../models/users')
 const EventModel = require('../../models/events')
@@ -81,6 +83,10 @@ class EventVolunteerController {
   }
 
   static async addGoogleCalendarAttendee(eventId, attendeeEmail) {
+    if (config.environment.isDevelopment) {
+      return
+    }
+
     const calendarEvent = await GoogleCalendarController.getEvent(eventId)
     const attendees = calendarEvent.attendees.concat([{
       email: attendeeEmail,
@@ -179,8 +185,12 @@ class EventVolunteerController {
     }
   }
 
-  static async delete(id) {
-    const eventVolunteer = await EventVolunteerModel.findById(id, ['user','event', 'eventJob.name'], { 
+  static async delete(id, options = {}) {
+    const { 
+      returnDocument = false
+    } = options
+
+    const eventVolunteer = await EventVolunteerModel.findById(id, ['user', 'event', 'eventJob.name'], { 
       lean: true,
       populate: ['user', 'event']
     })
@@ -212,9 +222,28 @@ class EventVolunteerController {
     }
 
     EventVolunteerController.removeGoogleCalendarAttendee(event._id.toString(), user.email).catch(console.error)
+
+    if (returnDocument) {
+      return eventVolunteer
+    }
+  }
+
+  static async replace(id, volunteerJob) {
+    const { 
+      user: userId,
+      event: eventId
+    } = await EventVolunteerController.delete(id, {
+      returnDocument: true
+    })
+
+    await EventVolunteerController.create(userId, eventId, volunteerJob)
   }
 
   static async removeGoogleCalendarAttendee(eventId, attendeeEmailToRemove) {
+    if (config.environment.isDevelopment) {
+      return
+    }
+
     const calendarEvent = await GoogleCalendarController.getEvent(eventId)
     const attendees = calendarEvent.attendees.filter((attendee) => attendee.email !== attendeeEmailToRemove)
 
