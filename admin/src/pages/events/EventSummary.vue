@@ -131,8 +131,8 @@
                           href="#"
                         >
                           <b-icon
-                            :class="item.present ? 'text-success' : 'text-danger'"
-                            :icon="item.present ? 'check-circle' : 'x-circle'"
+                            :class="item.absent ? 'text-danger' : 'text-success'"
+                            :icon="item.absent ? 'x-circle' : 'check-circle'"
                           />  {{ `${item.user.firstName} ${item.user.lastName}` }}
                         </b-list-group-item>
                       </b-list-group>
@@ -567,10 +567,10 @@ export default {
       let absent = 0
 
       for (const volunteer of volunteers) {
-        if (volunteer.present) {
-          present += 1
-        } else {
+        if (volunteer.absent) {
           absent += 1
+        } else {
+          present += 1
         }
       }
 
