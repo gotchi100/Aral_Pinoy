@@ -98,6 +98,98 @@
                                   <div class="form-check form-switch">
                                     <label
                                       class="form-check-label"
+                                      for="input-event-save-as-template-checkbox"
+                                      style="font-family: 'Bebas Neue', cursive;"
+                                    >
+                                      Save as Template
+                                    </label>
+
+                                    <input
+                                      id="input-event-save-as-template-checkbox"
+                                      v-model="event.saveAsTemplate"
+                                      class="form-check-input"
+                                      type="checkbox"
+                                    >
+                                  </div>
+                                </b-form-group>
+                              </b-col>
+                            </b-row>
+
+                            <template v-if="event.saveAsTemplate">
+                              <b-row>
+                                <b-form-group class="text-start">
+                                  <label
+                                    class="py-1"
+                                    for="input-event-template-name"
+                                    style="font-family: 'Bebas Neue', cursive;"
+                                  >
+                                    Template Name:
+                                  </label>
+
+                                  <validation-provider
+                                    v-slot="validationContext"
+                                    :rules="{
+                                      required: event.saveAsTemplate,
+                                      max: 100
+                                    }"
+                                  >
+                                    <b-form-input
+                                      id="input-event-template-name"
+                                      v-model="event.templateName"
+                                      :state="getValidationState(validationContext)"
+                                      placeholder="Enter Template Name"
+                                      aria-describedby="input-event-template-name-feedback"
+                                    />
+
+                                    <b-form-invalid-feedback id="input-event-template-name-feedback">
+                                      {{ validationContext.errors[0] }}
+                                    </b-form-invalid-feedback>
+                                  </validation-provider>
+                                </b-form-group>
+                              </b-row>
+
+                              <b-row>
+                                <b-col cols="12">
+                                  <b-form-group class="text-start">
+                                    <label
+                                      class="py-1"
+                                      for="textarea-event-template-description"
+                                      style="font-family:'Bebas Neue', cursive;"
+                                    >
+                                      Template Description:
+                                    </label>
+
+                                    <validation-provider
+                                      v-slot="validationContext"
+                                      :rules="{
+                                        max: 5000
+                                      }"
+                                    >
+                                      <b-form-textarea
+                                        id="textarea-event-description"
+                                        v-model="event.templateDescription"
+                                        rows="3"
+                                        max-rows="8"
+                                        :state="getValidationState(validationContext)"
+                                        aria-describedby="textarea-event-template-description-feedback"
+                                        placeholder="Enter Template Description"
+                                      />
+
+                                      <b-form-invalid-feedback id="textarea-event-template-description-feedback">
+                                        {{ validationContext.errors[0] }}
+                                      </b-form-invalid-feedback>
+                                    </validation-provider>
+                                  </b-form-group>
+                                </b-col>
+                              </b-row>
+                            </template>
+
+                            <b-row class="pt-3">
+                              <b-col cols="12">
+                                <b-form-group class="pt-2 text-start">
+                                  <div class="form-check form-switch">
+                                    <label
+                                      class="form-check-label"
                                       for="is-urgent-event-checkbox"
                                       style="font-family: 'Bebas Neue', cursive;"
                                     >
@@ -823,27 +915,6 @@
                           align-v="center"
                         >
                           <b-col cols="2">
-                            <b-form-group class="pt-2 text-start">
-                              <div class="form-check form-switch">
-                                <label
-                                  class="form-check-label"
-                                  for="is-urgent-event-checkbox"
-                                  style="font-family: 'Bebas Neue', cursive;"
-                                >
-                                  Save as Template
-                                </label>
-
-                                <input
-                                  id="is-urgent-event-checkbox"
-                                  v-model="event.saveAsTemplate"
-                                  class="form-check-input"
-                                  type="checkbox"
-                                >
-                              </div>
-                            </b-form-group>
-                          </b-col>
-
-                          <b-col cols="2">
                             <b-button
                               id="create-button"
                               class="w-100"
@@ -965,7 +1036,9 @@ export default ({
         ikdItems: [],
         jobs: [],
         questions: [],
-        saveAsTemplate: false
+        saveAsTemplate: false,
+        templateName: '',
+        templateDescription: ''
       },
       contactForm: {
         name: '',
@@ -1111,9 +1184,6 @@ export default ({
       try {
         const eventTemplate = await eventTemplateRepository.get(eventTemplateId)
 
-        this.event.name = eventTemplate.name
-        this.event.description = eventTemplate.description
-
         if (eventTemplate.location?.name) {
           this.event.location.name = eventTemplate.location.name
         }
@@ -1152,7 +1222,12 @@ export default ({
       form.set('date[start]', new Date(event.date.start).toISOString())
       form.set('date[end]', new Date(event.date.end).toISOString())
       form.set('goals[monetaryDonation]', parseFloat(event.goals.monetaryDonation))
-      form.set('saveAsTemplate', event.saveAsTemplate)
+
+      if (event.saveAsTemplate === true) {
+        form.set('templateName', event.templateName)
+        form.set('templateDescription', event.templateDescription)
+        form.set('saveAsTemplate', event.saveAsTemplate)
+      }
 
       if (event.logo !== null) {
         form.set('logo', event.logo)

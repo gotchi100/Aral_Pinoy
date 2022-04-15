@@ -70,7 +70,9 @@ const createEventValidator = Joi.object({
     })
   ),
   questions: questionsSchema,
-  saveAsTemplate: Joi.boolean().default(false)
+  saveAsTemplate: Joi.boolean().default(false),
+  templateName: Joi.string().trim().max(100).required(),
+  templateDescription: Joi.string().trim().empty('').max(5000),
 })
 
 function validateCreateEventBody(req, res, next) {

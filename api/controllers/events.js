@@ -75,7 +75,9 @@ class EventsController {
       ikdItems,
       jobs: eventJobs,
       questions: eventQuestions,
-      saveAsTemplate = false
+      saveAsTemplate = false,
+      templateName,
+      templateDescription
     } = event
 
     const sanitizedName = sanitize(name)
@@ -277,9 +279,11 @@ class EventsController {
     await EventsController.createGoogleEvent(eventDocument).catch((error) => console.dir(error, { depth: null }))
 
     if (saveAsTemplate) {
+      const sanitizedTemplateName = sanitize(templateName)
+
       await EventsController.createTemplate({
-        name: sanitizedName,
-        description,
+        name: sanitizedTemplateName,
+        description: templateDescription,
         location,
         goals,
         sdgIds,
