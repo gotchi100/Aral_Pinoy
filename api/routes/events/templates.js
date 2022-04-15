@@ -163,11 +163,26 @@ async function get(req, res, next) {
   }
 }
 
+async function deleteTemplate(req, res, next) {
+  const { id } = req.params
+
+  try {
+    await EventTemplateController.deleteTemplate(id)
+
+    return res.status(200).json({
+      ok: true
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 const router = express.Router()
 
 router.post('/', validateCreateBody, create)
 
 router.get('/', validateList, list)
 router.get('/:id', validateIdParam, get)
+router.delete('/:id', validateIdParam, deleteTemplate)
 
 module.exports = router

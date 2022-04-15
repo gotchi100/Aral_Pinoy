@@ -104,6 +104,16 @@ class EventTemplateController {
 
     return template
   }
+
+  static async deleteTemplate(id) {
+    const { deletedCount } = await EventTemplateModel.deleteOne({
+      _id: id
+    })
+
+    if (deletedCount === 0) {
+      throw new NotFoundError('Event template does not exist')
+    }
+  }
 }
 
 module.exports = EventTemplateController

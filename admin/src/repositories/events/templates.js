@@ -55,6 +55,10 @@ class EventTemplateRepository {
 
     return data
   }
+
+  async deleteTemplate (id) {
+    await this.apiClient.delete(`/event-templates/${id}`)
+  }
 }
 
 module.exports = EventTemplateRepository

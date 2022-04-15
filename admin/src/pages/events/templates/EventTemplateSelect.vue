@@ -53,21 +53,34 @@
                     <b-list-group>
                       <b-list-group-item
                         v-for="template in templates.results"
-                        :key="template.id"
+                        :key="template._id"
                         class="flex-column align-items-start"
                         to="#"
                         style="text-align: left"
                         @click="selectTemplate(template._id)"
                       >
-                        <div>
-                          <h5 class="mb-1">
-                            {{ template.name }}
-                          </h5>
-                        </div>
+                        <div class="d-flex w-100 justify-content-between">
+                          <div>
+                            <div>
+                              <h5 class="mb-1">
+                                {{ template.name }}
+                              </h5>
+                            </div>
 
-                        <p class="mb-1">
-                          {{ template.description }}
-                        </p>
+                            <p class="mb-1">
+                              {{ template.description }}
+                            </p>
+                          </div>
+
+                          <button
+                            class="btn btn-link"
+                            type="button"
+                            style="color: #dc3545"
+                            @click.stop="showDeleteTemplate(template._id)"
+                          >
+                            <b-icon icon="trash" />
+                          </button>
+                        </div>
                       </b-list-group-item>
                     </b-list-group>
                   </b-skeleton-wrapper>
@@ -78,6 +91,18 @@
         </b-col>
       </b-row>
     </b-container>
+
+    <b-modal
+      v-model="showDeleteTemplateModal"
+      size="xl"
+      @ok="deleteTemplate"
+    >
+      <b-container fluid>
+        <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
+          Are you sure you want to delete this template?
+        </h1>
+      </b-container>
+    </b-modal>
   </div>
 </template>
 
@@ -97,11 +122,20 @@ export default ({
       templates: {
         results: [],
         total: 0
-      }
+      },
+      templateIdToDelete: null,
+      showDeleteTemplateModal: false
     }
   },
   computed: {
     ...mapGetters(['token'])
+  },
+  watch: {
+    showDeleteTemplateModal () {
+      if (this.showDeleteTemplateModal === false) {
+        this.templateIdToDelete = null
+      }
+    }
   },
   async created () {
     eventTemplateRepository.setAuthorizationHeader(`Bearer ${this.token}`)
@@ -133,6 +167,21 @@ export default ({
           templateId
         }
       })
+    },
+    showDeleteTemplate (templateIdToDelete) {
+      this.templateIdToDelete = templateIdToDelete
+      this.showDeleteTemplateModal = true
+    },
+    async deleteTemplate () {
+      if (this.templateIdToDelete === null) {
+        return
+      }
+
+      this.isFetchingTemplates = true
+
+      await eventTemplateRepository.deleteTemplate(this.templateIdToDelete)
+
+      this.$router.go()
     }
   }
 })
