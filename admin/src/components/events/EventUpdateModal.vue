@@ -322,8 +322,8 @@ export default {
       required: true
     },
     currentEvent: {
-      type: [Object, null],
-      required: true
+      type: Object,
+      default: null
     }
   },
   data () {
