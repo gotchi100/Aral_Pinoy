@@ -48,6 +48,88 @@
                 </b-row>
 
                 <b-row
+                  v-if="incidents.length > 0"
+                  class="mb-3"
+                >
+                  <b-col cols="12">
+                    <b-card
+                      title="Incidents"
+                      style="text-align: left"
+                    >
+                      <b-list-group flush>
+                        <b-list-group-item
+                          v-for="(incident, index) of incidents"
+                          :key="index"
+                          href="#"
+                        >
+                          {{ incident }}
+                        </b-list-group-item>
+                      </b-list-group>
+                    </b-card>
+                  </b-col>
+                </b-row>
+
+                <b-row
+                  v-if="usedItemsChart !== undefined"
+                  class="mb-3"
+                >
+                  <b-col cols="12">
+                    <b-card
+                      title="Items Used"
+                      style="text-align: left"
+                    >
+                      <b-row>
+                        <b-col cols="12">
+                          <b-container fluid>
+                            <b-row
+                              class="py-5"
+                            >
+                              <b-col cols="12">
+                                <bar-chart
+                                  :height="200"
+                                  :chart-data="{
+                                    labels: usedItemsChart.labels,
+                                    datasets: usedItemsChart.datasets
+                                  }"
+                                  :options="{
+                                    tooltips: {
+                                      enabled: false
+                                    },
+                                    elements: {
+                                      bar: {
+                                        borderWidth: 2,
+                                      }
+                                    },
+                                    scales: {
+                                      yAxes: {
+                                        ticks: {
+                                          min: 0,
+                                          beginAtZero: true,
+                                          precision: 0
+                                        }
+                                      }
+                                    },
+                                    responsive: true,
+                                    plugins: {
+                                      legend: {
+                                        position: 'top',
+                                      },
+                                      title: {
+                                        display: false,
+                                      }
+                                    }
+                                  }"
+                                />
+                              </b-col>
+                            </b-row>
+                          </b-container>
+                        </b-col>
+                      </b-row>
+                    </b-card>
+                  </b-col>
+                </b-row>
+
+                <b-row
                   v-if="eventVolunteers.length > 0"
                   class="mb-3"
                 >
@@ -64,16 +146,15 @@
                             >
                               <b-col cols="12">
                                 <bar-chart
-                                  :height="100"
+                                  :height="200"
                                   :chart-data="{
                                     labels: volunteerAttendanceChart.labels,
                                     datasets: volunteerAttendanceChart.datasets
                                   }"
                                   :options="{
-                                    indexAxis: 'y',
                                     datasets: {
                                       bar: {
-                                        barPercentage: '0.4',
+                                        barPercentage: '0.25',
                                       }
                                     },
                                     tooltips: {
@@ -86,11 +167,6 @@
                                     },
                                     scales: {
                                       yAxes: {
-                                        display: false,
-                                        stacked: true,
-                                      },
-                                      xAxes: {
-                                        stacked: true,
                                         ticks: {
                                           min: 0,
                                           beginAtZero: true,
@@ -141,28 +217,6 @@
                 </b-row>
 
                 <b-row
-                  v-if="usedItems.length > 0"
-                  class="mb-3"
-                >
-                  <b-col cols="12">
-                    <b-card
-                      title="Items Used"
-                      style="text-align: left"
-                    >
-                      <b-list-group flush>
-                        <b-list-group-item
-                          v-for="(item, index) in usedItems"
-                          :key="index"
-                          href="#"
-                        >
-                          {{ item.usedQuantity }} {{ item.name }}
-                        </b-list-group-item>
-                      </b-list-group>
-                    </b-card>
-                  </b-col>
-                </b-row>
-
-                <b-row
                   v-if="eventExpenses.length > 0"
                   class="mb-3"
                 >
@@ -200,28 +254,6 @@
                           </b-container>
                         </b-col>
                       </b-row>
-                    </b-card>
-                  </b-col>
-                </b-row>
-
-                <b-row
-                  v-if="incidents.length > 0"
-                  class="mb-3"
-                >
-                  <b-col cols="12">
-                    <b-card
-                      title="Incidents"
-                      style="text-align: left"
-                    >
-                      <b-list-group flush>
-                        <b-list-group-item
-                          v-for="(incident, index) of incidents"
-                          :key="index"
-                          href="#"
-                        >
-                          {{ incident }}
-                        </b-list-group-item>
-                      </b-list-group>
                     </b-card>
                   </b-col>
                 </b-row>
@@ -480,7 +512,7 @@ const dangerColor = '#dc3545'
 
 const polarQuestionColors = {
   'Very Satisfied': successColor,
-  Satisfied: '#16784a',
+  Satisfied: '#16786e',
   Neutral: '#b8b8b8',
   Dissatisfied: '#dc3545',
   'Very Dissatisfied': '#9c2531'
@@ -527,38 +559,46 @@ export default {
 
       return Array.isArray(event.incidents) ? event.incidents : []
     },
-    usedItems () {
+    usedItemsChart () {
       if (this.event === null) {
-        return []
+        return
       }
 
       const items = this.event.ikds
 
       if (!Array.isArray(items) || items.length === 0) {
-        return []
+        return
       }
+      const datasets = []
+      const backgroundColor = randomColor({
+        hue: 'random',
+        luminosity: 'dark',
+        count: items.length
+      })
 
-      const usedItems = []
+      let itemIndex = 0
 
       for (const item of items) {
         const {
           item: {
             name
           },
-          usedQuantity
+          usedQuantity = 0
         } = item
 
-        if (usedQuantity === undefined || usedQuantity === 0) {
-          continue
-        }
-
-        usedItems.push({
-          usedQuantity,
-          name
+        datasets.push({
+          label: name,
+          backgroundColor: backgroundColor[itemIndex],
+          data: [usedQuantity]
         })
+
+        itemIndex += 1
       }
 
-      return usedItems
+      return {
+        labels: [''],
+        datasets
+      }
     },
     volunteerAttendanceChart () {
       const volunteers = this.eventVolunteers
@@ -597,7 +637,7 @@ export default {
       }
 
       const { current, target } = this.event.goals.monetaryDonation
-      const jobs = this.event.jobs
+      // const jobs = this.event.jobs
 
       const goals = []
 
@@ -647,33 +687,33 @@ export default {
         })
       }
 
-      if (Array.isArray(jobs)) {
-        for (const job of jobs) {
-          const datasets = [
-            {
-              label: 'Joined',
-              backgroundColor: successColor,
-              data: [job.slots.current]
-            }
-          ]
+      // if (Array.isArray(jobs)) {
+      //   for (const job of jobs) {
+      //     const datasets = [
+      //       {
+      //         label: 'Joined',
+      //         backgroundColor: successColor,
+      //         data: [job.slots.current]
+      //       }
+      //     ]
 
-          const remainingTarget = job.slots.max - job.slots.current
+      //     const remainingTarget = job.slots.max - job.slots.current
 
-          if (remainingTarget > 0) {
-            datasets.push({
-              label: 'Remaining Target',
-              backgroundColor: dangerColor,
-              data: [remainingTarget]
-            })
-          }
+      //     if (remainingTarget > 0) {
+      //       datasets.push({
+      //         label: 'Remaining Target',
+      //         backgroundColor: dangerColor,
+      //         data: [remainingTarget]
+      //       })
+      //     }
 
-          goals.push({
-            title: `Role: ${job.name}`,
-            labels: [''],
-            datasets
-          })
-        }
-      }
+      //     goals.push({
+      //       title: `Role: ${job.name}`,
+      //       labels: [''],
+      //       datasets
+      //     })
+      //   }
+      // }
 
       return goals
     },
