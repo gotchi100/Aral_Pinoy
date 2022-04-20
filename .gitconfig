@@ -2,3 +2,5 @@
   email = aralpinoycapstone@gmail.com
   name = Aral Pinoy
   signingkey = F0057B2AE7AEE17356B0113D804624682AED7F6E
+[credential]
+  helper = cache
