@@ -252,7 +252,11 @@ class InkindDonationsController {
       ])
 
       results = aggregationResults[0]
-      total = aggregationResults[1][0].count
+      const countAggResult = aggregationResults[1]
+
+      if (countAggResult.length > 0) {
+        total = aggregationResults[1][0].count
+      }
     } else {
       const matchQuery = {}
       const queryOptions = { 
