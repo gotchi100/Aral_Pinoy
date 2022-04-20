@@ -71,7 +71,7 @@ const createEventValidator = Joi.object({
   ),
   questions: questionsSchema,
   saveAsTemplate: Joi.boolean().default(false),
-  templateName: Joi.string().trim().max(100).required(),
+  templateName: Joi.string().trim().max(100),
   templateDescription: Joi.string().trim().empty('').max(5000),
 })
 
