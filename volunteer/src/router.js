@@ -5,11 +5,12 @@ import LoginPage from './pages/Login'
 import RegisterPage from './pages/Register'
 import ProfilePage from './pages/Profile'
 import EventCalendar from './pages/EventCalendar'
-import ForgotPassword from './pages/ForgotPassword.vue'
-import ResetPassword from './pages/ResetPassword.vue'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 import GoogleSignInCallbackPage from './pages/GoogleSignIn'
-import PrivacyPolicyPage from './pages/PrivacyPolicy.vue'
-import TermsConditionPage from './pages/TermsCondition.vue'
+import PrivacyPolicyPage from './pages/PrivacyPolicy'
+import TermsConditionPage from './pages/TermsCondition'
+import NotificationsPage from './pages/Notifications'
 
 // /events
 import EventList from './pages/events/EventList'
@@ -27,10 +28,17 @@ const routes = [
   { path: '/privacy-policy', component: PrivacyPolicyPage },
   { path: '/terms-and-conditions', component: TermsConditionPage },
 
-  // private routes
   {
     path: '/profile',
     component: ProfilePage,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    name: 'Notifications',
+    path: '/notifications',
+    component: NotificationsPage,
     meta: {
       requiresAuth: true
     }
