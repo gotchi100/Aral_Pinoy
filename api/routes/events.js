@@ -214,6 +214,7 @@ const patchEventValidator = Joi.object({
     start: Joi.date().iso().required(),
     end: Joi.date().iso().greater(Joi.ref('start')).required(),
   }),
+  jobs: jobsSchema,
 })
 
 function validatePatchEvent(req, res, next) {
@@ -238,7 +239,8 @@ async function patchEvent(req, res, next) {
     name,
     description,
     location,
-    date
+    date,
+    jobs
   } = req.body
 
   try {
@@ -246,7 +248,8 @@ async function patchEvent(req, res, next) {
       name,
       description,
       location,
-      date
+      date,
+      jobs
     })
 
     return res.status(200).json({

@@ -6,6 +6,7 @@ const { Types } = require('mongoose')
 const config = require('../config')
 
 const EventModel = require('../models/events')
+const EventVolunteerModel = require('../models/events/volunteers')
 const EventJobModel = require('../models/event-jobs')
 const EventExpenseModel = require('../models/events/expenses')
 const EventTemplateModel = require('../models/events/templates')
@@ -15,9 +16,11 @@ const InkindDonationModel = require('../models/inkind-donations')
 const IkdTransactionModel = require('../models/inkind-donations/transactions')
 const IkdOutboundTransactionModel = require('../models/inkind-donations/outbound-transactions')
 const UserModel = require('../models/users')
+const NotificationModel = require('../models/notifications')
 
 const GoogleCalendarController = require('./google/calendar')
 
+const NOTIFICATION_TYPES = require('../constants/notifications').TYPES
 const { STATUSES } = require('../constants/events')
 const { OUTBOUND_RECEIVER_TYPES, TRANSACTION_STATUSES } = require('../constants/inkind-donations')
 
@@ -444,10 +447,11 @@ class EventsController {
       name,
       description,
       location,
-      date
+      date,
+      jobs
     } = event
 
-    const currentEvent = await EventModel.findById(id, ['__v', 'status'])
+    const currentEvent = await EventModel.findById(id, ['__v', 'status', 'jobs'])
 
     if (currentEvent === null) {
       throw new NotFoundError('event')
@@ -481,6 +485,21 @@ class EventsController {
       $set['date.end'] = date.end
     }
 
+    if (Array.isArray(jobs)) {
+      if (jobs.length === 0) {
+        $unset.jobs = ''
+      } else {
+        const { resolvedJobs, newJobs, targetVolunteers } = await EventsController.resolveJobs(currentEvent.jobs, jobs)
+        
+        for (const newJob of newJobs) {
+          await EventsController.createNewEventJobNotification(id, newJob.name)
+        }
+
+        $set.jobs = resolvedJobs
+        $set['goals.numVolunteers.target'] = targetVolunteers
+      }
+    }
+
     const { matchedCount } = await EventModel.updateOne({
       _id: id,
       __v: currentEvent.__v
@@ -502,6 +521,47 @@ class EventsController {
       location,
       date
     }, { sendUpdates: 'all' }).catch(console.error)
+  }
+
+  static async resolveJobs(eventJobs, jobs) {
+    const resolvedJobs = []
+    const newJobs = []
+    const existingJobMap = new Map()
+    let targetVolunteers = 0
+
+    for (const job of eventJobs) {
+      existingJobMap.set(job.name, job)
+
+      targetVolunteers += job.slots.max
+    }
+
+    for (const job of jobs) {
+      const existingJob = existingJobMap.get(job.name)
+
+      if (existingJob === undefined) {
+        const eventJob = await EventsController.createEventJob(job)
+
+        newJobs.push(eventJob)
+        resolvedJobs.push(eventJob)
+
+        targetVolunteers += eventJob.slots.max
+      } else {
+        const eventJob = await EventsController.createEventJob(job, false)
+
+        eventJob.slots.current = existingJob.slots.current
+
+        resolvedJobs.push(eventJob)
+
+        targetVolunteers -= existingJob.slots.max
+        targetVolunteers += eventJob.slots.max
+      }
+    }
+
+    return {
+      resolvedJobs,
+      newJobs,
+      targetVolunteers
+    }
   }
 
   static async updateGoogleEvent(id, event, options = {}) {
@@ -697,6 +757,79 @@ class EventsController {
       quantity,
       date: new Date(date),
     })
+  }
+
+  static async createEventJob(job, upsert = true) {
+    const jobSkills = []
+    const skillIds = []
+
+    if (Array.isArray(job.skillIds)) {
+      for (const skillId of job.skillIds) {
+        const skill = await SkillModel.findById(skillId, ['name', 'norm', 'description'], {
+          lean: true
+        })
+
+        if (skill === null) {
+          throw new NotFoundError(`Skill does not exist: ${skillId}`)
+        }
+
+        jobSkills.push({
+          name: skill.name,
+          norm: skill.norm,
+          description: skill.description,
+        })
+
+        skillIds.push(skill._id)
+      }
+    }
+      
+    const sanitizedJobName = sanitize(job.name)
+    const jobNorm = sanitizedJobName.toLowerCase()
+
+    if (upsert === true) {
+      await EventJobModel.updateOne({
+        norm: jobNorm
+      }, {
+        $setOnInsert: {
+          name: sanitizedJobName,
+          norm: jobNorm,
+          description: job.description,
+          skills: skillIds
+        }
+      }, {
+        upsert: true
+      })
+    }
+
+    return {
+      name: sanitizedJobName,
+      description: job.description,
+      slots: {
+        current: 0,
+        max: job.requirements.max
+      },
+      skills: jobSkills
+    }
+  }
+
+  static async createNewEventJobNotification(eventId, jobName) {
+    const volunteers = await EventVolunteerModel.find({
+      event: eventId
+    })
+
+    for (const volunteer of volunteers) {
+      await NotificationModel.create({
+        user: new Types.ObjectId(volunteer.user),
+        seen: false,
+        read: false,
+        type: NOTIFICATION_TYPES.NEW_EVENT_ROLE,
+        typeDetails: {
+          event: new Types.ObjectId(eventId),
+          role: jobName
+        },
+        createdAt: new Date()
+      })
+    }
   }
 }
 

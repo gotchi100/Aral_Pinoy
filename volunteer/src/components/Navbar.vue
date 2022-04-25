@@ -123,7 +123,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['user', 'isLoggedIn']),
+    ...mapGetters(['user', 'token', 'isLoggedIn']),
     eventNavigationLink () {
       if (this.$route.name !== 'Home') {
         return {

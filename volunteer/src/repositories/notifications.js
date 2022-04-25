@@ -4,52 +4,7 @@ const axios = require('axios')
 
 /** @typedef {import('axios').Axios} Axios */
 
-let results = [{
-  _id: '1',
-  user: '2',
-  seen: false,
-  read: true,
-  type: 'new-event-role',
-  typeDetails: {
-    event: {
-      _id: '62602ab945ecc2fc1d993eb0',
-      name: 'Batangas Tree Planting',
-      logoUrl: 'https://storage.googleapis.com/staging_aral-pinoy-events/62602ab945ecc2fc1d993eb0/logo-l27qyoax-treeplant.jpg'
-    },
-    role: 'Trash Collector'
-  },
-  createdAt: new Date('2022-03-22').toJSON()
-}, {
-  _id: '2',
-  user: '2',
-  seen: false,
-  read: false,
-  type: 'new-event-role',
-  typeDetails: {
-    event: {
-      _id: '61f55740015b1bf805e4b1fa',
-      name: 'Education Under the Bridge BATA NATIONAL HIGH SCHOOL',
-      logoUrl: 'https://storage.googleapis.com/staging_aral-pinoy-events/61f55740015b1bf805e4b1fa/logo-kyzyrye2-large_IMG_20190603_150544.jpg'
-    },
-    role: 'Assistant Teacher'
-  },
-  createdAt: new Date('2022-02-22').toJSON()
-}, {
-  _id: '3',
-  user: '2',
-  seen: true,
-  read: false,
-  type: 'new-event-role',
-  typeDetails: {
-    event: {
-      _id: '61f699fa4978949a9fc50f0e',
-      name: 'Sta. Ana Elementary School Brigada Pabasa',
-      logoUrl: 'https://storage.googleapis.com/staging_aral-pinoy-events/61f699fa4978949a9fc50f0e/logo-kz1byqq2-Brigada%20Pagbasa.png'
-    },
-    role: 'Assistant Teacher'
-  },
-  createdAt: new Date('2022-01-22').toJSON()
-}]
+const REPOSITORY_BASE_URL = '/notifications'
 
 class NotificationRepository {
   /**
@@ -70,89 +25,59 @@ class NotificationRepository {
   }
 
   async list (filters = {}, options = {}) {
-    // TODO: Integrate notifications
     const {
       limit,
       offset
     } = options
 
-    // const queryString = new URLSearchParams()
+    const queryString = new URLSearchParams()
 
-    // if (limit !== undefined) {
-    //   queryString.set('limit', limit)
-    // }
+    if (limit !== undefined) {
+      queryString.set('limit', limit)
+    }
 
-    // if (offset !== undefined) {
-    //   queryString.set('offset', offset)
-    // }
+    if (offset !== undefined) {
+      queryString.set('offset', offset)
+    }
 
-    // if (filters.userId !== undefined) {
-    //   queryString.set('filters.userId', filters.userId)
-    // }
-    const listResult = results.filter((notification) => {
-      const statements = [true]
+    if (filters.userId !== undefined) {
+      queryString.set('filters.userId', filters.userId)
+    }
 
-      if (filters.read !== undefined) {
-        statements.push(filters.read === notification.read)
-      }
+    if (filters.read !== undefined) {
+      queryString.set('filters.read', filters.read)
+    }
 
-      return statements.every((statement) => statement === true)
-    })
+    const { data } = await this.apiClient.get(`${REPOSITORY_BASE_URL}?${queryString.toString()}`)
 
     return {
-      results: listResult.slice(offset * limit, (offset + 1) * limit),
-      total: listResult.length
+      results: data.results,
+      total: data.total
     }
   }
 
   async countUnseen (filters = {}) {
-    // TODO: Integrate notifications
+    const queryString = new URLSearchParams()
 
-    // if (filters.userId !== undefined) {
-    //   queryString.set('filters.userId', filters.userId)
-    // }
+    queryString.set('filters.seen', false)
 
-    return results.filter((notification) => {
-      return notification.seen === false
-    }).length
+    if (filters.userId !== undefined) {
+      queryString.set('filters.userId', filters.userId)
+    }
+
+    const { data } = await this.apiClient.get(`${REPOSITORY_BASE_URL}?${queryString.toString()}`)
+
+    return data.total
   }
 
   async markAsSeen (id) {
-    const newResults = []
-
-    for (const item of results) {
-      if (item._id !== id) {
-        newResults.push(item)
-
-        continue
-      }
-
-      newResults.push({
-        ...item,
-        seen: true
-      })
-    }
-
-    results = newResults
+    await this.apiClient.patch(`${REPOSITORY_BASE_URL}/${id}/seen`)
   }
 
   async markAsRead (ids) {
-    const newResults = []
-
-    for (const item of results) {
-      if (!ids.includes(item._id)) {
-        newResults.push(item)
-
-        continue
-      }
-
-      newResults.push({
-        ...item,
-        read: true
-      })
-    }
-
-    results = newResults
+    await this.apiClient.patch(`${REPOSITORY_BASE_URL}/readAll`, {
+      ids
+    })
   }
 }
 

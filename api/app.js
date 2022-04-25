@@ -37,6 +37,8 @@ const ikdOrganizationsRouter = require('./routes/inkind-donations/organizations'
 const ikdTransactionsRouter = require('./routes/inkind-donations/transactions')
 const ikdOutboundTransactionsRouter = require('./routes/inkind-donations/outbound-transactions')
 
+const notificationsRouter = require('./routes/notifications')
+
 const seedSdgs = require('./db/seeders/sdg')
 
 const logger = debug('api:server')
@@ -124,6 +126,8 @@ app.use('/inkind-donation-groups', ikdGroupsRouter)
 app.use('/inkind-donation-organizations', ikdOrganizationsRouter)
 app.use('/inkind-donation-transactions', ikdTransactionsRouter)
 app.use('/inkind-donation-outbound-transactions', ikdOutboundTransactionsRouter)
+
+app.use('/notifications', notificationsRouter)
 
 app.use(function (req, res, next) {
   res.status(404).json({

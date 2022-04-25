@@ -44,7 +44,7 @@
                         v-for="notification of notifications.results"
                       >
                         <new-event-role-notification
-                          v-if="notification.type === 'new-event-role'"
+                          v-if="notification.type === 'NEW_EVENT_ROLE'"
                           :key="notification._id"
                           :notification="notification"
                           @onRead="redirectAndMarkAsRead"
@@ -91,7 +91,7 @@
                         v-for="notification of unreadNotifications.results"
                       >
                         <new-event-role-notification
-                          v-if="notification.type === 'new-event-role'"
+                          v-if="notification.type === 'NEW_EVENT_ROLE'"
                           :key="notification._id"
                           :notification="notification"
                           @onRead="redirectAndMarkAsRead"
@@ -182,7 +182,9 @@ export default {
       this.notifications.offset = offset
 
       try {
-        const { results, total } = await notificationRepository.list({}, {
+        const { results, total } = await notificationRepository.list({
+          userId: this.user._id
+        }, {
           limit: this.listLimit,
           offset: this.notifications.offset
         })
@@ -199,6 +201,7 @@ export default {
 
       try {
         const { results, total } = await notificationRepository.list({
+          userId: this.user._id,
           read: false
         }, {
           limit: this.listLimit,
