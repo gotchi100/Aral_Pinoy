@@ -554,6 +554,14 @@ class EventsController {
 
         targetVolunteers -= existingJob.slots.max
         targetVolunteers += eventJob.slots.max
+
+        existingJobMap.delete(job.name)
+      }
+    }
+
+    for (const [, job] of existingJobMap.entries()) {
+      if (job.slots.current > 0) {
+        throw new ConflictError('job_has_a_volunteer')
       }
     }
 
