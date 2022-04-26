@@ -134,62 +134,6 @@
                     <validation-provider
                       v-slot="validationContext"
                       :rules="{
-                        max: 100,
-                        regex: regexRules.filipinoCharacters
-                      }"
-                    >
-                      <label
-                        for="update-profile-middleName"
-                        style="font-family:'Bebas Neue', cursive;"
-                      >
-                        Middle Name
-                      </label>
-
-                      <div class="input-group mb-3">
-                        <b-form-input
-                          id="update-profile-middleName"
-                          v-model="profile.middleName"
-                          type="text"
-                          class="form-control"
-                          :state="getValidationState(validationContext)"
-                          aria-describedby="update-profile-middleName-feedback"
-                          :disabled="loading.middleName"
-                        />
-
-                        <button
-                          class="btn btn-outline-success"
-                          type="button"
-                          :disabled="invalid || !changed || loading.middleName"
-                          @click="updateProfile({ middleName: profile.middleName }, 'middleName', reset)"
-                        >
-                          <b-spinner
-                            v-if="loading.middleName"
-                            style="width: 1rem; height: 1rem;"
-                          />
-                          <template v-else>
-                            <b-icon icon="file-earmark-check-fill" />
-                          </template>
-                        </button>
-
-                        <b-form-invalid-feedback id="update-profile-middleName-feedback">
-                          {{
-                            validationContext.failedRules.regex !== undefined
-                              ? 'This field does not have a valid format'
-                              : validationContext.errors[0]
-                          }}
-                        </b-form-invalid-feedback>
-                      </div>
-                    </validation-provider>
-                  </validation-observer>
-                </b-col>
-              </b-row>
-
-              <b-row>
-                <b-col cols="12">
-                  <validation-observer v-slot="{ invalid, changed, reset }">
-                    <validation-provider
-                      v-slot="validationContext"
-                      :rules="{
                         required: true,
                         max: 100,
                         regex: regexRules.filipinoCharacters
@@ -801,7 +745,6 @@ export default {
       errorMessage: '',
       profile: {
         firstName: '',
-        middleName: '',
         lastName: '',
         contactNumber: '',
         email: '',
@@ -814,7 +757,6 @@ export default {
       },
       loading: {
         firstName: false,
-        middleName: false,
         lastName: false,
         contactNumber: false,
         email: false,
@@ -883,7 +825,6 @@ export default {
     const user = this.user
 
     this.profile.firstName = user.firstName
-    this.profile.middleName = user.middleName
     this.profile.lastName = user.lastName
     this.profile.contactNumber = user.contactNumber
     this.profile.email = user.email

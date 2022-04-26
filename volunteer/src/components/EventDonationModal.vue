@@ -47,20 +47,6 @@
               cols="12"
               class="mb-2"
             >
-              <label for="donation-form-middlename">
-                Middle Name
-              </label>
-
-              <b-form-input
-                id="donation-form-middlename"
-                v-model="person.middleName"
-              />
-            </b-col>
-
-            <b-col
-              cols="12"
-              class="mb-2"
-            >
               <label for="donation-form-lastname">
                 Last Name
               </label>
@@ -161,7 +147,6 @@ export default {
       isDonating: false,
       person: {
         firstName: '',
-        middleName: '',
         lastName: '',
         contact: {
           phone: '',
@@ -190,7 +175,6 @@ export default {
     if (this.user !== null) {
       this.person.contact.email = this.user.email
       this.person.firstName = this.user.firstName
-      this.person.middleName = this.user.middleName
       this.person.lastName = this.user.lastName
 
       if (this.user.contactNumber !== undefined) {
@@ -229,10 +213,6 @@ export default {
           metadata.contactDetails.firstName = this.person.firstName
         }
 
-        if (this.person.middleName !== '') {
-          metadata.contactDetails.middleName = this.person.middleName
-        }
-
         if (this.person.lastName !== '') {
           metadata.contactDetails.lastName = this.person.lastName
         }
@@ -265,16 +245,11 @@ export default {
       if (!this.isAnonymousDonation) {
         buyer = {
           firstName: this.person.firstName,
-          middleName: undefined,
           lastName: this.person.lastName,
           contact: {
             phone: undefined,
             email: undefined
           }
-        }
-
-        if (this.person.middleName !== '') {
-          buyer.middleName = this.person.middleName
         }
 
         if (this.person.contact.phone !== '') {
