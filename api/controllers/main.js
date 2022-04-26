@@ -17,6 +17,42 @@ function sanitize(name) {
   return name.replace(whitespaceRegex,' ')
 }
 
+async function getBirthDateAndGender(accessToken) {
+  let birthDate
+  let gender
+
+  try {
+    const birthdayInfoResult = await axios.get('https://people.googleapis.com/v1/people/me?personFields=birthdays', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    })
+  
+    const { year, month, day } = birthdayInfoResult.data.birthdays[0].date
+
+    birthDate = new Date(year, month - 1, day)
+  } catch {
+    // no-op
+  }
+
+  try {
+    const genderInfoResult = await axios.get('https://people.googleapis.com/v1/people/me?personFields=genders', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    })
+
+    gender = genderInfoResult.data.genders[0].formattedValue
+  } catch {
+    // no-op
+  }
+
+  return {
+    birthDate,
+    gender
+  }
+}
+
 class MainController {
   static async login (req, res, next) {
     const {
@@ -109,12 +145,24 @@ class MainController {
       })
 
       if (user === null) {
-        user = await UserModel.create({
+        const userDocument = {
           email: googleUser.email,
           firstName: googleUser.given_name,
           lastName: googleUser.family_name,
           roles: 'volunteer'
-        })
+        }
+
+        const { birthDate, gender } = await getBirthDateAndGender(access_token)
+
+        if (birthDate !== undefined) {
+          userDocument.birthDate = birthDate
+        }
+
+        if (gender !== undefined) {
+          userDocument.gender = gender
+        }
+
+        user = await UserModel.create(userDocument)
 
         user = user.toObject()
       }

@@ -182,7 +182,7 @@ export default {
       }
     },
     async googleSignIn () {
-      window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?scope=openid email profile&include_granted_scopes=true&response_type=code&redirect_uri=${config.google.oauth.apiRedirectUri}&client_id=666385844175-d4bc42f0ckfic58dh994f4sq7tmhbejd.apps.googleusercontent.com`
+      window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?access_type=online&scope=openid https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/user.birthday.read https://www.googleapis.com/auth/user.gender.read&include_granted_scopes=true&response_type=code&redirect_uri=${config.google.oauth.apiRedirectUri}&client_id=666385844175-d4bc42f0ckfic58dh994f4sq7tmhbejd.apps.googleusercontent.com`
     }
   }
 }
