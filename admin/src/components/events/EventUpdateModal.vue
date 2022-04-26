@@ -265,6 +265,65 @@
                 </b-container>
               </b-card>
             </validation-observer>
+
+            <b-row class="py-3">
+              <b-col cols="12">
+                <b-card>
+                  <span>
+                    Roles
+                  </span>
+
+                  <b-row>
+                    <b-col cols="12">
+                      <b-table
+                        :items="event.jobs"
+                        :fields="eventJobFields"
+                        show-empty
+                        responsive
+                        striped
+                        primary-key="name"
+                      >
+                        <template #cell(skills)="{ item }">
+                          <template v-if="item.skills.length > 0">
+                            <b-form-tag
+                              v-for="jobSkill in item.skills"
+                              :key="jobSkill._id"
+                              class="bg-success"
+                              disabled
+                            >
+                              {{ jobSkill.name }}
+                            </b-form-tag>
+                          </template>
+                        </template>
+                      </b-table>
+                    </b-col>
+                  </b-row>
+
+                  <b-row
+                    class="pt-3"
+                    align-h="end"
+                  >
+                    <b-col cols="12">
+                      <b-button
+                        class="w-100 mb-3"
+                        :disabled="showJobsUpdateModal"
+                        @click="showJobsUpdateModal = true"
+                      >
+                        Edit Roles
+                      </b-button>
+                    </b-col>
+                  </b-row>
+                </b-card>
+              </b-col>
+            </b-row>
+
+            <event-jobs-update-modal
+              :event-id="event._id"
+              :current-event-jobs="event.jobs"
+              :show="showJobsUpdateModal"
+              @update="patchEvent"
+              @close="showJobsUpdateModal = false"
+            />
           </b-container>
         </b-col>
       </b-row>
@@ -276,12 +335,13 @@
 import { ValidationObserver, ValidationProvider, extend } from 'vee-validate'
 import { required, max } from 'vee-validate/dist/rules'
 import { mapGetters } from 'vuex'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, pickBy, identity } from 'lodash'
 import {
   addMonths,
   isSameDay
 } from 'date-fns'
 
+import EventJobsUpdateModal from './EventJobsUpdateModal'
 import validationMixins from '../../mixins/validation'
 import EventRepository from '../../repositories/events'
 import { apiClient } from '../../axios'
@@ -313,7 +373,8 @@ export default {
   name: 'EventUpdateModal',
   components: {
     ValidationObserver,
-    ValidationProvider
+    ValidationProvider,
+    EventJobsUpdateModal
   },
   mixins: [validationMixins],
   props: {
@@ -331,6 +392,7 @@ export default {
       modal: false,
       event: null,
       nextMonth,
+      showJobsUpdateModal: false,
       eventDate: {
         start: {
           date: nextMonth,
@@ -352,7 +414,14 @@ export default {
         date: false,
         'location.name': false
       },
-      errorMessage: ''
+      errorMessage: '',
+      eventJobFields: [
+        { key: 'name', label: 'Title' },
+        { key: 'description', label: 'Description' },
+        { key: 'slots.current', label: 'Current Number of Volunteers' },
+        { key: 'slots.max', label: 'Number of Volunteers Needed' },
+        { key: 'skills', label: 'Skills' }
+      ]
     }
   },
   computed: {
@@ -526,6 +595,11 @@ export default {
       const validEndTime = this.eventDate.end.validTime
 
       return validStartDate && validStartTime && validEndDate && validEndTime
+    },
+    patchEvent (event) {
+      Object.assign(this.event, cloneDeep(event))
+
+      this.event = pickBy(this.event, identity)
     }
   }
 }

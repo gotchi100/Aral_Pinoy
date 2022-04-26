@@ -75,7 +75,7 @@
                 >
                   <b-col cols="12">
                     <b-card
-                      title="Items Used"
+                      title="Consumable and Non-Consumable"
                       style="text-align: left"
                     >
                       <b-row>
