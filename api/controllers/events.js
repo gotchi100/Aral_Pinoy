@@ -773,9 +773,19 @@ class EventsController {
 
     if (Array.isArray(job.skillIds)) {
       for (const skillId of job.skillIds) {
-        const skill = await SkillModel.findById(skillId, ['name', 'norm', 'description'], {
-          lean: true
-        })
+        let skill
+
+        if (Types.ObjectId.isValid(skillId)) {
+          skill = await SkillModel.findById(skillId, ['name', 'norm', 'description'], {
+            lean: true
+          })
+        } else {
+          skill = await SkillModel.findOne({
+            norm: skillId
+          }, ['name', 'norm', 'description'], {
+            lean: true
+          })
+        }
 
         if (skill === null) {
           throw new NotFoundError(`Skill does not exist: ${skillId}`)
