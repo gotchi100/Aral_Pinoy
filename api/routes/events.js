@@ -36,7 +36,7 @@ const jobsSchema = Joi.array().items(
     requirements: Joi.object({
       max: Joi.number().min(1).default(1)
     }).required(),
-    skillIds: Joi.array().items(Joi.objectId(), Joi.string().trim().max(50).required()).unique()
+    skillIds: Joi.array().items(Joi.objectId(), Joi.string().trim().max(50).empty('')).unique()
   })
 )
 
