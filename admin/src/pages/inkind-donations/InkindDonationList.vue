@@ -11,7 +11,7 @@
               <b-row>
                 <b-col cols="12">
                   <h1 style="font-family:'Bebas Neue', cursive;">
-                    In-Kind Donations Inventory
+                    Items Inventory
                   </h1>
                 </b-col>
               </b-row>

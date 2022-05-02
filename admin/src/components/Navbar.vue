@@ -43,31 +43,27 @@
         <b-navbar-nav right>
           <div>
             <b-nav-item-dropdown
-              id="dropdown-grouped"
               style="margin-left: 18px; color: black;"
               class="donations"
-              text="Donations"
+              text="Inventory"
             >
-              <b-dropdown-group
-                id="dropdown-group-1"
-                header="In-Kind"
-                style="font-family: 'Bebas Neue', cursive; color: black;"
-              >
-                <b-dropdown-item to="/inkind-donations">
-                  In-Kind Inventory
-                </b-dropdown-item>
-                <b-dropdown-item to="/inkind-donations/outbound">
-                  Donated In-Kind
-                </b-dropdown-item>
-              </b-dropdown-group>
+              <b-dropdown-item to="/inkind-donations">
+                Items
+              </b-dropdown-item>
+
+              <b-dropdown-item to="/inkind-donations/outbound">
+                Donated
+              </b-dropdown-item>
+
               <b-dropdown-divider />
+
               <b-dropdown-group
                 id="dropdown-group-2"
                 header="Monetary"
                 style="font-family: 'Bebas Neue', cursive; color: black;"
               >
                 <b-dropdown-item to="/monetary-donations">
-                  Monetary Inventory
+                  Donations Received
                 </b-dropdown-item>
               </b-dropdown-group>
             </b-nav-item-dropdown>
