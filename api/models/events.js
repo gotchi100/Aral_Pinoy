@@ -158,6 +158,10 @@ const schema = new mongoose.Schema({
   questions: {
     type: [questionSchema],
     default: undefined
+  },
+  incidents : {
+    type: [String],
+    default: undefined
   }
 }, {
   id: false,

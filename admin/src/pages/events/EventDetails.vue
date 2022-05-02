@@ -562,6 +562,8 @@
           </b-col>
         </b-row>
 
+        <hr>
+
         <b-row>
           <b-col cols="12">
             <h5>
@@ -738,6 +740,122 @@
                               variant="success"
                               :disabled="invalid"
                               @click="addExpense"
+                            >
+                              Submit
+                            </b-button>
+                          </b-col>
+                        </b-row>
+                      </b-col>
+                    </b-row>
+                  </b-container>
+                </validation-observer>
+              </b-card>
+            </b-collapse>
+          </b-col>
+        </b-row>
+
+        <hr>
+
+        <b-row>
+          <b-col cols="12">
+            <h5>
+              Incidents
+            </h5>
+          </b-col>
+
+          <b-col cols="12">
+            <b-table
+              :items="updateEventStatus.incidents"
+              :fields="['Incident', 'Action']"
+              show-empty
+              striped
+            >
+              <template #cell(Incident)="{ item }">
+                {{ item }}
+              </template>
+
+              <template #cell(Action)="{ index }">
+                <b-button
+                  variant="danger"
+                  @click="removeIncident(index)"
+                >
+                  <b-icon icon="trash" />
+                </b-button>
+              </template>
+            </b-table>
+          </b-col>
+
+          <b-col cols="12">
+            <b-button
+              class="w-100 mb-3"
+              :disabled="updateEventStatus.showIncidentForm"
+              @click="updateEventStatus.showIncidentForm = true"
+            >
+              Add Incident
+            </b-button>
+
+            <b-collapse v-model="updateEventStatus.showIncidentForm">
+              <b-card>
+                <validation-observer v-slot="{ invalid }">
+                  <b-container>
+                    <b-row>
+                      <b-col cols="12">
+                        <b-form-group class="text-start">
+                          <label
+                            class="py-1"
+                            for="input-incident-message"
+                            style="font-family: 'Bebas Neue', cursive;"
+                          >
+                            Incident
+                          </label>
+
+                          <validation-provider
+                            v-slot="validationContext"
+                            :rules="{
+                              required: true
+                            }"
+                          >
+                            <b-form-input
+                              id="input-incident-message"
+                              v-model="updateEventStatus.incidentForm.message"
+                              placeholder="Explain the incident in detail"
+                              :state="getValidationState(validationContext)"
+                              aria-describedby="input-incident-message-feedback"
+                            />
+
+                            <b-form-invalid-feedback id="input-incident-message-feedback">
+                              {{ validationContext.errors[0] }}
+                            </b-form-invalid-feedback>
+                          </validation-provider>
+                        </b-form-group>
+                      </b-col>
+
+                      <b-col
+                        class="pt-3"
+                        cols="12"
+                      >
+                        <b-row>
+                          <b-col
+                            cols="12"
+                            md="6"
+                          >
+                            <b-button
+                              class="w-100"
+                              @click="updateEventStatus.showIncidentForm = false"
+                            >
+                              Cancel
+                            </b-button>
+                          </b-col>
+
+                          <b-col
+                            cols="12"
+                            md="6"
+                          >
+                            <b-button
+                              class="w-100"
+                              variant="success"
+                              :disabled="invalid"
+                              @click="addIncident"
                             >
                               Submit
                             </b-button>
@@ -929,7 +1047,12 @@ export default {
           { key: 'type', label: 'Type of expense' },
           { key: 'remarks', label: 'Remarks' },
           { key: 'action', label: 'Action' }
-        ]
+        ],
+        incidents: [],
+        showIncidentForm: false,
+        incidentForm: {
+          message: ''
+        }
       },
       updateEvent: {
         modal: false,
@@ -1173,7 +1296,6 @@ export default {
 
       const eventId = this.eventId
       const itemsUnused = []
-      let expenses
 
       if (this.updateEventStatus.itemsUsed.length > 0) {
         for (const { item, quantity, maxQuantity } of this.updateEventStatus.itemsUsed) {
@@ -1190,6 +1312,8 @@ export default {
         }
       }
 
+      let expenses
+
       if (this.updateEventStatus.expenses.length > 0) {
         expenses = []
 
@@ -1202,9 +1326,20 @@ export default {
         }
       }
 
+      let incidents
+
+      if (this.updateEventStatus.incidents.length > 0) {
+        incidents = []
+
+        for (const incident of this.updateEventStatus.incidents) {
+          incidents.push(incident)
+        }
+      }
+
       try {
         await apiClient.patch(`/events/${eventId}/status`, {
           status,
+          incidents,
           itemsUnused,
           expenses
         }, {
@@ -1250,6 +1385,26 @@ export default {
     },
     removeExpense (index) {
       this.updateEventStatus.expenses.splice(index, 1)
+    },
+    addIncident () {
+      const { message } = this.updateEventStatus.incidentForm
+
+      const trimmedMessage = message.trim()
+
+      if (trimmedMessage.length === 0) {
+        return
+      }
+
+      this.updateEventStatus.incidents.push(trimmedMessage)
+
+      this.updateEventStatus.showIncidentForm = false
+
+      this.updateEventStatus.incidentForm = {
+        message: ''
+      }
+    },
+    removeIncident (index) {
+      this.updateEventStatus.incidents.splice(index, 1)
     }
   }
 }

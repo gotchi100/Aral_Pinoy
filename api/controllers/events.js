@@ -604,6 +604,7 @@ class EventsController {
   static async updateStatus(id, details) {
     const {
       status,
+      incidents,
       itemsUnused,
       expenses
     } = details
@@ -679,14 +680,20 @@ class EventsController {
       }
     }
 
+    const $set = {
+      status,
+      ...ikdUsedQuantityMap
+    }
+
+    if (Array.isArray(incidents) && incidents.length > 0) {
+      $set.incidents = incidents
+    }
+
     const eventUpdateResults = await EventModel.updateOne({
       _id: new Types.ObjectId(id),
       __v : event.__v
     }, {
-      $set: {
-        status,
-        ...ikdUsedQuantityMap
-      },
+      $set,
       $inc: {
         __v: 1
       }
