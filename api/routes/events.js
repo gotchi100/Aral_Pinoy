@@ -271,7 +271,7 @@ const patchEventStatusValidator = Joi.object({
     Joi.object({
       amount: Joi.number().positive().precision(2).required(),
       type: Joi.string().required(),
-      remarks: Joi.string().max(300)
+      remarks: Joi.string().trim().max(300).empty('')
     })
   )
 })

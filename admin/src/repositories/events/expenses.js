@@ -4,6 +4,8 @@ const axios = require('axios')
 
 /** @typedef {import('axios').Axios} Axios */
 
+const REPOSITORY_ROUTE_PREFIX = '/event-expenses'
+
 class EventExpenseRepository {
   /**
    *
@@ -24,19 +26,27 @@ class EventExpenseRepository {
   async list (filters = {}, options = {}) {
     const {
       limit = 5,
-      offset = 0
+      offset = 0,
+      grouped = false,
+      sort = {}
     } = options
 
     const queryString = new URLSearchParams()
 
     queryString.set('limit', limit)
     queryString.set('offset', offset)
+    queryString.set('grouped', grouped)
 
     if (filters.eventId !== undefined) {
       queryString.set('filters.eventId', filters.eventId)
     }
 
-    const { data } = await this.apiClient.get(`/event-expenses?${queryString.toString()}`)
+    if (sort.field !== undefined && sort.order !== undefined) {
+      queryString.set('sort.field', sort.field)
+      queryString.set('sort.order', sort.order)
+    }
+
+    const { data } = await this.apiClient.get(`${REPOSITORY_ROUTE_PREFIX}?${queryString.toString()}`)
 
     return {
       results: data.results,

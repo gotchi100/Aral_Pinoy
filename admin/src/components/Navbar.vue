@@ -73,6 +73,22 @@
 
       <b-navbar-nav class="ml-auto">
         <b-navbar-nav right>
+          <div>
+            <b-nav-item-dropdown
+              style="margin-left: 18px; color: black;"
+              class="donations"
+              text="Expenses"
+            >
+              <b-dropdown-item to="/expenses">
+                Events
+              </b-dropdown-item>
+            </b-nav-item-dropdown>
+          </div>
+        </b-navbar-nav>
+      </b-navbar-nav>
+
+      <b-navbar-nav class="ml-auto">
+        <b-navbar-nav right>
           <b-nav-item-dropdown
             style="margin-left: 18px; color: black;"
             class="reports"

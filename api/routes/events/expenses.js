@@ -12,7 +12,10 @@ Joi.objectId = joiObjectId(Joi)
 const listValidator = Joi.object({
   offset: Joi.number().min(0).default(0),
   limit: Joi.number().min(1).default(25),
+  grouped: Joi.boolean().default(false),
   'filters.eventId': Joi.objectId(),
+  'sort.field': Joi.string().valid('createdAt'),
+  'sort.order': Joi.string().valid('asc', 'desc')
 }).options({ 
   stripUnknown: true
 })
@@ -37,18 +40,48 @@ async function list(req, res, next) {
   const {
     offset,
     limit,
+    grouped,
     'filters.eventId': filterEventId,
+    'sort.field': sortField,
+    'sort.order': sortOrder
   } = req.query
 
-  try {
-    const { results, total } = await EventExpenseController.list({
-      offset,
-      limit,
-      filters: {
-        eventId: filterEventId,
-      }
-    })
+  let results
+  let total
 
+  try {
+    if (grouped) {
+      const groupListResult = await EventExpenseController.groupList({
+        offset,
+        limit,
+      })
+  
+      results = groupListResult.results
+      total = groupListResult.total
+    } else {
+      let sort
+  
+      if (sortField !== undefined && sortOrder !== undefined) {
+        sort = {
+          field: sortField,
+          order: sortOrder
+        }
+      }
+  
+      const listResult = await EventExpenseController.list({
+        offset,
+        limit,
+        grouped,
+        filters: {
+          eventId: filterEventId,
+        },
+        sort
+      })
+
+      results = listResult.results
+      total = listResult.total
+    }
+  
     return res.json({
       results,
       total

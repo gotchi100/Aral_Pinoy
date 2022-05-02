@@ -50,6 +50,9 @@ import InkindDonationAdjustmentList from './pages/inkind-donations/InkindDonatio
 import InkindDonationCategoryList from './pages/inkind-donations/InkindDonationCategoryList'
 import InkindDonationOutboundList from './pages/inkind-donations/InkindDonationOutboundList'
 
+// /expenses
+import EventExpensesList from './pages/expenses/EventExpensesList'
+
 // /monetary-donations
 import MonetaryDonationList from './pages/monetary-donations/MonetaryDonationList.vue'
 
@@ -266,6 +269,15 @@ const routes = [
   {
     path: '/inkind-donations/outbound',
     component: InkindDonationOutboundList,
+    meta: {
+      requiresAuth: true
+    }
+  },
+
+  // /expenses
+  {
+    path: '/expenses',
+    component: EventExpensesList,
     meta: {
       requiresAuth: true
     }
