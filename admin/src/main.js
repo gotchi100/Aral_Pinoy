@@ -18,6 +18,7 @@ import EditHomepage from './pages/EditHomepage'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import EventCalendar from './pages/EventCalendar'
+import Notifications from './pages/Notifications'
 
 import EditSDG1 from './pages/AdminEditSDG1.vue'
 import EditSDG4 from './pages/AdminEditSDG4.vue'
@@ -116,6 +117,13 @@ const routes = [
   {
     path: '/profile',
     component: Profile,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/notifications',
+    component: Notifications,
     meta: {
       requiresAuth: true
     }

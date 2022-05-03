@@ -12,7 +12,8 @@ if (localStorageToken && localStorageToken === 'null') {
 export default {
   state: {
     user: localStorageUser || null,
-    token: localStorageToken || null
+    token: localStorageToken || null,
+    unseenNotificationsCount: 0
   },
   mutations: {
     setUser (state, userDetails) {
@@ -23,6 +24,9 @@ export default {
       state.token = token
 
       window.localStorage.setItem('token', token)
+    },
+    setUnseenNotificationsCount (state, unseenNotificationsCount) {
+      state.unseenNotificationsCount = unseenNotificationsCount
     }
   },
   actions: {
@@ -33,6 +37,12 @@ export default {
     logout (context) {
       context.commit('setUser', null)
       context.commit('setToken', null)
+    },
+    decreaseUnseenNotificationsCount (context) {
+      context.commit('setUnseenNotificationsCount', context.state.unseenNotificationsCount - 1)
+    },
+    setUnseenNotificationsCount (context, count) {
+      context.commit('setUnseenNotificationsCount', count)
     }
   },
   getters: {
@@ -44,6 +54,9 @@ export default {
     },
     token: (state) => {
       return state.token
+    },
+    unseenNotificationsCount: (state) => {
+      return state.unseenNotificationsCount
     }
   }
 }

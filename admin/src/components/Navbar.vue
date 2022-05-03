@@ -122,17 +122,39 @@
           <b-nav-item-dropdown
             style="margin-right: 40px; color: black;"
             class="user"
-            :text="$store.state.user.firstName"
           >
+            <template #button-content>
+              {{ user.firstName }}
+              <span
+                v-if="unseenNotificationsCount > 0"
+                class="position-absolute translate-middle badge rounded-pill bg-danger"
+              >
+                {{ unseenNotificationCountString }}
+              </span>
+            </template>
+
             <b-dropdown-item to="/profile">
               Profile
             </b-dropdown-item>
+
+            <b-dropdown-item to="/notifications">
+              Notifications
+              <span
+                v-if="unseenNotificationsCount !== 0"
+                class="position-absolute translate-middle badge rounded-pill bg-danger"
+              >
+                {{ unseenNotificationCountString }}
+              </span>
+            </b-dropdown-item>
+
             <b-dropdown-item to="/edit-homepage">
               Edit Homepage
             </b-dropdown-item>
+
             <b-dropdown-item to="/skills">
               Edit Skills
             </b-dropdown-item>
+
             <b-dropdown-item @click="logout">
               Logout
             </b-dropdown-item>
@@ -144,9 +166,14 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
+
+import NotificationRepository from '../repositories/notifications'
+import { apiClient } from '../axios'
 
 const logo = require('../assets/aralpinoy.png')
+
+const notificationRepository = new NotificationRepository(apiClient)
 
 export default {
   name: 'Navbar',
@@ -156,9 +183,29 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isLoggedIn'])
+    ...mapGetters(['user', 'token', 'isLoggedIn', 'unseenNotificationsCount']),
+    unseenNotificationCountString () {
+      if (this.unseenNotificationsCount > 99) {
+        return '99+'
+      }
+
+      return this.unseenNotificationsCount
+    }
+  },
+  async created () {
+    notificationRepository.setAuthorizationHeader(`Bearer ${this.token}`)
+
+    await this.getUnseenNotificationCount()
   },
   methods: {
+    ...mapActions(['setUnseenNotificationsCount']),
+    async getUnseenNotificationCount () {
+      const count = await notificationRepository.countUnseen({
+        userId: this.user._id
+      })
+
+      this.setUnseenNotificationsCount(count)
+    },
     logout () {
       this.$store.dispatch('logout')
 
