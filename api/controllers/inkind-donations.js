@@ -82,7 +82,7 @@ class InkindDonationsController {
               throw new BadRequestError(`Category data type is invalid for "${field.label}": ${value}`)
             }
 
-            category.customFields[key] = value
+            category.customFields[key] = dateValue
           }
         }
       }
