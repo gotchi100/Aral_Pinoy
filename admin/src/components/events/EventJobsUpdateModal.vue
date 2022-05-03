@@ -338,7 +338,7 @@ export default {
     },
     currentEventJobs: {
       type: Array,
-      required: true
+      default: () => []
     }
   },
   data () {

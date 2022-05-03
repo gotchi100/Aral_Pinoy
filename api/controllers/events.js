@@ -448,10 +448,11 @@ class EventsController {
       description,
       location,
       date,
+      ikdItems,
       jobs
     } = event
 
-    const currentEvent = await EventModel.findById(id, ['__v', 'status', 'jobs'])
+    const currentEvent = await EventModel.findById(id, ['_id', '__v', 'date', 'status', 'ikds', 'jobs'])
 
     if (currentEvent === null) {
       throw new NotFoundError('event')
@@ -483,6 +484,79 @@ class EventsController {
     if (date !== undefined) {
       $set['date.start'] = date.start
       $set['date.end'] = date.end
+    }
+
+    if (Array.isArray(ikdItems)) {
+      if (currentEvent.ikds !== undefined) {
+        await IkdOutboundTransactionModel.deleteMany({
+          receiver: {
+            type: OUTBOUND_RECEIVER_TYPES.EVENT,
+            event: currentEvent._id
+          }
+        })
+  
+        await EventsController.restoreIkds(currentEvent.ikds)
+      }
+
+      if (ikdItems.length === 0) {
+        $unset.ikds = ''
+      }else {
+        const ikds = []
+
+        for (const item of ikdItems) {
+          const ikd = await InkindDonationModel.findOne({
+            sku: item.sku
+          }, ['sku', 'name', 'category.name', '__v'], {
+            lean: true
+          })
+  
+          if (ikd === null) {
+            throw new NotFoundError(`In-kind Donation does not exist: ${item.sku}`)
+          }
+  
+          const itemToAdd = {
+            sku: ikd.sku,
+            name: ikd.name,
+          }
+  
+          if (ikd.category !== undefined) {
+            itemToAdd.category = {
+              name: ikd.category.name
+            }
+          }
+  
+          ikds.push({
+            item: itemToAdd,
+            quantity: item.quantity
+          })
+  
+          const itemUpdateResults = await InkindDonationModel.updateOne({
+            _id: ikd._id, 
+            __v : ikd.__v
+          }, {
+            $inc: {
+              quantity: -(item.quantity),
+              __v : 1
+            }
+          })
+      
+          if (itemUpdateResults.matchedCount === 0) {
+            throw new ConflictError('In-kind donation was recently updated, please try again')
+          }
+  
+          await IkdOutboundTransactionModel.create({
+            quantity: item.quantity,
+            date: currentEvent.date.start,
+            item: itemToAdd,
+            receiver: {
+              type: OUTBOUND_RECEIVER_TYPES.EVENT,
+              event: currentEvent._id
+            }
+          })
+        }
+
+        $set.ikds = ikds
+      }
     }
 
     if (Array.isArray(jobs)) {
@@ -521,6 +595,19 @@ class EventsController {
       location,
       date
     }, { sendUpdates: 'all' }).catch(console.error)
+  }
+
+  static async restoreIkds(eventIkds) {
+    for (const { item, quantity } of eventIkds) {
+      await InkindDonationModel.updateOne({
+        sku: item.sku
+      }, {
+        $inc: {
+          quantity,
+          __v : 1
+        }
+      })
+    }
   }
 
   static async resolveJobs(eventJobs, jobs) {

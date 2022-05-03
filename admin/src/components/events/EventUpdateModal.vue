@@ -270,6 +270,44 @@
               <b-col cols="12">
                 <b-card>
                   <span>
+                    Items
+                  </span>
+
+                  <b-row>
+                    <b-col cols="12">
+                      <b-table
+                        :items="event.ikds"
+                        :fields="eventIkdFields"
+                        show-empty
+                        responsive
+                        striped
+                        primary-key="item.sku"
+                      />
+                    </b-col>
+                  </b-row>
+
+                  <b-row
+                    class="pt-3"
+                    align-h="end"
+                  >
+                    <b-col cols="12">
+                      <b-button
+                        class="w-100 mb-3"
+                        :disabled="showIkdsUpdateModal"
+                        @click="showIkdsUpdateModal = true"
+                      >
+                        Edit Items
+                      </b-button>
+                    </b-col>
+                  </b-row>
+                </b-card>
+              </b-col>
+            </b-row>
+
+            <b-row class="py-3">
+              <b-col cols="12">
+                <b-card>
+                  <span>
                     Roles
                   </span>
 
@@ -317,6 +355,14 @@
               </b-col>
             </b-row>
 
+            <event-ikds-update-modal
+              :event-id="event._id"
+              :current-event-ikds="event.ikds"
+              :show="showIkdsUpdateModal"
+              @update="patchEvent"
+              @close="showIkdsUpdateModal = false"
+            />
+
             <event-jobs-update-modal
               :event-id="event._id"
               :current-event-jobs="event.jobs"
@@ -342,6 +388,7 @@ import {
 } from 'date-fns'
 
 import EventJobsUpdateModal from './EventJobsUpdateModal'
+import EventIkdsUpdateModal from './EventIkdsUpdateModal'
 import validationMixins from '../../mixins/validation'
 import EventRepository from '../../repositories/events'
 import { apiClient } from '../../axios'
@@ -374,7 +421,8 @@ export default {
   components: {
     ValidationObserver,
     ValidationProvider,
-    EventJobsUpdateModal
+    EventJobsUpdateModal,
+    EventIkdsUpdateModal
   },
   mixins: [validationMixins],
   props: {
@@ -393,6 +441,7 @@ export default {
       event: null,
       nextMonth,
       showJobsUpdateModal: false,
+      showIkdsUpdateModal: false,
       eventDate: {
         start: {
           date: nextMonth,
@@ -415,6 +464,10 @@ export default {
         'location.name': false
       },
       errorMessage: '',
+      eventIkdFields: [
+        { key: 'item.name', label: 'Item' },
+        { key: 'quantity', label: 'Quantity' }
+      ],
       eventJobFields: [
         { key: 'name', label: 'Title' },
         { key: 'description', label: 'Description' },

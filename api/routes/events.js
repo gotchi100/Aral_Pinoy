@@ -214,6 +214,12 @@ const patchEventValidator = Joi.object({
     start: Joi.date().iso().required(),
     end: Joi.date().iso().greater(Joi.ref('start')).required(),
   }),
+  ikdItems: Joi.array().items(
+    Joi.object({
+      sku: Joi.string().trim().max(100).uppercase().required(),
+      quantity: Joi.number().min(1).required()
+    })
+  ),
   jobs: jobsSchema,
 })
 
@@ -240,6 +246,7 @@ async function patchEvent(req, res, next) {
     description,
     location,
     date,
+    ikdItems,
     jobs
   } = req.body
 
@@ -249,6 +256,7 @@ async function patchEvent(req, res, next) {
       description,
       location,
       date,
+      ikdItems,
       jobs
     })
 
