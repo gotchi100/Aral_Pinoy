@@ -69,6 +69,8 @@ import ReportVolunteers from './pages/reports/ReportVolunteers'
 import VolunteerSuggestion from './pages/events/VolunteerSuggestion.vue'
 import Donate from './pages/AdminDonate.vue'
 
+import DemoCronJobs from './pages/demo/DemoCronJobs'
+
 import { apiClient } from './axios'
 import vuexStore from './store'
 
@@ -360,6 +362,15 @@ const routes = [
   {
     path: '/donate',
     component: Donate,
+    meta: {
+      requiresAuth: true
+    }
+  },
+
+  // Testing purposes
+  {
+    path: '/demo/cron-jobs',
+    component: DemoCronJobs,
     meta: {
       requiresAuth: true
     }
