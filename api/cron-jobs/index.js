@@ -23,5 +23,7 @@ module.exports = async function () {
   await agenda.every(EVERY_MIDNIGHT_CRON, [
     'check expiring inventory items',
     'check events with insufficient volunteers'
-  ])
+  ], undefined, {
+    timezone: 'Asia/Manila'
+  })
 }
