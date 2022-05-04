@@ -21,6 +21,7 @@ const sdgsRouter = require('./routes/sdgs')
 const skillsRouter = require('./routes/skills')
 const usersRouter = require('./routes/users')
 const monetaryDonationsRouter = require('./routes/monetary-donations')
+const cronRouter = require('./routes/cron')
 
 const eventsRouter = require('./routes/events')
 const eventDonationsRouter = require('./routes/events/donations')
@@ -40,6 +41,7 @@ const ikdOutboundTransactionsRouter = require('./routes/inkind-donations/outboun
 const notificationsRouter = require('./routes/notifications')
 
 const seedSdgs = require('./db/seeders/sdg')
+const setupCronJobs = require('./cron-jobs/index')
 
 const logger = debug('api:server')
 
@@ -111,6 +113,7 @@ app.use('/forgot-password', forgotPasswordRouter)
 app.use('/google-oauth', googleOAuthRouter)
 app.use('/sdgs', sdgsRouter)
 app.use('/monetary-donations', monetaryDonationsRouter)
+app.use('/cron', cronRouter)
 
 app.use('/events', eventsRouter)
 app.use('/event-donations', eventDonationsRouter)
@@ -166,6 +169,7 @@ app.use(function (err, req, res, next) {
 async function onSetup() {
   await connectDatabase()
   await seedSdgs()
+  await setupCronJobs()
 
   app.emit('ready')
 }
