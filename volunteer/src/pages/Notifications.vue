@@ -56,7 +56,7 @@
                         v-if="!notifications.isFullyLoaded"
                         class="flex-column align-items-center"
                         button
-                        @click="getNotifications((notifications.offset + listLimit) - 1)"
+                        @click="getNotifications(notifications.offset + listLimit)"
                       >
                         <span class="text-primary">
                           See more notifications
@@ -102,7 +102,7 @@
                         v-if="!unreadNotifications.isFullyLoaded"
                         class="flex-column align-items-center"
                         button
-                        @click="getUnreadNotifications((unreadNotifications.offset + listLimit) - 1)"
+                        @click="getUnreadNotifications(unreadNotifications.offset + listLimit)"
                       >
                         <span class="text-primary">
                           See more notifications
@@ -139,7 +139,7 @@ export default {
   },
   data () {
     return {
-      listLimit: 2,
+      listLimit: 10,
       notifications: {
         results: [],
         loading: false,

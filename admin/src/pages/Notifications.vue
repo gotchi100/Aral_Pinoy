@@ -63,7 +63,7 @@
                         v-if="!notifications.isFullyLoaded"
                         class="flex-column align-items-center"
                         button
-                        @click="getNotifications((notifications.offset + listLimit) - 1)"
+                        @click="getNotifications(notifications.offset + listLimit)"
                       >
                         <span class="text-primary">
                           See more notifications
@@ -115,7 +115,7 @@
                         v-if="!unreadNotifications.isFullyLoaded"
                         class="flex-column align-items-center"
                         button
-                        @click="getUnreadNotifications((unreadNotifications.offset + listLimit) - 1)"
+                        @click="getUnreadNotifications(unreadNotifications.offset + listLimit)"
                       >
                         <span class="text-primary">
                           See more notifications
@@ -154,7 +154,7 @@ export default {
   },
   data () {
     return {
-      listLimit: 2,
+      listLimit: 10,
       notifications: {
         results: [],
         loading: false,
@@ -202,8 +202,10 @@ export default {
           userId: this.user._id
         }, {
           limit: this.listLimit,
-          offset: this.notifications.offset
+          offset: offset
         })
+
+        console.log(results)
 
         this.notifications.results = this.notifications.results.concat(results)
         this.notifications.isFullyLoaded = this.notifications.results.length === total
@@ -221,10 +223,10 @@ export default {
           read: false
         }, {
           limit: this.listLimit,
-          offset: this.unreadNotifications.offset
+          offset: offset
         })
 
-        this.unreadNotifications.results = results
+        this.unreadNotifications.results = this.unreadNotifications.results.concat(results)
         this.unreadNotifications.total = total
         this.unreadNotifications.isFullyLoaded = this.unreadNotifications.results.length === total
       } finally {
