@@ -148,7 +148,7 @@
             <label
               class="homeAddress"
               for="input-small"
-            >Home Address</label>
+            >Present Address</label>
             <b-col>
               <validation-provider
                 v-slot="validationContext"
@@ -157,12 +157,27 @@
                 <b-form-input
                   v-model="user.address.home"
                   :state="getValidationState(validationContext)"
+                  debounce="1000"
                   aria-describedby="input-user-home-address-feedback"
                 />
                 <b-form-invalid-feedback id="input-user-home-address-feedback">
                   {{ validationContext.errors[0] }}
                 </b-form-invalid-feedback>
               </validation-provider>
+            </b-col>
+          </b-row>
+
+          <b-row
+            v-if="user.address.home"
+            class="my-1"
+          >
+            <b-col>
+              <iframe
+                loading="lazy"
+                allowfullscreen
+                referrerpolicy="no-referrer-when-downgrade"
+                :src="`https://www.google.com/maps/embed/v1/place?key=${googleMapsApiKey}&q=${user.address.home}`"
+              />
             </b-col>
           </b-row>
 
@@ -440,6 +455,7 @@ import { required, min, max, email, is, regex } from 'vee-validate/dist/rules'
 
 const _ = require('lodash')
 const logo = require('../assets/aralpinoywords.png')
+const config = require('../../config')
 const { apiClient } = require('../axios')
 
 const { subYears, startOfDay } = require('date-fns')
@@ -504,6 +520,9 @@ export default {
   computed: {
     debounceGetSkills () {
       return _.debounce(this.getSkills, 500)
+    },
+    googleMapsApiKey () {
+      return config.google.maps.apiKey
     }
   },
   created () {
