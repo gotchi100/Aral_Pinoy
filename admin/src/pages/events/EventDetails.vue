@@ -103,7 +103,13 @@
                               md="6"
                             >
                               <p class="h4 mb-0">
-                                <b-icon icon="geo-alt" />&nbsp;{{ event.location.name }}
+                                <b-icon icon="geo-alt" />&nbsp;
+                                <a
+                                  :href="`https://www.google.com/maps/search/?api=1&query=${event.location.name}`"
+                                  target="_blank"
+                                >
+                                  {{ event.location.name }}
+                                </a>
                               </p>
                             </b-col>
 
