@@ -1,18 +1,25 @@
 'use strict'
 
 const { Types } = require('mongoose')
+const { addMonths, endOfMonth } = require('date-fns')
 
 const InkindDonationModel = require('../models/inkind-donations')
 const NotificationModel = require('../models/notifications')
 const UserModel = require('../models/users')
 const NOTIFICATION_TYPES = require('../constants/notifications').TYPES
 
-const ONE_MONTH_MS = 2628000000
+async function getAdminsAndOfficers() {
+  const users = await UserModel.find({
+    roles: {
+      $in: ['admin','officer']
+    }
+  }, ['_id'])
 
-async function run() {
-  const todayAfterOneMonth = new Date(Date.now() + ONE_MONTH_MS)
-  
-  const items = await InkindDonationModel.find({
+  return users
+}
+
+async function getExpiringItems(dateThreshold) {
+  const expiringItems = await InkindDonationModel.find({
     $and: [
       {
         'category.customFields': {
@@ -23,66 +30,60 @@ async function run() {
         $or: [
           {
             'category.customFields.expirationDate': {
-              $lte: todayAfterOneMonth
+              $lte: dateThreshold
             }
           },
           {
             'category.customFields.bestBeforeDate': {
-              $lte: todayAfterOneMonth
+              $lte: dateThreshold
             }
           }
         ]
       }
     ]
-  })
+  }, ['sku', 'name', 'quantity', 'category'])
 
-  if (items.length === 0) {
-    return
-  }
+  return expiringItems
+}
 
-  const users = await UserModel.find({
-    roles: {
-      $in: ['admin','officer']
-    }
-  }, ['_id'])
+async function run() {
+  const users = await getAdminsAndOfficers()
 
   if (users.length === 0) {
     return
   }
 
-  for (const item of items) {
-    for (const user of users) {
-      const userId = new Types.ObjectId(user._id)
+  const nextMonth = addMonths(new Date(), 1)
+  const endOfNextMonth = endOfMonth(nextMonth)
 
-      let expirationDate
+  const expiringItems = await getExpiringItems(endOfNextMonth)
 
-      if (item.category.customFields.expirationDate !== undefined) {
-        expirationDate = item.category.customFields.expirationDate
-      } else {
-        expirationDate = item.category.customFields.bestBeforeDate
-      }
+  if (expiringItems.length === 0) {
+    return
+  }
 
-      await NotificationModel.updateOne({
+  for (const user of users) {
+    const userId = new Types.ObjectId(user._id)
+
+    await NotificationModel.updateOne({
+      user: userId,
+      type: NOTIFICATION_TYPES.EXPIRING_INVENTORY_ITEM,
+      'typeDetails.dateThreshold': endOfNextMonth
+    }, {
+      $setOnInsert: {
         user: userId,
+        seen: false,
+        read: false,
         type: NOTIFICATION_TYPES.EXPIRING_INVENTORY_ITEM,
-        'typeDetails.itemSku': item.sku
-      }, {
-        $setOnInsert: {
-          user: userId,
-          seen: false,
-          read: false,
-          type: NOTIFICATION_TYPES.EXPIRING_INVENTORY_ITEM,
-          typeDetails: {
-            itemSku: item.sku,
-            itemName: item.name,
-            expirationDate
-          },
-          createdAt: new Date()
-        }
-      }, {
-        upsert: true
-      })
-    }
+        typeDetails: {
+          expiringItems,
+          dateThreshold: endOfNextMonth
+        },
+        createdAt: new Date()
+      }
+    }, {
+      upsert: true
+    })
   }
 }
 

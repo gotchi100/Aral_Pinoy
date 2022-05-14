@@ -17,14 +17,14 @@
     >
       <div class="d-flex justify-content-between">
         <h5 class="mb-1">
-          An item in your inventory will soon expire!
+          Items in your inventory will expire in one month!
         </h5>
         <small>{{ notificationDate }}</small>
       </div>
 
       <small class="mb-1">
-        <strong>{{ details.itemName }}</strong> will be expiring on
-        <strong>{{ new Date(details.expirationDate).toLocaleString('en-us', { dateStyle: 'medium' }) }}</strong>.
+        <strong>{{ getItemNames() }}</strong> will be expiring on
+        <strong>{{ new Date(details.dateThreshold).toLocaleString('en-us', { month: 'short', year: 'numeric' }) }}</strong>.
       </small>
     </div>
   </b-list-group-item>
@@ -68,6 +68,29 @@ export default {
       if (isVisible) {
         this.$emit('onVisible')
       }
+    },
+    getItemNames () {
+      const expiringItems = this.details.expiringItems
+
+      if (expiringItems.length === 1) {
+        const item = expiringItems[0]
+
+        return `${item.name}`
+      }
+
+      if (expiringItems.length === 2) {
+        const [firstItem, secondItem] = expiringItems
+
+        return `${firstItem.name} and ${secondItem.name}`
+      }
+
+      if (expiringItems.length === 3) {
+        const [firstItem, secondItem, thirdItem] = expiringItems
+
+        return `${firstItem.name}, ${secondItem.name}, and ${thirdItem.name}`
+      }
+
+      return `${expiringItems[0].name}, ${expiringItems[1].name}, and ${expiringItems.length - 2} others`
     }
   }
 }
