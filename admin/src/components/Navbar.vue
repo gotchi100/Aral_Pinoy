@@ -52,7 +52,7 @@
               </b-dropdown-item>
 
               <b-dropdown-item to="/inkind-donations/outbound">
-                Donated
+                Donated In-Kind
               </b-dropdown-item>
 
               <b-dropdown-divider />
@@ -71,20 +71,14 @@
         </b-navbar-nav>
       </b-navbar-nav>
 
-      <b-navbar-nav class="ml-auto">
-        <b-navbar-nav right>
-          <div>
-            <b-nav-item-dropdown
-              style="margin-left: 18px; color: black;"
-              class="donations"
-              text="Expenses"
-            >
-              <b-dropdown-item to="/expenses">
-                Events
-              </b-dropdown-item>
-            </b-nav-item-dropdown>
-          </div>
-        </b-navbar-nav>
+      <b-navbar-nav>
+        <b-nav-item
+          to="/expenses"
+          style="margin-left: 18px;"
+          class="volunteers"
+        >
+          Expenses
+        </b-nav-item>
       </b-navbar-nav>
 
       <b-navbar-nav class="ml-auto">
