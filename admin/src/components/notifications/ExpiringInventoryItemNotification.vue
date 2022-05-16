@@ -1,44 +1,62 @@
 <template>
-  <b-list-group-item
-    v-b-visible="visibleHandler"
-    :variant="notification.seen ? 'secondary': ''"
-    class="d-flex align-items-center"
-    button
-    @click="read()"
-  >
-    <b-avatar
-      icon="hourglass-bottom"
-      class="mr-5"
-    />
-
-    <div
-      class="flex-column w-100 align-items-start"
-      style="margin-left: 15px"
+  <div>
+    <b-list-group-item
+      v-b-visible="visibleHandler"
+      :variant="notification.seen ? 'secondary': ''"
+      class="d-flex align-items-center"
+      button
+      @click="read()"
     >
-      <div class="d-flex justify-content-between">
-        <h5 class="mb-1">
-          Items in your inventory will expire in one month!
-        </h5>
-        <small>{{ notificationDate }}</small>
-      </div>
+      <b-avatar
+        icon="hourglass-bottom"
+        class="mr-5"
+      />
 
-      <small class="mb-1">
-        <strong>{{ getItemNames() }}</strong> will be expiring on
-        <strong>{{ new Date(details.dateThreshold).toLocaleString('en-us', { month: 'short', year: 'numeric' }) }}</strong>.
-      </small>
-    </div>
-  </b-list-group-item>
+      <div
+        class="flex-column w-100 align-items-start"
+        style="margin-left: 15px"
+      >
+        <div class="d-flex justify-content-between">
+          <h5 class="mb-1">
+            Items in your inventory will expire in one month!
+          </h5>
+          <small>{{ notificationDate }}</small>
+        </div>
+
+        <small class="mb-1">
+          <strong>{{ getItemNames() }}</strong> will be expiring on
+          <strong>{{ new Date(details.dateThreshold).toLocaleString('en-us', { month: 'short', year: 'numeric' }) }}</strong>.
+        </small>
+      </div>
+    </b-list-group-item>
+
+    <expiring-inventory-items-modal
+      :show="modal"
+      :inventory-items="details.expiringItems"
+      @close="modal = false"
+    />
+  </div>
 </template>
 
 <script>
 import { formatDistanceToNow } from 'date-fns'
 
+import ExpiringInventoryItemsModal from './ExpiringInventoryItemsModal'
+
 export default {
   name: 'ExpiringInventoryItemNotification',
+  components: {
+    ExpiringInventoryItemsModal
+  },
   props: {
     notification: {
       type: Object,
       required: true
+    }
+  },
+  data () {
+    return {
+      modal: false
     }
   },
   computed: {
@@ -57,12 +75,12 @@ export default {
   methods: {
     read () {
       const id = this.notification._id
-      const path = '/inkind-donations'
 
       this.$emit('onRead', {
-        id,
-        path
+        id
       })
+
+      this.modal = true
     },
     visibleHandler (isVisible) {
       if (isVisible) {

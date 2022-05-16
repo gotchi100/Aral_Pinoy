@@ -238,7 +238,9 @@ export default {
 
       this.unreadNotifications.results = this.unreadNotifications.results.filter((notification) => notification._id !== id)
 
-      this.$router.push({ path })
+      if (path !== undefined) {
+        this.$router.push({ path })
+      }
     },
     async markAsSeen (id) {
       if (seenIds.has(id)) {
