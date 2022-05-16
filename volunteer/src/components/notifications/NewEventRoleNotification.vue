@@ -71,6 +71,10 @@ export default {
       })
     },
     visibleHandler (isVisible) {
+      if (this.notification.seen) {
+        return
+      }
+
       if (isVisible) {
         this.$emit('onVisible')
       }

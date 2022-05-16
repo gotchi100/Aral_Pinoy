@@ -83,6 +83,10 @@ export default {
       this.modal = true
     },
     visibleHandler (isVisible) {
+      if (this.notification.seen) {
+        return
+      }
+
       if (isVisible) {
         this.$emit('onVisible')
       }
