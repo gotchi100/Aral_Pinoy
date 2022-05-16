@@ -50,6 +50,13 @@
                           @onRead="redirectAndMarkAsRead"
                           @onVisible="markAsSeen(notification._id)"
                         />
+
+                        <event-invitation-notification
+                          v-if="notification.type === 'EVENT_INVITATION'"
+                          :key="notification._id"
+                          :notification="notification"
+                          @onRead="redirectAndMarkAsRead"
+                        />
                       </template>
 
                       <b-list-group-item
