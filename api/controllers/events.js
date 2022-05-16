@@ -943,6 +943,115 @@ class EventsController {
       })
     }
   }
+
+  static async getRecommendedVolunteers(eventId) {
+    const event = await EventModel.findById(eventId, ['jobs'])
+
+    if (event === null) {
+      throw new NotFoundError('event')
+    }
+
+    if (!Array.isArray(event.jobs)) {
+      return []
+    }
+
+    const skillNorms = new Set()
+
+    for (const job of event.jobs) {
+      const skills = job.skills
+
+      if (!Array.isArray(skills) || skills.length === 0) {
+        continue
+      }
+
+      for (const skill of skills) {
+        skillNorms.add(skill.norm)
+      }
+    }
+
+    const skillIds = []
+
+    if (skillNorms.size > 0) {
+      const skills = await SkillModel.find({
+        norm: {
+          $in: Array.from(skillNorms)
+        }
+      }, ['_id'])
+      
+      for (const skill of skills) {
+        skillIds.push(skill._id)
+      }
+    }
+
+    const volunteeredUsers = await EventVolunteerModel.find({
+      event: eventId
+    }, ['user'])
+
+    const userFindQuery = {
+      roles: 'volunteer'
+    }
+
+    if (skillIds.length > 0) {
+      userFindQuery.skills = {
+        $in: skillIds
+      }
+    }
+
+    if (volunteeredUsers.length > 0) {
+      const volunteeredUserIds = []
+
+      for (const { user } of volunteeredUsers) {
+        volunteeredUserIds.push(user)
+      }
+
+      userFindQuery._id = {
+        $nin: volunteeredUserIds
+      }
+    }
+
+    const users = await UserModel.find(userFindQuery, ['_id', 'firstName', 'lastName', 'email'])
+
+    return users
+  }
+
+  static async inviteVolunteers(eventId, userIds) {
+    const event = await EventModel.findById(eventId, ['_id'])
+
+    if (event === null) {
+      throw new NotFoundError('event')
+    }
+
+    const users = await UserModel.find({
+      _id: {
+        $in: userIds
+      }
+    }, ['_id'])
+
+    if (users.length === 0) {
+      throw new NotFoundError('users')
+    }
+
+    for (const user of users) {
+      await NotificationModel.updateOne({
+        user: user._id,
+        type: NOTIFICATION_TYPES.EVENT_INVITATION,
+        'typeDetails.event': event._id
+      }, {
+        $setOnInsert: {
+          user: user._id,
+          seen: false,
+          read: false,
+          type: NOTIFICATION_TYPES.EVENT_INVITATION,
+          typeDetails: {
+            event: event._id,
+          },
+          createdAt: new Date()
+        }
+      }, {
+        upsert: true
+      })
+    }
+  }
 }
 
 module.exports = EventsController

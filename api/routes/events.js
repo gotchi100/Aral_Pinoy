@@ -75,6 +75,10 @@ const createEventValidator = Joi.object({
   templateDescription: Joi.string().trim().empty('').max(5000),
 })
 
+const inviteVolunteersSchema = Joi.object({
+  userIds : Joi.array().items(Joi.objectId()).unique()
+})
+
 function validateCreateEventBody(req, res, next) {
   const { value: validatedBody, error } = createEventValidator.validate(req.body)
 
@@ -325,6 +329,49 @@ async function patchEventStatus(req, res, next) {
   }
 }
 
+async function getRecommendedVolunteers(req, res, next) {
+  const { id } = req.params
+
+  try {
+    const volunteers = await EventsController.getRecommendedVolunteers(id)
+
+    return res.status(200).json(volunteers)
+  } catch (error) {
+    next(error)
+  }
+}
+
+function validateInviteVolunteersBody(req, res, next) {
+  const { value: validatedBody, error } = inviteVolunteersSchema.validate(req.body)
+
+  if (error !== undefined) {      
+    return res.status(400).json({
+      code: 'BadRequest',
+      status: 400,
+      message: error.message
+    })
+  }
+
+  req.body = validatedBody
+
+  next()
+}
+
+async function inviteUsers(req, res, next) {
+  const { id } = req.params
+  const { userIds } = req.body
+
+  try {
+    await EventsController.inviteVolunteers(id, userIds)
+
+    return res.status(200).json({
+      ok: true
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 const router = express.Router()
 
 router.post('/', upload.single('logo'), validateCreateEventBody, createEvent)
@@ -336,5 +383,9 @@ router.get('/:id', validateIdParams, getEvent)
 router.patch('/:id', validatePatchEvent, patchEvent)
 
 router.patch('/:id/status', validateIdParams, validatePatchEventStatusBody, patchEventStatus)
+
+router.get('/:id/recommended-volunteers', validateIdParams, getRecommendedVolunteers)
+
+router.post('/:id/invite-volunteers', validateIdParams, validateInviteVolunteersBody, inviteUsers)
 
 module.exports = router

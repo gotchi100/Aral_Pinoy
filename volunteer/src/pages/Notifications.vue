@@ -96,6 +96,13 @@
                           :notification="notification"
                           @onRead="redirectAndMarkAsRead"
                         />
+
+                        <event-invitation-notification
+                          v-if="notification.type === 'EVENT_INVITATION'"
+                          :key="notification._id"
+                          :notification="notification"
+                          @onRead="redirectAndMarkAsRead"
+                        />
                       </template>
 
                       <b-list-group-item
@@ -124,6 +131,7 @@
 import { mapGetters } from 'vuex'
 
 import NewEventRoleNotification from '../components/notifications/NewEventRoleNotification'
+import EventInvitationNotification from '../components/notifications/EventInvitationNotification'
 
 import NotificationRepository from '../repositories/notifications'
 import { apiClient } from '../axios'
@@ -135,7 +143,8 @@ const seenIds = new Set()
 export default {
   name: 'Notifications',
   components: {
-    NewEventRoleNotification
+    NewEventRoleNotification,
+    EventInvitationNotification
   },
   data () {
     return {

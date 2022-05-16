@@ -78,6 +78,18 @@ class EventRepository {
   async update (id, payload) {
     await this.apiClient.patch(`/events/${id}`, payload)
   }
+
+  async getRecommendedVolunteers (id) {
+    const { data } = await this.apiClient.get(`/events/${id}/recommended-volunteers`)
+
+    return data
+  }
+
+  async inviteVolunteers (id, userIds) {
+    await this.apiClient.post(`/events/${id}/invite-volunteers`, {
+      userIds
+    })
+  }
 }
 
 module.exports = EventRepository

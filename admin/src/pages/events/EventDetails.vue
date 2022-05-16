@@ -529,6 +529,14 @@
                   </b-card>
                 </b-col>
               </b-row>
+
+              <b-row class="py-4">
+                <b-col cols="12">
+                  <event-details-actions-card
+                    :event="event"
+                  />
+                </b-col>
+              </b-row>
             </b-container>
           </b-card>
         </b-col>
@@ -951,6 +959,7 @@ import { mapGetters } from 'vuex'
 import { cloneDeep, pickBy, identity } from 'lodash'
 
 import EventUpdateModal from '../../components/events/EventUpdateModal'
+import EventDetailsActionsCard from '../../components/events/EventDetailsActionsCard'
 
 import validationMixin from '../../mixins/validation'
 import formattersMixin from '../../mixins/formatters'
@@ -976,6 +985,7 @@ extend('max', {
 export default {
   name: 'EventDetails',
   components: {
+    EventDetailsActionsCard,
     EventUpdateModal,
     ValidationObserver,
     ValidationProvider
