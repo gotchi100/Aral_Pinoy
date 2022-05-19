@@ -210,24 +210,43 @@
                             small
                             primary-key="_id"
                           >
-                            <template #cell(bestBeforeDate)="row">
-                              <span v-if="row.item.category !== undefined && hasIkdCustomCategory(row.item.category.customFields, 'bestBeforeDate')">
+                            <template #cell(bestBeforeDate)="{ item }">
+                              <span v-if="item.category !== undefined && hasIkdCustomCategory(item.category.customFields, 'bestBeforeDate')">
                                 {{
-                                  new Date(row.item.category.customFields.bestBeforeDate).toLocaleString('en-us', {
+                                  new Date(item.category.customFields.bestBeforeDate).toLocaleString('en-us', {
                                     dateStyle: 'medium'
                                   })
                                 }}
+                                <b-icon
+                                  v-if="isExpiring(item.category.customFields.bestBeforeDate)"
+                                  variant="danger"
+                                  icon="exclamation-circle-fill"
+                                />
                               </span>
                             </template>
 
-                            <template #cell(expirationDate)="row">
-                              <span v-if="row.item.category !== undefined && hasIkdCustomCategory(row.item.category.customFields, 'expirationDate')">
+                            <template #cell(expirationDate)="{ item }">
+                              <span v-if="item.category !== undefined && hasIkdCustomCategory(item.category.customFields, 'expirationDate')">
                                 {{
-                                  new Date(row.item.category.customFields.expirationDate).toLocaleString('en-us', {
+                                  new Date(item.category.customFields.expirationDate).toLocaleString('en-us', {
                                     dateStyle: 'medium'
                                   })
                                 }}
+                                <b-icon
+                                  v-if="isExpiring(item.category.customFields.expirationDate)"
+                                  variant="danger"
+                                  icon="exclamation-circle-fill"
+                                />
                               </span>
+                            </template>
+
+                            <template #cell(actions)="{ item }">
+                              <b-button
+                                variant="danger"
+                                @click="showDeleteConfirmation(item)"
+                              >
+                                <b-icon icon="trash" />
+                              </b-button>
                             </template>
                           </b-table>
                         </b-col>
@@ -313,11 +332,24 @@
         </b-col>
       </b-row>
     </b-container>
+
+    <b-modal
+      v-model="confirmDeleteModal.show"
+      @ok="deleteInkindDonation"
+      @cancel="confirmDeleteModal.show = false"
+    >
+      <b-container fluid>
+        <h1 style="font-family:'Bebas Neue', cursive; text-align:center;">
+          Are you sure you want to delete this item?
+        </h1>
+      </b-container>
+    </b-modal>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import { addMonths } from 'date-fns'
 
 import InkindDonationCreateItemModal from '../../components/inkind-donations/InkindDonationCreateItemModal'
 import InkindDonationTransactionModal from '../../components/inkind-donations/InkindDonationTransactionModal'
@@ -365,14 +397,18 @@ export default {
         { key: 'quantity', label: 'Quantity' },
         { key: 'category.name', label: 'Category' },
         { key: 'bestBeforeDate', label: 'Best Before', sortable: true },
-        { key: 'expirationDate', label: 'Expiration Date', sortable: true }
+        { key: 'expirationDate', label: 'Expiration Date', sortable: true },
+        { key: 'actions', label: 'Actions' }
       ],
-      inkindDonations: [],
       inkindDonationTotal: 0,
       inkindDonationCurrentPage: 1,
       inkindDonationPerPage: 5,
       createItemModal: false,
-      transactionModal: false
+      transactionModal: false,
+      confirmDeleteModal: {
+        show: false,
+        itemToDelete: null
+      }
     }
   },
   computed: {
@@ -447,6 +483,25 @@ export default {
       }
 
       return value[field] !== undefined
+    },
+    showDeleteConfirmation (item) {
+      this.confirmDeleteModal = {
+        show: true,
+        itemToDelete: item
+      }
+    },
+    async deleteInkindDonation () {
+      const itemId = this.confirmDeleteModal.itemToDelete._id
+
+      await inkindDonationRepository.deleteOne(itemId)
+
+      this.$refs.ikdsTable.refresh()
+    },
+    isExpiring (dateStr) {
+      const date = new Date(dateStr)
+      const todayAfterOneMonth = addMonths(new Date(), 1)
+
+      return date <= todayAfterOneMonth
     }
   }
 }

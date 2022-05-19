@@ -98,6 +98,10 @@ class InkindDonationRepository {
       total: data.total
     }
   }
+
+  async deleteOne (id) {
+    await this.apiClient.delete(`${REPOSITORY_ROUTE_PREFIX}/${id}`)
+  }
 }
 
 module.exports = InkindDonationRepository
