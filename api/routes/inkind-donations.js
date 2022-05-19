@@ -130,7 +130,7 @@ async function list(req, res, next) {
   }
 }
 
-function validateGetInkindDonation(req, res, next) {
+function validateIdParams(req, res, next) {
   const { id } = req.params
 
   if (!Types.ObjectId.isValid(id)) {
@@ -156,10 +156,25 @@ async function get(req, res, next) {
   }
 }
 
+async function deleteOne(req, res, next) {
+  const { id } = req.params
+
+  try {
+    await InkindDonationController.deleteOne(id)
+
+    return res.json({
+      ok: true
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 const router = express.Router()
 
 router.post('/', upload.single('file'), validateCreateInkindDonation, create)
 router.get('/', validateListInkindDonation, list)
-router.get('/:id', validateGetInkindDonation, get)
+router.get('/:id', validateIdParams, get)
+router.delete('/:id', validateIdParams, deleteOne)
 
 module.exports = router

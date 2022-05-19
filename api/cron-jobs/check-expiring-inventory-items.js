@@ -22,6 +22,7 @@ async function getExpiringItems(dateThreshold) {
   const expiringItems = await InkindDonationModel.find({
     $and: [
       {
+        deleted : false,
         'category.customFields': {
           $exists: true
         }

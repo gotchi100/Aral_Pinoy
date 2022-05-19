@@ -36,7 +36,8 @@ class InkindDonationOutboundTransactionsController {
     } = transaction
     
     const item = await InkindDonationModel.findOne({
-      sku
+      sku,
+      deleted: false
     }, ['name', 'category', '__v'], {
       lean: true
     })
@@ -195,6 +196,7 @@ class InkindDonationOutboundTransactionsController {
     if (status !== TRANSACTION_STATUSES.RETURNED) {
       const item = await InkindDonationModel.findOne({
         sku: transaction.item.sku,
+        deleted: false
       }, ['__v'], {
         lean: true
       })
@@ -205,6 +207,7 @@ class InkindDonationOutboundTransactionsController {
       
       const itemUpdateResults = await InkindDonationModel.updateOne({
         sku: transaction.item.sku,
+        deleted: false,
         __v : item.__v
       }, {
         $inc: {

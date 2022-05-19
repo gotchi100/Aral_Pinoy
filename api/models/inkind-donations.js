@@ -3,10 +3,7 @@
 const mongoose = require('mongoose')
 
 const inkindDonationSchema = new mongoose.Schema({
-  sku: {
-    type: String,
-    unique: true
-  },
+  sku: String,
   skuText: {
     type: String,
     select: false
@@ -23,7 +20,12 @@ const inkindDonationSchema = new mongoose.Schema({
     name: String,
     customFields: {}
   },
-  group: String
+  group: String,
+  deleted: {
+    type: Boolean,
+    default: false
+  },
+  deletedOn: Date
 }, {
   collection: 'inkindDonations',
   validateBeforeSave: false
@@ -32,6 +34,15 @@ const inkindDonationSchema = new mongoose.Schema({
 inkindDonationSchema.index({
   skuText: 'text',
   name: 'text'
+})
+
+inkindDonationSchema.index({
+  sku: 1
+}, {
+  unique: 1,
+  partialFilterExpression: {
+    deleted: false
+  }
 })
 
 module.exports = mongoose.model('InkindDonation', inkindDonationSchema)

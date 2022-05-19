@@ -199,6 +199,11 @@ class InkindDonationsController {
       const aggregationResults = await Promise.all([
         InkindDonationModel.aggregate([
           {
+            $match: {
+              deleted: false
+            }
+          },
+          {
             $group: {
               _id: '$group',
               quantity: {
@@ -239,7 +244,12 @@ class InkindDonationsController {
             $limit: limit
           }
         ]),
-        InkindDonationModel.aggregate([ 
+        InkindDonationModel.aggregate([
+          {
+            $match: {
+              deleted: false
+            }
+          },
           {
             $group: {
               _id: '$group'
@@ -258,7 +268,9 @@ class InkindDonationsController {
         total = aggregationResults[1][0].count
       }
     } else {
-      const matchQuery = {}
+      const matchQuery = {
+        deleted: false
+      }
       const queryOptions = { 
         lean: true,
         limit,
@@ -300,13 +312,34 @@ class InkindDonationsController {
   }
 
   static async get(id) {
-    const inkindDonation = await InkindDonationModel.findById(id, undefined, { lean: true })
+    const inkindDonation = await InkindDonationModel.findOne({
+      _id: id,
+      deleted: false
+    }, undefined, { lean: true })
 
     if (inkindDonation === null) {
       throw new NotFoundError(`In-kind donation does not exist: ${id}`)
     }
 
     return inkindDonation
+  }
+
+  static async deleteOne(id) {
+    const { matchedCount } = await InkindDonationModel.updateOne({
+      _id: id,
+      deleted: false
+    }, {
+      $set: {
+        deleted: true
+      },
+      $currentDate: {
+        deletedOn: true
+      }
+    })
+
+    if (matchedCount === 0) {
+      throw new NotFoundError('inkind-donation')
+    }
   }
 
   static async createTransaction(transaction) {

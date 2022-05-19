@@ -107,8 +107,11 @@ class EventsController {
       ikds = []
 
       for (const item of ikdItems) {
-        const ikd = await InkindDonationModel.findById(
-          item.ikdId, 
+        const ikd = await InkindDonationModel.findOne(
+          {
+            _id : item.ikdId,
+            deleted: false
+          }, 
           ['sku', 'name', 'category.name', '__v'], 
           {
             lean: true
@@ -137,6 +140,7 @@ class EventsController {
 
         const itemUpdateResults = await InkindDonationModel.updateOne({
           _id: new Types.ObjectId(item.ikdId), 
+          deleted: false,
           __v : ikd.__v
         }, {
           $inc: {
@@ -505,7 +509,8 @@ class EventsController {
 
         for (const item of ikdItems) {
           const ikd = await InkindDonationModel.findOne({
-            sku: item.sku
+            sku: item.sku,
+            deleted: false,
           }, ['sku', 'name', 'category.name', '__v'], {
             lean: true
           })
@@ -532,6 +537,7 @@ class EventsController {
   
           const itemUpdateResults = await InkindDonationModel.updateOne({
             _id: ikd._id, 
+            deleted: false,
             __v : ikd.__v
           }, {
             $inc: {
@@ -600,7 +606,8 @@ class EventsController {
   static async restoreIkds(eventIkds) {
     for (const { item, quantity } of eventIkds) {
       await InkindDonationModel.updateOne({
-        sku: item.sku
+        sku: item.sku,
+        deleted: false,
       }, {
         $inc: {
           quantity,
@@ -824,7 +831,8 @@ class EventsController {
     } = transaction
     
     const item = await InkindDonationModel.findOne({
-      sku
+      sku,
+      deleted: false
     }, ['name', 'category', 'quantity', '__v'], {
       lean: true
     })
@@ -835,6 +843,7 @@ class EventsController {
     
     const itemUpdateResults = await InkindDonationModel.updateOne({
       sku,
+      deleted: false,
       __v : item.__v
     }, {
       $inc: {
