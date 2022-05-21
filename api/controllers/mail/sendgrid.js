@@ -41,6 +41,18 @@ class SendgridMailController {
   static async sendNewEventJob(email, event) {
     await transporter.sendNewEventJob(email, event)
   }
+
+  /**
+   * Send insufficient event volunteers email via SendGrid
+   * @param {Object} email Email details
+   * @param {string} email.to To address
+   * @param {Object} event Event details
+   * @param {string} event.name Event name
+   * @param {string} event.url URL to the event
+   */
+  static async sendInsufficientEventVolunteersEmail(email, event) {
+    await transporter.sendInsufficientEventVolunteersEmail(email, event)
+  }
 }
 
 module.exports = SendgridMailController

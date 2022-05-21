@@ -136,6 +136,39 @@ class SendgridTransporter extends BaseTransporter {
       }
     })
   }
+
+  /**
+   * Send insufficient event volunteers email using SendGrid mail transporter
+   * @param {Object} email Email details
+   * @param {string} email.to To address
+   * @param {Object} event Event details
+   * @param {string} event.name Event name
+   * @param {string} event.url URL to the event
+   * @param {string} event.jobName Job name that was added to the event
+   */
+  async sendInsufficientEventVolunteersEmail(email, event) {
+    const {
+      to
+    } = email
+
+    const {
+      name,
+      url,
+    } = event
+
+    await this.transporter.sendMail({
+      from: this.noReplyFromAddress,
+      to,
+      subject: 'Notice: An event needs more volunteers',
+      template: 'insufficient-event-volunteers',
+      context: {
+        event: {
+          name,
+          url,
+        },
+      }
+    })
+  }
 }
 
 module.exports = SendgridTransporter
