@@ -1,12 +1,14 @@
 'use strict'
 
-const { Types } = require('mongoose')
 const { addMonths, endOfMonth } = require('date-fns')
+const debug = require('debug')
 
 const InkindDonationModel = require('../models/inkind-donations')
 const NotificationModel = require('../models/notifications')
 const UserModel = require('../models/users')
 const NOTIFICATION_TYPES = require('../constants/notifications').TYPES
+
+const logger = debug('api:cron:check-expiring-inventory-items')
 
 async function getAdminsAndOfficers() {
   const users = await UserModel.find({
@@ -48,25 +50,32 @@ async function getExpiringItems(dateThreshold) {
 }
 
 async function run() {
+  logger('Running cron task')
+
   const users = await getAdminsAndOfficers()
 
   if (users.length === 0) {
+    logger('No users found')
+
     return
   }
 
   const nextMonth = addMonths(new Date(), 1)
   const endOfNextMonth = endOfMonth(nextMonth)
+  logger(`Searching for items before provided date: ${endOfNextMonth.toJSON()}`)
 
   const expiringItems = await getExpiringItems(endOfNextMonth)
 
   if (expiringItems.length === 0) {
+    logger('No expiring items found')
+
     return
   }
 
   for (const user of users) {
-    const userId = new Types.ObjectId(user._id)
+    const userId = user._id
 
-    await NotificationModel.updateOne({
+    const { upsertedCount } = await NotificationModel.updateOne({
       user: userId,
       type: NOTIFICATION_TYPES.EXPIRING_INVENTORY_ITEM,
       'typeDetails.dateThreshold': endOfNextMonth
@@ -85,7 +94,13 @@ async function run() {
     }, {
       upsert: true
     })
+
+    if (upsertedCount > 0) {
+      logger(`User notification sent to ${user._id.toString()}`)
+    }
   }
+
+  logger('Task ended successfully')
 }
 
 module.exports = function (agenda) {
