@@ -284,7 +284,7 @@
                         primary-key="item.sku"
                       >
                         <template #cell(bestBeforeDate)="{ item }">
-                          <span v-if="item.item.category !== undefined && hasCustomExpiration(item.item, 'bestBeforeDate')">
+                          <span v-if="hasCustomExpiration(item.item, 'bestBeforeDate')">
                             {{
                               new Date(item.item.category.customFields.bestBeforeDate).toLocaleString('en-us', { month: 'short', year: 'numeric' })
                             }}
@@ -297,7 +297,7 @@
                         </template>
 
                         <template #cell(expirationDate)="{ item }">
-                          <span v-if="item.item.category !== undefined && hasCustomExpiration(item.item, 'expirationDate')">
+                          <span v-if="hasCustomExpiration(item.item, 'expirationDate')">
                             {{
                               new Date(item.item.category.customFields.expirationDate).toLocaleString('en-us', { month: 'short', year: 'numeric' })
                             }}
@@ -684,6 +684,10 @@ export default {
       this.event = pickBy(this.event, identity)
     },
     hasCustomExpiration (item, field) {
+      if (item.category === undefined || item.category.customFields === undefined) {
+        return false
+      }
+
       return item.category.customFields[field] !== undefined
     },
     isExpiring (dateStr) {
