@@ -101,6 +101,41 @@ class SendgridTransporter extends BaseTransporter {
       }
     })
   }
+
+  /**
+   * Send new event job email using SendGrid mail transporter
+   * @param {Object} email Email details
+   * @param {string} email.to To address
+   * @param {Object} event Event details
+   * @param {string} event.name Event name
+   * @param {string} event.url URL to the event
+   * @param {string} event.jobName Job name that was added to the event
+   */
+  async sendNewEventJob(email, event) {
+    const {
+      to
+    } = email
+
+    const {
+      name,
+      url,
+      jobName
+    } = event
+
+    await this.transporter.sendMail({
+      from: this.noReplyFromAddress,
+      to,
+      subject: 'An event you volunteered has a new role!',
+      template: 'new-event-job',
+      context: {
+        event: {
+          name,
+          url,
+          jobName
+        },
+      }
+    })
+  }
 }
 
 module.exports = SendgridTransporter

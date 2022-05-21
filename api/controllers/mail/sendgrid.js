@@ -28,6 +28,19 @@ class SendgridMailController {
   static async sendEventInvitation(email, event) {
     await transporter.sendEventInvitation(email, event)
   }
+
+  /**
+   * Send new event job email via SendGrid
+   * @param {Object} email Email details
+   * @param {string} email.to To address
+   * @param {Object} event Event details
+   * @param {string} event.name Event name
+   * @param {string} event.url URL to the event
+   * @param {string} event.jobName Job name that was added to the event
+   */
+  static async sendNewEventJob(email, event) {
+    await transporter.sendNewEventJob(email, event)
+  }
 }
 
 module.exports = SendgridMailController

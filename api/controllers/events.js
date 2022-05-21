@@ -457,7 +457,7 @@ class EventsController {
       jobs
     } = event
 
-    const currentEvent = await EventModel.findById(id, ['_id', '__v', 'date', 'status', 'ikds', 'jobs'])
+    const currentEvent = await EventModel.findById(id, ['_id', 'name', '__v', 'date', 'status', 'ikds', 'jobs'])
 
     if (currentEvent === null) {
       throw new NotFoundError('event')
@@ -573,7 +573,7 @@ class EventsController {
         const { resolvedJobs, newJobs, targetVolunteers } = await EventsController.resolveJobs(currentEvent.jobs, jobs)
         
         for (const newJob of newJobs) {
-          await EventsController.createNewEventJobNotification(id, newJob.name)
+          await EventsController.createNewEventJobNotification(currentEvent, newJob.name)
         }
 
         $set.jobs = resolvedJobs
@@ -934,23 +934,58 @@ class EventsController {
     }
   }
 
-  static async createNewEventJobNotification(eventId, jobName) {
+  /**
+   * 
+   * @param {Object} event Event
+   * @param {string} jobName Job name
+   */
+  static async createNewEventJobNotification(event, jobName) {
+    const eventId = event._id
+
     const volunteers = await EventVolunteerModel.find({
       event: eventId
+    }, ['user'], {
+      populate: {
+        path: 'user',
+        select: ['_id', 'email']
+      }
     })
 
+    const eventUrl = new URL(`/#/events/${eventId.toString()}`, config.volunteer.domainName).href
+
     for (const volunteer of volunteers) {
-      await NotificationModel.create({
-        user: new Types.ObjectId(volunteer.user),
-        seen: false,
-        read: false,
+      const userId = volunteer.user._id
+
+      const { upsertedCount } = await NotificationModel.updateOne({
+        user: userId,
         type: NOTIFICATION_TYPES.NEW_EVENT_ROLE,
-        typeDetails: {
-          event: new Types.ObjectId(eventId),
-          role: jobName
-        },
-        createdAt: new Date()
+        'typeDetails.event': eventId,
+        'typeDetails.role': jobName
+      }, {
+        $setOnInsert: {
+          user: userId,
+          seen: false,
+          read: false,
+          type: NOTIFICATION_TYPES.NEW_EVENT_ROLE,
+          typeDetails: {
+            event: eventId,
+            role: jobName
+          },
+          createdAt: new Date()
+        }
+      }, {
+        upsert: true
       })
+
+      if (upsertedCount > 0) {
+        await SendgridMailController.sendNewEventJob({
+          to: volunteer.user.email
+        }, {
+          name: event.name,
+          url :eventUrl,
+          jobName
+        }).catch(console.error)
+      }
     }
   }
 
