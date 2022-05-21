@@ -45,8 +45,14 @@ class SendgridTransporter extends BaseTransporter {
     })
   }
 
-  sendIkdAcknowledgement(to, item) {
-    return this.transporter.sendMail({
+  /**
+   * 
+   * @param {*} to 
+   * @param {*} item 
+   * @returns {Promise<void>}
+   */
+  async sendIkdAcknowledgement(to, item) {
+    await this.transporter.sendMail({
       from: this.supportFromAddress,
       to,
       replyTo: 'support@aralpinoy.xyz',
@@ -60,6 +66,38 @@ class SendgridTransporter extends BaseTransporter {
         },
         volunteerHref: this.volunteerUrl.href,
         volunteerDomain: this.volunteerUrl.hostname
+      }
+    })
+  }
+
+  /**
+   * Send event invitation email using SendGrid mail transporter
+   * @param {Object} email Email details
+   * @param {string} email.to To address
+   * @param {Object} event Event details
+   * @param {string} event.name Event name
+   * @param {string} event.url URL to the event
+   */
+  async sendEventInvitation(email, event) {
+    const {
+      to
+    } = email
+
+    const {
+      name,
+      url
+    } = event
+
+    await this.transporter.sendMail({
+      from: this.noReplyFromAddress,
+      to,
+      subject: 'You are invited to an event!',
+      template: 'event-invitation',
+      context: {
+        event: {
+          name,
+          url
+        },
       }
     })
   }

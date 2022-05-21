@@ -19,6 +19,7 @@ const UserModel = require('../models/users')
 const NotificationModel = require('../models/notifications')
 
 const GoogleCalendarController = require('./google/calendar')
+const SendgridMailController = require('./mail/sendgrid')
 
 const NOTIFICATION_TYPES = require('../constants/notifications').TYPES
 const { STATUSES } = require('../constants/events')
@@ -1024,7 +1025,7 @@ class EventsController {
   }
 
   static async inviteVolunteers(eventId, userIds) {
-    const event = await EventModel.findById(eventId, ['_id'])
+    const event = await EventModel.findById(eventId, ['_id', 'name'])
 
     if (event === null) {
       throw new NotFoundError('event')
@@ -1034,14 +1035,16 @@ class EventsController {
       _id: {
         $in: userIds
       }
-    }, ['_id'])
+    }, ['_id', 'email'])
 
     if (users.length === 0) {
       throw new NotFoundError('users')
     }
 
+    const eventUrl = new URL(`/#/events/${eventId}`, config.volunteer.domainName).href
+
     for (const user of users) {
-      await NotificationModel.updateOne({
+      const { upsertedCount } = await NotificationModel.updateOne({
         user: user._id,
         type: NOTIFICATION_TYPES.EVENT_INVITATION,
         'typeDetails.event': event._id
@@ -1059,6 +1062,15 @@ class EventsController {
       }, {
         upsert: true
       })
+
+      if (upsertedCount > 0) {
+        await SendgridMailController.sendEventInvitation({
+          to: user.email
+        }, {
+          name: event.name,
+          url: eventUrl
+        }).catch(console.error)
+      }
     }
   }
 }
