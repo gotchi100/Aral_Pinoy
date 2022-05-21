@@ -898,7 +898,21 @@
                                     :key="item._id"
                                     @click="selectIkdItem(item)"
                                   >
-                                    {{ item.quantity }} - {{ item.name }} <span style="color: grey; font-size: 12px">{{ item.sku }}</span>
+                                    {{ item.quantity }} - {{ item.name }}
+                                    <span style="color: grey; font-size: 12px">{{ item.sku }}</span>&nbsp;
+                                    <span
+                                      v-if="hasExpiration(item)"
+                                      style="color: grey; font-size: 12px"
+                                    >
+                                      {{
+                                        getItemExpirationDate(item).toLocaleString('en-us', { month: 'short', year: 'numeric' })
+                                      }}
+                                      <b-icon
+                                        v-if="isExpiring(getItemExpirationDate(item))"
+                                        variant="danger"
+                                        icon="exclamation-circle-fill"
+                                      />
+                                    </span>
                                   </b-dropdown-item>
                                 </b-dropdown>
                               </b-col>
@@ -1489,6 +1503,27 @@ export default ({
     },
     removeEventQuestion (index) {
       this.event.questions.splice(index, 1)
+    },
+    hasExpiration (item) {
+      if (item.category === undefined || item.category.customFields === undefined) {
+        return false
+      }
+
+      return item.category.customFields.bestBeforeDate !== undefined || item.category.customFields.expirationDate !== undefined
+    },
+    getItemExpirationDate (item) {
+      if (item.category.customFields.expirationDate !== undefined) {
+        return new Date(item.category.customFields.expirationDate)
+      }
+
+      if (item.category.customFields.bestBeforeDate !== undefined) {
+        return new Date(item.category.customFields.bestBeforeDate)
+      }
+    },
+    isExpiring (date) {
+      const todayAfterOneMonth = addMonths(new Date(), 1)
+
+      return date <= todayAfterOneMonth
     }
   }
 })

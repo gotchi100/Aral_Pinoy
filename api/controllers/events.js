@@ -512,7 +512,7 @@ class EventsController {
           const ikd = await InkindDonationModel.findOne({
             sku: item.sku,
             deleted: false,
-          }, ['sku', 'name', 'category.name', '__v'], {
+          }, ['sku', 'name', 'category', '__v'], {
             lean: true
           })
   
@@ -526,9 +526,7 @@ class EventsController {
           }
   
           if (ikd.category !== undefined) {
-            itemToAdd.category = {
-              name: ikd.category.name
-            }
+            itemToAdd.category = ikd.category
           }
   
           ikds.push({

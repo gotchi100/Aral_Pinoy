@@ -282,7 +282,33 @@
                         responsive
                         striped
                         primary-key="item.sku"
-                      />
+                      >
+                        <template #cell(bestBeforeDate)="{ item }">
+                          <span v-if="item.item.category !== undefined && hasCustomExpiration(item.item, 'bestBeforeDate')">
+                            {{
+                              new Date(item.item.category.customFields.bestBeforeDate).toLocaleString('en-us', { month: 'short', year: 'numeric' })
+                            }}
+                            <b-icon
+                              v-if="isExpiring(item.item.category.customFields.bestBeforeDate)"
+                              variant="danger"
+                              icon="exclamation-circle-fill"
+                            />
+                          </span>
+                        </template>
+
+                        <template #cell(expirationDate)="{ item }">
+                          <span v-if="item.item.category !== undefined && hasCustomExpiration(item.item, 'expirationDate')">
+                            {{
+                              new Date(item.item.category.customFields.expirationDate).toLocaleString('en-us', { month: 'short', year: 'numeric' })
+                            }}
+                            <b-icon
+                              v-if="isExpiring(item.item.category.customFields.expirationDate)"
+                              variant="danger"
+                              icon="exclamation-circle-fill"
+                            />
+                          </span>
+                        </template>
+                      </b-table>
                     </b-col>
                   </b-row>
 
@@ -466,7 +492,10 @@ export default {
       errorMessage: '',
       eventIkdFields: [
         { key: 'item.name', label: 'Item' },
-        { key: 'quantity', label: 'Quantity' }
+        { key: 'item.sku', label: 'SKU' },
+        { key: 'quantity', label: 'Quantity' },
+        { key: 'bestBeforeDate', label: 'Best Before' },
+        { key: 'expirationDate', label: 'Expiration' }
       ],
       eventJobFields: [
         { key: 'name', label: 'Title' },
@@ -653,6 +682,15 @@ export default {
       Object.assign(this.event, cloneDeep(event))
 
       this.event = pickBy(this.event, identity)
+    },
+    hasCustomExpiration (item, field) {
+      return item.category.customFields[field] !== undefined
+    },
+    isExpiring (dateStr) {
+      const date = new Date(dateStr)
+      const todayAfterOneMonth = addMonths(new Date(), 1)
+
+      return date <= todayAfterOneMonth
     }
   }
 }

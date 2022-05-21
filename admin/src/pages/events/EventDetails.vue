@@ -411,6 +411,32 @@
                               0
                             </span>
                           </template>
+
+                          <template #cell(bestBeforeDate)="{ item }">
+                            <span v-if="item.item.category !== undefined && hasCustomExpiration(item.item, 'bestBeforeDate')">
+                              {{
+                                new Date(item.item.category.customFields.bestBeforeDate).toLocaleString('en-us', { month: 'short', year: 'numeric' })
+                              }}
+                              <b-icon
+                                v-if="isExpiring(item.item.category.customFields.bestBeforeDate)"
+                                variant="danger"
+                                icon="exclamation-circle-fill"
+                              />
+                            </span>
+                          </template>
+
+                          <template #cell(expirationDate)="{ item }">
+                            <span v-if="item.item.category !== undefined && hasCustomExpiration(item.item, 'expirationDate')">
+                              {{
+                                new Date(item.item.category.customFields.expirationDate).toLocaleString('en-us', { month: 'short', year: 'numeric' })
+                              }}
+                              <b-icon
+                                v-if="isExpiring(item.item.category.customFields.expirationDate)"
+                                variant="danger"
+                                icon="exclamation-circle-fill"
+                              />
+                            </span>
+                          </template>
                         </b-table>
                       </b-col>
                     </b-row>
@@ -957,6 +983,7 @@ import { ValidationObserver, ValidationProvider, extend } from 'vee-validate'
 import { required, max } from 'vee-validate/dist/rules'
 import { mapGetters } from 'vuex'
 import { cloneDeep, pickBy, identity } from 'lodash'
+import { addMonths } from 'date-fns'
 
 import EventUpdateModal from '../../components/events/EventUpdateModal'
 import EventDetailsActionsCard from '../../components/events/EventDetailsActionsCard'
@@ -1039,6 +1066,9 @@ export default {
       ],
       eventIkdFields: [
         { key: 'item.name', label: 'Item' },
+        { key: 'item.sku', label: 'SKU' },
+        { key: 'bestBeforeDate', label: 'Best Before' },
+        { key: 'expirationDate', label: 'Expiration' },
         { key: 'quantity', label: 'Quantity' },
         { key: 'usedQuantity', label: 'Used' }
       ],
@@ -1421,6 +1451,15 @@ export default {
     },
     removeIncident (index) {
       this.updateEventStatus.incidents.splice(index, 1)
+    },
+    hasCustomExpiration (item, field) {
+      return item.category.customFields[field] !== undefined
+    },
+    isExpiring (dateStr) {
+      const date = new Date(dateStr)
+      const todayAfterOneMonth = addMonths(new Date(), 1)
+
+      return date <= todayAfterOneMonth
     }
   }
 }

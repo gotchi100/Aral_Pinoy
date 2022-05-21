@@ -29,6 +29,32 @@
                       striped
                       primary-key="name"
                     >
+                      <template #cell(bestBeforeDate)="{ item }">
+                        <span v-if="item.item.category !== undefined && hasCustomExpiration(item.item, 'bestBeforeDate')">
+                          {{
+                            new Date(item.item.category.customFields.bestBeforeDate).toLocaleString('en-us', { month: 'short', year: 'numeric' })
+                          }}
+                          <b-icon
+                            v-if="isExpiring(item.item.category.customFields.bestBeforeDate)"
+                            variant="danger"
+                            icon="exclamation-circle-fill"
+                          />
+                        </span>
+                      </template>
+
+                      <template #cell(expirationDate)="{ item }">
+                        <span v-if="item.item.category !== undefined && hasCustomExpiration(item.item, 'expirationDate')">
+                          {{
+                            new Date(item.item.category.customFields.expirationDate).toLocaleString('en-us', { month: 'short', year: 'numeric' })
+                          }}
+                          <b-icon
+                            v-if="isExpiring(item.item.category.customFields.expirationDate)"
+                            variant="danger"
+                            icon="exclamation-circle-fill"
+                          />
+                        </span>
+                      </template>
+
                       <template #cell(action)="{ index }">
                         <b-button
                           variant="danger"
@@ -89,7 +115,21 @@
                                   :key="item._id"
                                   @click="selectIkd(item)"
                                 >
-                                  {{ item.quantity }} - {{ item.name }} <span style="color: grey; font-size: 12px">{{ item.sku }}</span>
+                                  {{ item.quantity }} - {{ item.name }}
+                                  <span style="color: grey; font-size: 12px">{{ item.sku }}</span>&nbsp;
+                                  <span
+                                    v-if="hasExpiration(item)"
+                                    style="color: grey; font-size: 12px"
+                                  >
+                                    {{
+                                      getItemExpirationDate(item).toLocaleString('en-us', { month: 'short', year: 'numeric' })
+                                    }}
+                                    <b-icon
+                                      v-if="isExpiring(getItemExpirationDate(item))"
+                                      variant="danger"
+                                      icon="exclamation-circle-fill"
+                                    />
+                                  </span>
                                 </b-dropdown-item>
                               </b-dropdown>
                             </b-col>
@@ -185,6 +225,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { cloneDeep } from 'lodash'
+import { addMonths } from 'date-fns'
 
 import formattersMixins from '../../mixins/formatters'
 
@@ -239,7 +280,10 @@ export default {
       errorMessage: '',
       eventIkdFields: [
         { key: 'item.name', label: 'Item' },
+        { key: 'item.sku', label: 'SKU' },
         { key: 'quantity', label: 'Quantity' },
+        { key: 'bestBeforeDate', label: 'Best Before' },
+        { key: 'expirationDate', label: 'Expiration' },
         { key: 'action', label: 'Action' }
       ],
       ikdOptions: []
@@ -344,10 +388,7 @@ export default {
       this.ikdOptions = results.filter((item) => item.quantity > 0)
     },
     selectIkd (ikd) {
-      this.ikdForm.item = {
-        name: ikd.name,
-        sku: ikd.sku
-      }
+      this.ikdForm.item = ikd
     },
     addEventIkd () {
       const {
@@ -384,6 +425,38 @@ export default {
       }
 
       this.eventIkds.splice(index, 1)
+    },
+    hasCustomExpiration (item, field) {
+      return item.category.customFields[field] !== undefined
+    },
+    hasExpiration (item) {
+      if (item.category === undefined || item.category.customFields === undefined) {
+        return false
+      }
+
+      return this.hasCustomExpiration(item, 'bestBeforeDate') || this.hasCustomExpiration(item, 'expirationDate')
+    },
+    getItemExpirationDate (item) {
+      if (item.category.customFields.expirationDate !== undefined) {
+        return new Date(item.category.customFields.expirationDate)
+      }
+
+      if (item.category.customFields.bestBeforeDate !== undefined) {
+        return new Date(item.category.customFields.bestBeforeDate)
+      }
+    },
+    isExpiring (date) {
+      let dateToCompare
+
+      if (typeof date === 'string') {
+        dateToCompare = new Date(date)
+      } else {
+        dateToCompare = date
+      }
+
+      const todayAfterOneMonth = addMonths(new Date(), 1)
+
+      return dateToCompare <= todayAfterOneMonth
     }
   }
 }

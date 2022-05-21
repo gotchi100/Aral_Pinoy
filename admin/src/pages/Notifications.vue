@@ -205,8 +205,6 @@ export default {
           offset: offset
         })
 
-        console.log(results)
-
         this.notifications.results = this.notifications.results.concat(results)
         this.notifications.isFullyLoaded = this.notifications.results.length === total
       } finally {

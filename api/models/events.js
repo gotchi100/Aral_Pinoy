@@ -42,9 +42,7 @@ const ikdSchema = new mongoose.Schema({
   item: {
     sku: String,
     name: String,
-    category: {
-      name: String
-    }
+    category: mongoose.SchemaTypes.Mixed
   },
   quantity: Number,
   usedQuantity: Number
