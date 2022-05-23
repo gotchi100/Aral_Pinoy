@@ -9,28 +9,35 @@
     <b-container>
       <b-row>
         <b-col cols="12">
-          <b-container fluid>
-            <b-row class="py-3">
-              <b-col cols="12">
-                <b-row>
-                  <b-col cols="12">
-                    <b-table
-                      :items="inventoryItems"
-                      :fields="inventoryItemFields"
-                      show-empty
-                      responsive
-                      striped
-                      primary-key="name"
-                    >
-                      <template #cell(expirationDate)="{ item }">
-                        {{ new Date(getItemExpirationDate(item)).toLocaleString('en-us', { month: 'short', year: 'numeric' }) }}
-                      </template>
-                    </b-table>
-                  </b-col>
-                </b-row>
-              </b-col>
-            </b-row>
-          </b-container>
+          <b-table
+            :items="inventoryItems"
+            :fields="inventoryItemFields"
+            show-empty
+            responsive
+            striped
+            primary-key="name"
+          >
+            <template #cell(expirationDate)="{ item }">
+              {{ new Date(getItemExpirationDate(item)).toLocaleString('en-us', { month: 'short', year: 'numeric' }) }}
+            </template>
+          </b-table>
+        </b-col>
+      </b-row>
+
+      <b-row>
+        <b-col
+          align-v="center"
+          align-h="center"
+          cols="12"
+        >
+          <div class="d-flex w-100 justify-content-center">
+            <b-button
+              variant="danger"
+              to="/inkind-donations"
+            >
+              Go to Item Inventory
+            </b-button>
+          </div>
         </b-col>
       </b-row>
     </b-container>
