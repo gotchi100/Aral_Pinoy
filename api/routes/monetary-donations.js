@@ -17,6 +17,7 @@ const metadataSchema = Joi.object({
     lastName: Joi.string().trim().allow(''),
     email: Joi.string().trim().allow(''),
     phone: Joi.string().trim().allow(''),
+    companyName: Joi.string().trim().allow(''),
   })
 })
 

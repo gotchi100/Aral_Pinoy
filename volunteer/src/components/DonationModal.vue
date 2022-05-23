@@ -62,6 +62,20 @@
               class="mb-2"
             >
               <label for="donation-form-lastname">
+                Company Name
+              </label>
+
+              <b-form-input
+                id="donation-form-lastname"
+                v-model="person.contact.companyName"
+              />
+            </b-col>
+
+            <b-col
+              cols="12"
+              class="mb-2"
+            >
+              <label for="donation-form-lastname">
                 Contact Email
               </label>
 
@@ -218,6 +232,10 @@ export default {
 
         if (this.person.contact.email !== '') {
           metadata.contactDetails.email = this.person.contact.email
+        }
+
+        if (this.person.contact.companyName !== '') {
+          metadata.contactDetails.companyName = this.person.contact.companyName
         }
       }
 

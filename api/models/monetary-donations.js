@@ -40,6 +40,7 @@ const schema = new mongoose.Schema({
       lastName: String,
       email: String,
       phone: String,
+      companyName: String
     }
   }
 }, {
