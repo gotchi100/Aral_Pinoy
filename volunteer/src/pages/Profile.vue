@@ -472,7 +472,7 @@
                       <span>
                         {{
                           new Date(item.event.date.start).toLocaleString('en-us', {
-                            dateStyle: 'short',
+                            dateStyle: 'medium',
                             timeStyle: 'short'
                           })
                         }}
@@ -533,7 +533,7 @@
               <b-row>
                 <b-col cols="12">
                   <h1 style="font-family:'Bebas Neue', cursive;">
-                    Donation History
+                    Event Donation History
                   </h1>
                 </b-col>
               </b-row>
@@ -576,7 +576,7 @@
                       <span v-if="value !== undefined && value !== ''">
                         {{
                           new Date(value).toLocaleString('en-us', {
-                            dateStyle: 'short',
+                            dateStyle: 'medium',
                             timeStyle: 'short'
                           })
                         }}
@@ -618,6 +618,113 @@
                     v-model="eventDonations.pagination.currentPage"
                     :total-rows="eventDonations.total"
                     :per-page="eventDonations.pagination.perPage"
+                    align="fill"
+                    size="sm"
+                    class="my-0"
+                  />
+                </b-col>
+              </b-row>
+            </b-container>
+          </b-card>
+        </b-col>
+      </b-row>
+
+      <b-row class="pb-4">
+        <b-col cols="12">
+          <b-card
+            style="border-radius: 20px;"
+          >
+            <b-container fluid>
+              <b-row>
+                <b-col cols="12">
+                  <h1 style="font-family:'Bebas Neue', cursive;">
+                    Aral Pinoy Donation History
+                  </h1>
+                </b-col>
+              </b-row>
+
+              <b-row class="pb-4">
+                <b-col cols="4">
+                  <b-form-group
+                    style="font-size: 15px; font-family:'Bebas Neue', cursive;"
+                    label="Per page"
+                    label-for="per-page-select"
+                    label-cols-sm="6"
+                    label-cols-md="4"
+                    label-cols-lg="3"
+                    label-align-sm="right"
+                    label-size="sm"
+                    class="mb-0"
+                  >
+                    <b-form-select
+                      v-model="monetaryDonations.pagination.perPage"
+                      :options="pageOptions"
+                      style="width: 25%"
+                    />
+                  </b-form-group>
+                </b-col>
+              </b-row>
+
+              <b-row>
+                <b-col cols="12">
+                  <b-table
+                    :items="getMonetaryDonations"
+                    :fields="monetaryDonations.fields"
+                    :current-page="monetaryDonations.pagination.currentPage"
+                    :per-page="monetaryDonations.pagination.perPage"
+                    show-empty
+                    small
+                    stacked="md"
+                    style="background:white"
+                  >
+                    <template #cell(createdAt)="{ value }">
+                      <span v-if="value !== undefined && value !== ''">
+                        {{
+                          new Date(value).toLocaleString('en-us', {
+                            dateStyle: 'medium',
+                            timeStyle: 'short'
+                          })
+                        }}
+                      </span>
+                    </template>
+
+                    <template #cell(contact)="{ item }">
+                      <span style="font-size: 14px">
+                        {{
+                          getContactFromMonetaryDonationMetadata(item.metadata)
+                        }}
+                      </span>
+                    </template>
+
+                    <template #cell(amount)="{ value }">
+                      <span>
+                        {{
+                          new Intl.NumberFormat('en-us', {
+                            style: 'currency',
+                            currency: 'PHP'
+                          }).format(value)
+                        }}
+                      </span>
+                    </template>
+
+                    <template #cell(status)="{ value }">
+                      <span>
+                        {{ value.toUpperCase() }}
+                      </span>
+                    </template>
+                  </b-table>
+                </b-col>
+              </b-row>
+
+              <b-row class="justify-content-md-center">
+                <b-col
+                  cols="6"
+                  class="my-1"
+                >
+                  <b-pagination
+                    v-model="monetaryDonations.pagination.currentPage"
+                    :total-rows="monetaryDonations.total"
+                    :per-page="monetaryDonations.pagination.perPage"
                     align="fill"
                     size="sm"
                     class="my-0"
@@ -703,6 +810,7 @@ import UserRepository from '../repositories/users'
 import SkillRepository from '../repositories/skills'
 import EventDonationRepository from '../repositories/events/donations'
 import EventVolunteerRepository from '../repositories/events/volunteers'
+import MonetaryDonationRepository from '../repositories/monetary-donations'
 import validationMixins from '../mixins/validation'
 
 const logo = require('../assets/aralpinoywords.png')
@@ -726,6 +834,7 @@ const userRepository = new UserRepository(apiClient)
 const skillRepository = new SkillRepository(apiClient)
 const eventDonationRepository = new EventDonationRepository(apiClient)
 const eventVolunteerRepository = new EventVolunteerRepository(apiClient)
+const monetaryDonationRepository = new MonetaryDonationRepository(apiClient)
 
 function toSkillId (skill) {
   return skill._id
@@ -795,6 +904,21 @@ export default {
           { key: 'status', label: 'Status' }
         ]
       },
+      monetaryDonations: {
+        results: [],
+        total: 0,
+        pagination: {
+          perPage: 5,
+          currentPage: 1
+        },
+        fields: [
+          { key: '_id', label: 'Reference Number' },
+          { key: 'createdAt', label: 'Transaction Date & Time' },
+          { key: 'contact', label: 'Contact Details' },
+          { key: 'amount', label: 'Amount' },
+          { key: 'status', label: 'Status' }
+        ]
+      },
       resetPasswordMsg: '',
       isResettingPassword: false,
       genderOptions: ['Male', 'Female'],
@@ -821,6 +945,7 @@ export default {
     skillRepository.setAuthorizationHeader(authHeader)
     eventDonationRepository.setAuthorizationHeader(authHeader)
     eventVolunteerRepository.setAuthorizationHeader(authHeader)
+    monetaryDonationRepository.setAuthorizationHeader(authHeader)
 
     const user = this.user
 
@@ -877,6 +1002,63 @@ export default {
       this.eventDonations.total = total
 
       return results
+    },
+    async getMonetaryDonations (ctx) {
+      const userId = this.user._id
+
+      const perPage = this.monetaryDonations.pagination.perPage
+      const pageOffset = this.monetaryDonationsPageOffset
+
+      const { results, total } = await monetaryDonationRepository.list({
+        userId
+      }, {
+        limit: perPage,
+        offset: pageOffset,
+        expand: true,
+        sort: {
+          field: 'updatedAt',
+          order: 'desc'
+        }
+      })
+
+      this.monetaryDonations.total = total
+
+      return results
+    },
+    getContactFromMonetaryDonationMetadata (metadata) {
+      if (metadata === undefined) {
+        return ''
+      }
+
+      if (metadata.contactDetails === undefined) {
+        return ''
+      }
+
+      const contactDetails = metadata.contactDetails
+
+      const nameBuilder = []
+
+      if (contactDetails.firstName !== undefined) {
+        nameBuilder.push(contactDetails.firstName)
+      }
+
+      if (contactDetails.middleName !== undefined) {
+        nameBuilder.push(contactDetails.middleName)
+      }
+
+      if (contactDetails.lastName !== undefined) {
+        nameBuilder.push(contactDetails.lastName)
+      }
+
+      const name = nameBuilder.join(' ')
+
+      if (contactDetails.email !== undefined) {
+        return `${name} <${contactDetails.email}>`
+      } else if (contactDetails.phone !== undefined) {
+        return `${name} <${contactDetails.phone}>`
+      }
+
+      return name
     },
     async updateProfile (update = {}, loadField, reset) {
       this.errorMessage = ''
