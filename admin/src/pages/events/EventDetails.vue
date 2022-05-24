@@ -558,6 +558,100 @@
 
               <b-row class="py-4">
                 <b-col cols="12">
+                  <b-card style="border-radius: 20px;">
+                    <h1
+                      class="text-start"
+                      style="font-family:'Bebas Neue', cursive;"
+                    >
+                      Documentation
+                    </h1>
+
+                    <b-row v-if="documentation.isLoading">
+                      <b-col cols="3">
+                        <b-skeleton-img />
+                      </b-col>
+
+                      <b-col cols="3">
+                        <b-skeleton-img />
+                      </b-col>
+
+                      <b-col cols="3">
+                        <b-skeleton-img />
+                      </b-col>
+
+                      <b-col cols="3">
+                        <b-skeleton-img />
+                      </b-col>
+                    </b-row>
+
+                    <b-row v-else>
+                      <b-col
+                        v-for="item in documentation.results"
+                        :key="item._id"
+                        class="my-3"
+                        cols="3"
+                      >
+                        <b-img
+                          thumbnail
+                          fluid
+                          :src="item.url"
+                          @click="showDocumentation(item)"
+                        />
+                      </b-col>
+                    </b-row>
+
+                    <b-row
+                      v-if="!documentation.isFullyLoaded"
+                      class="my-3"
+                    >
+                      <b-col
+                        cols="12"
+                        class="d-flex w-100 justify-content-between"
+                      >
+                        <b-button
+                          class="w-100"
+                          variant="outline-success"
+                          @click="getEventDocumentations(documentation.pagination.offset + documentation.pagination.perPage)"
+                        >
+                          See More
+                        </b-button>
+                      </b-col>
+                    </b-row>
+
+                    <b-row>
+                      <b-col cols="12">
+                        <b-progress
+                          v-if="documentation.isUploading"
+                          class="w-100 my-3"
+                          :max="documentation.progress.max"
+                          height="1.5rem"
+                        >
+                          <b-progress-bar
+                            :value="documentation.progress.current"
+                            :label="`${documentation.progress.current} out of ${documentation.progress.max}`"
+                          />
+                        </b-progress>
+
+                        <div
+                          v-show="!documentation.isUploading"
+                          class="my-3"
+                        >
+                          <input
+                            ref="documentationUpload"
+                            class="form-control"
+                            type="file"
+                            multiple
+                            @change="handleDocumentationUpload"
+                          >
+                        </div>
+                      </b-col>
+                    </b-row>
+                  </b-card>
+                </b-col>
+              </b-row>
+
+              <b-row class="py-4">
+                <b-col cols="12">
                   <event-details-actions-card
                     :event="event"
                   />
@@ -969,11 +1063,18 @@
       </template>
     </b-modal>
 
-    <EventUpdateModal
+    <event-update-modal
       :show="updateEvent.modal"
       :current-event="updateEvent.event"
       @update="patchEvent"
       @close="updateEvent.modal = false"
+    />
+
+    <event-documentation-lightbox
+      :show="documentationLightbox.modal"
+      :documentation="documentationLightbox.item"
+      @close="documentationLightbox.modal = false"
+      @deleted="handleDeletedDocumentation"
     />
   </div>
 </template>
@@ -987,6 +1088,7 @@ import { addMonths } from 'date-fns'
 
 import EventUpdateModal from '../../components/events/EventUpdateModal'
 import EventDetailsActionsCard from '../../components/events/EventDetailsActionsCard'
+import EventDocumentationLightbox from '../../components/events/EventDocumentationLightbox'
 
 import validationMixin from '../../mixins/validation'
 import formattersMixin from '../../mixins/formatters'
@@ -994,11 +1096,13 @@ import formattersMixin from '../../mixins/formatters'
 import { apiClient } from '../../axios'
 import EventVolunteerRepository from '../../repositories/events/volunteers'
 import EventExpenseRepository from '../../repositories/events/expenses'
+import EventDocumentationRepository from '../../repositories/events/documentations'
 
 const logo = require('../../assets/aralpinoywords.png')
 
 const eventVolunteerRepository = new EventVolunteerRepository(apiClient)
 const eventExpenseRepository = new EventExpenseRepository(apiClient)
+const eventDocumentationRepository = new EventDocumentationRepository(apiClient)
 
 extend('required', {
   ...required,
@@ -1014,6 +1118,7 @@ export default {
   components: {
     EventDetailsActionsCard,
     EventUpdateModal,
+    EventDocumentationLightbox,
     ValidationObserver,
     ValidationProvider
   },
@@ -1072,6 +1177,25 @@ export default {
         { key: 'quantity', label: 'Quantity' },
         { key: 'usedQuantity', label: 'Used' }
       ],
+      documentation: {
+        results: [],
+        total: 0,
+        isFullyLoaded: false,
+        isLoading: false,
+        isUploading: false,
+        progress: {
+          current: 0,
+          max: 0
+        },
+        pagination: {
+          offset: 0,
+          perPage: 12
+        }
+      },
+      documentationLightbox: {
+        item: null,
+        modal: false
+      },
       updateEventStatus: {
         modal: false,
         confirmModal: false,
@@ -1250,8 +1374,11 @@ export default {
     const authHeader = `Bearer ${this.token}`
     eventVolunteerRepository.setAuthorizationHeader(authHeader)
     eventExpenseRepository.setAuthorizationHeader(authHeader)
+    eventDocumentationRepository.setAuthorizationHeader(authHeader)
 
     this.getEvent()
+
+    this.getEventDocumentations()
   },
   methods: {
     async getEvent () {
@@ -1320,6 +1447,32 @@ export default {
       this.eventExpenses.total = total
 
       return results
+    },
+    async getEventDocumentations (offset = 0, resetResults = false) {
+      const eventId = this.eventId
+      const perPage = this.documentation.pagination.perPage
+
+      this.documentation.pagination.offset = offset
+      this.documentation.isLoading = true
+
+      try {
+        const { results, total } = await eventDocumentationRepository.list(eventId, {
+          limit: perPage,
+          offset
+        })
+
+        if (resetResults) {
+          this.documentation.results = results
+        } else {
+          this.documentation.results = this.documentation.results.concat(results)
+        }
+
+        this.documentation.total = total
+
+        this.documentation.isFullyLoaded = this.documentation.results.length === this.documentation.total
+      } finally {
+        this.documentation.isLoading = false
+      }
     },
     patchEvent (event) {
       Object.assign(this.event, cloneDeep(event))
@@ -1464,6 +1617,55 @@ export default {
       const todayAfterOneMonth = addMonths(new Date(), 1)
 
       return date <= todayAfterOneMonth
+    },
+    async handleDocumentationUpload (event) {
+      const files = event.target.files
+
+      if (files.length === 0) {
+        return
+      }
+
+      this.documentation.progress = {
+        current: 0,
+        max: files.length
+      }
+
+      this.documentation.isUploading = true
+
+      let filesUploaded = 0
+      const eventId = this.eventId
+
+      try {
+        for (const file of files) {
+          await eventDocumentationRepository.create({
+            eventId,
+            file
+          })
+
+          filesUploaded += 1
+          this.documentation.progress.current = filesUploaded
+        }
+      } finally {
+        this.$refs.documentationUpload.value = null
+
+        setTimeout(() => {
+          this.documentation.isUploading = false
+        }, 3000)
+      }
+
+      await this.getEventDocumentations(0, true)
+    },
+    showDocumentation (item) {
+      this.documentationLightbox.item = item
+      this.documentationLightbox.modal = true
+    },
+    handleDeletedDocumentation (documentationId) {
+      const index = this.documentation.results.findIndex((documentation) => documentation._id === documentationId)
+
+      if (index !== -1) {
+        this.documentation.results.splice(index, 1)
+        this.documentation.total -= 1
+      }
     }
   }
 }
@@ -1477,12 +1679,5 @@ export default {
   font-family: 'Bebas Neue', cursive;
   text-align: left;
   line-height: 1.8;
-}
-.fixed {
-  display: inline;
-  position: fixed;
-  right: 15px;
-  bottom: 15px;
-  z-index: 99999;
 }
 </style>
