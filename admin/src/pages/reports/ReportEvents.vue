@@ -32,6 +32,7 @@
                     id="start-datepicker"
                     v-model="startDate"
                     :max="endDate"
+                    value-as-date
                     class="mb-2"
                   />
                 </b-col>
@@ -51,6 +52,7 @@
                     id="end-datepicker"
                     v-model="endDate"
                     :max="new Date()"
+                    value-as-date
                     class="mb-2"
                   />
                 </b-col>
@@ -61,6 +63,8 @@
                   <b-button
                     pill
                     variant="danger"
+                    :disabled="isGeneratingReport"
+                    @click="getReportEvents"
                   >
                     Generate Report
                   </b-button>
@@ -71,7 +75,10 @@
         </b-col>
       </b-row>
 
-      <b-row class="pb-3">
+      <b-row
+        v-if="!isGeneratingReport"
+        class="pb-3"
+      >
         <b-col cols="12">
           <b-card
             bg-variant="light"
@@ -118,6 +125,13 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
+import ReportRepository from '../../repositories/reports'
+import { apiClient } from '../../axios'
+
+const reportRepository = new ReportRepository(apiClient)
+
 const today = new Date()
 
 export default {
@@ -126,31 +140,14 @@ export default {
     return {
       startDate: today,
       endDate: today,
+      isGeneratingReport: false,
       report: {
-        events: [{
-          _id: 'eventId',
-          name: 'Event Name',
-          date: {
-            start: '2022-05-25T18:53:22.738Z',
-            end: '2022-06-25T18:53:22.738Z'
-          }
-        }, {
-          _id: 'eventId2',
-          name: 'Event Name',
-          date: {
-            start: '2022-05-25T18:53:22.738Z',
-            end: '2022-06-25T18:53:22.738Z'
-          }
-        }, {
-          _id: 'eventId3',
-          name: 'Event Name',
-          date: {
-            start: '2022-05-25T18:53:22.738Z',
-            end: '2022-06-25T18:53:22.738Z'
-          }
-        }]
+        events: []
       }
     }
+  },
+  computed: {
+    ...mapGetters(['token'])
   },
   watch: {
     endDate (value) {
@@ -162,7 +159,27 @@ export default {
       }
     }
   },
+  created () {
+    reportRepository.setAuthorizationHeader(`Bearer ${this.token}`)
+  },
   methods: {
+    async getReportEvents () {
+      const startDate = this.startDate.toJSON()
+      const endDate = this.endDate.toJSON()
+
+      this.isGeneratingReport = true
+
+      try {
+        const { results } = await reportRepository.getEvents({
+          start: startDate,
+          end: endDate
+        })
+
+        this.report.events = results
+      } finally {
+        this.isGeneratingReport = false
+      }
+    },
     toDate (string) {
       const date = new Date(string)
 
