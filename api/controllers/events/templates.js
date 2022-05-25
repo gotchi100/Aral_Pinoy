@@ -94,15 +94,16 @@ class EventTemplateController {
 
   static async get(id) {
     const template = await EventTemplateModel.findById(id, undefined, {
-      lean: true,
-      populate: ['jobs.skills']
+      populate: ['jobs.skills'],
     })
 
     if (template === null) {
       throw new NotFoundError('Event template does not exist')
     }
 
-    return template
+    return template.toObject({
+      getters: true
+    })
   }
 
   static async deleteTemplate(id) {
