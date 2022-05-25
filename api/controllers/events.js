@@ -568,7 +568,9 @@ class EventsController {
       if (jobs.length === 0) {
         $unset.jobs = ''
       } else {
-        const { resolvedJobs, newJobs, targetVolunteers } = await EventsController.resolveJobs(currentEvent.jobs, jobs)
+        const currentJobs = currentEvent.jobs || []
+
+        const { resolvedJobs, newJobs, targetVolunteers } = await EventsController.resolveJobs(currentJobs, jobs)
         
         for (const newJob of newJobs) {
           await EventsController.createNewEventJobNotification(currentEvent, newJob.name)

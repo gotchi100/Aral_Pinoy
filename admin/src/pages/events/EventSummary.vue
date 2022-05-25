@@ -360,16 +360,15 @@
                               >
                                 <b-col cols="12">
                                   <bar-chart
-                                    :height="100"
+                                    :height="150"
                                     :chart-data="{
                                       labels: question.labels,
                                       datasets: question.datasets
                                     }"
                                     :options="{
-                                      indexAxis: 'y',
                                       datasets: {
                                         bar: {
-                                          barPercentage: '0.5',
+                                          barPercentage: '0.15',
                                         }
                                       },
                                       elements: {
@@ -379,14 +378,14 @@
                                       },
                                       scales: {
                                         yAxes: {
-                                          display: false
-                                        },
-                                        xAxes: {
                                           ticks: {
                                             min: 0,
                                             beginAtZero: true,
                                             precision: 0
                                           }
+                                        },
+                                        xAxes: {
+                                          display: false,
                                         }
                                       },
                                       responsive: true,
