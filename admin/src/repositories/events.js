@@ -79,8 +79,23 @@ class EventRepository {
     await this.apiClient.patch(`/events/${id}`, payload)
   }
 
-  async getRecommendedVolunteers (id) {
-    const { data } = await this.apiClient.get(`/events/${id}/recommended-volunteers`)
+  async getRecommendedVolunteers (id, options = {}) {
+    const {
+      offset,
+      limit
+    } = options
+
+    const queryString = new URLSearchParams()
+
+    if (limit !== undefined) {
+      queryString.set('limit', limit)
+    }
+
+    if (offset !== undefined) {
+      queryString.set('offset', offset)
+    }
+
+    const { data } = await this.apiClient.get(`/events/${id}/recommended-volunteers?${queryString.toString()}`)
 
     return data
   }

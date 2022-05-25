@@ -57,24 +57,47 @@
               class="mb-3"
               header="Recommendation"
             >
-              <b-list-group>
-                <b-list-group-item
-                  v-for="volunteer in volunteerInvitation.recommendedVolunteers"
-                  :key="volunteer._id"
-                  class="d-flex justify-content-between align-items-center"
-                >
-                  <div>
-                    {{ volunteer.lastName }}, {{ volunteer.firstName }} <span style="color: grey; font-size: 12px">{{ volunteer.email }}</span>
-                  </div>
+              <b-table
+                :items="getRecommendedVolunteers"
+                :fields="volunteerInvitation.recommendedVolunteers.fields"
+                :current-page="volunteerInvitation.recommendedVolunteers.pagination.currentPage"
+                :per-page="volunteerInvitation.recommendedVolunteers.pagination.perPage"
+                stacked="md"
+                style="background:white"
+                show-empty
+                small
+                primary-key="_id"
+                hover
+              >
+                <template #cell(invite)="{ item }">
+                  <b-form-group class="pt-2 text-start">
+                    <div class="form-check">
+                      <input
+                        id="recommended-volunteer-invite-checkbox"
+                        class="form-check-input"
+                        type="checkbox"
+                        @change="(e) => handleVolunteerInvite(item, e.target.checked)"
+                      >
+                    </div>
+                  </b-form-group>
+                </template>
+              </b-table>
 
-                  <b-button
-                    variant="success"
-                    @click="selectUserForInvitation(volunteer)"
-                  >
-                    <b-icon icon="plus" />
-                  </b-button>
-                </b-list-group-item>
-              </b-list-group>
+              <b-row class="pt-4 justify-content-md-center">
+                <b-col
+                  cols="6"
+                  class="my-1"
+                >
+                  <b-pagination
+                    v-model="volunteerInvitation.recommendedVolunteers.pagination.currentPage"
+                    :total-rows="volunteerInvitation.recommendedVolunteers.total"
+                    :per-page="volunteerInvitation.recommendedVolunteers.pagination.perPage"
+                    align="fill"
+                    size="sm"
+                    class="my-0"
+                  />
+                </b-col>
+              </b-row>
             </b-card>
 
             <b-card header="Invitation List">
@@ -123,7 +146,7 @@
                 <b-dropdown-item
                   v-for="user in userOptions"
                   :key="user._id"
-                  @click="selectUserForInvitation(user)"
+                  @click="handleVolunteerInvite(user, true)"
                 >
                   {{ user.lastName }}, {{ user.firstName }} <span style="color: grey; font-size: 12px">{{ user.email }}</span>
                 </b-dropdown-item>
@@ -182,7 +205,20 @@ export default {
         modal: false,
         message: '',
         isInviting: false,
-        recommendedVolunteers: [],
+        recommendedVolunteers: {
+          results: [],
+          total: 0,
+          pagination: {
+            perPage: 10,
+            currentPage: 1
+          },
+          fields: [
+            { key: 'email', label: 'Email' },
+            { key: 'lastName', label: 'Last Name' },
+            { key: 'firstName', label: 'First Name' },
+            { key: 'invite', label: 'Invite' }
+          ]
+        },
         userInvitations: []
       },
       userOptions: []
@@ -196,16 +232,21 @@ export default {
 
     eventRepository.setAuthorizationHeader(authHeader)
     userRepository.setAuthorizationHeader(authHeader)
-
-    await this.getRecommendedVolunteers()
   },
   methods: {
-    async getRecommendedVolunteers () {
+    async getRecommendedVolunteers (ctx) {
       const eventId = this.event._id
+      const perPage = this.volunteerInvitation.recommendedVolunteers.pagination.perPage
+      const pageOffset = (this.volunteerInvitation.recommendedVolunteers.pagination.currentPage - 1) * this.volunteerInvitation.recommendedVolunteers.pagination.perPage
 
-      const volunteers = await eventRepository.getRecommendedVolunteers(eventId)
+      const { results, total } = await eventRepository.getRecommendedVolunteers(eventId, {
+        limit: perPage,
+        offset: pageOffset
+      })
 
-      this.volunteerInvitation.recommendedVolunteers = volunteers
+      this.volunteerInvitation.recommendedVolunteers.total = total
+
+      return results
     },
     showVolunteerInvitationModal () {
       this.volunteerInvitation.modal = true
@@ -221,11 +262,17 @@ export default {
 
       this.userOptions = results
     },
-    selectUserForInvitation (volunteer) {
+    handleVolunteerInvite (volunteer, isInvited) {
       const existingVolunteerIndex = this.volunteerInvitation.userInvitations.findIndex((item) => item._id === volunteer._id)
 
-      if (existingVolunteerIndex === -1) {
-        this.volunteerInvitation.userInvitations.push(volunteer)
+      if (isInvited) {
+        if (existingVolunteerIndex === -1) {
+          this.volunteerInvitation.userInvitations.push(volunteer)
+        }
+      } else {
+        if (existingVolunteerIndex !== -1) {
+          this.volunteerInvitation.userInvitations.splice(existingVolunteerIndex, 1)
+        }
       }
     },
     removeUserFromInvitation (index) {

@@ -994,7 +994,7 @@ class EventsController {
     }
   }
 
-  static async getRecommendedVolunteers(eventId) {
+  static async getRecommendedVolunteers(eventId, options = {}) {
     const event = await EventModel.findById(eventId, ['jobs'])
 
     if (event === null) {
@@ -1004,6 +1004,8 @@ class EventsController {
     if (!Array.isArray(event.jobs)) {
       return []
     }
+
+    const filters = options.filters
 
     const skillNorms = new Set()
 
@@ -1020,6 +1022,7 @@ class EventsController {
     }
 
     const skillIds = []
+    const filteredSkills = filters.skillIds || []
 
     if (skillNorms.size > 0) {
       const skills = await SkillModel.find({
@@ -1029,7 +1032,15 @@ class EventsController {
       }, ['_id'])
       
       for (const skill of skills) {
-        skillIds.push(skill._id)
+        if (filteredSkills.length === 0) {
+          skillIds.push(skill._id)
+
+          continue
+        }
+        
+        if (filteredSkills.includes(skill._id.toString())) {
+          skillIds.push(skill._id)
+        }
       }
     }
 
@@ -1041,7 +1052,7 @@ class EventsController {
       roles: 'volunteer'
     }
 
-    if (skillIds.length > 0) {
+    if (filteredSkills.length > 0 || skillIds.length > 0) {
       userFindQuery.skills = {
         $in: skillIds
       }
@@ -1059,9 +1070,23 @@ class EventsController {
       }
     }
 
-    const users = await UserModel.find(userFindQuery, ['_id', 'firstName', 'lastName', 'email'])
+    const {
+      offset,
+      limit,
+    } = options
 
-    return users
+    const [users, total] = await Promise.all([
+      UserModel.find(userFindQuery, ['_id', 'firstName', 'lastName', 'email'], {
+        skip: offset,
+        limit
+      }),
+      UserModel.countDocuments(userFindQuery)
+    ])
+
+    return {
+      results: users,
+      total
+    }
   }
 
   static async inviteVolunteers(eventId, userIds) {

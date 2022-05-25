@@ -108,6 +108,29 @@ async function createEvent(req, res, next) {
   }
 }
 
+const paginationValidator = Joi.object({
+  offset: Joi.number().min(0).default(0),
+  limit: Joi.number().min(1).default(25),
+})
+
+function validatePaginationQuery(req, res, next) {
+  const { value: validatedQuery, error } = paginationValidator.validate(req.query, {
+    allowUnknown: true
+  })
+
+  if (error !== undefined) {      
+    return res.status(400).json({
+      code: 'BadRequest',
+      status: 400,
+      message: error.message
+    })
+  }
+
+  req.query = validatedQuery
+
+  next()
+}
+
 const listEventsValidator = Joi.object({
   offset: Joi.number().min(0).default(0),
   limit: Joi.number().min(1).default(25),
@@ -332,13 +355,49 @@ async function patchEventStatus(req, res, next) {
   }
 }
 
+const getRecommendedVolunteersValidator = Joi.object({
+  'filters.skillIds': Joi.array().items(Joi.objectId()).unique(),
+})
+
+function validateGetRecommendedVolunteersQuery(req, res, next) {
+  const { value: validatedQuery, error } = getRecommendedVolunteersValidator.validate(req.query, {
+    allowUnknown: true
+  })
+
+  if (error !== undefined) {      
+    return res.status(400).json({
+      code: 'BadRequest',
+      status: 400,
+      message: error.message
+    })
+  }
+
+  req.query = validatedQuery
+
+  next()
+}
+
 async function getRecommendedVolunteers(req, res, next) {
   const { id } = req.params
+  const { 
+    offset,
+    limit,
+    'filters.skillIds': filterSkillIds
+  } = req.query
 
   try {
-    const volunteers = await EventsController.getRecommendedVolunteers(id)
+    const { results, total } = await EventsController.getRecommendedVolunteers(id, {
+      offset,
+      limit,
+      filters: {
+        skillIds: filterSkillIds
+      }
+    })
 
-    return res.status(200).json(volunteers)
+    return res.status(200).json({
+      results,
+      total
+    })
   } catch (error) {
     next(error)
   }
@@ -387,7 +446,7 @@ router.patch('/:id', validatePatchEvent, patchEvent)
 
 router.patch('/:id/status', validateIdParams, validatePatchEventStatusBody, patchEventStatus)
 
-router.get('/:id/recommended-volunteers', validateIdParams, getRecommendedVolunteers)
+router.get('/:id/recommended-volunteers', validateIdParams, validatePaginationQuery, validateGetRecommendedVolunteersQuery, getRecommendedVolunteers)
 
 router.post('/:id/invite-volunteers', validateIdParams, validateInviteVolunteersBody, inviteUsers)
 
