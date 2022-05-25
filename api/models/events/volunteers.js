@@ -19,7 +19,8 @@ const schema = new mongoose.Schema({
   eventEvaluation: {
     type: mongoose.Types.ObjectId,
     ref: 'EventEvaluation',
-  }
+  },
+  absent: Boolean
 }, {
   collection: 'eventVolunteers',
   validateBeforeSave: false

@@ -4,6 +4,7 @@ const express = require('express')
 const Joi = require('joi')
 
 const ReportEventsController = require('../controllers/reports/events')
+const ReportVolunteersController = require('../controllers/reports/volunteers')
 
 const dateRangeQueryValidator = Joi.object({
   startDate: Joi.date().iso().required(),
@@ -46,8 +47,29 @@ async function getEventsReport(req, res, next) {
   }
 }
 
+async function getVolunteersReport(req, res, next) {
+  const {
+    startDate,
+    endDate
+  } = req.query
+
+  try {
+    const results = await ReportVolunteersController.get({
+      start: startDate,
+      end: endDate
+    })
+
+    return res.json({
+      results
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 const router = express.Router()
 
 router.get('/events', validateDateRangeQuery, getEventsReport)
+router.get('/volunteers', validateDateRangeQuery, getVolunteersReport)
 
 module.exports = router

@@ -66,7 +66,14 @@
                     :disabled="isGeneratingReport"
                     @click="getReportEvents"
                   >
-                    Generate Report
+                    <b-spinner
+                      v-if="isGeneratingReport"
+                      style="width: 1rem; height: 1rem;"
+                    />
+
+                    <template v-else>
+                      Generate Report
+                    </template>
                   </b-button>
                 </b-col>
               </b-row>

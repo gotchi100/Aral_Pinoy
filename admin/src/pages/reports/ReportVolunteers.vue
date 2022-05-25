@@ -32,6 +32,7 @@
                     id="start-datepicker"
                     v-model="startDate"
                     :max="endDate"
+                    value-as-date
                     class="mb-2"
                   />
                 </b-col>
@@ -51,6 +52,7 @@
                     id="end-datepicker"
                     v-model="endDate"
                     :max="new Date()"
+                    value-as-date
                     class="mb-2"
                   />
                 </b-col>
@@ -61,8 +63,17 @@
                   <b-button
                     pill
                     variant="danger"
+                    :disabled="isGeneratingReport"
+                    @click="getReportVolunteers"
                   >
-                    Generate Report
+                    <b-spinner
+                      v-if="isGeneratingReport"
+                      style="width: 1rem; height: 1rem;"
+                    />
+
+                    <template v-else>
+                      Generate Report
+                    </template>
                   </b-button>
                 </b-col>
               </b-row>
@@ -176,8 +187,15 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
+import ReportRepository from '../../repositories/reports'
+import { apiClient } from '../../axios'
+
 import BarChart from '../../components/charts/Bar'
 import PieChart from '../../components/charts/Pie'
+
+const reportRepository = new ReportRepository(apiClient)
 
 const today = new Date()
 
@@ -191,17 +209,21 @@ export default {
     return {
       startDate: today,
       endDate: today,
+      isGeneratingReport: false,
       report: {
         age: {
           labels: ['Below 18', '18-59', '60 and above'],
-          data: [20, 20, 50]
+          data: []
         },
         gender: {
           labels: ['Male', 'Female'],
-          data: [20, 50]
+          data: []
         }
       }
     }
+  },
+  computed: {
+    ...mapGetters(['token'])
   },
   watch: {
     endDate (value) {
@@ -210,6 +232,29 @@ export default {
 
       if (startDate > endDate) {
         this.startDate = endDate
+      }
+    }
+  },
+  created () {
+    reportRepository.setAuthorizationHeader(`Bearer ${this.token}`)
+  },
+  methods: {
+    async getReportVolunteers () {
+      const startDate = this.startDate.toJSON()
+      const endDate = this.endDate.toJSON()
+
+      this.isGeneratingReport = true
+
+      try {
+        const { results } = await reportRepository.getVolunteers({
+          start: startDate,
+          end: endDate
+        })
+
+        this.report.age = results.age
+        this.report.gender = results.gender
+      } finally {
+        this.isGeneratingReport = false
       }
     }
   }
