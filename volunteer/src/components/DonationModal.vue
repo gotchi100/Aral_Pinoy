@@ -159,6 +159,7 @@ export default {
         firstName: '',
         lastName: '',
         contact: {
+          companyName: '',
           phone: '',
           email: ''
         }
