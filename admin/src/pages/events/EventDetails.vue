@@ -276,6 +276,25 @@
               </b-row>
 
               <b-row
+                v-if="event.review !== undefined"
+                class="py-4 text-start"
+              >
+                <b-col cols="12">
+                  <b-card style="border-radius: 20px;">
+                    <h1 style="font-family:'Bebas Neue', cursive;">
+                      Event Review
+                    </h1>
+
+                    <b-form-textarea
+                      v-model="event.review"
+                      rows="15"
+                      readonly
+                    />
+                  </b-card>
+                </b-col>
+              </b-row>
+
+              <b-row
                 v-if="Array.isArray(event.sdgs)"
                 class="py-4"
               >
@@ -1003,6 +1022,21 @@
             </b-collapse>
           </b-col>
         </b-row>
+
+        <b-row>
+          <b-col cols="12">
+            <h5>
+              Review
+            </h5>
+          </b-col>
+
+          <b-col cols="12">
+            <b-form-textarea
+              v-model="updateEventStatus.review"
+              rows="15"
+            />
+          </b-col>
+        </b-row>
       </b-container>
 
       <template #modal-footer>
@@ -1222,7 +1256,8 @@ export default {
         showIncidentForm: false,
         incidentForm: {
           message: ''
-        }
+        },
+        review: ''
       },
       updateEvent: {
         modal: false,
@@ -1481,12 +1516,7 @@ export default {
     },
     async preUpdateStatus (status) {
       this.updateEventStatus.status = status
-
-      if (this.hasIkdItems || this.hasMonetaryGoal) {
-        this.updateEventStatus.modal = true
-      } else {
-        this.updateEventStatus.confirmModal = true
-      }
+      this.updateEventStatus.modal = true
     },
     async updateStatus (status) {
       this.isLoadingEvent = true
@@ -1535,12 +1565,15 @@ export default {
         }
       }
 
+      const review = this.updateEventStatus.review
+
       try {
         await apiClient.patch(`/events/${eventId}/status`, {
           status,
           incidents,
           itemsUnused,
-          expenses
+          expenses,
+          review
         }, {
           headers: {
             Authorization: `Bearer ${this.token}`

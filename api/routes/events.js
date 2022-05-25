@@ -285,7 +285,8 @@ const patchEventStatusValidator = Joi.object({
       type: Joi.string().required(),
       remarks: Joi.string().trim().max(300).empty('')
     })
-  )
+  ),
+  review: Joi.string().trim().empty('').max(5000),
 })
 
 function validatePatchEventStatusBody(req, res, next) {
@@ -310,7 +311,8 @@ async function patchEventStatus(req, res, next) {
     status,
     incidents,
     itemsUnused,
-    expenses
+    expenses,
+    review
   } = req.body
 
   try {
@@ -318,7 +320,8 @@ async function patchEventStatus(req, res, next) {
       status,
       incidents,
       itemsUnused,
-      expenses
+      expenses,
+      review
     })
 
     return res.status(200).json({

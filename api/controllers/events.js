@@ -701,7 +701,8 @@ class EventsController {
       status,
       incidents,
       itemsUnused,
-      expenses
+      expenses,
+      review
     } = details
 
     const event = await EventModel.findById(id, ['_id', 'name', '__v', 'status', 'ikds', 'goals'])
@@ -778,6 +779,10 @@ class EventsController {
     const $set = {
       status,
       ...ikdUsedQuantityMap
+    }
+
+    if (review !== undefined) {
+      $set.review = review
     }
 
     if (Array.isArray(incidents) && incidents.length > 0) {

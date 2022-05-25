@@ -112,6 +112,7 @@ const schema = new mongoose.Schema({
     end: Date
   },
   logoUrl: String,
+  review: String,
   goals : {
     numVolunteers: {
       current: {
