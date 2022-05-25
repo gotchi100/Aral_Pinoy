@@ -24,7 +24,9 @@
                   <label
                     for="start-datepicker"
                     style="font-family: 'Bebas Neue', cursive;"
-                  >From</label>
+                  >
+                    From
+                  </label>
 
                   <b-form-datepicker
                     id="start-datepicker"
@@ -79,90 +81,32 @@
               fluid
             >
               <b-row
-                class="py-4"
+                class="py-2"
               >
                 <b-col cols="12">
                   <h1 style="font-family:'Bebas Neue', cursive;">
-                    Demographics
+                    Post-Event Summaries
                   </h1>
                 </b-col>
               </b-row>
 
-              <b-row
-                class="py-4"
-              >
+              <b-row class="pb-3">
                 <b-col cols="12">
-                  <h2 style="font-family:'Bebas Neue', cursive;">
-                    Age
-                  </h2>
-                </b-col>
-
-                <b-col
-                  class="d-flex w-100 justify-content-center"
-                  cols="12"
-                >
-                  <bar-chart
-                    :height="400"
-                    :chart-data="{
-                      labels: report.age.labels,
-                      datasets: [{
-                        label: '',
-                        data: report.age.data,
-                        backgroundColor: [
-                          'rgb(54, 162, 235)',
-                          'rgb(255, 99, 132)',
-                          'rgb(255, 219, 99)',
-                        ],
-                      }]
-                    }"
-                    :options="{
-                      scales: {
-                        yAxes: {
-                          ticks: {
-                            min: 0,
-                            beginAtZero: true,
-                            precision: 0
-                          }
-                        }
-                      },
-                      responsive: true,
-                      plugins: {
-                        legend: {
-                          display: false
-                        },
-                      }
-                    }"
-                  />
-                </b-col>
-              </b-row>
-
-              <b-row
-                class="py-4"
-              >
-                <b-col cols="12">
-                  <h2 style="font-family:'Bebas Neue', cursive;">
-                    Gender
-                  </h2>
-                </b-col>
-
-                <b-col
-                  class="d-flex w-100 justify-content-center"
-                  cols="12"
-                >
-                  <pie-chart
-                    :styles="{ 'width': '30%' }"
-                    :chart-data="{
-                      labels: report.gender.labels,
-                      datasets: [{
-                        label: '',
-                        data: report.gender.data,
-                        backgroundColor: [
-                          'rgb(54, 162, 235)',
-                          'rgb(255, 99, 132)',
-                        ],
-                      }]
-                    }"
-                  />
+                  <b-list-group>
+                    <b-list-group-item
+                      v-for="event in report.events"
+                      :key="event._id"
+                      button
+                      @click="$router.push({ path: `/events/${event._id}/summary` })"
+                    >
+                      {{ event.name }} <br>
+                      <span style="color: grey; font-size: 12px">
+                        {{ toDate(event.date.start).toLocaleString('en-us', { dateStyle: 'medium', timeStyle: 'short' }) }}
+                        -
+                        {{ toDate(event.date.end).toLocaleString('en-us', { dateStyle: 'medium', timeStyle: 'short' }) }}
+                      </span>
+                    </b-list-group-item>
+                  </b-list-group>
                 </b-col>
               </b-row>
             </b-container>
@@ -174,30 +118,37 @@
 </template>
 
 <script>
-import BarChart from '../../components/charts/Bar'
-import PieChart from '../../components/charts/Pie'
-
 const today = new Date()
 
 export default {
   name: 'ReportEvents',
-  components: {
-    BarChart,
-    PieChart
-  },
   data () {
     return {
       startDate: today,
       endDate: today,
       report: {
-        age: {
-          labels: ['Below 18', '18-59', '60 and above'],
-          data: [20, 20, 50]
-        },
-        gender: {
-          labels: ['Male', 'Female'],
-          data: [20, 50]
-        }
+        events: [{
+          _id: 'eventId',
+          name: 'Event Name',
+          date: {
+            start: '2022-05-25T18:53:22.738Z',
+            end: '2022-06-25T18:53:22.738Z'
+          }
+        }, {
+          _id: 'eventId2',
+          name: 'Event Name',
+          date: {
+            start: '2022-05-25T18:53:22.738Z',
+            end: '2022-06-25T18:53:22.738Z'
+          }
+        }, {
+          _id: 'eventId3',
+          name: 'Event Name',
+          date: {
+            start: '2022-05-25T18:53:22.738Z',
+            end: '2022-06-25T18:53:22.738Z'
+          }
+        }]
       }
     }
   },
@@ -209,6 +160,17 @@ export default {
       if (startDate > endDate) {
         this.startDate = endDate
       }
+    }
+  },
+  methods: {
+    toDate (string) {
+      const date = new Date(string)
+
+      if (isNaN(date)) {
+        return
+      }
+
+      return date
     }
   }
 }

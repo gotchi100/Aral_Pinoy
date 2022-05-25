@@ -267,7 +267,7 @@ export default {
         },
         donors: {
           labels: ['Red Ribbon', 'Anonymous', '3', '4', '5'],
-          data: [20, 5, 3, 1, 100]
+          data: [20, 5, 3, 1, 100000]
         }
       }
     }

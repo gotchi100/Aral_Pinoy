@@ -88,15 +88,18 @@
             class="reports"
             text="Reports"
           >
-            <b-dropdown-item to="/reports/inkind-donations">
-              In-Kind Donations
+            <b-dropdown-item to="/reports/events">
+              Event Summaries
             </b-dropdown-item>
+
+            <b-dropdown-item to="/reports/inkind-donations">
+              Items Inventory
+            </b-dropdown-item>
+
             <b-dropdown-item to="/reports/monetary-donations">
               Monetary Donations
             </b-dropdown-item>
-            <b-dropdown-item to="/reports/events">
-              Event Evaluation
-            </b-dropdown-item>
+
             <b-dropdown-item to="/reports/volunteers">
               Volunteer
             </b-dropdown-item>
