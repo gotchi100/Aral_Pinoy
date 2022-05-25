@@ -70,6 +70,8 @@
                           style="background:white"
                           show-empty
                           primary-key="event._id"
+                          hover
+                          @row-clicked="showEventExpenses"
                         >
                           <template #cell(event)="{ value }">
                             <b-link :to="`/events/${value._id}`">
@@ -112,11 +114,19 @@
         </b-col>
       </b-row>
     </b-container>
+
+    <expenses-list-modal
+      :show="expensesListModal.show"
+      :event="expensesListModal.event"
+      @close="expensesListModal.show = false"
+    />
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+
+import ExpensesListModal from '../../components/expenses/ExpensesListModal'
 
 import EventExpenseRepository from '../../repositories/events/expenses'
 import { apiClient } from '../../axios'
@@ -124,6 +134,9 @@ import { apiClient } from '../../axios'
 const eventExpenseRepository = new EventExpenseRepository(apiClient)
 
 export default {
+  components: {
+    ExpensesListModal
+  },
   data () {
     return {
       pageOptions: [5, 10, 20],
@@ -136,6 +149,10 @@ export default {
         ],
         currentPage: 1,
         perPage: 5
+      },
+      expensesListModal: {
+        show: false,
+        event: null
       }
     }
   },
@@ -168,6 +185,19 @@ export default {
       this.groupedExpenses.total = total
 
       return results
+    },
+    showEventExpenses (groupedExpense) {
+      const {
+        _id,
+        name
+      } = groupedExpense.event
+
+      this.expensesListModal.event = {
+        _id,
+        name,
+        totalExpenses: groupedExpense.amount
+      }
+      this.expensesListModal.show = true
     }
   }
 }
