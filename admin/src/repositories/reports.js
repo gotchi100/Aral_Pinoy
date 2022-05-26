@@ -66,6 +66,35 @@ class ReportRepository {
 
     return data
   }
+
+  /**
+   * @param {Object} params Parameters
+   * @param {string} params.itemId Item Id
+   * @param {Object} params.dateRange Date range
+   * @param {string} params.dateRange.start Start date
+   * @param {string} params.dateRange.end End date
+   * @returns {Promise<{ results: Object[] }>}
+   */
+  async getInventoryItem (params) {
+    const {
+      itemId,
+      dateRange
+    } = params
+
+    const {
+      start,
+      end
+    } = dateRange
+
+    const queryString = new URLSearchParams()
+    queryString.set('startDate', start)
+    queryString.set('endDate', end)
+    queryString.set('itemId', itemId)
+
+    const { data } = await this.apiClient.get(`${REPOSITORY_BASE_URL}/inventory-item?${queryString.toString()}`)
+
+    return data
+  }
 }
 
 module.exports = ReportRepository
