@@ -9,6 +9,7 @@ Joi.objectId = joiObjectId(Joi)
 const ReportEventsController = require('../controllers/reports/events')
 const ReportVolunteersController = require('../controllers/reports/volunteers')
 const ReportInventoryItemController = require('../controllers/reports/inventory-item')
+const ReportMonetaryDonationController = require('../controllers/reports/monetary-donations')
 
 const dateRangeQueryValidator = Joi.object({
   startDate: Joi.date().iso().required(),
@@ -119,10 +120,31 @@ async function getInventoryItemReport(req, res, next) {
   }
 }
 
+async function getMonetaryDonationsReport(req, res, next) {
+  const {
+    startDate,
+    endDate
+  } = req.query
+
+  try {
+    const results = await ReportMonetaryDonationController.get({
+      start: startDate,
+      end: endDate
+    })
+
+    return res.json({
+      results
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 const router = express.Router()
 
 router.get('/events', validateDateRangeQuery, getEventsReport)
 router.get('/volunteers', validateDateRangeQuery, getVolunteersReport)
 router.get('/inventory-item', validateDateRangeQuery, validateInventoryItemQuery, getInventoryItemReport)
+router.get('/monetary-donations', validateDateRangeQuery, getMonetaryDonationsReport)
 
 module.exports = router

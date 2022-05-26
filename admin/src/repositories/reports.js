@@ -95,6 +95,28 @@ class ReportRepository {
 
     return data
   }
+
+  /**
+   *
+   * @param {Object} dateRange Date range
+   * @param {string} dateRange.start Start date
+   * @param {string} dateRange.end End date
+   * @returns {Promise<{ results: Object[] }>}
+   */
+  async getMonetaryDonations (dateRange) {
+    const {
+      start,
+      end
+    } = dateRange
+
+    const queryString = new URLSearchParams()
+    queryString.set('startDate', start)
+    queryString.set('endDate', end)
+
+    const { data } = await this.apiClient.get(`${REPOSITORY_BASE_URL}/monetary-donations?${queryString.toString()}`)
+
+    return data
+  }
 }
 
 module.exports = ReportRepository

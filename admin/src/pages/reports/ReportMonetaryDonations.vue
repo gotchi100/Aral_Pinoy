@@ -32,6 +32,7 @@
                     id="start-datepicker"
                     v-model="startDate"
                     :max="endDate"
+                    value-as-date
                     class="mb-2"
                   />
                 </b-col>
@@ -51,6 +52,7 @@
                     id="end-datepicker"
                     v-model="endDate"
                     :max="new Date()"
+                    value-as-date
                     class="mb-2"
                   />
                 </b-col>
@@ -61,8 +63,17 @@
                   <b-button
                     pill
                     variant="danger"
+                    :disabled="isGeneratingReport"
+                    @click="getReportMonetaryDonations"
                   >
-                    Generate Report
+                    <b-spinner
+                      v-if="isGeneratingReport"
+                      style="width: 1rem; height: 1rem;"
+                    />
+
+                    <template v-else>
+                      Generate Report
+                    </template>
                   </b-button>
                 </b-col>
               </b-row>
@@ -80,7 +91,7 @@
             <b-container
               fluid
             >
-              <b-row
+              <!-- <b-row
                 class="py-4"
               >
                 <b-col cols="12">
@@ -127,7 +138,7 @@
                     }"
                   />
                 </b-col>
-              </b-row>
+              </b-row> -->
 
               <b-row
                 class="py-4"
@@ -182,45 +193,48 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import * as randomColor from 'randomcolor'
 
+import ReportRepository from '../../repositories/reports'
+import { apiClient } from '../../axios'
+
 import BarChart from '../../components/charts/Bar'
-import TrendChart from '../../components/charts/Trend'
+// import TrendChart from '../../components/charts/Trend'
+
+const reportRepository = new ReportRepository(apiClient)
 
 const today = new Date()
-
-const backgroundColors = randomColor({
-  hue: 'random',
-  luminosity: 'dark',
-  count: 4
-})
 
 export default {
   name: 'ReportMonetaryDonations',
   components: {
-    BarChart,
-    TrendChart
+    BarChart
+    // TrendChart
   },
   data () {
     return {
       startDate: today,
       endDate: today,
+      isGeneratingReport: false,
       report: {
-        incomeStatement: {
-          labels: ['Mar 1', 'Mar 2', 'Mar 3'],
-          dataset: [{
-            data: [7008, 5000, 9000]
-          }, {
-            data: [1234, 3333, 7601]
-          }]
-        },
+        // incomeStatement: {
+        //   labels: ['Mar 1', 'Mar 2', 'Mar 3'],
+        //   dataset: [{
+        //     data: [7008, 5000, 9000]
+        //   }, {
+        //     data: [1234, 3333, 7601]
+        //   }]
+        // },
         monetaryDonations: {
-          labels: ['Google', 'Apple', 'Anonymous', 'Microsoft'],
-          data: [609, 409, 7008, 5000],
-          backgroundColors
+          labels: [],
+          data: []
         }
       }
     }
+  },
+  computed: {
+    ...mapGetters(['token'])
   },
   watch: {
     endDate (value) {
@@ -232,8 +246,37 @@ export default {
       }
     }
   },
-  methods: {
+  created () {
+    const authHeader = `Bearer ${this.token}`
 
+    reportRepository.setAuthorizationHeader(authHeader)
+  },
+  methods: {
+    async getReportMonetaryDonations () {
+      const startDate = this.startDate.toJSON()
+      const endDate = this.endDate.toJSON()
+
+      this.isGeneratingReport = true
+
+      try {
+        const { results } = await reportRepository.getMonetaryDonations({
+          start: startDate,
+          end: endDate
+        })
+
+        this.report.monetaryDonations = results.monetaryDonations
+
+        const backgroundColors = randomColor({
+          hue: 'random',
+          luminosity: 'dark',
+          count: results.monetaryDonations.labels.length
+        })
+
+        this.report.monetaryDonations.backgroundColors = backgroundColors
+      } finally {
+        this.isGeneratingReport = false
+      }
+    }
   }
 }
 </script>

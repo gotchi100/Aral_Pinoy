@@ -42,8 +42,6 @@ class ReportInventoryItemController {
       }
     }
 
-    console.log(inventoryItem)
-
     const transactions = await IkdTransactionModel.find({
       'item.sku': inventoryItem.sku,
       date: {
