@@ -79,6 +79,7 @@ class EventsController {
       ikdItems,
       jobs: eventJobs,
       questions: eventQuestions,
+      budget: eventBudget,
       saveAsTemplate = false,
       templateName,
       templateDescription
@@ -275,7 +276,8 @@ class EventsController {
       sdgs,
       ikds,
       jobs,
-      questions
+      questions,
+      budget: eventBudget
     })
 
     const eventDocument = results.toObject({

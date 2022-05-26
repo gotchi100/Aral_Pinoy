@@ -4,10 +4,7 @@
       <b-row>
         <b-col cols="12">
           <b-card style="border-radius: 20px;">
-            <validation-observer
-              ref="mainObs"
-              v-slot="{ invalid }"
-            >
+            <validation-observer>
               <b-container>
                 <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; text-align: center;">
                   Create Event
@@ -438,6 +435,174 @@
                                 </b-form-group>
                               </b-col>
                             </b-row>
+                          </b-card>
+                        </b-col>
+                      </b-row>
+
+                      <b-row class="pt-4">
+                        <b-col cols="12">
+                          <b-card>
+                            <b-col cols="12">
+                              <h5
+                                class="text-start"
+                                style="font-family:'Bebas Neue', cursive;"
+                              >
+                                Budget Proposal Breakdown
+                              </h5>
+                            </b-col>
+
+                            <b-col cols="12">
+                              <b-table
+                                :items="event.budget.breakdown"
+                                :fields="[
+                                  { key: 'amount', label: 'Amount' },
+                                  { key: 'type', label: 'Type of expense' },
+                                  { key: 'action', label: 'Action' }
+                                ]"
+                                show-empty
+                                striped
+                                primary-key="item.type"
+                              >
+                                <template #cell(amount)="{ value }">
+                                  {{
+                                    new Intl.NumberFormat('en-us', {
+                                      style: 'currency',
+                                      currency: 'PHP'
+                                    }).format(value)
+                                  }}
+                                </template>
+
+                                <template #cell(action)="{ index }">
+                                  <b-button
+                                    variant="danger"
+                                    @click="removeFromBudget(index)"
+                                  >
+                                    <b-icon icon="trash" />
+                                  </b-button>
+                                </template>
+                              </b-table>
+                            </b-col>
+
+                            <b-col cols="12">
+                              <b-button
+                                class="w-100 mb-3"
+                                :disabled="budgetForm.show"
+                                @click="budgetForm.show = true"
+                              >
+                                Add to Breakdown
+                              </b-button>
+
+                              <b-collapse v-model="budgetForm.show">
+                                <b-card>
+                                  <validation-observer
+                                    ref="budgetObs"
+                                    v-slot="{ invalid: invalidBudget }"
+                                  >
+                                    <b-container>
+                                      <b-row>
+                                        <b-col cols="12">
+                                          <b-form-group class="text-start">
+                                            <label
+                                              class="py-1"
+                                              for="input-budget-breakdown-type"
+                                              style="font-family: 'Bebas Neue', cursive;"
+                                            >
+                                              Type
+                                            </label>
+
+                                            <validation-provider
+                                              v-slot="validationContext"
+                                              :rules="{
+                                                required: true
+                                              }"
+                                            >
+                                              <b-form-input
+                                                id="input-budget-breakdown-type"
+                                                v-model="budgetForm.details.type"
+                                                placeholder="Ex: Materials"
+                                                :state="getValidationState(validationContext)"
+                                                aria-describedby="input-budget-breakdown-type-feedback"
+                                              />
+
+                                              <b-form-invalid-feedback id="input-budget-breakdown-type-feedback">
+                                                {{ validationContext.errors[0] }}
+                                              </b-form-invalid-feedback>
+                                            </validation-provider>
+                                          </b-form-group>
+                                        </b-col>
+
+                                        <b-col cols="12">
+                                          <b-form-group class="text-start">
+                                            <label
+                                              class="py-1"
+                                              for="input-budget-breakdown-amount"
+                                              style="font-family: 'Bebas Neue', cursive;"
+                                            >
+                                              Amount
+                                            </label>
+
+                                            <validation-provider
+                                              v-slot="validationContext"
+                                              :rules="{
+                                                required: true
+                                              }"
+                                            >
+                                              <b-form-input
+                                                id="input-budget-breakdown-amount"
+                                                v-model="budgetForm.details.amount"
+                                                type="number"
+                                                step="100"
+                                                lazy-formatter
+                                                :formatter="toPositiveNumber"
+                                                :state="getValidationState(validationContext)"
+                                                aria-describedby="input-budget-breakdown-amount-feedback"
+                                              />
+
+                                              <b-form-invalid-feedback id="input-budget-breakdown-amount-feedback">
+                                                {{ validationContext.errors[0] }}
+                                              </b-form-invalid-feedback>
+                                            </validation-provider>
+                                          </b-form-group>
+                                        </b-col>
+
+                                        <b-col
+                                          class="pt-3"
+                                          cols="12"
+                                        >
+                                          <b-row>
+                                            <b-col
+                                              cols="12"
+                                              md="6"
+                                            >
+                                              <b-button
+                                                class="w-100"
+                                                @click="budgetForm.show = false"
+                                              >
+                                                Cancel
+                                              </b-button>
+                                            </b-col>
+
+                                            <b-col
+                                              cols="12"
+                                              md="6"
+                                            >
+                                              <b-button
+                                                class="w-100"
+                                                variant="success"
+                                                :disabled="invalidBudget"
+                                                @click="addToBudgetBreakdown"
+                                              >
+                                                Submit
+                                              </b-button>
+                                            </b-col>
+                                          </b-row>
+                                        </b-col>
+                                      </b-row>
+                                    </b-container>
+                                  </validation-observer>
+                                </b-card>
+                              </b-collapse>
+                            </b-col>
                           </b-card>
                         </b-col>
                       </b-row>
@@ -933,9 +1098,9 @@
                               id="create-button"
                               class="w-100"
                               variant="danger"
-                              :disabled="invalid && !(showJobForm || showQuestionForm)"
+                              :disabled="(!event.name || !event.location.name) && !(showJobForm || showQuestionForm || budgetForm.show)"
                               @click="() => {
-                                if (showJobForm || showQuestionForm) {
+                                if (showJobForm || showQuestionForm || budgetForm.show) {
                                   return
                                 }
 
@@ -943,7 +1108,7 @@
                               }"
                             >
                               <b-icon
-                                v-if="showJobForm || showQuestionForm"
+                                v-if="showJobForm || showQuestionForm || budgetForm.show"
                                 icon="exclamation-triangle"
                                 font-scale=".85"
                                 style="vertical-align: baseline"
@@ -955,7 +1120,7 @@
                             </b-button>
 
                             <b-tooltip
-                              :disabled="!(showJobForm || showQuestionForm)"
+                              :disabled="!(showJobForm || showQuestionForm || budgetForm.show)"
                               target="create-button"
                             >
                               Please complete or close the Roles or Questionnaire form
@@ -996,7 +1161,9 @@ import {
   addDays,
   isSameDay
 } from 'date-fns'
+
 import EventTemplateRepository from '../../repositories/events/templates'
+import formatterMixins from '../../mixins/formatters'
 import { apiClient } from '../../axios'
 
 const eventTemplateRepository = new EventTemplateRepository(apiClient)
@@ -1018,6 +1185,9 @@ export default ({
     ValidationObserver,
     ValidationProvider
   },
+  mixins: [
+    formatterMixins
+  ],
   data () {
     return {
       isFetchingTemplate: false,
@@ -1052,7 +1222,10 @@ export default ({
         questions: [],
         saveAsTemplate: false,
         templateName: '',
-        templateDescription: ''
+        templateDescription: '',
+        budget: {
+          breakdown: []
+        }
       },
       contactForm: {
         name: '',
@@ -1096,6 +1269,13 @@ export default ({
       showQuestionForm: false,
       questionForm: {
         label: ''
+      },
+      budgetForm: {
+        show: false,
+        details: {
+          type: '',
+          amount: 1
+        }
       },
       skillOptions: []
     }
@@ -1294,6 +1474,17 @@ export default ({
 
           form.set(`questions[${i}][label]`, question.label)
           form.set(`questions[${i}][type]`, question.type)
+        }
+      }
+
+      if (event.budget.breakdown.length > 0) {
+        const budgetBreakdown = event.budget.breakdown
+
+        for (let i = 0; i < budgetBreakdown.length; i++) {
+          const breakdownItem = budgetBreakdown[i]
+
+          form.set(`budget[breakdown][${i}][type]`, breakdownItem.type)
+          form.set(`budget[breakdown][${i}][amount]`, breakdownItem.amount)
         }
       }
 
@@ -1524,6 +1715,24 @@ export default ({
       const todayAfterOneMonth = addMonths(new Date(), 1)
 
       return date <= todayAfterOneMonth
+    },
+    addToBudgetBreakdown () {
+      const { type, amount } = this.budgetForm.details
+
+      this.event.budget.breakdown.push({
+        type,
+        amount
+      })
+
+      this.$refs.budgetObs.reset()
+      this.budgetForm.show = false
+      this.budgetForm.details = {
+        type: '',
+        amount: 1
+      }
+    },
+    removeFromBudget (index) {
+      this.event.budget.breakdown.splice(index, 1)
     }
   }
 })

@@ -47,6 +47,15 @@ const questionsSchema = Joi.array().items(
   })
 )
 
+const budgetBreakdownSchema = Joi.object({
+  type: Joi.string().required(),
+  amount: Joi.number().positive().precision(2).required(),
+})
+
+const budgetSchema = Joi.object({
+  breakdown: Joi.array().items(budgetBreakdownSchema).default([])
+})
+
 const createEventValidator = Joi.object({
   name: Joi.string().trim().max(100).required(),
   description: Joi.string().trim().empty('').max(5000),
@@ -70,6 +79,7 @@ const createEventValidator = Joi.object({
     })
   ),
   questions: questionsSchema,
+  budget: budgetSchema,
   saveAsTemplate: Joi.boolean().default(false),
   templateName: Joi.string().trim().max(100),
   templateDescription: Joi.string().trim().empty('').max(5000),

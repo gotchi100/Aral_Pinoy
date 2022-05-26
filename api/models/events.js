@@ -2,6 +2,14 @@
 
 const mongoose = require('mongoose')
 
+function getAmount(value) {
+  return value / 1000
+}
+
+function setAmount(value) {
+  return value * 1000
+}
+
 const sdgQuestionSchema = new mongoose.Schema({
   label: String,
   type: {
@@ -89,13 +97,28 @@ const questionSchema = new mongoose.Schema({
   validateBeforeSave: false
 })
 
-function getMonetaryDonation(value) {
-  return value / 1000
-}
+const budgetBreakdownSchema  = new mongoose.Schema({
+  type: {
+    type: String
+  },
+  amount: {
+    type: Number,
+    get: getAmount,
+    set: setAmount
+  },
+}, {
+  _id: false,
+  validateBeforeSave: false
+})
 
-function setMonetaryDonation(value) {
-  return value * 1000
-}
+const budgetSchema = new mongoose.Schema({
+  breakdown: {
+    type: [budgetBreakdownSchema],
+  }
+}, {
+  _id: false,
+  validateBeforeSave: false
+})
 
 const schema = new mongoose.Schema({
   name: {
@@ -125,13 +148,13 @@ const schema = new mongoose.Schema({
       current: {
         type: Number,
         default: 0,
-        get: getMonetaryDonation,
-        set: setMonetaryDonation
+        get: getAmount,
+        set: setAmount
       },
       target: {
         type: Number,
-        get: getMonetaryDonation,
-        set: setMonetaryDonation
+        get: getAmount,
+        set: setAmount
       }
     }
   },
@@ -161,6 +184,9 @@ const schema = new mongoose.Schema({
   incidents : {
     type: [String],
     default: undefined
+  },
+  budget: {
+    type: budgetSchema
   }
 }, {
   id: false,
