@@ -7,9 +7,11 @@ const EventVolunteerModel = require('../../models/events/volunteers')
 const UserModel = require('../../models/users')
 
 const AGE_LABELS = {
-  BELOW_EIGHTEEN: 'Below 18',
-  EIGTEEN_TO_FIFTYNINE: '18-59',
-  SIXTY_AND_ABOVE: '60 and above'
+  BELOW_EIGHTEEN : 'Below 18',
+  EIGHTEEN_TO_THIRTY : '18-30',
+  THIRTY_ONE_TO_FORTY : '31-40',
+  FORTY_ONE_TO_FIFTY : '41-50',
+  FIFTY_ONE_AND_ABOVE: '51 and above'
 }
 
 const GENDER_LABELS = {
@@ -126,8 +128,10 @@ class ReportVolunteersController {
 
     const ageGroupMap = new Map([
       [AGE_LABELS.BELOW_EIGHTEEN, 0],
-      [AGE_LABELS.EIGTEEN_TO_FIFTYNINE, 0],
-      [AGE_LABELS.SIXTY_AND_ABOVE, 0]
+      [AGE_LABELS.EIGHTEEN_TO_THIRTY, 0],
+      [AGE_LABELS.THIRTY_ONE_TO_FORTY, 0],
+      [AGE_LABELS.FORTY_ONE_TO_FIFTY, 0],
+      [AGE_LABELS.FIFTY_ONE_AND_ABOVE, 0],
     ])
 
     const genderMap = new Map([
@@ -176,11 +180,19 @@ class ReportVolunteersController {
       return AGE_LABELS.BELOW_EIGHTEEN
     }
 
-    if (age < 60) {
-      return AGE_LABELS.EIGTEEN_TO_FIFTYNINE
+    if (age >= 18 && age <= 30) {
+      return AGE_LABELS.EIGHTEEN_TO_THIRTY
     }
 
-    return AGE_LABELS.SIXTY_AND_ABOVE
+    if (age >= 31 && age <= 40) {
+      return AGE_LABELS.THIRTY_ONE_TO_FORTY
+    }
+
+    if (age >= 41 && age <= 50) {
+      return AGE_LABELS.FORTY_ONE_TO_FIFTY
+    }
+
+    return AGE_LABELS.FIFTY_ONE_AND_ABOVE
   }
 }
 
