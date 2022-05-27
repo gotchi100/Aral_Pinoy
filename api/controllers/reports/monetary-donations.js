@@ -29,65 +29,100 @@ class ReportMonetaryDonationController {
 
     if (monetaryDonations.length === 0) {
       return {
-        monetaryDonations: {
+        monetaryDonationsByPerson: {
+          labels: [],
+          data: []
+        },
+        monetaryDonationsByCompany : {
           labels: [],
           data: []
         }
       }
     }
 
-    const donorAmountMap = new Map()
+    const donorAmountByPersonMap = new Map()
+    const donorAmountByCompanyMap = new Map()
 
     for (const monetaryDonation of monetaryDonations) {
-      let donor
+      const donorPerson = ReportMonetaryDonationController.resolveDonorByPerson(monetaryDonation.metadata)
+      const amountDonatedByPerson = donorAmountByPersonMap.get(donorPerson)
 
-      if (monetaryDonation.metadata !== undefined) {
-        donor = ReportMonetaryDonationController.resolveDonor(monetaryDonation.metadata.contactDetails)
+      if (amountDonatedByPerson === undefined) {
+        donorAmountByPersonMap.set(donorPerson, monetaryDonation.amount)
       } else {
-        donor = ANONYMOUS_DONOR
+        donorAmountByPersonMap.set(donorPerson, amountDonatedByPerson + monetaryDonation.amount)
       }
 
-      const amount = donorAmountMap.get(donor)
+      const donorCompany = ReportMonetaryDonationController.resolveDonorByCompany(monetaryDonation.metadata)
+      const amountDonatedByCompany = donorAmountByPersonMap.get(donorPerson)
 
-      if (amount === undefined) {
-        donorAmountMap.set(donor, monetaryDonation.amount)
+      if (amountDonatedByCompany === undefined) {
+        donorAmountByCompanyMap.set(donorCompany, monetaryDonation.amount)
       } else {
-        donorAmountMap.set(donor, amount + monetaryDonation.amount)
+        donorAmountByCompanyMap.set(donorCompany, amountDonatedByCompany + monetaryDonation.amount)
       }
     }
 
-    const monetaryDonationsLabels = []
-    const monetaryDonationsData = []
+    const monetaryDonationsByPersonLabels = []
+    const monetaryDonationsByPersonData = []
+    const monetaryDonationsByCompanyLabels = []
+    const monetaryDonationsByCompanyData = []
 
-    for (const [donor, amount] of donorAmountMap.entries()) {
-      monetaryDonationsLabels.push(donor)
-      monetaryDonationsData.push(amount)
+    for (const [donor, amount] of donorAmountByPersonMap.entries()) {
+      monetaryDonationsByPersonLabels.push(donor)
+      monetaryDonationsByPersonData.push(amount)
+    }
+
+    for (const [donor, amount] of donorAmountByCompanyMap.entries()) {
+      monetaryDonationsByCompanyLabels.push(donor)
+      monetaryDonationsByCompanyData.push(amount)
     }
 
     return {
-      monetaryDonations: {
-        labels: monetaryDonationsLabels,
-        data: monetaryDonationsData
+      monetaryDonationsByPerson: {
+        labels: monetaryDonationsByPersonLabels,
+        data: monetaryDonationsByPersonData
+      },
+      monetaryDonationsByCompany : {
+        labels: monetaryDonationsByCompanyLabels,
+        data: monetaryDonationsByCompanyData
       }
     }
   }
 
   /**
    * 
-   * @param {Object} contactDetails Contact details
+   * @param {Object} metadata Metadata
    * @returns {string}
    */
-  static resolveDonor(contactDetails) {
-    if (contactDetails === undefined) {
+  static resolveDonorByPerson(metadata) {
+    if (metadata === undefined) {
       return ANONYMOUS_DONOR
     }
 
-    if (contactDetails.companyName !== undefined) {
-      return contactDetails.companyName
+    const contactDetails = metadata.contactDetails
+
+    if (contactDetails !== undefined && contactDetails.firstName !== undefined && contactDetails.lastName !== undefined) {
+      return `${contactDetails.firstName} ${contactDetails.lastName}`
     }
 
-    if (contactDetails.firstName !== undefined && contactDetails.lastName !== undefined) {
-      return `${contactDetails.firstName} ${contactDetails.lastName}`
+    return ANONYMOUS_DONOR
+  }
+
+  /**
+   * 
+   * @param {Object} metadata Metadata
+   * @returns {string}
+   */
+  static resolveDonorByCompany(metadata) {
+    if (metadata === undefined) {
+      return ANONYMOUS_DONOR
+    }
+      
+    const contactDetails = metadata.contactDetails
+
+    if (contactDetails !== undefined && contactDetails.companyName !== undefined) {
+      return contactDetails.companyName
     }
 
     return ANONYMOUS_DONOR

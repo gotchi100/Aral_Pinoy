@@ -82,7 +82,10 @@
         </b-col>
       </b-row>
 
-      <b-row class="pb-3">
+      <b-row
+        v-if="report.isGenerated"
+        class="pb-3"
+      >
         <b-col cols="12">
           <b-card
             bg-variant="light"
@@ -144,8 +147,21 @@
                 class="py-4"
               >
                 <b-col cols="12">
+                  <h1 style="font-family:'Bebas Neue', cursive;">
+                    Report from
+                    {{ new Date(report.startDate).toLocaleString('en-us', { day: 'numeric', month: 'numeric', year: 'numeric' }) }}
+                    -
+                    {{ new Date(report.endDate).toLocaleString('en-us', { day: 'numeric', month: 'numeric', year: 'numeric' }) }}
+                  </h1>
+                </b-col>
+              </b-row>
+
+              <b-row
+                class="py-4"
+              >
+                <b-col cols="12">
                   <h2 style="font-family:'Bebas Neue', cursive;">
-                    Aral Pinoy Donations
+                    Donations by Company
                   </h2>
                 </b-col>
 
@@ -157,11 +173,56 @@
                     :height="600"
                     :width="600"
                     :chart-data="{
-                      labels: report.monetaryDonations.labels,
+                      labels: report.monetaryDonationsByCompany.labels,
                       datasets: [{
                         label: '',
-                        data: report.monetaryDonations.data,
-                        backgroundColor: report.monetaryDonations.backgroundColors,
+                        data: report.monetaryDonationsByCompany.data,
+                        backgroundColor: report.monetaryDonationsByCompany.backgroundColors,
+                      }]
+                    }"
+                    :options="{
+                      scales: {
+                        yAxes: {
+                          ticks: {
+                            min: 0,
+                            beginAtZero: true,
+                            precision: 0
+                          }
+                        }
+                      },
+                      responsive: true,
+                      plugins: {
+                        legend: {
+                          display: false
+                        },
+                      }
+                    }"
+                  />
+                </b-col>
+              </b-row>
+
+              <b-row
+                class="py-4"
+              >
+                <b-col cols="12">
+                  <h2 style="font-family:'Bebas Neue', cursive;">
+                    Donations by Individuals
+                  </h2>
+                </b-col>
+
+                <b-col
+                  class="d-flex w-100 justify-content-center"
+                  cols="12"
+                >
+                  <bar-chart
+                    :height="600"
+                    :width="600"
+                    :chart-data="{
+                      labels: report.monetaryDonationsByPerson.labels,
+                      datasets: [{
+                        label: '',
+                        data: report.monetaryDonationsByPerson.data,
+                        backgroundColor: report.monetaryDonationsByPerson.backgroundColors,
                       }]
                     }"
                     :options="{
@@ -226,7 +287,14 @@ export default {
         //     data: [1234, 3333, 7601]
         //   }]
         // },
-        monetaryDonations: {
+        isGenerated: false,
+        startDate: today,
+        endDate: today,
+        monetaryDonationsByCompany: {
+          labels: [],
+          data: []
+        },
+        monetaryDonationsByPerson: {
           labels: [],
           data: []
         }
@@ -257,6 +325,10 @@ export default {
       const endDate = this.endDate.toJSON()
 
       this.isGeneratingReport = true
+      this.report.isGenerated = false
+
+      this.report.startDate = startDate
+      this.report.endDate = endDate
 
       try {
         const { results } = await reportRepository.getMonetaryDonations({
@@ -264,15 +336,21 @@ export default {
           end: endDate
         })
 
-        this.report.monetaryDonations = results.monetaryDonations
-
-        const backgroundColors = randomColor({
+        this.report.monetaryDonationsByCompany = results.monetaryDonationsByCompany
+        this.report.monetaryDonationsByCompany.backgroundColors = randomColor({
           hue: 'random',
           luminosity: 'dark',
-          count: results.monetaryDonations.labels.length
+          count: results.monetaryDonationsByCompany.labels.length
         })
 
-        this.report.monetaryDonations.backgroundColors = backgroundColors
+        this.report.monetaryDonationsByPerson = results.monetaryDonationsByPerson
+        this.report.monetaryDonationsByPerson.backgroundColors = randomColor({
+          hue: 'random',
+          luminosity: 'dark',
+          count: results.monetaryDonationsByPerson.labels.length
+        })
+
+        this.report.isGenerated = true
       } finally {
         this.isGeneratingReport = false
       }
