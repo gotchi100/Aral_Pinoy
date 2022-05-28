@@ -174,15 +174,19 @@ class ReportSdgsController {
         data: []
       }]
     }
-    const noPovertyReverseLabelMap = sdgQuestionReverseLabelMap.get('#1 No Poverty')
+    const noPovertyQuestionCounterMap = sdgQuestionCounterMap.get('#1 No Poverty')
 
-    for (const [questionIndex, answerCounterMap] of sdgQuestionCounterMap.get('#1 No Poverty').entries()) {
-      const label = `Q${questionIndex + 1}`
+    if (noPovertyQuestionCounterMap !== undefined) {
+      const noPovertyReverseLabelMap = sdgQuestionReverseLabelMap.get('#1 No Poverty')
 
-      noPovertySdgEvaluation.labels.push(label)
-      noPovertySdgEvaluation.reverseLabelMap[label] = noPovertyReverseLabelMap.get(questionIndex)
-      noPovertySdgEvaluation.datasets[0].data.push(answerCounterMap.get('Yes'))
-      noPovertySdgEvaluation.datasets[1].data.push(answerCounterMap.get('No'))
+      for (const [questionIndex, answerCounterMap] of sdgQuestionCounterMap.get('#1 No Poverty').entries()) {
+        const label = `Q${questionIndex + 1}`
+
+        noPovertySdgEvaluation.labels.push(label)
+        noPovertySdgEvaluation.reverseLabelMap[label] = noPovertyReverseLabelMap.get(questionIndex)
+        noPovertySdgEvaluation.datasets[0].data.push(answerCounterMap.get('Yes'))
+        noPovertySdgEvaluation.datasets[1].data.push(answerCounterMap.get('No'))
+      }
     }
 
     const qualityEducationSdgEvaluation = {
@@ -196,15 +200,19 @@ class ReportSdgsController {
         data: []
       }]
     }
-    const qualityEducationReverseLabelMap = sdgQuestionReverseLabelMap.get('#4 Quality Education')
+    const qualityEducationQuestionCounterMap = sdgQuestionCounterMap.get('#4 Quality Education')
 
-    for (const [questionIndex, answerCounterMap] of sdgQuestionCounterMap.get('#4 Quality Education').entries()) {
-      const label = `Q${questionIndex + 1}`
+    if (qualityEducationQuestionCounterMap !== undefined) {
+      const qualityEducationReverseLabelMap = sdgQuestionReverseLabelMap.get('#4 Quality Education')
 
-      qualityEducationSdgEvaluation.labels.push(label)
-      qualityEducationSdgEvaluation.reverseLabelMap[label] = qualityEducationReverseLabelMap.get(questionIndex)
-      qualityEducationSdgEvaluation.datasets[0].data.push(answerCounterMap.get('Yes'))
-      qualityEducationSdgEvaluation.datasets[1].data.push(answerCounterMap.get('No'))
+      for (const [questionIndex, answerCounterMap] of sdgQuestionCounterMap.get('#4 Quality Education').entries()) {
+        const label = `Q${questionIndex + 1}`
+
+        qualityEducationSdgEvaluation.labels.push(label)
+        qualityEducationSdgEvaluation.reverseLabelMap[label] = qualityEducationReverseLabelMap.get(questionIndex)
+        qualityEducationSdgEvaluation.datasets[0].data.push(answerCounterMap.get('Yes'))
+        qualityEducationSdgEvaluation.datasets[1].data.push(answerCounterMap.get('No'))
+      }
     }
 
     const climateActionSdgEvaluation = {
@@ -218,15 +226,19 @@ class ReportSdgsController {
         data: []
       }]
     }
-    const climateActionReverseLabelMap = sdgQuestionReverseLabelMap.get('#13 Climate Action')
+    const climateActionQuestionCounterMap = sdgQuestionCounterMap.get('#13 Climate Action')
 
-    for (const [questionIndex, answerCounterMap] of sdgQuestionCounterMap.get('#13 Climate Action').entries()) {
-      const label = `Q${questionIndex + 1}`
+    if (climateActionQuestionCounterMap !== undefined) {
+      const climateActionReverseLabelMap = sdgQuestionReverseLabelMap.get('#13 Climate Action')
 
-      climateActionSdgEvaluation.labels.push(label)
-      climateActionSdgEvaluation.reverseLabelMap[label] = climateActionReverseLabelMap.get(questionIndex)
-      climateActionSdgEvaluation.datasets[0].data.push(answerCounterMap.get('Yes'))
-      climateActionSdgEvaluation.datasets[1].data.push(answerCounterMap.get('No'))
+      for (const [questionIndex, answerCounterMap] of sdgQuestionCounterMap.get('#13 Climate Action').entries()) {
+        const label = `Q${questionIndex + 1}`
+
+        climateActionSdgEvaluation.labels.push(label)
+        climateActionSdgEvaluation.reverseLabelMap[label] = climateActionReverseLabelMap.get(questionIndex)
+        climateActionSdgEvaluation.datasets[0].data.push(answerCounterMap.get('Yes'))
+        climateActionSdgEvaluation.datasets[1].data.push(answerCounterMap.get('No'))
+      }
     }
 
     return {
