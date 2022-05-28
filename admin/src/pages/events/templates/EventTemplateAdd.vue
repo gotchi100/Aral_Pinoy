@@ -133,12 +133,11 @@
                             >
                               <b-form-input
                                 v-model="event.goals.monetaryDonation"
-                                type="number"
-                                step="100"
                                 placeholder="Enter the required amount for the Event"
+                                :formatter="toCurrency"
                                 lazy-formatter
-                                :formatter="validateFloat"
                                 required
+                                @focus="event.goals.monetaryDonation = fromCurrencyToNumber(event.goals.monetaryDonation)"
                               />
                             </b-form-group>
                           </b-col>
@@ -598,6 +597,7 @@ import {
   isSameDay
 } from 'date-fns'
 
+import formatterMixins from '../../../mixins/formatters'
 import EventTemplateRepository from '../../../repositories/events/templates'
 import { apiClient } from '../../../axios'
 
@@ -619,6 +619,9 @@ export default ({
     ValidationObserver,
     ValidationProvider
   },
+  mixins: [
+    formatterMixins
+  ],
   data () {
     return {
       nextMonth,
@@ -750,7 +753,7 @@ export default ({
         name: event.name,
         description: event.description,
         goals: {
-          monetaryDonation: event.goals.monetaryDonation
+          monetaryDonation: this.fromCurrencyToNumber(event.goals.monetaryDonation)
         }
       }
 
@@ -817,11 +820,6 @@ export default ({
       const [hours, minutes] = time.split(':')
 
       this.event.date.end = new Date(year, month, day, hours, minutes, 0, 0)
-    },
-    validateFloat (value) {
-      const parsedValue = parseFloat(value)
-
-      return isNaN(parsedValue) ? '0.00' : parsedValue.toFixed(2)
     },
     validatePositive (value) {
       const parsedValue = parseInt(value)

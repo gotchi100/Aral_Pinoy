@@ -27,6 +27,15 @@ const isNumber = v.compile({
   }
 })
 
+const isPesoCurrency = v.compile({
+  value: {
+    type: 'currency',
+    currencySymbol: '₱'
+  }
+})
+
+const pesoCurrencyRegex = /,|₱/g
+
 export default {
   methods: {
     toUpperCase (value) {
@@ -64,6 +73,35 @@ export default {
       }
 
       return Number(value)
+    },
+    toCurrency (value) {
+      if (typeof value === 'string' && isPesoCurrency({ value }) === true) {
+        return value
+      }
+
+      if (isNumber({ value }) !== true) {
+        return 0
+      }
+
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'PHP'
+      }).format(value)
+    },
+    fromCurrencyToNumber (value) {
+      if (isNumber({ value }) === true) {
+        return value
+      }
+
+      if (typeof value !== 'string') {
+        return 0
+      }
+
+      if (isPesoCurrency({ value }) !== true) {
+        return 0
+      }
+
+      return Number(value.replace(pesoCurrencyRegex, ''))
     }
   }
 }

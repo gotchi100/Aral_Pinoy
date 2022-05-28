@@ -425,12 +425,11 @@
                                 >
                                   <b-form-input
                                     v-model="event.goals.monetaryDonation"
-                                    type="number"
-                                    step="100"
                                     placeholder="Enter the required amount for the Event"
+                                    :formatter="toCurrency"
                                     lazy-formatter
-                                    :formatter="validateFloat"
                                     required
+                                    @focus="event.goals.monetaryDonation = fromCurrencyToNumber(event.goals.monetaryDonation)"
                                   />
                                 </b-form-group>
                               </b-col>
@@ -463,12 +462,12 @@
                                 striped
                                 primary-key="item.type"
                               >
-                                <template #cell(amount)="{ value }">
+                                <template #cell(amount)="{ value: amount }">
                                   {{
                                     new Intl.NumberFormat('en-us', {
                                       style: 'currency',
                                       currency: 'PHP'
-                                    }).format(value)
+                                    }).format(amount)
                                   }}
                                 </template>
 
@@ -550,12 +549,11 @@
                                               <b-form-input
                                                 id="input-budget-breakdown-amount"
                                                 v-model="budgetForm.details.amount"
-                                                type="number"
-                                                step="100"
                                                 lazy-formatter
-                                                :formatter="toPositiveNumber"
+                                                :formatter="toCurrency"
                                                 :state="getValidationState(validationContext)"
                                                 aria-describedby="input-budget-breakdown-amount-feedback"
+                                                @focus="budgetForm.details.amount = fromCurrencyToNumber(budgetForm.details.amount)"
                                               />
 
                                               <b-form-invalid-feedback id="input-budget-breakdown-amount-feedback">
@@ -1383,7 +1381,7 @@ export default ({
         }
 
         if (eventTemplate.goals?.monetaryDonation) {
-          this.event.goals.monetaryDonation = eventTemplate.goals.monetaryDonation
+          this.event.goals.monetaryDonation = this.toCurrency(eventTemplate.goals.monetaryDonation)
         }
 
         if (Array.isArray(eventTemplate.sdgIds)) {
@@ -1415,7 +1413,7 @@ export default ({
       form.set('location[name]', event.location.name)
       form.set('date[start]', new Date(event.date.start).toISOString())
       form.set('date[end]', new Date(event.date.end).toISOString())
-      form.set('goals[monetaryDonation]', parseFloat(event.goals.monetaryDonation))
+      form.set('goals[monetaryDonation]', this.fromCurrencyToNumber(event.goals.monetaryDonation))
 
       if (event.saveAsTemplate === true) {
         form.set('templateName', event.templateName)
@@ -1529,11 +1527,6 @@ export default ({
       const [hours, minutes] = time.split(':')
 
       this.event.date.end = new Date(year, month, day, hours, minutes, 0, 0)
-    },
-    validateFloat (value) {
-      const parsedValue = parseFloat(value)
-
-      return isNaN(parsedValue) ? '0.00' : parsedValue.toFixed(2)
     },
     validatePositive (value) {
       const parsedValue = parseInt(value)
@@ -1721,7 +1714,7 @@ export default ({
 
       this.event.budget.breakdown.push({
         type,
-        amount
+        amount: this.fromCurrencyToNumber(amount)
       })
 
       this.$refs.budgetObs.reset()

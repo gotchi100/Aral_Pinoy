@@ -110,9 +110,21 @@
             <b-form-input
               id="donation-form-amount"
               v-model="amount"
-              type="number"
-              :formatter="formatAmount"
+              :formatter="toCurrency"
+              lazy-formatter
+              required
+              list="donation-form-datalist"
+              @focus="amount = fromCurrencyToNumber(amount)"
             />
+
+            <datalist id="donation-form-datalist">
+              <option
+                v-for="(choice, index) in amountChoices"
+                :key="index"
+              >
+                {{ choice }}
+              </option>
+            </datalist>
           </b-col>
         </b-row>
 
@@ -139,11 +151,15 @@ import { uid } from 'uid'
 import PaymayaSdkClient from 'paymaya-js-sdk'
 
 import { apiClient } from '../axios'
+import formatterMixins from '../mixins/formatters'
 
 import config from '../../config'
 
 export default {
   name: 'EventDonationModal',
+  mixins: [
+    formatterMixins
+  ],
   props: {
     event: {
       required: true,
@@ -168,7 +184,14 @@ export default {
           email: ''
         }
       },
-      amount: 100
+      amount: this.toCurrency(100),
+      amountChoices: [
+        500,
+        1000,
+        2000,
+        5000,
+        10000
+      ]
     }
   },
   computed: {
@@ -248,14 +271,14 @@ export default {
       await apiClient.post('event-donations', {
         userId,
         eventId,
-        amount: this.amount,
+        amount: this.fromCurrencyToNumber(this.amount),
         referenceNumber: requestReferenceNumber,
         metadata
       })
     },
     async createCheckout (requestReferenceNumber) {
       const totalAmount = {
-        value: this.amount,
+        value: this.fromCurrencyToNumber(this.amount),
         currency: 'PHP'
       }
 
@@ -286,7 +309,7 @@ export default {
         name: `Aral Pinoy - ${event.name}`,
         code: event._id,
         totalAmount: {
-          value: this.amount
+          value: this.fromCurrencyToNumber(this.amount)
         }
       }]
 
@@ -319,19 +342,6 @@ export default {
         requestReferenceNumber,
         metadata
       })
-    },
-    formatAmount (value) {
-      const parsedValue = parseFloat(value)
-
-      if (isNaN(parsedValue)) {
-        return 1
-      }
-
-      if (parsedValue < 1) {
-        return 1
-      }
-
-      return Number(parsedValue.toFixed(2))
     }
   }
 }
