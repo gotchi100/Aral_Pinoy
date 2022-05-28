@@ -118,100 +118,157 @@
               <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">
                 SDG Campaign
               </h2>
-              <b-row>
-                <b-col>
-                  <b-card
-                    style="margin-left:100px; margin-bottom:20px; width: 250px; height:250px;"
-                    img-src="https://cdn.iconscout.com/icon/free/png-256/chart-growth-1913955-1624750.png"
-                    img-alt="Card image"
-                    img-top
-                  >
-                    <b-row>
-                      <label
-                        for="input-small"
-                        style="font-family:'Bebas Neue', cursive;"
-                      >No Poverty</label>
-                    </b-row>
-                    <b-row>
-                      <b-button
-                        v-if="isDisabled"
-                        to="/edit-sdg1"
-                      >
-                        SDG #1
-                      </b-button>
-                    </b-row>
-                  </b-card>
-                </b-col>
-                <b-col>
-                  <b-card
-                    style="margin-left:50px; margin-right:50px; margin-bottom:20px; width: 250px; height:250px;"
-                    img-src="https://cdn.iconscout.com/icon/free/png-256/chart-growth-1913955-1624750.png"
-                    img-alt="Card image"
-                    img-top
-                  >
-                    <b-row>
-                      <label
-                        for="input-small"
-                        style="font-family:'Bebas Neue', cursive;"
-                      >Quality Education</label>
-                    </b-row>
-                    <b-row>
-                      <b-button
-                        v-if="isDisabled"
-                        to="/edit-sdg4"
-                      >
-                        SDG #4
-                      </b-button>
-                    </b-row>
-                  </b-card>
-                </b-col>
-                <b-col>
-                  <b-card
-                    style="margin-right:100px; margin-bottom:20px; width: 250px; height:250px;"
-                    img-src="https://cdn.iconscout.com/icon/free/png-256/chart-growth-1913955-1624750.png"
-                    img-alt="Card image"
-                    img-top
-                  >
-                    <b-row>
-                      <label
-                        for="input-small"
-                        style="font-family:'Bebas Neue', cursive;"
-                      >Climate Action</label>
-                    </b-row>
-                    <b-row>
-                      <b-button
-                        v-if="isDisabled"
-                        to="/edit-sdg13"
-                      >
-                        SDG #13
-                      </b-button>
-                    </b-row>
-                  </b-card>
-                </b-col>
-              </b-row>
-              <b-row>
-                <b-col cols="10" />
-                <b-col>
-                  <b-button
-                    v-show="!isDisabled"
-                    style="margin-top:60px;"
-                    pill
-                    variant="danger"
-                    @click="isDisabled = true"
-                  >
-                    Edit SDG
-                  </b-button>
-                  <b-button
-                    v-show="isDisabled"
-                    style="margin-top:60px;"
-                    pill
-                    variant="danger"
-                    @click="isDisabled = false"
-                  >
-                    Cancel
-                  </b-button>
-                </b-col>
-              </b-row>
+
+              <b-skeleton-wrapper :loading="report.isLoading">
+                <template #loading>
+                  <b-spinner
+                    class="my-5"
+                    style="width: 10rem; height: 10rem;"
+                  />
+                </template>
+
+                <div v-if="!report.isLoading">
+                  <b-row>
+                    <b-col
+                      cols="12"
+                      md="4"
+                    >
+                      <bar-chart
+                        :height="400"
+                        :chart-data="{
+                          labels: report.noPovertySdgEvaluation.labels,
+                          datasets: [{
+                            ...report.noPovertySdgEvaluation.datasets[0],
+                            backgroundColor: [
+                              'rgb(54, 235, 151)',
+                            ],
+                          }, {
+                            ...report.noPovertySdgEvaluation.datasets[1],
+                            backgroundColor: [
+                              'rgb(255, 99, 132)',
+                            ],
+                          }]
+                        }"
+                        :options="{
+                          scales: {
+                            yAxes: {
+                              ticks: {
+                                min: 0,
+                                beginAtZero: true,
+                                precision: 0
+                              }
+                            }
+                          },
+                          responsive: true,
+                          plugins: {
+                            title: {
+                              display: true,
+                              text: '#1 No Poverty'
+                            },
+                            tooltip: {
+                              callbacks: {
+                                title: handleSdgChartTooltip.bind(this, 'noPovertySdgEvaluation')
+                              }
+                            }
+                          }
+                        }"
+                      />
+                    </b-col>
+
+                    <b-col
+                      cols="12"
+                      md="4"
+                    >
+                      <bar-chart
+                        :height="400"
+                        :chart-data="{
+                          labels: report.qualityEducationSdgEvaluation.labels,
+                          datasets: [{
+                            ...report.qualityEducationSdgEvaluation.datasets[0],
+                            backgroundColor: [
+                              'rgb(54, 235, 151)',
+                            ],
+                          }, {
+                            ...report.qualityEducationSdgEvaluation.datasets[1],
+                            backgroundColor: [
+                              'rgb(255, 99, 132)',
+                            ],
+                          }]
+                        }"
+                        :options="{
+                          scales: {
+                            yAxes: {
+                              ticks: {
+                                min: 0,
+                                beginAtZero: true,
+                                precision: 0
+                              }
+                            }
+                          },
+                          responsive: true,
+                          plugins: {
+                            title: {
+                              display: true,
+                              text: '#4 Quality Education'
+                            },
+                            tooltip: {
+                              callbacks: {
+                                title: handleSdgChartTooltip.bind(this, 'qualityEducationSdgEvaluation')
+                              }
+                            }
+                          }
+                        }"
+                      />
+                    </b-col>
+
+                    <b-col
+                      cols="12"
+                      md="4"
+                    >
+                      <bar-chart
+                        :height="400"
+                        :chart-data="{
+                          labels: report.climateActionSdgEvaluation.labels,
+                          datasets: [{
+                            ...report.climateActionSdgEvaluation.datasets[0],
+                            backgroundColor: [
+                              'rgb(54, 235, 151)',
+                            ],
+                          }, {
+                            ...report.climateActionSdgEvaluation.datasets[1],
+                            backgroundColor: [
+                              'rgb(255, 99, 132)',
+                            ],
+                          }]
+                        }"
+                        :options="{
+                          scales: {
+                            yAxes: {
+                              ticks: {
+                                min: 0,
+                                beginAtZero: true,
+                                precision: 0
+                              }
+                            }
+                          },
+                          responsive: true,
+                          plugins: {
+                            title: {
+                              display: true,
+                              text: '#13 Climate Action'
+                            },
+                            tooltip: {
+                              callbacks: {
+                                title: handleSdgChartTooltip.bind(this, 'climateActionSdgEvaluation')
+                              }
+                            }
+                          }
+                        }"
+                      />
+                    </b-col>
+                  </b-row>
+                </div>
+              </b-skeleton-wrapper>
             </b-container>
           </b-card>
         </b-col>
@@ -394,63 +451,40 @@ import {
   intervalToDuration,
   formatDuration
 } from 'date-fns'
+
+import BarChart from '../components/charts/Bar'
+
 import { apiClient } from '../axios'
 import InkindDonationRepository from '../repositories/inkind-donations'
 import EventDonationRepository from '../repositories/events/donations'
+import ReportRepository from '../repositories/reports'
 
 const logo = require('../assets/aralpinoywords.png')
 
 const inkindDonationRepository = new InkindDonationRepository(apiClient)
 const eventDonationRepository = new EventDonationRepository(apiClient)
+const reportRepository = new ReportRepository(apiClient)
+
+function splitByWordCount (sentence, count) {
+  const words = sentence.split(' ')
+  const result = []
+
+  while (words.length > 0) {
+    result.push(words.splice(0, count).join(' '))
+  }
+
+  return result
+}
 
 export default {
-  name: 'Register',
+  name: 'Dashboard',
+  components: {
+    BarChart
+  },
   data () {
     return {
       logo,
       isDisabled: false,
-      items: [
-        { date: '9/27/21', item: 'Unicef Shirt Large', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Unicef Shirt Medium', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Unicef Shirt Small', qty: 40, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Monggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Nissin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' },
-        { date: '9/27/21', item: 'FUnicef Shirt Large', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'FUnicef Shirt Medium', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'FUnicef Shirt Small', qty: 40, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Bonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Zissin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' },
-        { date: '9/27/21', item: 'Bnicef Shirt Large', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Bnicef Shirt Medium', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Bnicef Shirt Small', qty: 40, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Nonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Missin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' },
-        { date: '9/27/21', item: 'Ynicef Shirt Large', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Ynicef Shirt Medium', qty: 20, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Ynicef Shirt Small', qty: 40, ctgry: 'Apparel', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Yonggol Volume 2 Pencil', qty: 300, ctgry: 'School Material', bestbefore: 'N/A', expiration: 'N/A' },
-        { date: '9/27/21', item: 'Pissin Cup Noodles', qty: 250, ctgry: 'Food', bestbefore: '10/15/25', expiration: '10/20/25' }
-      ],
-      choices: [
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '3,500.50', payee: 'BPI Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '4,500.00', payee: 'BPI Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '13,500.00', payee: 'PayMaya Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '3,500.50', payee: 'PayMaya Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '3,500.50', payee: 'PayMaya Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '2,500.50', payee: 'BPI Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '1,500.50', payee: 'BPI Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '3,500.50', payee: 'BPI Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '3,500.50', payee: 'PayMaya Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '8,500.50', payee: 'BPI Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '3,500.50', payee: 'BPI Aral Pinoy Org Inc.' },
-        { event: 'Zatangas Coastal Cleanup', date: '09/27/21', amount: '3,500.50', payee: 'BPI Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '4,500.50', payee: 'BPI Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '3,500.50', payee: 'PayMaya Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '3,500.50', payee: 'PayMaya Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '3,500.50', payee: 'BPI Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '3,500.50', payee: 'BPI Aral Pinoy Org Inc.' },
-        { event: 'Batangas Coastal Cleanup', date: '09/27/21', amount: '3,500.50', payee: 'PayMaya Aral Pinoy Org Inc.' }
-      ],
       fields: [
         { key: 'date', label: 'Date', sortable: true, class: 'text-center' },
         { key: 'item', label: 'Item', sortable: true, class: 'text-center' },
@@ -459,26 +493,12 @@ export default {
         { key: 'bestbefore', label: 'Best Before', sortable: true, class: 'text-center' },
         { key: 'expiration', label: 'Expiration Date', sortable: true, class: 'text-center' }
       ],
-      fielders: [
-        { key: 'event', label: 'Event', sortable: true, class: 'text-center' },
-        { key: 'date', label: 'Date', sortable: true, class: 'text-center' },
-        { key: 'amount', label: 'Amount', sortable: true, class: 'text-center' },
-        { key: 'payee', label: 'Paid To', sortable: true, class: 'text-center' }
-      ],
       totalRows: 1,
       currentPage: 1,
       currentPages: 1,
       perPage: 5,
       perPages: 5,
-      pageOptions: [5, 10, { value: 100, text: 'Show a lot' }],
-      pageOptionss: [5, 10, { value: 100, text: 'Show a lot' }],
-      sortBy: '',
-      sortDesc: false,
-      sortDirection: 'asc',
       filter: null,
-      filters: null,
-      filterOn: [],
-      filterOns: [],
       isLoadingEvents: false,
       events: {
         results: []
@@ -499,48 +519,43 @@ export default {
           { key: 'contact', label: 'Contact' },
           { key: 'event', label: 'Event' }
         ]
+      },
+      report: {
+        isLoading: false,
+        noPovertySdgEvaluation: {
+          labels: [],
+          reverseLabelMap: {},
+          data: []
+        },
+        qualityEducationSdgEvaluation: {
+          labels: [],
+          reverseLabelMap: {},
+          data: []
+        },
+        climateActionSdgEvaluation: {
+          labels: [],
+          reverseLabelMap: {},
+          data: []
+        }
       }
     }
   },
   computed: {
-    ...mapGetters(['token']),
-    sortOption () {
-      // Create an options list from our fields
-      return this.fields
-        .filter(f => f.sortable)
-        .map(f => {
-          return { text: f.label, value: f.key }
-        })
-    },
-    sortOptions () {
-      // Create an options list from our fields
-      return this.fielders
-        .filter(f => f.sortable)
-        .map(f => {
-          return { text: f.label, value: f.key }
-        })
-    }
+    ...mapGetters(['token'])
   },
   created () {
-    inkindDonationRepository.setAuthorizationHeader(`Bearer ${this.token}`)
-    eventDonationRepository.setAuthorizationHeader(`Bearer ${this.token}`)
+    const authHeader = `Bearer ${this.token}`
+
+    inkindDonationRepository.setAuthorizationHeader(authHeader)
+    eventDonationRepository.setAuthorizationHeader(authHeader)
+    reportRepository.setAuthorizationHeader(authHeader)
 
     this.getEvents()
     this.getGroupedIkd()
     this.getEventDonations()
-  },
-  mounted () {
-    // Set the initial number of items
-    this.totalRows = this.items.length
-    this.totalRows = this.choices.length
+    this.getSdgsReport()
   },
   methods: {
-    onFiltered (filteredItems) {
-      // Trigger pagination to update the number of buttons/pages due to filtering
-      this.totalRows = filteredItems.length
-      this.currentPage = 1
-      this.currentPages = 1
-    },
     async getEvents () {
       this.isLoadingEvents = true
 
@@ -586,6 +601,22 @@ export default {
       })
 
       this.eventDonations.results = results
+    },
+    async getSdgsReport () {
+      this.report.isLoading = true
+
+      try {
+        const { results } = await reportRepository.getSdgs({
+          start: new Date(0).toJSON(),
+          end: new Date().toJSON()
+        })
+
+        this.report.noPovertySdgEvaluation = results.noPovertySdgEvaluation
+        this.report.qualityEducationSdgEvaluation = results.qualityEducationSdgEvaluation
+        this.report.climateActionSdgEvaluation = results.climateActionSdgEvaluation
+      } finally {
+        this.report.isLoading = false
+      }
     },
     getValueFromPath (object, path, defaultValue) {
       return get(object, path, defaultValue)
@@ -657,6 +688,14 @@ export default {
       const volunteerNoun = difference === 1 ? 'volunteer' : 'volunteers'
 
       return `We still need ${difference} ${volunteerNoun}!`
+    },
+    handleSdgChartTooltip (reportSdg, context) {
+      const sdgEvaluation = this.report[reportSdg]
+      const title = context[0].label
+
+      const reversedLabel = sdgEvaluation.reverseLabelMap[title]
+
+      return splitByWordCount(reversedLabel, 6)
     }
   }
 }

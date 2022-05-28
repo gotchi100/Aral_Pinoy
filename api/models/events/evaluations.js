@@ -26,7 +26,7 @@ const schema = new mongoose.Schema({
   }
 }, {
   collection: 'eventEvaluations',
-  validateBeforeSave: false
+  validateBeforeSave: false,
 })
 
 schema.index({

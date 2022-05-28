@@ -19,13 +19,17 @@ class ReportEventsController {
     } = dateRange
 
     const events = await EventModel.find({
-      status: 'ENDED',
-      'date.start': {
-        $gte: startOfDay(start),
-      },
-      'date.end': {
-        $lte: endOfDay(end),
-      },
+      $and: [{
+        status: 'ENDED',
+      }, {
+        'date.start': {
+          $lte: startOfDay(start),
+        }
+      }, {
+        'date.start': {
+          $gte: endOfDay(end),
+        }
+      }]
     }, ['_id', 'name', 'date'], {
       lean: true
     })
