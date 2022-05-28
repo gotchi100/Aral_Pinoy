@@ -212,11 +212,11 @@ export default {
       isGeneratingReport: false,
       report: {
         age: {
-          labels: ['Below 18', '18-59', '60 and above'],
+          labels: [],
           data: []
         },
         gender: {
-          labels: ['Male', 'Female'],
+          labels: [],
           data: []
         }
       }
