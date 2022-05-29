@@ -585,7 +585,7 @@
                     <b-row>
                       <b-col cols="12">
                         <b-table
-                          :items="getEventVolunteers"
+                          :items="getEventVolunteersForDetails"
                           :fields="eventVolunteers.fields"
                           :current-page="eventVolunteers.pagination.currentPage"
                           :per-page="eventVolunteers.pagination.perPage"
@@ -963,121 +963,194 @@
           </b-col>
         </b-row>
 
-        <hr>
+        <template v-if="updateEventStatus.status === 'ENDED'">
+          <hr>
 
-        <b-row>
-          <b-col cols="12">
-            <h5>
-              Incidents
-            </h5>
-          </b-col>
+          <b-row>
+            <b-col cols="12">
+              <h5>
+                Volunteers
+              </h5>
+            </b-col>
 
-          <b-col cols="12">
-            <b-table
-              :items="updateEventStatus.incidents"
-              :fields="['Incident', 'Action']"
-              show-empty
-              striped
-            >
-              <template #cell(Incident)="{ item }">
-                {{ item }}
-              </template>
+            <b-col cols="12">
+              <b-table
+                ref="updateEventVolunteersTable"
+                :items="getEventVolunteersForUpdate"
+                :fields="updateEventStatus.eventVolunteers.fields"
+                :current-page="updateEventStatus.eventVolunteers.pagination.currentPage"
+                :per-page="updateEventStatus.eventVolunteers.pagination.perPage"
+                show-empty
+                striped
+              >
+                <template #cell(volunteerName)="{ item }">
+                  {{ item.user.firstName }} {{ item.user.lastName }}
+                </template>
 
-              <template #cell(Action)="{ index }">
-                <b-button
-                  variant="danger"
-                  @click="removeIncident(index)"
-                >
-                  <b-icon icon="trash" />
-                </b-button>
-              </template>
-            </b-table>
-          </b-col>
-
-          <b-col cols="12">
-            <b-button
-              class="w-100 mb-3"
-              :disabled="updateEventStatus.showIncidentForm"
-              @click="updateEventStatus.showIncidentForm = true"
-            >
-              Add Incident
-            </b-button>
-
-            <b-collapse v-model="updateEventStatus.showIncidentForm">
-              <b-card>
-                <validation-observer v-slot="{ invalid }">
-                  <b-container>
-                    <b-row>
-                      <b-col cols="12">
-                        <b-form-group class="text-start">
-                          <label
-                            class="py-1"
-                            for="input-incident-message"
-                            style="font-family: 'Bebas Neue', cursive;"
-                          >
-                            Incident
-                          </label>
-
-                          <validation-provider
-                            v-slot="validationContext"
-                            :rules="{
-                              required: true
-                            }"
-                          >
-                            <b-form-input
-                              id="input-incident-message"
-                              v-model="updateEventStatus.incidentForm.message"
-                              placeholder="Explain the incident in detail"
-                              :state="getValidationState(validationContext)"
-                              aria-describedby="input-incident-message-feedback"
-                            />
-
-                            <b-form-invalid-feedback id="input-incident-message-feedback">
-                              {{ validationContext.errors[0] }}
-                            </b-form-invalid-feedback>
-                          </validation-provider>
-                        </b-form-group>
-                      </b-col>
-
-                      <b-col
-                        class="pt-3"
-                        cols="12"
+                <template #cell(absentCheck)="{ item }">
+                  <b-form-group class="pt-2">
+                    <div class="form-check">
+                      <input
+                        id="update-event-volunteer-absent-checkbox"
+                        class="form-check-input"
+                        type="checkbox"
+                        :checked="getAbsentUser(item).absent"
+                        @change="(e) => handleVolunteerAbsent(item, e.target.checked)"
                       >
-                        <b-row>
-                          <b-col
-                            cols="12"
-                            md="6"
-                          >
-                            <b-button
-                              class="w-100"
-                              @click="updateEventStatus.showIncidentForm = false"
-                            >
-                              Cancel
-                            </b-button>
-                          </b-col>
+                    </div>
+                  </b-form-group>
+                </template>
 
-                          <b-col
-                            cols="12"
-                            md="6"
-                          >
-                            <b-button
-                              class="w-100"
-                              variant="success"
-                              :disabled="invalid"
-                              @click="addIncident"
+                <template #cell(excusedCheck)="{ item }">
+                  <b-form-group class="pt-2">
+                    <div class="form-check">
+                      <input
+                        id="update-event-volunteer-absent-excused-checkbox"
+                        class="form-check-input"
+                        type="checkbox"
+                        :disabled="!getAbsentUser(item).absent"
+                        :checked="!getAbsentUser(item).shouldPenalize"
+                        @change="(e) => handleVolunteerAbsentExcused(item, e.target.checked)"
+                      >
+                    </div>
+                  </b-form-group>
+                </template>
+              </b-table>
+            </b-col>
+
+            <b-col
+              cols="12"
+              class="my-1 justify-content-md-center"
+            >
+              <b-pagination
+                v-model="updateEventStatus.eventVolunteers.pagination.currentPage"
+                :total-rows="updateEventStatus.eventVolunteers.total"
+                :per-page="updateEventStatus.eventVolunteers.pagination.perPage"
+                align="fill"
+                size="sm"
+                class="my-0"
+              />
+            </b-col>
+          </b-row>
+
+          <hr>
+
+          <b-row>
+            <b-col cols="12">
+              <h5>
+                Incidents
+              </h5>
+            </b-col>
+
+            <b-col cols="12">
+              <b-table
+                :items="updateEventStatus.incidents"
+                :fields="['Incident', 'Action']"
+                show-empty
+                striped
+              >
+                <template #cell(Incident)="{ item }">
+                  {{ item }}
+                </template>
+
+                <template #cell(Action)="{ index }">
+                  <b-button
+                    variant="danger"
+                    @click="removeIncident(index)"
+                  >
+                    <b-icon icon="trash" />
+                  </b-button>
+                </template>
+              </b-table>
+            </b-col>
+
+            <b-col cols="12">
+              <b-button
+                class="w-100 mb-3"
+                :disabled="updateEventStatus.showIncidentForm"
+                @click="updateEventStatus.showIncidentForm = true"
+              >
+                Add Incident
+              </b-button>
+
+              <b-collapse v-model="updateEventStatus.showIncidentForm">
+                <b-card>
+                  <validation-observer v-slot="{ invalid }">
+                    <b-container>
+                      <b-row>
+                        <b-col cols="12">
+                          <b-form-group class="text-start">
+                            <label
+                              class="py-1"
+                              for="input-incident-message"
+                              style="font-family: 'Bebas Neue', cursive;"
                             >
-                              Submit
-                            </b-button>
-                          </b-col>
-                        </b-row>
-                      </b-col>
-                    </b-row>
-                  </b-container>
-                </validation-observer>
-              </b-card>
-            </b-collapse>
-          </b-col>
-        </b-row>
+                              Incident
+                            </label>
+
+                            <validation-provider
+                              v-slot="validationContext"
+                              :rules="{
+                                required: true
+                              }"
+                            >
+                              <b-form-input
+                                id="input-incident-message"
+                                v-model="updateEventStatus.incidentForm.message"
+                                placeholder="Explain the incident in detail"
+                                :state="getValidationState(validationContext)"
+                                aria-describedby="input-incident-message-feedback"
+                              />
+
+                              <b-form-invalid-feedback id="input-incident-message-feedback">
+                                {{ validationContext.errors[0] }}
+                              </b-form-invalid-feedback>
+                            </validation-provider>
+                          </b-form-group>
+                        </b-col>
+
+                        <b-col
+                          class="pt-3"
+                          cols="12"
+                        >
+                          <b-row>
+                            <b-col
+                              cols="12"
+                              md="6"
+                            >
+                              <b-button
+                                class="w-100"
+                                @click="updateEventStatus.showIncidentForm = false"
+                              >
+                                Cancel
+                              </b-button>
+                            </b-col>
+
+                            <b-col
+                              cols="12"
+                              md="6"
+                            >
+                              <b-button
+                                class="w-100"
+                                variant="success"
+                                :disabled="invalid"
+                                @click="addIncident"
+                              >
+                                Submit
+                              </b-button>
+                            </b-col>
+                          </b-row>
+                        </b-col>
+                      </b-row>
+                    </b-container>
+                  </validation-observer>
+                </b-card>
+              </b-collapse>
+            </b-col>
+          </b-row>
+        </template>
+
+        <hr>
 
         <b-row>
           <b-col cols="12">
@@ -1323,7 +1396,22 @@ export default {
         incidentForm: {
           message: ''
         },
-        review: ''
+        review: '',
+        eventVolunteers: {
+          results: [],
+          total: 0,
+          pagination: {
+            perPage: 5,
+            currentPage: 1
+          },
+          fields: [
+            { key: 'volunteerName', label: 'Volunteer' },
+            { key: 'eventJob.name', label: 'Role' },
+            { key: 'absentCheck', label: 'Is Absent' },
+            { key: 'excusedCheck', label: 'Is Excused' }
+          ],
+          absentUsersMap: new Map()
+        }
       },
       updateEvent: {
         modal: false,
@@ -1517,9 +1605,11 @@ export default {
         this.isLoadingEvent = false
       }
     },
-    async getEventVolunteers (ctx) {
-      const perPage = this.eventVolunteers.pagination.perPage
-      const pageOffset = this.eventVolunteersPageOffset
+    async getEventVolunteers (params) {
+      const {
+        perPage,
+        pageOffset
+      } = params
 
       const { results, total } = await eventVolunteerRepository.list({
         eventId: this.eventId
@@ -1529,7 +1619,35 @@ export default {
         expand: true
       })
 
+      return {
+        results,
+        total
+      }
+    },
+    async getEventVolunteersForDetails (ctx) {
+      const perPage = this.eventVolunteers.pagination.perPage
+      const pageOffset = this.eventVolunteersPageOffset
+
+      const { results, total } = await this.getEventVolunteers({
+        perPage,
+        pageOffset
+      })
+
       this.eventVolunteers.total = total
+
+      return results
+    },
+    async getEventVolunteersForUpdate (ctx) {
+      const perPage = this.updateEventStatus.eventVolunteers.pagination.perPage
+      const pageOffset =
+      (this.updateEventStatus.eventVolunteers.pagination.currentPage - 1) * perPage
+
+      const { results, total } = await this.getEventVolunteers({
+        perPage,
+        pageOffset
+      })
+
+      this.updateEventStatus.eventVolunteers.total = total
 
       return results
     },
@@ -1631,6 +1749,24 @@ export default {
         }
       }
 
+      let absentUsers
+
+      if (this.updateEventStatus.eventVolunteers.absentUsersMap.size > 0) {
+        absentUsers = []
+        const absentUsersMap = this.updateEventStatus.eventVolunteers.absentUsersMap
+
+        for (const [userId, absentDetails] of absentUsersMap.entries()) {
+          if (!absentDetails.absent) {
+            continue
+          }
+
+          absentUsers.push({
+            userId,
+            shouldPenalize: absentDetails.shouldPenalize
+          })
+        }
+      }
+
       const review = this.updateEventStatus.review
 
       try {
@@ -1639,6 +1775,7 @@ export default {
           incidents,
           itemsUnused,
           expenses,
+          absentUsers,
           review
         }, {
           headers: {
@@ -1764,6 +1901,64 @@ export default {
       if (index !== -1) {
         this.documentation.results.splice(index, 1)
         this.documentation.total -= 1
+      }
+    },
+    getAbsentUser (eventVolunteer) {
+      const absentUsersMap = this.updateEventStatus.eventVolunteers.absentUsersMap
+
+      let absentUser = absentUsersMap.get(eventVolunteer.user._id)
+
+      if (absentUser === undefined) {
+        absentUser = {
+          absent: false,
+          shouldPenalize: true
+        }
+
+        absentUsersMap.set(eventVolunteer.user._id, absentUser)
+      }
+
+      return absentUser
+    },
+    handleVolunteerAbsent (eventVolunteer, isChecked) {
+      const absentUsersMap = this.updateEventStatus.eventVolunteers.absentUsersMap
+
+      let absentUser = absentUsersMap.get(eventVolunteer.user._id)
+
+      if (absentUser === undefined) {
+        absentUser = {
+          absent: false,
+          shouldPenalize: true
+        }
+
+        absentUsersMap.set(eventVolunteer.user._id, absentUser)
+      }
+
+      if (isChecked) {
+        absentUser.absent = true
+      } else {
+        absentUsersMap.delete(eventVolunteer.user._id)
+      }
+
+      this.$refs.updateEventVolunteersTable.refresh()
+    },
+    handleVolunteerAbsentExcused (eventVolunteer, isChecked) {
+      const absentUsersMap = this.updateEventStatus.eventVolunteers.absentUsersMap
+
+      let absentUser = absentUsersMap.get(eventVolunteer.user._id)
+
+      if (absentUser === undefined) {
+        absentUser = {
+          absent: false,
+          shouldPenalize: true
+        }
+
+        absentUsersMap.set(eventVolunteer.user._id, absentUser)
+      }
+
+      if (isChecked) {
+        absentUser.shouldPenalize = false
+      } else {
+        absentUser.shouldPenalize = true
       }
     }
   }

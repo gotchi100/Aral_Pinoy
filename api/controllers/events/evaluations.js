@@ -30,12 +30,16 @@ class EventEvaluationController {
     const eventVolunteer = await EventVolunteerModel.findOne({
       user: userId,
       event: eventId
-    }, ['_id', '__v', 'hasEventEvaluation'], {
+    }, ['_id', '__v', 'absent', 'hasEventEvaluation'], {
       lean: true
     })
 
     if (eventVolunteer === null) {
       throw new ConflictError('Invalid evaluation: User did not volunteer to this event')
+    }
+
+    if (eventVolunteer.absent) {
+      throw new ConflictError('absent')
     }
 
     if (eventVolunteer.hasEventEvaluation === true) {

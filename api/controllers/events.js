@@ -706,6 +706,7 @@ class EventsController {
       incidents,
       itemsUnused,
       expenses,
+      absentUsers,
       review
     } = details
 
@@ -792,6 +793,26 @@ class EventsController {
 
     if (Array.isArray(incidents) && incidents.length > 0) {
       $set.incidents = incidents
+    }
+
+    if (Array.isArray(absentUsers) && absentUsers.length > 0) {
+      const eventVolunteerUpdates = []
+
+      for (const absentUser of absentUsers) {
+        eventVolunteerUpdates.push(
+          EventVolunteerModel.updateOne({
+            event: event._id,
+            user: new Types.ObjectId(absentUser.userId)
+          }, {
+            $set: {
+              absent: true,
+              shouldPenalize: absentUser.shouldPenalize
+            }
+          })
+        )
+      }
+
+      await Promise.all(eventVolunteerUpdates)
     }
 
     const eventUpdateResults = await EventModel.updateOne({
