@@ -217,7 +217,7 @@
                 </b-row>
 
                 <b-row
-                  v-if="(event.budget !== undefined && event.budget.breakdown.length > 0) || eventExpenses.length > 0"
+                  v-if="hasBudget || eventExpenses.length > 0"
                   class="mb-3"
                 >
                   <b-col cols="12">
@@ -275,6 +275,7 @@
                           </b-container>
 
                           <b-container
+                            v-if="hasBudget"
                             fluid
                             style="width: 500px; height: 500px"
                           >
@@ -295,7 +296,7 @@
                                       },
                                       title: {
                                         display: true,
-                                        text: 'Proposed Expenses'
+                                        text: 'Proposed Budget'
                                       }
                                     }
                                   }"
@@ -639,6 +640,11 @@ export default {
 
       return Array.isArray(event.incidents) ? event.incidents : []
     },
+    hasBudget () {
+      const event = this.event
+
+      return event.budget !== undefined && event.budget.breakdown.length > 0
+    },
     usedItemsChart () {
       if (this.event === null) {
         return
@@ -850,7 +856,7 @@ export default {
       }
     },
     eventBudgetVsExpensesChart () {
-      const budgetBreakdown = this.event.budget.breakdown
+      const budgetBreakdown = this.hasBudget ? this.event.budget.breakdown : []
       const expenses = this.eventExpenses
 
       let totalBudget = 0

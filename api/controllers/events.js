@@ -723,9 +723,9 @@ class EventsController {
     const expenseTransactions = []
 
     if (Array.isArray(expenses) && expenses.length > 0) {
-      if (event.goals.monetaryDonation.current === 0) {
-        throw new ConflictError('monetary_donation_zero_balance')
-      }
+      // if (event.goals.monetaryDonation.current === 0) {
+      //   throw new ConflictError('monetary_donation_zero_balance')
+      // }
 
       for (const expense of expenses) {
         const sanitizedType = sanitize(expense.type)
