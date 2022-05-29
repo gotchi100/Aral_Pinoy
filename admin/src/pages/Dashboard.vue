@@ -491,7 +491,8 @@ import { get } from 'lodash'
 import {
   isSameDay,
   intervalToDuration,
-  formatDuration
+  formatDuration,
+  subDays
 } from 'date-fns'
 
 import BarChart from '../components/charts/Bar'
@@ -675,7 +676,7 @@ export default {
 
       try {
         const { results } = await reportRepository.getIncomeStatement({
-          start: new Date(0).toJSON(),
+          start: subDays(new Date(), 30).toJSON(),
           end: new Date().toJSON()
         })
 
