@@ -3,6 +3,7 @@
 const { startOfDay, endOfDay } = require('date-fns')
 
 const MonetaryDonationModel = require('../../models/monetary-donations')
+const EventDonationModel = require('../../models/events/donations')
 
 const ANONYMOUS_DONOR = 'Anonymous'
 
@@ -19,31 +20,158 @@ class ReportMonetaryDonationController {
       start,
       end
     } = dateRange
+
+    const totalDonationsByPerson = {
+      labels: [],
+      data: []
+    }
+    const totalDonationsByCompany = {
+      labels: [],
+      data: []
+    }
+    const monetaryDonationsByPerson = {
+      labels: [],
+      data: []
+    }
+    const monetaryDonationsByCompany = {
+      labels: [],
+      data: []
+    }
+    const eventDonationsByPerson = {
+      labels: [],
+      data: []
+    }
+    const eventDonationsByCompany = {
+      labels: [],
+      data: []
+    }
     
     const monetaryDonations = await MonetaryDonationModel.find({
       createdAt: {
         $gte: startOfDay(start),
         $lte: endOfDay(end)
       }
-    }, undefined)
+    }, ['amount', 'metadata'])
 
-    if (monetaryDonations.length === 0) {
-      return {
-        monetaryDonationsByPerson: {
-          labels: [],
-          data: []
-        },
-        monetaryDonationsByCompany : {
-          labels: [],
-          data: []
-        }
+    const eventDonations = await EventDonationModel.find({
+      createdAt: {
+        $gte: startOfDay(start),
+        $lte: endOfDay(end)
       }
+    }, ['amount', 'metadata'])
+
+    const totalDonationAmountByPersonMap = new Map()
+    const totalDonationAmountByCompanyMap = new Map()
+    
+    const {
+      donorAmountByPersonMap: monetaryDonationAmountByPersonMap,
+      donorAmountByCompanyMap: monetaryDonationAmountByCompanyMap
+    } = ReportMonetaryDonationController.resolveMonetaryDonationsDonorAmounts(monetaryDonations)
+
+    for (const [donor, amount] of monetaryDonationAmountByPersonMap.entries()) {
+      monetaryDonationsByPerson.labels.push(donor)
+      monetaryDonationsByPerson.data.push(amount)
+
+      let totalAmount = totalDonationAmountByPersonMap.get(donor)
+
+      if (totalAmount === undefined) {
+        totalAmount = amount
+      } else {
+        totalAmount += amount
+      }
+
+      totalDonationAmountByPersonMap.set(donor, totalAmount)
     }
 
+    for (const [donor, amount] of monetaryDonationAmountByCompanyMap.entries()) {
+      monetaryDonationsByCompany.labels.push(donor)
+      monetaryDonationsByCompany.data.push(amount)
+
+      let totalAmount = totalDonationAmountByCompanyMap.get(donor)
+
+      if (totalAmount === undefined) {
+        totalAmount = amount
+      } else {
+        totalAmount += amount
+      }
+
+      totalDonationAmountByCompanyMap.set(donor, totalAmount)
+    }
+
+    const {
+      donorAmountByPersonMap: eventDonationAmountByPersonMap,
+      donorAmountByCompanyMap: eventDonationAmountByCompanyMap
+    } = ReportMonetaryDonationController.resolveEventDonationsDonorAmounts(eventDonations)
+
+    for (const [donor, amount] of eventDonationAmountByPersonMap.entries()) {
+      eventDonationsByPerson.labels.push(donor)
+      eventDonationsByPerson.data.push(amount)
+
+      let totalAmount = totalDonationAmountByPersonMap.get(donor)
+
+      if (totalAmount === undefined) {
+        totalAmount = amount
+      } else {
+        totalAmount += amount
+      }
+      
+      totalDonationAmountByPersonMap.set(donor, totalAmount)
+    }
+
+    for (const [donor, amount] of eventDonationAmountByCompanyMap.entries()) {
+      eventDonationsByCompany.labels.push(donor)
+      eventDonationsByCompany.data.push(amount)
+
+      let totalAmount = totalDonationAmountByCompanyMap.get(donor)
+
+      if (totalAmount === undefined) {
+        totalAmount = amount
+      } else {
+        totalAmount += amount
+      }
+
+      totalDonationAmountByCompanyMap.set(donor, totalAmount)
+    }
+
+    for (const [donor, amount] of totalDonationAmountByPersonMap.entries()) {
+      totalDonationsByPerson.labels.push(donor)
+      totalDonationsByPerson.data.push(amount)
+    }
+
+    for (const [donor, amount] of totalDonationAmountByCompanyMap.entries()) {
+      totalDonationsByCompany.labels.push(donor)
+      totalDonationsByCompany.data.push(amount)
+    }
+
+    return {
+      totalDonationsByPerson,
+      totalDonationsByCompany,
+      monetaryDonationsByPerson,
+      monetaryDonationsByCompany,
+      eventDonationsByPerson,
+      eventDonationsByCompany
+    }
+  }
+
+  static resolveMonetaryDonationsDonorAmounts(monetaryDonations = []) {
     const donorAmountByPersonMap = new Map()
     const donorAmountByCompanyMap = new Map()
 
     for (const monetaryDonation of monetaryDonations) {
+      const donorCompany = ReportMonetaryDonationController.resolveDonorByCompany(monetaryDonation.metadata)
+
+      if (donorCompany !== undefined) {
+        const amountDonatedByCompany = donorAmountByCompanyMap.get(donorCompany)
+
+        if (amountDonatedByCompany === undefined) {
+          donorAmountByCompanyMap.set(donorCompany, monetaryDonation.amount)
+        } else {
+          donorAmountByCompanyMap.set(donorCompany, amountDonatedByCompany + monetaryDonation.amount)
+        }
+        
+        continue
+      }
+
       const donorPerson = ReportMonetaryDonationController.resolveDonorByPerson(monetaryDonation.metadata)
       const amountDonatedByPerson = donorAmountByPersonMap.get(donorPerson)
 
@@ -52,41 +180,46 @@ class ReportMonetaryDonationController {
       } else {
         donorAmountByPersonMap.set(donorPerson, amountDonatedByPerson + monetaryDonation.amount)
       }
-
-      const donorCompany = ReportMonetaryDonationController.resolveDonorByCompany(monetaryDonation.metadata)
-      const amountDonatedByCompany = donorAmountByPersonMap.get(donorPerson)
-
-      if (amountDonatedByCompany === undefined) {
-        donorAmountByCompanyMap.set(donorCompany, monetaryDonation.amount)
-      } else {
-        donorAmountByCompanyMap.set(donorCompany, amountDonatedByCompany + monetaryDonation.amount)
-      }
-    }
-
-    const monetaryDonationsByPersonLabels = []
-    const monetaryDonationsByPersonData = []
-    const monetaryDonationsByCompanyLabels = []
-    const monetaryDonationsByCompanyData = []
-
-    for (const [donor, amount] of donorAmountByPersonMap.entries()) {
-      monetaryDonationsByPersonLabels.push(donor)
-      monetaryDonationsByPersonData.push(amount)
-    }
-
-    for (const [donor, amount] of donorAmountByCompanyMap.entries()) {
-      monetaryDonationsByCompanyLabels.push(donor)
-      monetaryDonationsByCompanyData.push(amount)
     }
 
     return {
-      monetaryDonationsByPerson: {
-        labels: monetaryDonationsByPersonLabels,
-        data: monetaryDonationsByPersonData
-      },
-      monetaryDonationsByCompany : {
-        labels: monetaryDonationsByCompanyLabels,
-        data: monetaryDonationsByCompanyData
+      donorAmountByPersonMap,
+      donorAmountByCompanyMap
+    }
+  }
+
+  static resolveEventDonationsDonorAmounts(eventDonations = []) {
+    const donorAmountByPersonMap = new Map()
+    const donorAmountByCompanyMap = new Map()
+
+    for (const eventDonation of eventDonations) {
+      const donorCompany = ReportMonetaryDonationController.resolveDonorByCompany(eventDonation.metadata)
+
+      if (donorCompany !== undefined) {
+        const amountDonatedByCompany = donorAmountByCompanyMap.get(donorCompany)
+
+        if (amountDonatedByCompany === undefined) {
+          donorAmountByCompanyMap.set(donorCompany, eventDonation.amount)
+        } else {
+          donorAmountByCompanyMap.set(donorCompany, amountDonatedByCompany + eventDonation.amount)
+        }
+        
+        continue
       }
+
+      const donorPerson = ReportMonetaryDonationController.resolveDonorByPerson(eventDonation.metadata)
+      const amountDonatedByPerson = donorAmountByPersonMap.get(donorPerson)
+
+      if (amountDonatedByPerson === undefined) {
+        donorAmountByPersonMap.set(donorPerson, eventDonation.amount)
+      } else {
+        donorAmountByPersonMap.set(donorPerson, amountDonatedByPerson + eventDonation.amount)
+      }
+    }
+
+    return {
+      donorAmountByPersonMap,
+      donorAmountByCompanyMap
     }
   }
 
@@ -116,16 +249,16 @@ class ReportMonetaryDonationController {
    */
   static resolveDonorByCompany(metadata) {
     if (metadata === undefined) {
-      return ANONYMOUS_DONOR
+      return
     }
       
     const contactDetails = metadata.contactDetails
 
-    if (contactDetails !== undefined && contactDetails.companyName !== undefined) {
-      return contactDetails.companyName
+    if (contactDetails === undefined || contactDetails.companyName === undefined) {
+      return
     }
 
-    return ANONYMOUS_DONOR
+    return contactDetails.companyName
   }
 }
 

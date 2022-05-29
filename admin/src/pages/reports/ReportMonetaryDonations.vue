@@ -94,55 +94,6 @@
             <b-container
               fluid
             >
-              <!-- <b-row
-                class="py-4"
-              >
-                <b-col cols="12">
-                  <h2 style="font-family:'Bebas Neue', cursive;">
-                    Income Statement
-                  </h2>
-                </b-col>
-
-                <b-col
-                  class="d-flex w-100 justify-content-center"
-                  cols="12"
-                >
-                  <trend-chart
-                    :height="500"
-                    :width="500"
-                    :chart-data="{
-                      labels: report.incomeStatement.labels,
-                      datasets: [{
-                        label: 'Income',
-                        data: report.incomeStatement.dataset[0].data,
-                        borderColor: 'rgb(75, 192, 192)',
-                        backgroundColor: ['rgb(75, 192, 192)']
-                      }, {
-                        label: 'Expenses',
-                        data: report.incomeStatement.dataset[1].data,
-                        borderColor: 'rgb(192, 75, 75)',
-                        backgroundColor: ['rgb(192, 75, 75)']
-                      }]
-                    }"
-                    :options="{
-                      scales: {
-                        yAxes: {
-                          ticks: {
-                            beginAtZero: true,
-                          }
-                        }
-                      },
-                      responsive: true,
-                      plugins: {
-                        legend: {
-                          display: false
-                        },
-                      }
-                    }"
-                  />
-                </b-col>
-              </b-row> -->
-
               <b-row
                 class="py-4"
               >
@@ -161,7 +112,97 @@
               >
                 <b-col cols="12">
                   <h2 style="font-family:'Bebas Neue', cursive;">
-                    Donations by Company
+                    Total Donations by Company
+                  </h2>
+                </b-col>
+
+                <b-col
+                  class="d-flex w-100 justify-content-center"
+                  cols="12"
+                >
+                  <bar-chart
+                    :height="600"
+                    :width="600"
+                    :chart-data="{
+                      labels: report.totalDonationsByCompany.labels,
+                      datasets: [{
+                        label: '',
+                        data: report.totalDonationsByCompany.data,
+                        backgroundColor: report.totalDonationsByCompany.backgroundColors,
+                      }]
+                    }"
+                    :options="{
+                      scales: {
+                        yAxes: {
+                          ticks: {
+                            min: 0,
+                            beginAtZero: true,
+                            precision: 0
+                          }
+                        }
+                      },
+                      responsive: true,
+                      plugins: {
+                        legend: {
+                          display: false
+                        },
+                      }
+                    }"
+                  />
+                </b-col>
+              </b-row>
+
+              <b-row
+                class="py-4"
+              >
+                <b-col cols="12">
+                  <h2 style="font-family:'Bebas Neue', cursive;">
+                    Total Donations by Individuals
+                  </h2>
+                </b-col>
+
+                <b-col
+                  class="d-flex w-100 justify-content-center"
+                  cols="12"
+                >
+                  <bar-chart
+                    :height="600"
+                    :width="600"
+                    :chart-data="{
+                      labels: report.totalDonationsByPerson.labels,
+                      datasets: [{
+                        label: '',
+                        data: report.totalDonationsByPerson.data,
+                        backgroundColor: report.totalDonationsByPerson.backgroundColors,
+                      }]
+                    }"
+                    :options="{
+                      scales: {
+                        yAxes: {
+                          ticks: {
+                            min: 0,
+                            beginAtZero: true,
+                            precision: 0
+                          }
+                        }
+                      },
+                      responsive: true,
+                      plugins: {
+                        legend: {
+                          display: false
+                        },
+                      }
+                    }"
+                  />
+                </b-col>
+              </b-row>
+
+              <b-row
+                class="py-4"
+              >
+                <b-col cols="12">
+                  <h2 style="font-family:'Bebas Neue', cursive;">
+                    Monetary Donations by Company
                   </h2>
                 </b-col>
 
@@ -206,7 +247,7 @@
               >
                 <b-col cols="12">
                   <h2 style="font-family:'Bebas Neue', cursive;">
-                    Donations by Individuals
+                    Monetary Donations by Individuals
                   </h2>
                 </b-col>
 
@@ -223,6 +264,96 @@
                         label: '',
                         data: report.monetaryDonationsByPerson.data,
                         backgroundColor: report.monetaryDonationsByPerson.backgroundColors,
+                      }]
+                    }"
+                    :options="{
+                      scales: {
+                        yAxes: {
+                          ticks: {
+                            min: 0,
+                            beginAtZero: true,
+                            precision: 0
+                          }
+                        }
+                      },
+                      responsive: true,
+                      plugins: {
+                        legend: {
+                          display: false
+                        },
+                      }
+                    }"
+                  />
+                </b-col>
+              </b-row>
+
+              <b-row
+                class="py-4"
+              >
+                <b-col cols="12">
+                  <h2 style="font-family:'Bebas Neue', cursive;">
+                    Event Donations by Company
+                  </h2>
+                </b-col>
+
+                <b-col
+                  class="d-flex w-100 justify-content-center"
+                  cols="12"
+                >
+                  <bar-chart
+                    :height="600"
+                    :width="600"
+                    :chart-data="{
+                      labels: report.eventDonationsByCompany.labels,
+                      datasets: [{
+                        label: '',
+                        data: report.eventDonationsByCompany.data,
+                        backgroundColor: report.eventDonationsByCompany.backgroundColors,
+                      }]
+                    }"
+                    :options="{
+                      scales: {
+                        yAxes: {
+                          ticks: {
+                            min: 0,
+                            beginAtZero: true,
+                            precision: 0
+                          }
+                        }
+                      },
+                      responsive: true,
+                      plugins: {
+                        legend: {
+                          display: false
+                        },
+                      }
+                    }"
+                  />
+                </b-col>
+              </b-row>
+
+              <b-row
+                class="py-4"
+              >
+                <b-col cols="12">
+                  <h2 style="font-family:'Bebas Neue', cursive;">
+                    Event Donations by Individuals
+                  </h2>
+                </b-col>
+
+                <b-col
+                  class="d-flex w-100 justify-content-center"
+                  cols="12"
+                >
+                  <bar-chart
+                    :height="600"
+                    :width="600"
+                    :chart-data="{
+                      labels: report.eventDonationsByPerson.labels,
+                      datasets: [{
+                        label: '',
+                        data: report.eventDonationsByPerson.data,
+                        backgroundColor: report.eventDonationsByPerson.backgroundColors,
                       }]
                     }"
                     :options="{
@@ -290,11 +421,27 @@ export default {
         isGenerated: false,
         startDate: today,
         endDate: today,
+        totalDonationsByCompany: {
+          labels: [],
+          data: []
+        },
+        totalDonationsByPerson: {
+          labels: [],
+          data: []
+        },
         monetaryDonationsByCompany: {
           labels: [],
           data: []
         },
         monetaryDonationsByPerson: {
+          labels: [],
+          data: []
+        },
+        eventDonationsByCompany: {
+          labels: [],
+          data: []
+        },
+        eventDonationsByPerson: {
           labels: [],
           data: []
         }
@@ -336,6 +483,22 @@ export default {
           end: endDate
         })
 
+        // total donations
+        this.report.totalDonationsByCompany = results.totalDonationsByCompany
+        this.report.totalDonationsByCompany.backgroundColors = randomColor({
+          hue: 'random',
+          luminosity: 'dark',
+          count: results.monetaryDonationsByCompany.labels.length
+        })
+
+        this.report.totalDonationsByPerson = results.totalDonationsByPerson
+        this.report.totalDonationsByPerson.backgroundColors = randomColor({
+          hue: 'random',
+          luminosity: 'dark',
+          count: results.monetaryDonationsByPerson.labels.length
+        })
+
+        // monetary donations
         this.report.monetaryDonationsByCompany = results.monetaryDonationsByCompany
         this.report.monetaryDonationsByCompany.backgroundColors = randomColor({
           hue: 'random',
@@ -345,6 +508,21 @@ export default {
 
         this.report.monetaryDonationsByPerson = results.monetaryDonationsByPerson
         this.report.monetaryDonationsByPerson.backgroundColors = randomColor({
+          hue: 'random',
+          luminosity: 'dark',
+          count: results.monetaryDonationsByPerson.labels.length
+        })
+
+        // event donations
+        this.report.eventDonationsByCompany = results.eventDonationsByCompany
+        this.report.eventDonationsByCompany.backgroundColors = randomColor({
+          hue: 'random',
+          luminosity: 'dark',
+          count: results.monetaryDonationsByCompany.labels.length
+        })
+
+        this.report.eventDonationsByPerson = results.eventDonationsByPerson
+        this.report.eventDonationsByPerson.backgroundColors = randomColor({
           hue: 'random',
           luminosity: 'dark',
           count: results.monetaryDonationsByPerson.labels.length
