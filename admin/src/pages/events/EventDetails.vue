@@ -409,7 +409,7 @@
                       class="text-start"
                       style="font-family:'Bebas Neue', cursive;"
                     >
-                      Items for the Event
+                      Items
                     </h1>
 
                     <b-row>
@@ -463,6 +463,62 @@
                 </b-col>
               </b-row>
 
+              <b-row
+                v-if="event.budget !== undefined && event.budget.breakdown.length > 0"
+                class="py-4"
+              >
+                <b-col cols="12">
+                  <b-card style="border-radius: 20px;">
+                    <h1
+                      class="text-start"
+                      style="font-family:'Bebas Neue', cursive;"
+                    >
+                      Proposed Budget
+                    </h1>
+
+                    <b-row>
+                      <b-col cols="12">
+                        <b-table
+                          :items="event.budget.breakdown"
+                          :fields="eventBudget.fields"
+                          :current-page="eventBudget.pagination.currentPage"
+                          :per-page="eventBudget.pagination.perPage"
+                          show-empty
+                          responsive
+                          striped
+                          primary-key="type"
+                        >
+                          <template #cell(amount)="{ value }">
+                            {{
+                              new Intl.NumberFormat('en-us', {
+                                style: 'currency',
+                                currency: 'PHP'
+                              }).format(value)
+                            }}
+                          </template>
+                        </b-table>
+                      </b-col>
+                    </b-row>
+
+                    <b-row class="justify-content-md-center">
+                      <b-col
+                        cols="6"
+                        class="my-1"
+                      >
+                        <b-pagination
+                          v-model="eventBudget.pagination.currentPage"
+                          :total-rows="event.budget.breakdown.length"
+                          :per-page="eventBudget.pagination.perPage"
+                          align="fill"
+                          size="sm"
+                          class="my-0"
+                        />
+                      </b-col>
+                    </b-row>
+                  </b-card>
+                </b-col>
+              </b-row>
+
               <b-row class="py-4">
                 <b-col cols="12">
                   <b-card style="border-radius: 20px;">
@@ -470,7 +526,7 @@
                       class="text-start"
                       style="font-family:'Bebas Neue', cursive;"
                     >
-                      Expenses for the Event
+                      Expenses
                     </h1>
 
                     <b-row>
@@ -1168,6 +1224,16 @@ export default {
       showModal: false,
       currentPage: 1,
       canEndEvent: false,
+      eventBudget: {
+        pagination: {
+          perPage: 5,
+          currentPage: 1
+        },
+        fields: [
+          { key: 'amount', label: 'Amount' },
+          { key: 'type', label: 'Type of expense' }
+        ]
+      },
       eventVolunteers: {
         results: [],
         total: 0,
