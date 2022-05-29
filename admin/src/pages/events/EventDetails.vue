@@ -1601,6 +1601,15 @@ export default {
             }
           }
         }
+
+        if (event.budget !== undefined && event.budget.breakdown.length > 0) {
+          for (const item of event.budget.breakdown) {
+            this.updateEventStatus.expenses.push({
+              amount: item.amount,
+              type: item.type
+            })
+          }
+        }
       } finally {
         this.isLoadingEvent = false
       }
