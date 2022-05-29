@@ -79,6 +79,28 @@
                             </b-link>
                           </template>
 
+                          <template #cell(budget)="{ item }">
+                            <span v-if="item.event.budget !== undefined">
+                              {{
+                                new Intl.NumberFormat('en-us', {
+                                  style: 'currency',
+                                  currency: 'PHP'
+                                }).format(
+                                  getTotalAmountFromBreakdown(item.event.budget.breakdown)
+                                )
+                              }}
+                            </span>
+
+                            <span v-else>
+                              {{
+                                new Intl.NumberFormat('en-us', {
+                                  style: 'currency',
+                                  currency: 'PHP'
+                                }).format(0)
+                              }}
+                            </span>
+                          </template>
+
                           <template #cell(amount)="{ value }">
                             {{
                               new Intl.NumberFormat('en-us', {
@@ -145,7 +167,8 @@ export default {
         results: [],
         fields: [
           { key: 'event', label: 'Event' },
-          { key: 'amount', label: 'Amount' }
+          { key: 'budget', label: 'Proposed Amount' },
+          { key: 'amount', label: 'Actual Amount' }
         ],
         currentPage: 1,
         perPage: 5
@@ -185,6 +208,15 @@ export default {
       this.groupedExpenses.total = total
 
       return results
+    },
+    getTotalAmountFromBreakdown (breakdown) {
+      let total = 0
+
+      for (const item of breakdown) {
+        total += item.amount
+      }
+
+      return total
     },
     showEventExpenses (groupedExpense) {
       const {
