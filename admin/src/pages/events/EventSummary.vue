@@ -217,16 +217,93 @@
                 </b-row>
 
                 <b-row
-                  v-if="eventExpenses.length > 0"
+                  v-if="(event.budget !== undefined && event.budget.breakdown.length > 0) || eventExpenses.length > 0"
                   class="mb-3"
                 >
                   <b-col cols="12">
                     <b-card
-                      title="Expenses"
+                      title="Budget and Expenses"
                       style="text-align: left"
                     >
                       <b-row>
                         <b-col cols="12">
+                          <b-container fluid>
+                            <b-row
+                              class="py-5"
+                            >
+                              <b-col cols="12">
+                                <bar-chart
+                                  :height="250"
+                                  :chart-data="{
+                                    labels: eventBudgetVsExpensesChart.labels,
+                                    datasets: eventBudgetVsExpensesChart.datasets
+                                  }"
+                                  :options="{
+                                    datasets: {
+                                      bar: {
+                                        barPercentage: '0.25',
+                                      }
+                                    },
+                                    tooltips: {
+                                      enabled: false
+                                    },
+                                    elements: {
+                                      bar: {
+                                        borderWidth: 2,
+                                      }
+                                    },
+                                    scales: {
+                                      yAxes: {
+                                        ticks: {
+                                          min: 0,
+                                          beginAtZero: true,
+                                          precision: 0
+                                        }
+                                      },
+                                    },
+                                    responsive: true,
+                                    plugins: {
+                                      title: {
+                                        display: true,
+                                        text: 'Proposed vs Actual Amount'
+                                      }
+                                    }
+                                  }"
+                                />
+                              </b-col>
+                            </b-row>
+                          </b-container>
+
+                          <b-container
+                            fluid
+                            style="width: 500px; height: 500px"
+                          >
+                            <b-row>
+                              <b-col cols="12">
+                                <pie-chart
+                                  :height="100"
+                                  :width="100"
+                                  :chart-data="{
+                                    labels: eventBudgetChart.labels,
+                                    datasets: eventBudgetChart.datasets
+                                  }"
+                                  :options="{
+                                    responsive: true,
+                                    plugins: {
+                                      legend: {
+                                        position: 'top',
+                                      },
+                                      title: {
+                                        display: true,
+                                        text: 'Proposed Expenses'
+                                      }
+                                    }
+                                  }"
+                                />
+                              </b-col>
+                            </b-row>
+                          </b-container>
+
                           <b-container
                             fluid
                             style="width: 500px; height: 500px"
@@ -245,6 +322,10 @@
                                     plugins: {
                                       legend: {
                                         position: 'top',
+                                      },
+                                      title: {
+                                        display: true,
+                                        text: 'Actual Expenses'
                                       }
                                     }
                                   }"
@@ -716,6 +797,32 @@ export default {
 
       return goals
     },
+    eventBudgetChart () {
+      const budgetBreakdown = this.event.budget.breakdown
+
+      const backgroundColor = randomColor({
+        count: budgetBreakdown.length,
+        format: 'rgb'
+      })
+
+      const labels = []
+      const data = []
+
+      for (const item of budgetBreakdown) {
+        labels.push(item.type)
+        data.push(item.amount)
+      }
+
+      return {
+        labels,
+        datasets: [
+          {
+            backgroundColor,
+            data
+          }
+        ]
+      }
+    },
     eventExpensesChart () {
       const expenses = this.eventExpenses
 
@@ -738,6 +845,41 @@ export default {
           {
             backgroundColor,
             data
+          }
+        ]
+      }
+    },
+    eventBudgetVsExpensesChart () {
+      const budgetBreakdown = this.event.budget.breakdown
+      const expenses = this.eventExpenses
+
+      let totalBudget = 0
+      let totalExpenses = 0
+
+      for (const item of budgetBreakdown) {
+        totalBudget += item.amount
+      }
+
+      for (const expense of expenses) {
+        totalExpenses += expense.amount
+      }
+
+      return {
+        labels: [''],
+        datasets: [
+          {
+            label: 'Proposed Amount',
+            data: [totalBudget],
+            backgroundColor: [
+              'rgb(54, 235, 151)'
+            ]
+          },
+          {
+            label: 'Actual Amount',
+            data: [totalExpenses],
+            backgroundColor: [
+              'rgb(255, 99, 132)'
+            ]
           }
         ]
       }
