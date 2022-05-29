@@ -446,7 +446,9 @@ class EventsController {
       throw new NotFoundError(`Event does not exist: ${id}`)
     }
 
-    return event.toObject()
+    return event.toObject({
+      getters: true
+    })
   }
 
   static async update(id, event) {

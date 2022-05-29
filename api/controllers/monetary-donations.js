@@ -64,7 +64,8 @@ class MonetaryDonationController {
       return results.toObject({
         minimize: true,
         versionKey: false,
-        useProjection: true
+        useProjection: true,
+        getters: true
       })
     } catch (error) {
       if (error.code === 11000) {
