@@ -14,6 +14,12 @@ const SORT_ORDER_MAPPING = {
   desc: -1
 }
 
+function transformEventPopulation(event) {
+  return event.toObject({
+    getters: true
+  })
+}
+
 class EventExpenseController {
   static async list(options = {}) {
     const {
@@ -113,7 +119,8 @@ class EventExpenseController {
 
     const populatedResults = await EventModel.populate(aggregationResults[0], {
       path: 'event',
-      model: EventModel
+      model: EventModel,
+      transform: transformEventPopulation
     })
 
     return {

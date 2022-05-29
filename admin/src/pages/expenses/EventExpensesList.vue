@@ -167,8 +167,8 @@ export default {
         results: [],
         fields: [
           { key: 'event', label: 'Event' },
-          { key: 'budget', label: 'Proposed Amount' },
-          { key: 'amount', label: 'Actual Amount' }
+          { key: 'budget', label: 'Proposed Budget' },
+          { key: 'amount', label: 'Actual Expenses' }
         ],
         currentPage: 1,
         perPage: 5
@@ -221,12 +221,14 @@ export default {
     showEventExpenses (groupedExpense) {
       const {
         _id,
-        name
+        name,
+        budget
       } = groupedExpense.event
 
       this.expensesListModal.event = {
         _id,
         name,
+        budget,
         totalExpenses: groupedExpense.amount
       }
       this.expensesListModal.show = true

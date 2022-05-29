@@ -20,13 +20,74 @@
           </b-col>
         </b-row>
 
-        <b-row>
+        <template v-if="event.budget !== undefined">
+          <b-row class="pt-4">
+            <b-col cols="12">
+              <h4
+                style="font-family:'Bebas Neue', cursive;"
+                no-body
+              >
+                Proposed Budget:
+                {{
+                  new Intl.NumberFormat('en-us', {
+                    style: 'currency',
+                    currency: 'PHP'
+                  }).format(totalAmountFromBreakdown)
+                }}
+              </h4>
+            </b-col>
+          </b-row>
+
+          <b-row class="pt-4">
+            <b-col cols="12">
+              <b-table
+                :items="event.budget.breakdown"
+                :fields="budget.fields"
+                :current-page="budget.pagination.currentPage"
+                :per-page="5"
+                stacked="md"
+                style="background:white"
+                show-empty
+                small
+                primary-key="_id"
+                hover
+              >
+                <template #cell(amount)="{ value }">
+                  {{
+                    new Intl.NumberFormat('en-us', {
+                      style: 'currency',
+                      currency: 'PHP'
+                    }).format(value)
+                  }}
+                </template>
+              </b-table>
+            </b-col>
+          </b-row>
+
+          <b-row class="pt-4 justify-content-md-center">
+            <b-col
+              cols="6"
+              class="my-1"
+            >
+              <b-pagination
+                v-model="budget.pagination.currentPage"
+                :total-rows="event.budget.breakdown.length"
+                :per-page="budget.pagination.perPage"
+                align="fill"
+                size="sm"
+                class="my-0"
+              />
+            </b-col>
+          </b-row>
+        </template>
+
+        <b-row class="pt-4">
           <b-col cols="12">
             <h4
               style="font-family:'Bebas Neue', cursive;"
               no-body
             >
-              Total Amount:
+              Actual Expenses:
               {{
                 new Intl.NumberFormat('en-us', {
                   style: 'currency',
@@ -105,6 +166,17 @@ export default {
   data () {
     return {
       modal: false,
+      budget: {
+        pagination: {
+          perPage: 5,
+          currentPage: 1
+        },
+        fields: [
+          { key: 'amount', label: 'Amount' },
+          { key: 'type', label: 'Type of expense' },
+          { key: 'remarks', label: 'Remarks' }
+        ]
+      },
       expenses: {
         results: [],
         total: 0,
@@ -127,6 +199,21 @@ export default {
     },
     eventExpensesPageOffset () {
       return (this.expenses.pagination.currentPage - 1) * this.expenses.pagination.perPage
+    },
+    totalAmountFromBreakdown () {
+      if (this.event.budget === undefined) {
+        return 0
+      }
+
+      const breakdown = this.event.budget.breakdown
+
+      let total = 0
+
+      for (const item of breakdown) {
+        total += item.amount
+      }
+
+      return total
     }
   },
   watch: {
