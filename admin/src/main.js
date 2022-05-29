@@ -61,6 +61,7 @@ import MonetaryDonationList from './pages/monetary-donations/MonetaryDonationLis
 import Skills from './pages/skills/SkillList'
 
 // /reports
+import ReportIncomeStatement from './pages/reports/ReportIncomeStatement'
 import ReportInkindDonations from './pages/reports/ReportInkindDonations'
 import ReportMonetaryDonations from './pages/reports/ReportMonetaryDonations'
 import ReportEvents from './pages/reports/ReportEvents'
@@ -327,6 +328,13 @@ const routes = [
   {
     path: '/reports/volunteers',
     component: ReportVolunteers,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/reports/income-statement',
+    component: ReportIncomeStatement,
     meta: {
       requiresAuth: true
     }

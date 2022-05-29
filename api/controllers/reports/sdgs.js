@@ -58,17 +58,17 @@ class ReportSdgsController {
         noPovertySdgEvaluation: {
           labels: [],
           reverseLabelMap: {},
-          data: []
+          datasets: []
         },
         qualityEducationSdgEvaluation : {
           labels: [],
           reverseLabelMap: {},
-          data: []
+          datasets: []
         },
         climateActionSdgEvaluation : {
           labels: [],
           reverseLabelMap: {},
-          data: []
+          datasets: []
         }
       }
     }
@@ -99,17 +99,17 @@ class ReportSdgsController {
         noPovertySdgEvaluation: {
           labels: [],
           reverseLabelMap: {},
-          data: []
+          datasets: []
         },
         qualityEducationSdgEvaluation : {
           labels: [],
           reverseLabelMap: {},
-          data: []
+          datasets: []
         },
         climateActionSdgEvaluation : {
           labels: [],
           reverseLabelMap: {},
-          data: []
+          datasets: []
         }
       }
     }

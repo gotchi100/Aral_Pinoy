@@ -119,7 +119,7 @@
                 SDG Campaign
               </h2>
 
-              <b-skeleton-wrapper :loading="report.isLoading">
+              <b-skeleton-wrapper :loading="report.sdgEvaluation.isLoading">
                 <template #loading>
                   <b-spinner
                     class="my-5"
@@ -127,7 +127,7 @@
                   />
                 </template>
 
-                <div v-if="!report.isLoading">
+                <div v-if="!report.sdgEvaluation.isLoading">
                   <b-row>
                     <b-col
                       cols="12"
@@ -136,14 +136,14 @@
                       <bar-chart
                         :height="400"
                         :chart-data="{
-                          labels: report.noPovertySdgEvaluation.labels,
+                          labels: report.sdgEvaluation.noPoverty.labels,
                           datasets: [{
-                            ...report.noPovertySdgEvaluation.datasets[0],
+                            ...report.sdgEvaluation.noPoverty.datasets[0],
                             backgroundColor: [
                               'rgb(54, 235, 151)',
                             ],
                           }, {
-                            ...report.noPovertySdgEvaluation.datasets[1],
+                            ...report.sdgEvaluation.noPoverty.datasets[1],
                             backgroundColor: [
                               'rgb(255, 99, 132)',
                             ],
@@ -167,7 +167,7 @@
                             },
                             tooltip: {
                               callbacks: {
-                                title: handleSdgChartTooltip.bind(this, 'noPovertySdgEvaluation')
+                                title: handleSdgChartTooltip.bind(this, 'sdgEvaluation.noPoverty')
                               }
                             }
                           }
@@ -182,14 +182,14 @@
                       <bar-chart
                         :height="400"
                         :chart-data="{
-                          labels: report.qualityEducationSdgEvaluation.labels,
+                          labels: report.sdgEvaluation.qualityEducation.labels,
                           datasets: [{
-                            ...report.qualityEducationSdgEvaluation.datasets[0],
+                            ...report.sdgEvaluation.qualityEducation.datasets[0],
                             backgroundColor: [
                               'rgb(54, 235, 151)',
                             ],
                           }, {
-                            ...report.qualityEducationSdgEvaluation.datasets[1],
+                            ...report.sdgEvaluation.qualityEducation.datasets[1],
                             backgroundColor: [
                               'rgb(255, 99, 132)',
                             ],
@@ -213,7 +213,7 @@
                             },
                             tooltip: {
                               callbacks: {
-                                title: handleSdgChartTooltip.bind(this, 'qualityEducationSdgEvaluation')
+                                title: handleSdgChartTooltip.bind(this, 'sdgEvaluation.qualityEducation')
                               }
                             }
                           }
@@ -228,14 +228,14 @@
                       <bar-chart
                         :height="400"
                         :chart-data="{
-                          labels: report.climateActionSdgEvaluation.labels,
+                          labels: report.sdgEvaluation.climateAction.labels,
                           datasets: [{
-                            ...report.climateActionSdgEvaluation.datasets[0],
+                            ...report.sdgEvaluation.climateAction.datasets[0],
                             backgroundColor: [
                               'rgb(54, 235, 151)',
                             ],
                           }, {
-                            ...report.climateActionSdgEvaluation.datasets[1],
+                            ...report.sdgEvaluation.climateAction.datasets[1],
                             backgroundColor: [
                               'rgb(255, 99, 132)',
                             ],
@@ -259,7 +259,7 @@
                             },
                             tooltip: {
                               callbacks: {
-                                title: handleSdgChartTooltip.bind(this, 'climateActionSdgEvaluation')
+                                title: handleSdgChartTooltip.bind(this, 'sdgEvaluation.climateAction')
                               }
                             }
                           }
@@ -279,15 +279,57 @@
           <b-card style="border-radius: 20px;">
             <b-container fluid>
               <h2 style="font-family:'Bebas Neue', cursive; color: black; position: relative; font-size: 20px; text-align: left;">
-                Income & Expense Report
+                Last 30 Days Income & Expense Report
               </h2>
-              <b-img
-                center
-                src="https://www.syncfusion.com/blogs/wp-content/uploads/2021/02/Stacked-column-chart-showing-the-past-years%E2%80%99-income-and-expense-details-along-with-categories..jpg"
-                style="width: 592px; height:390px;"
-                alt="Center image"
-              />
-              <h4>Sample Data Visualization</h4>
+
+              <b-skeleton-wrapper :loading="report.isLoadingIncomeStatement">
+                <template #loading>
+                  <b-spinner
+                    class="my-5"
+                    style="width: 10rem; height: 10rem;"
+                  />
+                </template>
+
+                <div v-if="!report.isLoadingIncomeStatement">
+                  <b-row>
+                    <b-col
+                      cols="12"
+                    >
+                      <trend-chart
+                        :height="150"
+                        :chart-data="{
+                          labels: report.incomeStatement.labels,
+                          datasets: [{
+                            ...report.incomeStatement.datasets[0],
+                            borderColor: 'rgb(54, 235, 151)',
+                            backgroundColor: [
+                              'rgb(54, 235, 151)',
+                            ],
+                          }, {
+                            ...report.incomeStatement.datasets[1],
+                            borderColor: 'rgb(255, 99, 132)',
+                            backgroundColor: [
+                              'rgb(255, 99, 132)',
+                            ],
+                          }]
+                        }"
+                        :options="{
+                          scales: {
+                            yAxes: {
+                              ticks: {
+                                min: 0,
+                                beginAtZero: true,
+                                precision: 0
+                              }
+                            }
+                          },
+                          responsive: true
+                        }"
+                      />
+                    </b-col>
+                  </b-row>
+                </div>
+              </b-skeleton-wrapper>
             </b-container>
           </b-card>
         </b-col>
@@ -453,6 +495,7 @@ import {
 } from 'date-fns'
 
 import BarChart from '../components/charts/Bar'
+import TrendChart from '../components/charts/Trend'
 
 import { apiClient } from '../axios'
 import InkindDonationRepository from '../repositories/inkind-donations'
@@ -479,7 +522,8 @@ function splitByWordCount (sentence, count) {
 export default {
   name: 'Dashboard',
   components: {
-    BarChart
+    BarChart,
+    TrendChart
   },
   data () {
     return {
@@ -521,21 +565,28 @@ export default {
         ]
       },
       report: {
-        isLoading: false,
-        noPovertySdgEvaluation: {
-          labels: [],
-          reverseLabelMap: {},
-          data: []
+        sdgEvaluation: {
+          isLoading: false,
+          noPoverty: {
+            labels: [],
+            reverseLabelMap: {},
+            datasets: []
+          },
+          qualityEducation: {
+            labels: [],
+            reverseLabelMap: {},
+            datasets: []
+          },
+          climateAction: {
+            labels: [],
+            reverseLabelMap: {},
+            datasets: []
+          }
         },
-        qualityEducationSdgEvaluation: {
+        isLoadingIncomeStatement: false,
+        incomeStatement: {
           labels: [],
-          reverseLabelMap: {},
-          data: []
-        },
-        climateActionSdgEvaluation: {
-          labels: [],
-          reverseLabelMap: {},
-          data: []
+          datasets: []
         }
       }
     }
@@ -554,6 +605,7 @@ export default {
     this.getGroupedIkd()
     this.getEventDonations()
     this.getSdgsReport()
+    this.getIncomeStatementReport()
   },
   methods: {
     async getEvents () {
@@ -603,7 +655,7 @@ export default {
       this.eventDonations.results = results
     },
     async getSdgsReport () {
-      this.report.isLoading = true
+      this.report.sdgEvaluation.isLoading = true
 
       try {
         const { results } = await reportRepository.getSdgs({
@@ -611,11 +663,25 @@ export default {
           end: new Date().toJSON()
         })
 
-        this.report.noPovertySdgEvaluation = results.noPovertySdgEvaluation
-        this.report.qualityEducationSdgEvaluation = results.qualityEducationSdgEvaluation
-        this.report.climateActionSdgEvaluation = results.climateActionSdgEvaluation
+        this.report.sdgEvaluation.noPoverty = results.noPovertySdgEvaluation
+        this.report.sdgEvaluation.qualityEducation = results.qualityEducationSdgEvaluation
+        this.report.sdgEvaluation.climateAction = results.climateActionSdgEvaluation
       } finally {
-        this.report.isLoading = false
+        this.report.sdgEvaluation.isLoading = false
+      }
+    },
+    async getIncomeStatementReport () {
+      this.report.isLoadingIncomeStatement = true
+
+      try {
+        const { results } = await reportRepository.getIncomeStatement({
+          start: new Date(0).toJSON(),
+          end: new Date().toJSON()
+        })
+
+        this.report.incomeStatement = results.incomeStatement
+      } finally {
+        this.report.isLoadingIncomeStatement = false
       }
     },
     getValueFromPath (object, path, defaultValue) {
@@ -689,8 +755,8 @@ export default {
 
       return `We still need ${difference} ${volunteerNoun}!`
     },
-    handleSdgChartTooltip (reportSdg, context) {
-      const sdgEvaluation = this.report[reportSdg]
+    handleSdgChartTooltip (path, context) {
+      const sdgEvaluation = get(this.report, path)
       const title = context[0].label
 
       const reversedLabel = sdgEvaluation.reverseLabelMap[title]

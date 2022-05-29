@@ -27,7 +27,8 @@ const schema = new mongoose.Schema({
     get: getAmount,
     set: setAmount
   },
-  remarks: String
+  remarks: String,
+  createdAt: mongoose.SchemaTypes.Date
 }, {
   collection: 'eventExpenses',
   validateBeforeSave: false,
@@ -36,8 +37,7 @@ const schema = new mongoose.Schema({
   },
   toJSON: {
     getters: true
-  },
-  timestamps: true
+  }
 })
 
 module.exports = mongoose.model('EventExpense', schema)

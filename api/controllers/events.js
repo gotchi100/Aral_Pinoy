@@ -707,7 +707,7 @@ class EventsController {
       review
     } = details
 
-    const event = await EventModel.findById(id, ['_id', 'name', '__v', 'status', 'ikds', 'goals'])
+    const event = await EventModel.findById(id, ['_id', 'name', '__v', 'status', 'ikds', 'goals', 'date'])
 
     if (event === null) {
       throw new NotFoundError(`Event does not exist: ${id}`)
@@ -733,7 +733,8 @@ class EventsController {
             type: sanitizedType,
             typeNorm: sanitizedType.toLowerCase(),
             amount: expense.amount,
-            remarks: expense.remarks
+            remarks: expense.remarks,
+            createdAt: event.date.start
           })
         )
       }

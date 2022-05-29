@@ -96,6 +96,10 @@
               Items Inventory
             </b-dropdown-item>
 
+            <b-dropdown-item to="/reports/income-statement">
+              Income & Expenses
+            </b-dropdown-item>
+
             <b-dropdown-item to="/reports/monetary-donations">
               Monetary Donations
             </b-dropdown-item>
