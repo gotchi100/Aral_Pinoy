@@ -1,10 +1,28 @@
 'use strict'
 
-const { startOfDay, endOfDay, format } = require('date-fns')
+const { 
+  startOfDay,
+  endOfDay,
+  format,
+  parse
+} = require('date-fns')
 
 const MonetaryDonationModel = require('../../models/monetary-donations')
 const EventDonationModel = require('../../models/events/donations')
 const EventExpenseModel = require('../../models/events/expenses')
+
+const DATE_FORMAT = 'MM/dd/yy'
+
+/**
+ * @param {string} firstDateStr First date
+ * @param {string} secondDateStr Second date
+ */
+function sortByDate(firstDateStr, secondDateStr) {
+  const firstDate = parse(firstDateStr, DATE_FORMAT, new Date())
+  const secondDate = parse(secondDateStr, DATE_FORMAT, new Date())
+
+  return firstDate - secondDate
+}
 
 class ReportIncomeStatementController {
   /**
@@ -119,6 +137,8 @@ class ReportIncomeStatementController {
       incomeStatement.datasets[0].data.push(totalIncome)
       incomeStatement.datasets[1].data.push(totalExpense)
     }
+
+    incomeStatement.labels = incomeStatement.labels.sort(sortByDate)
 
     return {
       incomeStatement
