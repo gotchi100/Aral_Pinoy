@@ -158,27 +158,6 @@
                   />
                 </b-col>
               </b-row>
-              <!-- <b-row class="my-1">
-                <label class="change" for="input-small" style="font-family:'Bebas Neue', cursive;">Change Password?</label>
-              </b-row>
-              <b-row class="my-1" v-if="isDisabled">
-                <label class="password" for="input-small" style="font-family:'Bebas Neue', cursive;">New Password</label>
-                <b-col>
-                  <b-form-input v-model="password" :disabled="!isDisabled"></b-form-input>
-                </b-col>
-              </b-row>
-              <b-row class="my-1" v-if="isDisabled">
-                <label class="cpassword" for="input-small" style="font-family:'Bebas Neue', cursive;">Confirm Password</label>
-                <b-col>
-                  <b-form-input v-model="cpassword" :disabled="!isDisabled"></b-form-input>
-                </b-col>
-              </b-row>
-              <b-button pill variant="danger" @click="isDisabled = true" v-show="!isDisabled" style="margin: 8px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
-                    Edit
-              </b-button>
-              <b-button pill variant="danger" @click="isDisabled = false" v-show="isDisabled" style="margin: 8px; display: inline-block; font-size: 16px; padding: 8px; width: 225px;">
-                    Save
-              </b-button> -->
             </b-container>
           </b-card>
         </b-col>
@@ -228,6 +207,8 @@
                     show-empty
                     small
                     stacked="md"
+                    hover
+                    striped
                     style="background:white"
                   >
                     <template #cell(event)="{ item }">
@@ -250,6 +231,18 @@
                     <template #cell(status)="{ item }">
                       <span>
                         {{ item.event.status }}
+                      </span>
+                    </template>
+
+                    <template #cell(absent)="{ value }">
+                      <span>
+                        {{ value ? 'YES' : 'NO  ' }}
+                      </span>
+                    </template>
+
+                    <template #cell(shouldPenalize)="{ item, value }">
+                      <span v-if="item.absent && value !== undefined">
+                        {{ value ? 'NO' : 'YES  ' }}
                       </span>
                     </template>
                   </b-table>
@@ -320,6 +313,8 @@
                     show-empty
                     small
                     stacked="md"
+                    hover
+                    striped
                     style="background:white"
                   >
                     <template #cell(createdAt)="{ value }">
@@ -423,6 +418,8 @@
                     show-empty
                     small
                     stacked="md"
+                    hover
+                    striped
                     style="background:white"
                   >
                     <template #cell(createdAt)="{ value }">
@@ -520,7 +517,9 @@ export default {
           { key: 'event', label: 'Event' },
           { key: 'startDate', label: 'Date & Time' },
           { key: 'event.location.name', label: 'Venue' },
-          { key: 'status', label: 'Status' }
+          { key: 'status', label: 'Status' },
+          { key: 'absent', label: 'Is Absent' },
+          { key: 'shouldPenalize', label: 'Is Excused' }
         ]
       },
       eventDonations: {
