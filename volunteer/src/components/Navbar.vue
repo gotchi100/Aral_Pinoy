@@ -157,7 +157,9 @@ export default {
   async created () {
     notificationRepository.setAuthorizationHeader(`Bearer ${this.token}`)
 
-    await this.getUnseenNotificationCount()
+    if (this.user !== null) {
+      await this.getUnseenNotificationCount()
+    }
   },
   methods: {
     async getUnseenNotificationCount () {

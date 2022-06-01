@@ -286,57 +286,6 @@
 
               <b-row>
                 <b-col cols="12">
-                  <validation-observer v-slot="{ invalid, changed, reset }">
-                    <validation-provider
-                      v-slot="validationContext"
-                      :rules="{
-                        max: 256
-                      }"
-                    >
-                      <label
-                        for="update-profile-address-home"
-                        style="font-family:'Bebas Neue', cursive;"
-                      >
-                        Home Address
-                      </label>
-
-                      <div class="input-group mb-3">
-                        <b-form-input
-                          id="update-profile-address-home"
-                          v-model="profile.address.home"
-                          type="text"
-                          class="form-control"
-                          :state="getValidationState(validationContext)"
-                          aria-describedby="update-profile-address-home-feedback"
-                          :disabled="loading['address.home']"
-                        />
-
-                        <button
-                          class="btn btn-outline-success"
-                          type="button"
-                          :disabled="invalid || !changed || loading['address.home']"
-                          @click="updateProfile({ address: { home: profile.address.home } }, 'address.home', reset)"
-                        >
-                          <b-spinner
-                            v-if="loading['address.home']"
-                            style="width: 1rem; height: 1rem;"
-                          />
-                          <template v-else>
-                            <b-icon icon="file-earmark-check-fill" />
-                          </template>
-                        </button>
-
-                        <b-form-invalid-feedback id="update-profile-address-home-feedback">
-                          {{ validationContext.errors[0] }}
-                        </b-form-invalid-feedback>
-                      </div>
-                    </validation-provider>
-                  </validation-observer>
-                </b-col>
-              </b-row>
-
-              <b-row>
-                <b-col cols="12">
                   <label
                     for="update-profile-skills"
                     style="font-family:'Bebas Neue', cursive;"
@@ -859,10 +808,7 @@ export default {
         email: '',
         gender: '',
         skills: [],
-        skillIds: [],
-        address: {
-          home: ''
-        }
+        skillIds: []
       },
       loading: {
         firstName: false,
@@ -870,8 +816,7 @@ export default {
         contactNumber: false,
         email: false,
         gender: false,
-        skills: false,
-        'address.home': false
+        skills: false
       },
       pageOptions: [5, 10, 15],
       eventVolunteers: {
@@ -956,10 +901,6 @@ export default {
     this.profile.gender = user.gender
     this.profile.skills = user.skills || []
     this.profile.skillIds = [].concat(this.profile.skills).map(toSkillId)
-
-    if (user.address !== undefined && user.address.home !== undefined) {
-      this.profile.address.home = user.address.home
-    }
   },
   methods: {
     ...mapActions(['updateUser']),

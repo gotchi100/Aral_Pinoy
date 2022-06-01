@@ -127,24 +127,6 @@
                 <label
                   for="input-small"
                   style="font-family:'Bebas Neue', cursive;"
-                >Home Address</label>
-                <b-col>
-                  <b-skeleton
-                    v-if="isLoadingUser"
-                    type="input"
-                  />
-                  <b-form-input
-                    v-else
-                    v-model="homeAddress"
-                    disabled
-                  />
-                </b-col>
-              </b-row>
-
-              <b-row class="my-1">
-                <label
-                  for="input-small"
-                  style="font-family:'Bebas Neue', cursive;"
                 >Email Address</label>
                 <b-col>
                   <b-skeleton
@@ -570,17 +552,6 @@ export default {
         month: 'long',
         day: 'numeric'
       })
-    },
-    homeAddress () {
-      if (this.isLoadingUser) {
-        return ''
-      }
-
-      if (!this.user.address || !this.user.address.home) {
-        return ''
-      }
-
-      return this.user.address.home
     },
     eventDonationsPageOffset () {
       return (this.eventDonations.pagination.currentPage - 1) * this.eventDonations.pagination.perPage

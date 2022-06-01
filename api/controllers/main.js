@@ -195,7 +195,7 @@ class MainController {
       lastName,
       gender,
       birthDate,
-      address,
+      location,
       skills: skillIds
     } = req.body
 
@@ -215,7 +215,7 @@ class MainController {
         firstName: sanitize(firstName),
         lastName: sanitize(lastName),
         gender,
-        address,
+        location,
         roles: ['volunteer'],
         skills
       }

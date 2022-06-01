@@ -6,6 +6,7 @@ const Joi = require('joi')
 Joi.objectId = require('joi-objectid')(Joi)
 
 const UsersController = require('../controllers/users')
+const { provinces, cities } = require('../constants/philippines')
 
 const createUserValidator = Joi.object({
   email: Joi.string().email().trim().lowercase().max(256).required(), // TODO: Remove email from user update validation
@@ -15,8 +16,10 @@ const createUserValidator = Joi.object({
   lastName: Joi.string().trim().max(100).required(),
   gender: Joi.string().valid('Male', 'Female'),
   birthDate: Joi.date().iso(),
-  address: Joi.object({
-    home: Joi.string().trim().max(256)
+  location: Joi.object({
+    country: Joi.string().valid('PHILIPPINES'),
+    province: Joi.string().valid(...provinces),
+    city: Joi.string().valid(...cities),
   }),
   contactNumber: Joi.string().trim().max(20),
   skills: Joi.array().items(Joi.objectId()).unique()
@@ -40,9 +43,6 @@ const updateUserValidator = Joi.object({
   lastName: Joi.string().trim().max(100).empty(''),
   gender: Joi.string().valid('Male', 'Female'),
   birthDate: Joi.date().iso(),
-  address: Joi.object({
-    home: Joi.string().trim().max(256).empty('').allow(null)
-  }).empty({}),
   contactNumber: Joi.string().trim().max(20).empty('').allow(null),
   skillIds: Joi.array().items(Joi.objectId()).unique()
 })
@@ -151,7 +151,6 @@ async function updateUser(req, res, next) {
     lastName,
     gender,
     birthDate,
-    address,
     contactNumber,
     skillIds
   } = req.body
@@ -164,7 +163,6 @@ async function updateUser(req, res, next) {
       lastName,
       gender,
       birthDate,
-      address,
       contactNumber,
       skillIds
     })

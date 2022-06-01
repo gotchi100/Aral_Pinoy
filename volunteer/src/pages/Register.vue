@@ -146,38 +146,72 @@
 
           <b-row class="my-1">
             <label
-              class="homeAddress"
+              class="gender"
               for="input-small"
-            >Present Address</label>
+            >
+              Country
+            </label>
+
             <b-col>
-              <validation-provider
-                v-slot="validationContext"
-                :rules="{ max: 256 }"
+              <select
+                v-model="user.location.country"
+                class="form-select"
+                aria-label="Default select example"
+                disabled
               >
-                <b-form-input
-                  v-model="user.address.home"
-                  :state="getValidationState(validationContext)"
-                  debounce="1000"
-                  aria-describedby="input-user-home-address-feedback"
-                />
-                <b-form-invalid-feedback id="input-user-home-address-feedback">
-                  {{ validationContext.errors[0] }}
-                </b-form-invalid-feedback>
-              </validation-provider>
+                <option selected>
+                  PHILIPPINES
+                </option>
+              </select>
             </b-col>
           </b-row>
 
-          <b-row
-            v-if="user.address.home"
-            class="my-1"
-          >
+          <b-row class="my-1">
+            <label
+              class="gender"
+              for="input-small"
+            >
+              Province
+            </label>
+
             <b-col>
-              <iframe
-                loading="lazy"
-                allowfullscreen
-                referrerpolicy="no-referrer-when-downgrade"
-                :src="`https://www.google.com/maps/embed/v1/place?key=${googleMapsApiKey}&q=${user.address.home}`"
-              />
+              <select
+                v-model="user.location.province"
+                class="form-select"
+              >
+                <option
+                  v-for="province in philippineProvinces"
+                  :key="province"
+                  :value="province"
+                >
+                  {{ province }}
+                </option>
+              </select>
+            </b-col>
+          </b-row>
+
+          <b-row class="my-1">
+            <label
+              class="gender"
+              for="input-small"
+            >
+              City
+            </label>
+
+            <b-col>
+              <select
+                v-model="user.location.city"
+                class="form-select"
+                :disabled="cityOptions.length === 0"
+              >
+                <option
+                  v-for="city in cityOptions"
+                  :key="city"
+                  :value="city"
+                >
+                  {{ city }}
+                </option>
+              </select>
             </b-col>
           </b-row>
 
@@ -452,13 +486,14 @@
 <script>
 import { ValidationObserver, ValidationProvider, extend } from 'vee-validate'
 import { required, min, max, email, is, regex } from 'vee-validate/dist/rules'
+import { subYears, startOfDay } from 'date-fns'
+import _ from 'lodash'
 
-const _ = require('lodash')
+import config from '../../config'
+import { provinceCityMap } from '../constants/philippines'
+import { apiClient } from '../axios'
+
 const logo = require('../assets/aralpinoywords.png')
-const config = require('../../config')
-const { apiClient } = require('../axios')
-
-const { subYears, startOfDay } = require('date-fns')
 
 extend('required', {
   ...required,
@@ -501,8 +536,10 @@ export default {
         gender: 'Male',
         contactNumber: '',
         birthDate: subYears(new Date(), 18),
-        address: {
-          home: ''
+        location: {
+          country: 'PHILIPPINES',
+          province: '',
+          city: ''
         },
         skills: []
       },
@@ -514,7 +551,8 @@ export default {
       regexRules: {
         filipinoCharacters: /^[a-zA-Z\u00f1\u00d1 -]+$/,
         phContactNumber: /^(09|\+639)\d{9}$/
-      }
+      },
+      cityOptions: []
     }
   },
   computed: {
@@ -523,6 +561,22 @@ export default {
     },
     googleMapsApiKey () {
       return config.google.maps.apiKey
+    },
+    philippineProvinces () {
+      return Object.keys(provinceCityMap).sort()
+    }
+  },
+  watch: {
+    'user.location.province' (value) {
+      const citiesMap = provinceCityMap[value]
+
+      if (citiesMap !== undefined) {
+        this.cityOptions = Object.keys(citiesMap).sort()
+      } else {
+        this.cityOptions = []
+      }
+
+      this.user.location.city = ''
     }
   },
   created () {

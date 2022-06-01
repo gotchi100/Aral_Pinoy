@@ -6,6 +6,7 @@ Joi.objectId = require('joi-objectid')(Joi)
 
 const MainController = require('../controllers/main')
 const config = require('../config')
+const { provinces, cities } = require('../constants/philippines')
 
 let isGoogleSignInConfigProvided = false
 
@@ -22,8 +23,10 @@ const registerValidator = Joi.object({
   lastName: Joi.string().trim().max(100).required(),
   gender: Joi.string().valid('Male', 'Female'),
   birthDate: Joi.date().iso(),
-  address: Joi.object({
-    home: Joi.string().trim().max(256).allow('')
+  location: Joi.object({
+    country: Joi.string().valid('PHILIPPINES'),
+    province: Joi.string().valid(...provinces),
+    city: Joi.string().valid(...cities),
   }),
   skills: Joi.array().items(Joi.objectId()).unique()
 })

@@ -23,7 +23,7 @@ class UsersController {
       lastName,
       gender,
       birthDate,
-      address,
+      location,
       skills: skillIds
     } = req.body
 
@@ -45,7 +45,7 @@ class UsersController {
         lastName,
         gender,
         birthDate: new Date(birthDate),
-        address,
+        location,
         roles: ['officer'],
         skills
       })
@@ -153,7 +153,6 @@ class UsersController {
       lastName,
       gender,
       birthDate,
-      address,
       contactNumber,
       skillIds
     } = update
@@ -185,14 +184,6 @@ class UsersController {
 
     if (birthDate !== undefined) {
       $set.birthDate = new Date(birthDate)
-    }
-
-    if (address !== undefined) {
-      if (address.home === null) {
-        $unset['address.home'] = ''
-      } else {
-        $set['address.home'] = address.home
-      }
     }
 
     if (contactNumber === null) {

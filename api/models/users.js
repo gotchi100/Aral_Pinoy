@@ -31,8 +31,13 @@ const userSchema = new mongoose.Schema({
   },
   gender: String,
   birthDate: Date,
-  address: {
+  address: { // TODO: Remove
     home: String
+  },
+  location: {
+    country: String,
+    province: String,
+    city: String
   },
   skills: {
     type: [mongoose.Types.ObjectId],

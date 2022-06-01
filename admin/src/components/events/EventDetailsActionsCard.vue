@@ -134,6 +134,12 @@
                     primary-key="_id"
                     hover
                   >
+                    <template #cell(location)="{ item }">
+                      <span>
+                        {{ item.location.city }}, {{ item.location.province }}
+                      </span>
+                    </template>
+
                     <template #cell(skills)="{ value }">
                       <span
                         v-for="skill in value"
@@ -295,7 +301,7 @@ export default {
             { key: 'email', label: 'Email' },
             { key: 'lastName', label: 'Last Name' },
             { key: 'firstName', label: 'First Name' },
-            { key: 'address.home', label: 'Location' },
+            { key: 'location', label: 'Location' },
             { key: 'skills', label: 'Skills' },
             { key: 'invite', label: 'Invite' }
           ],

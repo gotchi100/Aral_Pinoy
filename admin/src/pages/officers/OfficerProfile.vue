@@ -112,25 +112,6 @@
 
               <b-row class="my-1">
                 <label
-                  for="homeAddress"
-                  style="font-family:'Bebas Neue', cursive;"
-                >Home Address</label>
-                <b-col>
-                  <b-skeleton
-                    v-if="isLoadingUser"
-                    type="input"
-                  />
-                  <b-form-input
-                    v-else
-                    id="homeAddress"
-                    :value="homeAddress"
-                    disabled
-                  />
-                </b-col>
-              </b-row>
-
-              <b-row class="my-1">
-                <label
                   class="email"
                   for="input-small"
                   style="font-family:'Bebas Neue', cursive;"
@@ -206,17 +187,6 @@ export default {
         month: 'long',
         day: 'numeric'
       })
-    },
-    homeAddress () {
-      if (this.isLoadingUser) {
-        return ''
-      }
-
-      if (!this.user.address || !this.user.address.home) {
-        return ''
-      }
-
-      return this.user.address.home
     }
   },
   created () {

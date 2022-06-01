@@ -108,20 +108,6 @@
 
               <b-row class="my-1">
                 <label
-                  for="home-address"
-                  style="font-family:'Bebas Neue', cursive;"
-                >Home Address</label>
-                <b-col>
-                  <b-form-input
-                    id="home-address"
-                    v-model="user.address.home"
-                    :disabled="!isDisabled"
-                  />
-                </b-col>
-              </b-row>
-
-              <b-row class="my-1">
-                <label
                   for="email"
                   style="font-family:'Bebas Neue', cursive;"
                 >Email Address</label>
@@ -216,10 +202,7 @@ export default {
         contactNumber: '',
         email: '',
         gender: '',
-        birthDate: '',
-        address: {
-          home: ''
-        }
+        birthDate: ''
       },
       password: '',
       cpassword: '',
@@ -253,10 +236,6 @@ export default {
     this.user.email = user.email
     this.user.gender = user.gender
     this.user.birthDate = user.birthDate
-
-    if (user.address !== undefined && user.address.home) {
-      this.user.address.home = user.address.home
-    }
   }
 }
 </script>
