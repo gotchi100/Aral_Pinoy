@@ -33,7 +33,7 @@
           <div class="d-flex w-100 justify-content-center">
             <b-button
               variant="danger"
-              to="/inkind-donations"
+              to="/inkind-donations?view=detailed&filters.showExpiringOnly=true"
             >
               Go to Item Inventory
             </b-button>

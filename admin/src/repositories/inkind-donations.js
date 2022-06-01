@@ -86,6 +86,10 @@ class InkindDonationRepository {
       }
     }
 
+    if (filters.showExpiringOnly !== undefined && filters.showExpiringOnly !== '') {
+      queryString.set('filters.showExpiringOnly', filters.showExpiringOnly)
+    }
+
     if (sort.field !== undefined && sort.order !== undefined) {
       queryString.set('sort.field', sort.field)
       queryString.set('sort.order', sort.order)

@@ -19,12 +19,12 @@
               <b-row>
                 <b-col cols="12">
                   <b-tabs
+                    v-model="activeTab"
                     pills
                     card
                   >
                     <b-tab
                       title="Compiled View"
-                      active
                     >
                       <b-row class="my-2">
                         <b-col cols="12">
@@ -173,7 +173,7 @@
                                     >
                                       <label
                                         class="form-check-label"
-                                        :for="`status-checkbox-${option}`"
+                                        :for="`status-checkbox-${option.value}`"
                                       >
                                         {{ option.label }}
                                       </label>
@@ -184,6 +184,24 @@
                                         class="form-check-input"
                                         type="checkbox"
                                         :value="option.value"
+                                      >
+                                    </div>
+
+                                    <div
+                                      class="form-check form-switch"
+                                    >
+                                      <label
+                                        class="form-check-label"
+                                        for="status-checkbox-show-expiring"
+                                      >
+                                        Expiring Only
+                                      </label>
+
+                                      <input
+                                        id="status-checkbox-show-expiring"
+                                        v-model="detailedFilters.showExpiringOnly"
+                                        class="form-check-input"
+                                        type="checkbox"
                                       >
                                     </div>
                                   </b-dropdown-form>
@@ -366,6 +384,16 @@ const IKD_SORT_MAP = {
   expirationDate: 'category.customFields.expirationDate'
 }
 
+const ACTIVE_TAB_MAP = {
+  compiled: 0,
+  detailed: 1
+}
+
+const ACTIVE_TAB_REVERSE_MAP = {
+  0: 'compiled',
+  1: 'detailed'
+}
+
 export default {
   components: {
     InkindDonationCreateItemModal,
@@ -373,6 +401,7 @@ export default {
   },
   data () {
     return {
+      activeTab: 0,
       pageOptions: [5, 10, 20],
       groupedFields: [
         { key: '_id', label: 'Group' },
@@ -381,6 +410,9 @@ export default {
       groupedIkdTotal: 0,
       groupedIkdCurrentPage: 1,
       groupedIkdPerPage: 5,
+      detailedFilters: {
+        showExpiringOnly: false
+      },
       inkindDonationSearchFilter: '',
       ikdCategoryCustomFieldFilters: [],
       ikdCategoryCustomFieldsOptions: [{
@@ -421,14 +453,49 @@ export default {
     }
   },
   watch: {
+    activeTab (value) {
+      this.$router.replace({
+        query: {
+          ...this.$route.query,
+          view: ACTIVE_TAB_REVERSE_MAP[value]
+        }
+      })
+    },
     ikdCategoryCustomFieldFilters (val) {
       this.$refs.ikdsTable.refresh()
+    },
+    'detailedFilters.showExpiringOnly' (value) {
+      this.$refs.ikdsTable.refresh()
+
+      this.$router.replace({
+        query: {
+          ...this.$route.query,
+          'filters.showExpiringOnly': value
+        }
+      })
     }
   },
   created () {
+    this.setDataFromRouteQuery()
+
     inkindDonationRepository.setAuthorizationHeader(`Bearer ${this.token}`)
   },
   methods: {
+    setDataFromRouteQuery () {
+      const query = this.$route.query
+
+      const activeTab = ACTIVE_TAB_MAP[query.view]
+
+      if (activeTab !== undefined) {
+        this.activeTab = activeTab
+      }
+
+      const showExpiringOnly = query['filters.showExpiringOnly']
+
+      if (showExpiringOnly !== undefined && showExpiringOnly.toLowerCase() === 'true') {
+        this.detailedFilters.showExpiringOnly = true
+      }
+    },
     async getGroupedInkindDonations (ctx) {
       const queryString = new URLSearchParams()
 
@@ -466,7 +533,8 @@ export default {
 
       const { results, total } = await inkindDonationRepository.list({
         query: filter,
-        categoryCustomFields: this.ikdCategoryCustomFieldFilters
+        categoryCustomFields: this.ikdCategoryCustomFieldFilters,
+        showExpiringOnly: this.detailedFilters.showExpiringOnly
       }, {
         limit,
         offset,

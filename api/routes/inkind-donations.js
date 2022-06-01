@@ -44,6 +44,7 @@ const listInkindDonationsValidator = Joi.object({
   'filters.categoryCustomFields': Joi.array().items(
     Joi.string().valid('bestBeforeDate', 'expirationDate')
   ),
+  'filters.showExpiringOnly': Joi.boolean().default(false),
   'sort.field': Joi.string().valid('sku', 'name', 'category.customFields.bestBeforeDate', 'category.customFields.expirationDate'),
   'sort.order': Joi.string().valid('asc', 'desc')
 }).options({ 
@@ -102,6 +103,7 @@ async function list(req, res, next) {
     grouped,
     'filters.query': filterQuery,
     'filters.categoryCustomFields': filterCategoryCustomFields,
+    'filters.showExpiringOnly': filterShowExpiringOnly, 
     'sort.field': sortField,
     'sort.order': sortOrder
   } = req.query
@@ -113,7 +115,8 @@ async function list(req, res, next) {
       grouped,
       filters: {
         query: filterQuery,
-        categoryCustomFields: filterCategoryCustomFields
+        categoryCustomFields: filterCategoryCustomFields,
+        showExpiringOnly : filterShowExpiringOnly
       },
       sort: {
         field: sortField,

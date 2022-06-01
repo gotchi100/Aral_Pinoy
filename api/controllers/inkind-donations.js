@@ -2,6 +2,7 @@
 
 const { Storage } = require('@google-cloud/storage')
 const { Types } = require('mongoose')
+const { addMonths, endOfMonth } = require('date-fns')
 
 const config = require('../config')
 
@@ -185,7 +186,8 @@ class InkindDonationsController {
 
     const {
       query: filterQuery,
-      categoryCustomFields
+      categoryCustomFields,
+      showExpiringOnly
     } = filters
 
     const {
@@ -291,6 +293,37 @@ class InkindDonationsController {
             $exists: true
           }
         }
+      }
+
+      if (showExpiringOnly === true) {
+        const today = new Date()
+
+        const nextMonth = addMonths(today, 1)
+        const endOfNextMonth = endOfMonth(nextMonth)
+
+        matchQuery.$and = [
+          {
+            'category.customFields': {
+              $exists: true
+            }
+          },
+          {
+            $or: [
+              {
+                'category.customFields.expirationDate': {
+                  $gte: today,
+                  $lte: endOfNextMonth
+                }
+              },
+              {
+                'category.customFields.bestBeforeDate': {
+                  $gte: today,
+                  $lte: endOfNextMonth
+                }
+              },
+            ]
+          }
+        ]
       }
 
       if (sortField !== undefined && sortOrder !== undefined) {
