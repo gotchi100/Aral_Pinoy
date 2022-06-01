@@ -11,126 +11,37 @@
               <b-row>
                 <b-col cols="12">
                   <h2 style="font-family:'Bebas Neue', cursive;">
-                    Items Inventory Report
+                    Deleted Items Inventory Report
                   </h2>
                 </b-col>
               </b-row>
 
               <b-row class="py-2">
                 <b-col cols="12">
-                  <span>
-                    Item
-                  </span>
-
-                  <b-dropdown
-                    :text="item !== null ? `${item.name} - ${item.sku}` : 'Select an item'"
-                    style="width: 100%"
-                    menu-class="w-100"
-                    variant="success"
-                    :no-caret="item !== null"
-                    no-flip
+                  <b-button
+                    pill
+                    variant="danger"
+                    :disabled="report.deletedInventoryItems.isGeneratingReport"
+                    @click="getDeletedInventoryItems"
                   >
-                    <b-dropdown-form>
-                      <b-form-group
-                        label="Search Item"
-                        label-for="item-search-input"
-                        @submit.stop.prevent
-                      >
-                        <b-form-input
-                          id="item-search-input"
-                          v-model="searchItem"
-                          debounce="500"
-                          @update="searchInventoryItem"
-                        />
-                      </b-form-group>
-                    </b-dropdown-form>
+                    <b-spinner
+                      v-if="report.deletedInventoryItems.isGeneratingReport"
+                      style="width: 1rem; height: 1rem;"
+                    />
 
-                    <b-dropdown-divider />
-
-                    <b-dropdown-item
-                      v-for="inventoryItem in inventoryItemOptions"
-                      :key="inventoryItem._id"
-                      @click="item = inventoryItem"
-                    >
-                      {{ inventoryItem.name }} <span style="color: grey; font-size: 12px">{{ inventoryItem.sku }}</span>
-                    </b-dropdown-item>
-                  </b-dropdown>
+                    <template v-else>
+                      Generate Report
+                    </template>
+                  </b-button>
                 </b-col>
               </b-row>
-
-              <template v-if="item !== null">
-                <b-row
-
-                  class="py-2"
-                >
-                  <b-col
-                    cols="12"
-                    md="6"
-                  >
-                    <label
-                      for="start-datepicker"
-                      style="font-family: 'Bebas Neue', cursive;"
-                    >
-                      From
-                    </label>
-
-                    <b-form-datepicker
-                      id="start-datepicker"
-                      v-model="startDate"
-                      :max="endDate"
-                      value-as-date
-                      class="mb-2"
-                    />
-                  </b-col>
-
-                  <b-col
-                    cols="12"
-                    md="6"
-                  >
-                    <label
-                      for="end-datepicker"
-                      style="font-family: 'Bebas Neue', cursive;"
-                    >
-                      To
-                    </label>
-
-                    <b-form-datepicker
-                      id="end-datepicker"
-                      v-model="endDate"
-                      :max="new Date()"
-                      value-as-date
-                      class="mb-2"
-                    />
-                  </b-col>
-                </b-row>
-
-                <b-row class="py-2">
-                  <b-col cols="12">
-                    <b-button
-                      pill
-                      variant="danger"
-                      :disabled="isGeneratingReport"
-                      @click="getReportVolunteers"
-                    >
-                      <b-spinner
-                        v-if="isGeneratingReport"
-                        style="width: 1rem; height: 1rem;"
-                      />
-
-                      <template v-else>
-                        Generate Report
-                      </template>
-                    </b-button>
-                  </b-col>
-                </b-row>
-              </template>
             </b-container>
           </b-card>
         </b-col>
       </b-row>
 
       <b-row
-        v-if="item !== null"
+        v-if="report.deletedInventoryItems.hasGeneratedReport"
         class="pb-3"
       >
         <b-col cols="12">
@@ -142,57 +53,234 @@
               fluid
             >
               <b-row
-                class="py-4"
+                class="py-2"
               >
                 <b-col cols="12">
                   <h1 style="font-family:'Bebas Neue', cursive;">
-                    {{ item.name }}
+                    Deleted Inventory Items
                   </h1>
+
+                  <h6>
+                    As of {{ new Date().toLocaleString('en-us', { dateStyle: 'medium' }) }}
+                  </h6>
                 </b-col>
               </b-row>
 
-              <b-row
-                class="py-4"
-              >
+              <b-row class="pb-3">
+                <b-col cols="12">
+                  <b-list-group>
+                    <b-list-group-item
+                      v-for="inventoryItem in report.deletedInventoryItems.results"
+                      :key="inventoryItem._id"
+                    >
+                      {{ inventoryItem.name }} <br>
+                      <span style="color: grey; font-size: 12px">
+                        {{ new Date(inventoryItem.deletedOn).toLocaleString('en-us', { dateStyle: 'medium', timeStyle: 'short' }) }}
+                      </span>
+                    </b-list-group-item>
+                  </b-list-group>
+                </b-col>
+              </b-row>
+            </b-container>
+          </b-card>
+        </b-col>
+      </b-row>
+    </b-container>
+
+    <b-container class="py-5">
+      <b-row class="pb-3">
+        <b-col cols="12">
+          <b-card
+            bg-variant="light"
+            style="border-radius: 20px;"
+          >
+            <b-container fluid>
+              <b-row>
                 <b-col cols="12">
                   <h2 style="font-family:'Bebas Neue', cursive;">
-                    Stock Quantity
+                    Expiring Items Inventory Report
                   </h2>
                 </b-col>
+              </b-row>
 
-                <b-col
-                  class="d-flex w-100 justify-content-center"
-                  cols="12"
-                >
-                  <trend-chart
-                    :height="500"
-                    :width="500"
-                    :chart-data="{
-                      labels: report.stockQuantity.labels,
-                      datasets: [{
-                        data: report.stockQuantity.data,
-                        backgroundColor: [
-                          'rgb(255, 99, 132)',
-                        ],
-                        borderColor: 'rgb(75, 192, 192)',
-                      }]
-                    }"
-                    :options="{
-                      scales: {
-                        yAxes: {
-                          ticks: {
-                            beginAtZero: true,
-                          }
-                        }
-                      },
-                      responsive: true,
-                      plugins: {
-                        legend: {
-                          display: false
-                        },
-                      }
-                    }"
-                  />
+              <b-row class="py-2">
+                <b-col cols="12">
+                  <b-button
+                    pill
+                    variant="danger"
+                    :disabled="report.expiringInventoryItems.isGeneratingReport"
+                    @click="getExpiringInventoryItems"
+                  >
+                    <b-spinner
+                      v-if="report.expiringInventoryItems.isGeneratingReport"
+                      style="width: 1rem; height: 1rem;"
+                    />
+
+                    <template v-else>
+                      Generate Report
+                    </template>
+                  </b-button>
+                </b-col>
+              </b-row>
+            </b-container>
+          </b-card>
+        </b-col>
+      </b-row>
+
+      <b-row
+        v-if="report.expiringInventoryItems.hasGeneratedReport"
+        class="pb-3"
+      >
+        <b-col cols="12">
+          <b-card
+            bg-variant="light"
+            style="border-radius: 20px;"
+          >
+            <b-container
+              fluid
+            >
+              <b-row
+                class="py-2"
+              >
+                <b-col cols="12">
+                  <h1 style="font-family:'Bebas Neue', cursive;">
+                    Expiring Inventory Items
+                  </h1>
+
+                  <h6>
+                    As of {{ new Date().toLocaleString('en-us', { dateStyle: 'medium' }) }}
+                  </h6>
+                </b-col>
+              </b-row>
+
+              <b-row class="pb-3">
+                <b-col cols="12">
+                  <b-list-group>
+                    <b-list-group-item
+                      v-for="inventoryItem in report.expiringInventoryItems.results"
+                      :key="inventoryItem._id"
+                    >
+                      {{ inventoryItem.name }} <br>
+                      <span style="color: grey; font-size: 12px">
+                        {{ new Date(getItemExpirationDate(inventoryItem)).toLocaleString('en-us', { dateStyle: 'medium' }) }}
+                      </span>
+                    </b-list-group-item>
+                  </b-list-group>
+                </b-col>
+              </b-row>
+            </b-container>
+          </b-card>
+        </b-col>
+      </b-row>
+    </b-container>
+
+    <b-container class="py-5">
+      <b-row class="pb-3">
+        <b-col cols="12">
+          <b-card
+            bg-variant="light"
+            style="border-radius: 20px;"
+          >
+            <b-container fluid>
+              <b-row>
+                <b-col cols="12">
+                  <h2 style="font-family:'Bebas Neue', cursive;">
+                    Items Inventory Report
+                  </h2>
+                </b-col>
+              </b-row>
+
+              <b-row class="py-2">
+                <b-col cols="12">
+                  <b-button
+                    pill
+                    variant="danger"
+                    :disabled="report.inventoryItems.isGeneratingReport"
+                    @click="getInventoryItems"
+                  >
+                    <b-spinner
+                      v-if="report.inventoryItems.isGeneratingReport"
+                      style="width: 1rem; height: 1rem;"
+                    />
+
+                    <template v-else>
+                      Generate Report
+                    </template>
+                  </b-button>
+                </b-col>
+              </b-row>
+            </b-container>
+          </b-card>
+        </b-col>
+      </b-row>
+
+      <b-row
+        v-if="report.inventoryItems.hasGeneratedReport"
+        class="pb-3"
+      >
+        <b-col cols="12">
+          <b-card
+            bg-variant="light"
+            style="border-radius: 20px;"
+          >
+            <b-container
+              fluid
+            >
+              <b-row
+                class="py-2"
+              >
+                <b-col cols="12">
+                  <h1 style="font-family:'Bebas Neue', cursive;">
+                    Inventory Items by Group
+                  </h1>
+
+                  <h6>
+                    As of {{ new Date().toLocaleString('en-us', { dateStyle: 'medium' }) }}
+                  </h6>
+                </b-col>
+              </b-row>
+
+              <b-row class="pb-3">
+                <b-col cols="12">
+                  <b-list-group>
+                    <b-list-group-item
+                      v-for="inventoryItem in report.inventoryItems.itemsByGroup"
+                      :key="inventoryItem._id"
+                    >
+                      {{ inventoryItem._id }} - <strong>{{ inventoryItem.quantity }}</strong>
+                    </b-list-group-item>
+                  </b-list-group>
+                </b-col>
+              </b-row>
+            </b-container>
+
+            <b-container
+              fluid
+            >
+              <b-row
+                class="py-2"
+              >
+                <b-col cols="12">
+                  <h1 style="font-family:'Bebas Neue', cursive;">
+                    Inventory Items by Category
+                  </h1>
+
+                  <h6>
+                    As of {{ new Date().toLocaleString('en-us', { dateStyle: 'medium' }) }}
+                  </h6>
+                </b-col>
+              </b-row>
+
+              <b-row class="pb-3">
+                <b-col cols="12">
+                  <b-list-group>
+                    <b-list-group-item
+                      v-for="inventoryItem in report.inventoryItems.itemsByCategory"
+                      :key="inventoryItem._id"
+                    >
+                      {{ inventoryItem._id }} - <strong>{{ inventoryItem.quantity }}</strong>
+                    </b-list-group-item>
+                  </b-list-group>
                 </b-col>
               </b-row>
             </b-container>
@@ -207,33 +295,31 @@
 import { mapGetters } from 'vuex'
 
 import ReportRepository from '../../repositories/reports'
-import InkindDonationRepository from '../../repositories/inkind-donations'
 import { apiClient } from '../../axios'
 
-import TrendChart from '../../components/charts/Trend'
-
-const inkindDonationRepository = new InkindDonationRepository(apiClient)
 const reportRepository = new ReportRepository(apiClient)
-
-const today = new Date()
 
 export default {
   name: 'ReportInkindDonations',
-  components: {
-    TrendChart
-  },
   data () {
     return {
-      startDate: today,
-      endDate: today,
-      searchItem: '',
-      inventoryItemOptions: [],
-      item: null,
       isGeneratingReport: false,
       report: {
-        stockQuantity: {
-          labels: [],
-          data: []
+        deletedInventoryItems: {
+          hasGeneratedReport: false,
+          isGeneratingReport: false,
+          results: []
+        },
+        expiringInventoryItems: {
+          hasGeneratedReport: false,
+          isGeneratingReport: false,
+          results: []
+        },
+        inventoryItems: {
+          hasGeneratedReport: false,
+          isGeneratingReport: false,
+          itemsByGroup: [],
+          itemsByCategory: []
         }
       }
     }
@@ -244,38 +330,65 @@ export default {
   created () {
     const authHeader = `Bearer ${this.token}`
 
-    inkindDonationRepository.setAuthorizationHeader(authHeader)
     reportRepository.setAuthorizationHeader(authHeader)
   },
   methods: {
-    async searchInventoryItem (value) {
-      const { results } = await inkindDonationRepository.list({
-        query: value
-      }, {
-        limit: 5
-      })
+    async getDeletedInventoryItems () {
+      const deletedInventoryItems = this.report.deletedInventoryItems
 
-      this.inventoryItemOptions = results
-    },
-    async getReportVolunteers () {
-      const startDate = this.startDate.toJSON()
-      const endDate = this.endDate.toJSON()
-
-      this.isGeneratingReport = true
-      const itemId = this.item._id
+      deletedInventoryItems.isGeneratingReport = true
+      deletedInventoryItems.hasGeneratedReport = false
 
       try {
-        const { results } = await reportRepository.getInventoryItem({
-          itemId,
-          dateRange: {
-            start: startDate,
-            end: endDate
-          }
+        const { results } = await reportRepository.getDeletedInventoryItems({
+          start: new Date(0).toJSON(),
+          end: new Date().toJSON()
         })
 
-        this.report.stockQuantity = results.stockQuantity
+        deletedInventoryItems.results = results
+        deletedInventoryItems.hasGeneratedReport = true
       } finally {
-        this.isGeneratingReport = false
+        deletedInventoryItems.isGeneratingReport = false
+      }
+    },
+    async getExpiringInventoryItems () {
+      const expiringInventoryItems = this.report.expiringInventoryItems
+
+      expiringInventoryItems.isGeneratingReport = true
+      expiringInventoryItems.hasGeneratedReport = false
+
+      try {
+        const { results } = await reportRepository.getExpiringInventoryItems()
+
+        expiringInventoryItems.results = results
+        expiringInventoryItems.hasGeneratedReport = true
+      } finally {
+        expiringInventoryItems.isGeneratingReport = false
+      }
+    },
+    async getInventoryItems () {
+      const inventoryItems = this.report.inventoryItems
+
+      inventoryItems.isGeneratingReport = true
+      inventoryItems.hasGeneratedReport = false
+
+      try {
+        const { results } = await reportRepository.getInventoryItems()
+
+        inventoryItems.itemsByGroup = results.inventoryItemsByGroup
+        inventoryItems.itemsByCategory = results.inventoryItemsByCategory
+        inventoryItems.hasGeneratedReport = true
+      } finally {
+        inventoryItems.isGeneratingReport = false
+      }
+    },
+    getItemExpirationDate (item) {
+      if (item.category.customFields.expirationDate !== undefined) {
+        return new Date(item.category.customFields.expirationDate)
+      }
+
+      if (item.category.customFields.bestBeforeDate !== undefined) {
+        return new Date(item.category.customFields.bestBeforeDate)
       }
     }
   }
