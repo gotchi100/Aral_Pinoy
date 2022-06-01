@@ -79,13 +79,32 @@ class EventRepository {
     await this.apiClient.patch(`/events/${id}`, payload)
   }
 
-  async getRecommendedVolunteers (id, options = {}) {
+  /**
+   *
+   * @param {Object} params Parameters
+   * @param {Object} params.eventId Event Id
+   * @param {Object} params.skills Skills
+   * @param {Object} options Options
+   * @returns
+   */
+  async getRecommendedVolunteers (params, options = {}) {
+    const {
+      eventId,
+      skills
+    } = params
+
     const {
       offset,
       limit
     } = options
 
     const queryString = new URLSearchParams()
+
+    if (Array.isArray(skills) && skills.length > 0) {
+      for (const skill of skills) {
+        queryString.append('filters.skillIds[]', skill._id)
+      }
+    }
 
     if (limit !== undefined) {
       queryString.set('limit', limit)
@@ -95,7 +114,7 @@ class EventRepository {
       queryString.set('offset', offset)
     }
 
-    const { data } = await this.apiClient.get(`/events/${id}/recommended-volunteers?${queryString.toString()}`)
+    const { data } = await this.apiClient.get(`/events/${eventId}/recommended-volunteers?${queryString.toString()}`)
 
     return data
   }

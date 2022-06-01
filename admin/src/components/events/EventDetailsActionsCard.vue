@@ -57,31 +57,108 @@
               class="mb-3"
               header="Recommendation"
             >
-              <b-table
-                :items="getRecommendedVolunteers"
-                :fields="volunteerInvitation.recommendedVolunteers.fields"
-                :current-page="volunteerInvitation.recommendedVolunteers.pagination.currentPage"
-                :per-page="volunteerInvitation.recommendedVolunteers.pagination.perPage"
-                stacked="md"
-                style="background:white"
-                show-empty
-                small
-                primary-key="_id"
-                hover
-              >
-                <template #cell(invite)="{ item }">
-                  <b-form-group class="pt-2 text-start">
-                    <div class="form-check">
-                      <input
-                        id="recommended-volunteer-invite-checkbox"
-                        class="form-check-input"
-                        type="checkbox"
-                        @change="(e) => handleVolunteerInvite(item, e.target.checked)"
+              <b-row>
+                <b-col
+                  cols="12"
+                  md="6"
+                >
+                  <div class="pb-3">
+                    Filter by Skills
+                  </div>
+
+                  <b-form-tags>
+                    <template>
+                      <ul
+                        class="list-inline d-inline-block mb-2"
                       >
-                    </div>
-                  </b-form-group>
-                </template>
-              </b-table>
+                        <li
+                          v-for="(skill, index) in volunteerInvitation.recommendedVolunteers.filters.skills"
+                          :key="index"
+                          class="list-inline-item"
+                        >
+                          <b-form-tag
+                            class="bg-success"
+                            @remove="removeSkill(index)"
+                          >
+                            {{ skill.name }}
+                          </b-form-tag>
+                        </li>
+                      </ul>
+                    </template>
+
+                    <b-dropdown
+                      text="Add Skill"
+                      style="width: 100%"
+                      menu-class="w-100"
+                      variant="primary"
+                    >
+                      <b-dropdown-form>
+                        <b-form-group
+                          label="Search Skill"
+                          label-for="skill-search"
+                          @submit.stop.prevent
+                        >
+                          <b-form-input
+                            id="skill-search"
+                            debounce="500"
+                            @update="searchSkills"
+                          />
+                        </b-form-group>
+                      </b-dropdown-form>
+                      <b-dropdown-divider />
+
+                      <b-dropdown-item
+                        v-for="skill in volunteerInvitation.recommendedVolunteers.filterOptions.skillOptions"
+                        :key="skill._id"
+                        @click="selectSkill(skill)"
+                      >
+                        {{ skill.name }} <span style="color: grey; font-size: 12px">{{ skill.description }}</span>
+                      </b-dropdown-item>
+                    </b-dropdown>
+                  </b-form-tags>
+                </b-col>
+              </b-row>
+
+              <b-row class="pt-4">
+                <b-col cols="12">
+                  <b-table
+                    ref="recommendedVolunteersTable"
+                    :items="getRecommendedVolunteers"
+                    :fields="volunteerInvitation.recommendedVolunteers.fields"
+                    :current-page="volunteerInvitation.recommendedVolunteers.pagination.currentPage"
+                    :per-page="volunteerInvitation.recommendedVolunteers.pagination.perPage"
+                    stacked="md"
+                    style="background:white"
+                    show-empty
+                    small
+                    primary-key="_id"
+                    hover
+                  >
+                    <template #cell(skills)="{ value }">
+                      <span
+                        v-for="skill in value"
+                        :key="skill._id"
+                        class="badge bg-secondary mx-1"
+                      >
+                        {{ skill.name }}
+                      </span>
+                    </template>
+
+                    <template #cell(invite)="{ item }">
+                      <b-form-group class="pt-2 text-start">
+                        <div class="form-check">
+                          <input
+                            id="recommended-volunteer-invite-checkbox"
+                            class="form-check-input"
+                            type="checkbox"
+                            @change="(e) => handleVolunteerInvite(item, e.target.checked)"
+                          >
+                        </div>
+                      </b-form-group>
+                    </template>
+                  </b-table>
+                </b-col>
+              </b-row>
 
               <b-row class="pt-4 justify-content-md-center">
                 <b-col
@@ -187,9 +264,11 @@ import { mapGetters } from 'vuex'
 import { apiClient } from '../../axios'
 import EventRepository from '../../repositories/events'
 import UserRepository from '../../repositories/users'
+import SkillRepository from '../../repositories/skills'
 
 const eventRepository = new EventRepository(apiClient)
 const userRepository = new UserRepository(apiClient)
+const skillRepository = new SkillRepository(apiClient)
 
 export default {
   name: 'EventDetailsActionsCard',
@@ -216,8 +295,19 @@ export default {
             { key: 'email', label: 'Email' },
             { key: 'lastName', label: 'Last Name' },
             { key: 'firstName', label: 'First Name' },
+            { key: 'address.home', label: 'Location' },
+            { key: 'skills', label: 'Skills' },
             { key: 'invite', label: 'Invite' }
-          ]
+          ],
+          loading: {
+            searchSkills: false
+          },
+          filters: {
+            skills: []
+          },
+          filterOptions: {
+            skillOptions: []
+          }
         },
         userInvitations: []
       },
@@ -232,14 +322,19 @@ export default {
 
     eventRepository.setAuthorizationHeader(authHeader)
     userRepository.setAuthorizationHeader(authHeader)
+    skillRepository.setAuthorizationHeader(authHeader)
   },
   methods: {
     async getRecommendedVolunteers (ctx) {
       const eventId = this.event._id
+      const skills = this.volunteerInvitation.recommendedVolunteers.filters.skills
       const perPage = this.volunteerInvitation.recommendedVolunteers.pagination.perPage
       const pageOffset = (this.volunteerInvitation.recommendedVolunteers.pagination.currentPage - 1) * this.volunteerInvitation.recommendedVolunteers.pagination.perPage
 
-      const { results, total } = await eventRepository.getRecommendedVolunteers(eventId, {
+      const { results, total } = await eventRepository.getRecommendedVolunteers({
+        eventId,
+        skills
+      }, {
         limit: perPage,
         offset: pageOffset
       })
@@ -294,6 +389,40 @@ export default {
       } finally {
         this.volunteerInvitation.isInviting = false
       }
+    },
+    async searchSkills (value) {
+      const { results } = await skillRepository.list({
+        name: value
+      }, {
+        limit: 10,
+        offset: 0,
+        sort: {
+          field: 'name',
+          order: 'asc'
+        }
+      })
+
+      this.volunteerInvitation.recommendedVolunteers.filterOptions.skillOptions = results
+    },
+    selectSkill (skill) {
+      const skills = this.volunteerInvitation.recommendedVolunteers.filters.skills
+
+      for (const existingSkill of skills) {
+        if (existingSkill._id === skill._id) {
+          return
+        }
+      }
+
+      skills.push(skill)
+
+      this.$refs.recommendedVolunteersTable.refresh()
+    },
+    removeSkill (index) {
+      const skills = this.volunteerInvitation.recommendedVolunteers.filters.skills
+
+      skills.splice(index, 1)
+
+      this.$refs.recommendedVolunteersTable.refresh()
     }
   }
 }

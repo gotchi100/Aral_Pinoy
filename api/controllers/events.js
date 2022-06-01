@@ -1102,10 +1102,16 @@ class EventsController {
     } = options
 
     const [users, total] = await Promise.all([
-      UserModel.find(userFindQuery, ['_id', 'firstName', 'lastName', 'email'], {
-        skip: offset,
-        limit
-      }),
+      UserModel.find(
+        userFindQuery, 
+        ['_id', 'firstName', 'lastName', 'email', 'address', 'skills'], 
+        {
+          populate: {
+            path: 'skills'
+          },
+          skip: offset,
+          limit
+        }),
       UserModel.countDocuments(userFindQuery)
     ])
 
