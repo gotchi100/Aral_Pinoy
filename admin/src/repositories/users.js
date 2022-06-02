@@ -55,6 +55,12 @@ class UserRepository {
       }
     }
 
+    if (Array.isArray(filters.skillIds) && filters.skillIds.length > 0) {
+      for (const skillId of filters.skillIds) {
+        queryString.append('filters.skillIds[]', skillId)
+      }
+    }
+
     if (sort.field !== undefined && sort.order !== undefined) {
       queryString.set('sort.field', sort.field)
       queryString.set('sort.order', sort.order)

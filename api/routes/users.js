@@ -31,6 +31,7 @@ const paginationValidator = Joi.object({
   countVolunteeredEvents: Joi.boolean().default(false),
   'filters.roles': Joi.array().items(Joi.string().valid('admin', 'officer', 'volunteer')).unique(),
   'filters.name': Joi.string().trim().empty(''),
+  'filters.skillIds': Joi.array().items(Joi.objectId()).unique(),
   'sort.field': Joi.string().valid('firstName', 'lastName', 'eventsVolunteeredCount'),
   'sort.order': Joi.string().valid('asc', 'desc')
 }).options({ 
@@ -91,6 +92,7 @@ async function list(req, res, next) {
     countVolunteeredEvents,
     'filters.roles': filterRoles,
     'filters.name': filterName,
+    'filters.skillIds': filterSkillIds,
     'sort.field': sortField,
     'sort.order': sortOrder
   } = req.query
@@ -102,7 +104,8 @@ async function list(req, res, next) {
       countVolunteeredEvents,
       filters: {
         name: filterName,
-        roles: filterRoles
+        roles: filterRoles,
+        skills: filterSkillIds
       },
       sort: {
         field: sortField,

@@ -80,7 +80,8 @@ class UserController {
 
     const {
       roles: filterRoles,
-      name: filterName
+      name: filterName,
+      skills: skillIds
     } = filters
 
     const filterQuery = {}
@@ -103,13 +104,15 @@ class UserController {
       listUsersQuery = UserController.listUsersWithEventCount(filterQuery, {
         limit: options.limit,
         offset : options.offset,
-        sort : options.sort
+        sort : options.sort,
+        skillIds
       })
     } else {
       listUsersQuery = UserController.listUsers(filterQuery, {
         limit: options.limit,
         offset : options.offset,
-        sort : options.sort
+        sort : options.sort,
+        skillIds
       })
     }
 
@@ -136,7 +139,8 @@ class UserController {
     const {
       limit,
       offset,
-      sort = {}
+      sort = {},
+      skillIds
     } = options
 
     const {
@@ -144,22 +148,50 @@ class UserController {
       order: sortOrder
     } = sort
 
-    const queryOptions = { 
-      lean: true,
-      limit,
-      skip: offset,
-      populate: {
-        path: 'skills'
+    const aggregationQuery = [{
+      $match: {
+        ...filterQuery
       }
+    }, {
+      $lookup: {
+        from: 'skills',
+        localField: 'skills',
+        foreignField: '_id',
+        as: 'skills'
+      }
+    }]
+
+    if (Array.isArray(skillIds) && skillIds.length > 0) {
+      aggregationQuery.push({
+        $match: {
+          'skills._id': {
+            $in: skillIds.map((id) => new Types.ObjectId(id))
+          }
+        }
+      })
+    }
+
+    if (offset !== undefined) {
+      aggregationQuery.push({
+        $skip: offset
+      }) 
+    }
+
+    if (limit !== undefined) {
+      aggregationQuery.push({
+        $limit: limit
+      }) 
     }
 
     if (sortField !== undefined && sortOrder !== undefined) {
-      queryOptions.sort = {
-        [sortField]: SORT_ORDER_MAPPING[sortOrder]
-      }
+      aggregationQuery.push({
+        $sort: {
+          [sortField]: SORT_ORDER_MAPPING[sortOrder]
+        }
+      })
     }
 
-    return await UserModel.find(filterQuery, undefined, queryOptions)
+    return await UserModel.aggregate(aggregationQuery)
   }
 
   /**
@@ -174,7 +206,8 @@ class UserController {
     const { 
       limit,
       offset,
-      sort = {}
+      sort = {},
+      skillIds
     } = options
 
     const {
@@ -186,7 +219,24 @@ class UserController {
       $match: {
         ...filterQuery
       }
+    }, {
+      $lookup: {
+        from: 'skills',
+        localField: 'skills',
+        foreignField: '_id',
+        as: 'skills'
+      }
     }]
+
+    if (Array.isArray(skillIds) && skillIds.length > 0) {
+      aggregationQuery.push({
+        $match: {
+          'skills._id': {
+            $in: skillIds.map((id) => new Types.ObjectId(id))
+          }
+        }
+      })
+    }
 
     if (offset !== undefined) {
       aggregationQuery.push({
@@ -219,13 +269,6 @@ class UserController {
           }
         ],
         as: 'volunteeredEvents'
-      }
-    }, {
-      $lookup: {
-        from: 'skills',
-        localField: 'skills',
-        foreignField: '_id',
-        as: 'skills'
       }
     }, {
       $addFields: { 
