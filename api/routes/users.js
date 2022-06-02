@@ -28,9 +28,10 @@ const createUserValidator = Joi.object({
 const paginationValidator = Joi.object({
   offset: Joi.number().min(0).default(0),
   limit: Joi.number().min(1).default(25),
+  countVolunteeredEvents: Joi.boolean().default(false),
   'filters.roles': Joi.array().items(Joi.string().valid('admin', 'officer', 'volunteer')).unique(),
   'filters.name': Joi.string().trim().empty(''),
-  'sort.field': Joi.string().valid('firstName', 'lastName'),
+  'sort.field': Joi.string().valid('firstName', 'lastName', 'eventsVolunteeredCount'),
   'sort.order': Joi.string().valid('asc', 'desc')
 }).options({ 
   stripUnknown: true
@@ -87,6 +88,7 @@ async function list(req, res, next) {
   const {
     offset,
     limit,
+    countVolunteeredEvents,
     'filters.roles': filterRoles,
     'filters.name': filterName,
     'sort.field': sortField,
@@ -97,6 +99,7 @@ async function list(req, res, next) {
     const { results, total } = await UsersController.list({
       offset,
       limit,
+      countVolunteeredEvents,
       filters: {
         name: filterName,
         roles: filterRoles

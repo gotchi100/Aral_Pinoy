@@ -12,7 +12,7 @@ const SORT_ORDER_MAPPING = {
 
 const { NotFoundError } = require('../errors')
 
-class UsersController {
+class UserController {
   static async create(req, res, next) {
     const {
       email,
@@ -74,10 +74,8 @@ class UsersController {
 
   static async list(options = {}) {
     const {
-      limit,
-      offset,
+      countVolunteeredEvents,
       filters = {},
-      sort = {}
     } = options
 
     const {
@@ -85,17 +83,7 @@ class UsersController {
       name: filterName
     } = filters
 
-    const {
-      field: sortField,
-      order: sortOrder
-    } = sort
-
     const filterQuery = {}
-    const queryOptions = { 
-      lean: true,
-      limit,
-      skip: offset
-    }
 
     if (filterName !== undefined && filterName !== '') {
       filterQuery.$text = {
@@ -109,14 +97,24 @@ class UsersController {
       }
     }
 
-    if (sortField !== undefined && sortOrder !== undefined) {
-      queryOptions.sort = {
-        [sortField]: SORT_ORDER_MAPPING[sortOrder]
-      }
+    let listUsersQuery
+    
+    if (countVolunteeredEvents) {
+      listUsersQuery = UserController.listUsersWithEventCount(filterQuery, {
+        limit: options.limit,
+        offset : options.offset,
+        sort : options.sort
+      })
+    } else {
+      listUsersQuery = UserController.listUsers(filterQuery, {
+        limit: options.limit,
+        offset : options.offset,
+        sort : options.sort
+      })
     }
 
     const [users, total] = await Promise.all([
-      UserModel.find(filterQuery, undefined, queryOptions),
+      listUsersQuery,
       UserModel.countDocuments(filterQuery)
     ])
 
@@ -124,6 +122,123 @@ class UsersController {
       results: users,
       total
     }
+  }
+
+  /**
+   * @private
+   * @param {Object} [filterQuery={}] 
+   * @param {Object} [options={}] 
+   * @param {Object} [options.sort]
+   * @param {number} [options.limit]
+   * @param {number} [options.skip]
+   */
+  static async listUsers(filterQuery = {}, options = {}) {
+    const {
+      limit,
+      offset,
+      sort = {}
+    } = options
+
+    const {
+      field: sortField,
+      order: sortOrder
+    } = sort
+
+    const queryOptions = { 
+      lean: true,
+      limit,
+      skip: offset
+    }
+
+    if (sortField !== undefined && sortOrder !== undefined) {
+      queryOptions.sort = {
+        [sortField]: SORT_ORDER_MAPPING[sortOrder]
+      }
+    }
+
+    return await UserModel.find(filterQuery, undefined, queryOptions)
+  }
+
+  /**
+   * @private
+   * @param {Object} [filterQuery={}] 
+   * @param {Object} [options={}] 
+   * @param {Object} [options.sort]
+   * @param {number} [options.limit]
+   * @param {number} [options.skip]
+   */
+  static async listUsersWithEventCount(filterQuery = {}, options = {}) {
+    const { 
+      limit,
+      offset,
+      sort = {}
+    } = options
+
+    const {
+      field: sortField,
+      order: sortOrder
+    } = sort
+
+    const aggregationQuery = [{
+      $match: {
+        ...filterQuery
+      }
+    }]
+
+    if (offset !== undefined) {
+      aggregationQuery.push({
+        $skip: offset
+      }) 
+    }
+
+    if (limit !== undefined) {
+      aggregationQuery.push({
+        $limit: limit
+      }) 
+    }
+
+    aggregationQuery.push({
+      $lookup: {
+        from: 'eventVolunteers',
+        localField: '_id',
+        foreignField: 'user',
+        pipeline: [
+          {
+            $match: {
+              $or: [{
+                absent: {
+                  $exists: false
+                }
+              }, {
+                absent: false
+              }]
+            }
+          }
+        ],
+        as: 'volunteeredEvents'
+      }
+    }, {
+      $addFields: { 
+        eventsVolunteeredCount: {
+          $size: { 
+            '$ifNull': ['$volunteeredEvents', [] ] } 
+        }
+      }
+    }, {
+      $project: {
+        volunteeredEvents: 0
+      }
+    })
+
+    if (sortField === 'eventsVolunteeredCount' && sortOrder !== undefined) {
+      aggregationQuery.push({
+        $sort: {
+          [sortField]: SORT_ORDER_MAPPING[sortOrder]
+        }
+      })
+    }
+
+    return await UserModel.aggregate(aggregationQuery)
   }
 
   static async get(req, res) {
@@ -220,4 +335,4 @@ class UsersController {
   }
 }
 
-module.exports = UsersController
+module.exports = UserController

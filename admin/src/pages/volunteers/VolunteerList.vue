@@ -130,6 +130,12 @@ import UserRepository from '../../repositories/users'
 
 const userRepository = new UserRepository(apiClient)
 
+const SORT_MAP = {
+  firstName: 'firstName',
+  lastName: 'lastName',
+  eventsVolunteeredCount: 'eventsVolunteeredCount'
+}
+
 export default {
   name: 'VolunteerList',
   data () {
@@ -144,7 +150,8 @@ export default {
         { key: 'email', label: 'Email' },
         { key: 'lastName', label: 'Last Name', sortable: true },
         { key: 'firstName', label: 'First Name', sortable: true },
-        { key: 'contactNumber', label: 'Contact Number' }
+        { key: 'contactNumber', label: 'Contact Number' },
+        { key: 'eventsVolunteeredCount', label: 'Number of Events Volunteered', sortable: true }
       ]
     }
   },
@@ -170,7 +177,7 @@ export default {
       const sort = {}
 
       if (sortBy !== undefined && sortBy !== '') {
-        sort.field = sortBy
+        sort.field = SORT_MAP[sortBy]
         sort.order = sortDesc ? 'desc' : 'asc'
       }
 
@@ -180,7 +187,8 @@ export default {
       }, {
         limit,
         offset,
-        sort
+        sort,
+        countVolunteeredEvents: true
       })
 
       this.total = total

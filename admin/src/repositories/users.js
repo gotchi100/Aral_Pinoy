@@ -31,7 +31,8 @@ class UserRepository {
     const {
       limit,
       offset,
-      sort = {}
+      sort = {},
+      countVolunteeredEvents = false
     } = options
 
     const queryString = new URLSearchParams()
@@ -57,6 +58,10 @@ class UserRepository {
     if (sort.field !== undefined && sort.order !== undefined) {
       queryString.set('sort.field', sort.field)
       queryString.set('sort.order', sort.order)
+    }
+
+    if (countVolunteeredEvents === true) {
+      queryString.set('countVolunteeredEvents', true)
     }
 
     const { data } = await this.apiClient.get(`/users?${queryString.toString()}`)
