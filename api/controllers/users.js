@@ -147,7 +147,10 @@ class UserController {
     const queryOptions = { 
       lean: true,
       limit,
-      skip: offset
+      skip: offset,
+      populate: {
+        path: 'skills'
+      }
     }
 
     if (sortField !== undefined && sortOrder !== undefined) {
@@ -216,6 +219,13 @@ class UserController {
           }
         ],
         as: 'volunteeredEvents'
+      }
+    }, {
+      $lookup: {
+        from: 'skills',
+        localField: 'skills',
+        foreignField: '_id',
+        as: 'skills'
       }
     }, {
       $addFields: { 

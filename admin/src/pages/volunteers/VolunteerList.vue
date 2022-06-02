@@ -100,6 +100,16 @@
                     <template #cell(name)="row">
                       {{ row.item.firstName }} {{ row.item.lastName }}
                     </template>
+
+                    <template #cell(skills)="{ value }">
+                      <span
+                        v-for="skill in value"
+                        :key="skill._id"
+                        class="badge bg-secondary mx-1"
+                      >
+                        {{ skill.name }}
+                      </span>
+                    </template>
                   </b-table>
                 </b-col>
               </b-row>
@@ -151,6 +161,7 @@ export default {
         { key: 'lastName', label: 'Last Name', sortable: true },
         { key: 'firstName', label: 'First Name', sortable: true },
         { key: 'contactNumber', label: 'Contact Number' },
+        { key: 'skills', label: 'Skills' },
         { key: 'eventsVolunteeredCount', label: 'Number of Events Volunteered', sortable: true }
       ]
     }
