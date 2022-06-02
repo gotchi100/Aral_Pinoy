@@ -1048,7 +1048,6 @@ class EventsController {
     }
 
     const skillIds = []
-    const filteredSkills = filters.skillIds || []
 
     if (skillNorms.size > 0) {
       const skills = await SkillModel.find({
@@ -1058,15 +1057,7 @@ class EventsController {
       }, ['_id'])
       
       for (const skill of skills) {
-        if (filteredSkills.length === 0) {
-          skillIds.push(skill._id)
-
-          continue
-        }
-        
-        if (filteredSkills.includes(skill._id.toString())) {
-          skillIds.push(skill._id)
-        }
+        skillIds.push(skill._id)
       }
     }
 
@@ -1078,9 +1069,11 @@ class EventsController {
       roles: 'volunteer'
     }
 
+    const filteredSkills = filters.skillIds || []
+
     if (filteredSkills.length > 0 || skillIds.length > 0) {
       userFindQuery.skills = {
-        $in: skillIds
+        $in: filteredSkills.map((id) => new Types.ObjectId(id)).concat(skillIds)
       }
     }
 
