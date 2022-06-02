@@ -127,6 +127,13 @@ const logo = require('../assets/aralpinoywords.png')
 const config = require('../../config')
 const { apiClient } = require('../axios')
 
+const ERROR_MESSAGE_MAP = {
+  invalid_user: 'Invalid User Login',
+  google_no_family_name: 'Google account sign-in requires a family name',
+  google_no_gender: 'Google account sign-in requires your gender to be available to the public',
+  google_no_birth_date: 'Google account sign-in requires your birth date to be available to the public'
+}
+
 export default {
   name: 'Login',
   data () {
@@ -146,6 +153,15 @@ export default {
       }
 
       return status
+    },
+    queryErrorMessage () {
+      const errorMessage = ERROR_MESSAGE_MAP[this.$route.query.errorMessage]
+
+      if (errorMessage === undefined) {
+        return
+      }
+
+      return errorMessage
     }
   },
   created () {
@@ -155,6 +171,10 @@ export default {
       })
 
       this.errorMessage = 'Your session has expired. Please login again.'
+    }
+
+    if (this.queryErrorMessage !== undefined) {
+      this.errorMessage = this.queryErrorMessage
     }
   },
   methods: {

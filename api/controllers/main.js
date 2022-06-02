@@ -9,8 +9,6 @@ const UserModel = require('../models/users')
 const SkillModel = require('../models/skills')
 const config = require('../config')
 
-const { BadRequestError } = require('../errors')
-
 const whitespaceRegex = /\s+/g
 
 function sanitize(name) {
@@ -133,10 +131,6 @@ class MainController {
 
       const googleUser = userInfoResults.data
 
-      if (!googleUser.family_name) {
-        throw new BadRequestError('Unable to sign-up by Google: Account does not have a family name')
-      }
-
       let user = await UserModel.findOne({
         email: googleUser.email,
         roles: 'volunteer'
@@ -152,13 +146,21 @@ class MainController {
           roles: 'volunteer'
         }
 
+        if (!googleUser.family_name) {
+          return res.redirect(`${config.volunteer.google.oauth.redirectUri}?errorMessage=no_family_name`)
+        }
+
         const { birthDate, gender } = await getBirthDateAndGender(access_token)
 
-        if (birthDate !== undefined) {
+        if (birthDate === undefined) {
+          return res.redirect(`${config.volunteer.google.oauth.redirectUri}?errorMessage=no_birth_date`)
+        } else {
           userDocument.birthDate = birthDate
         }
 
-        if (gender !== undefined) {
+        if (gender === undefined) {
+          return res.redirect(`${config.volunteer.google.oauth.redirectUri}?errorMessage=no_gender`)
+        } else {
           userDocument.gender = gender
         }
 

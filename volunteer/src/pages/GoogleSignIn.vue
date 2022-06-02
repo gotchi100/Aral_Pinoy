@@ -6,12 +6,19 @@
 export default {
   name: 'GoogleSignIn',
   created () {
-    const { user, token } = this.$route.query
+    const { user, token, errorMessage } = this.$route.query
+
+    const routeHistory = {
+      path: '/login',
+      query: {}
+    }
 
     if (!user || !token) {
-      this.$router.push({
-        path: '/login'
-      })
+      if (errorMessage !== undefined) {
+        routeHistory.query.errorMessage = `google_${errorMessage}`
+      }
+
+      return this.$router.push(routeHistory)
     }
 
     let parsedUser
@@ -19,8 +26,11 @@ export default {
     try {
       parsedUser = JSON.parse(atob(user))
     } catch (error) {
-      this.$router.push({
-        path: '/login'
+      return this.$router.push({
+        path: '/login',
+        query: {
+          errorMessage: 'invalid_user'
+        }
       })
     }
 
