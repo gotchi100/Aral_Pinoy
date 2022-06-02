@@ -135,7 +135,7 @@
                     hover
                   >
                     <template #cell(location)="{ item }">
-                      <span>
+                      <span v-if="item.location !== undefined">
                         {{ item.location.city }}, {{ item.location.province }}
                       </span>
                     </template>
