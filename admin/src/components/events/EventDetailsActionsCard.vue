@@ -60,7 +60,7 @@
               <b-row>
                 <b-col
                   cols="12"
-                  md="6"
+                  md="4"
                 >
                   <div class="pb-3">
                     Filter by Skills
@@ -114,6 +114,114 @@
                       >
                         {{ skill.name }} <span style="color: grey; font-size: 12px">{{ skill.description }}</span>
                       </b-dropdown-item>
+                    </b-dropdown>
+                  </b-form-tags>
+                </b-col>
+
+                <b-col
+                  cols="12"
+                  md="4"
+                >
+                  <div class="pb-3">
+                    Filter by Province
+                  </div>
+
+                  <b-form-tags>
+                    <template>
+                      <ul
+                        class="list-inline d-inline-block mb-2"
+                      >
+                        <li
+                          v-for="(province, index) in volunteerInvitation.recommendedVolunteers.filters.provinces"
+                          :key="index"
+                          class="list-inline-item"
+                        >
+                          <b-form-tag
+                            class="bg-success"
+                            @remove="removeProvince(index)"
+                          >
+                            {{ province }}
+                          </b-form-tag>
+                        </li>
+                      </ul>
+                    </template>
+
+                    <b-dropdown
+                      text="Add Province"
+                      style="width: 100%"
+                      menu-class="w-100"
+                      variant="primary"
+                    >
+                      <b-dropdown-form>
+                        <select
+                          class="form-select"
+                          @change="(e) => selectProvince(e.target.value)"
+                        >
+                          <option selected />
+
+                          <option
+                            v-for="province in philippineProvinces"
+                            :key="province"
+                            :value="province"
+                          >
+                            {{ province }}
+                          </option>
+                        </select>
+                      </b-dropdown-form>
+                    </b-dropdown>
+                  </b-form-tags>
+                </b-col>
+
+                <b-col
+                  cols="12"
+                  md="4"
+                >
+                  <div class="pb-3">
+                    Filter by City
+                  </div>
+
+                  <b-form-tags>
+                    <template>
+                      <ul
+                        class="list-inline d-inline-block mb-2"
+                      >
+                        <li
+                          v-for="(city, index) in volunteerInvitation.recommendedVolunteers.filters.cities"
+                          :key="index"
+                          class="list-inline-item"
+                        >
+                          <b-form-tag
+                            class="bg-success"
+                            @remove="removeCity(index)"
+                          >
+                            {{ city }}
+                          </b-form-tag>
+                        </li>
+                      </ul>
+                    </template>
+
+                    <b-dropdown
+                      text="Add City"
+                      style="width: 100%"
+                      menu-class="w-100"
+                      variant="primary"
+                    >
+                      <b-dropdown-form>
+                        <select
+                          class="form-select"
+                          @change="(e) => selectCity(e.target.value)"
+                        >
+                          <option selected />
+
+                          <option
+                            v-for="city in volunteerInvitation.recommendedVolunteers.filterOptions.cityOptions"
+                            :key="city"
+                            :value="city"
+                          >
+                            {{ city }}
+                          </option>
+                        </select>
+                      </b-dropdown-form>
                     </b-dropdown>
                   </b-form-tags>
                 </b-col>
@@ -279,11 +387,14 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { intersection } from 'lodash'
 
 import { apiClient } from '../../axios'
 import EventRepository from '../../repositories/events'
 import UserRepository from '../../repositories/users'
 import SkillRepository from '../../repositories/skills'
+
+import { provinceCityMap } from '../../constants/philippines'
 
 const eventRepository = new EventRepository(apiClient)
 const userRepository = new UserRepository(apiClient)
@@ -322,10 +433,14 @@ export default {
             searchSkills: false
           },
           filters: {
-            skills: []
+            skills: [],
+            provinces: [],
+            cities: []
           },
           filterOptions: {
-            skillOptions: []
+            skillOptions: [],
+            provinceOptions: [],
+            cityOptions: []
           }
         },
         userInvitations: []
@@ -334,7 +449,32 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['token'])
+    ...mapGetters(['token']),
+    philippineProvinces () {
+      return Object.keys(provinceCityMap).sort()
+    }
+  },
+  watch: {
+    'volunteerInvitation.recommendedVolunteers.filters.provinces' (provinces) {
+      const cityOptionsSet = new Set()
+
+      for (const province of provinces) {
+        const citiesMap = provinceCityMap[province]
+
+        if (citiesMap !== undefined) {
+          Object.keys(citiesMap).forEach(cityOptionsSet.add, cityOptionsSet)
+        }
+      }
+
+      const cityOptions = Array.from(cityOptionsSet)
+
+      this.volunteerInvitation.recommendedVolunteers.filters.cities = intersection(
+        this.volunteerInvitation.recommendedVolunteers.filters.cities,
+        cityOptions
+      )
+
+      this.volunteerInvitation.recommendedVolunteers.filterOptions.cityOptions = cityOptions.sort()
+    }
   },
   async created () {
     const authHeader = `Bearer ${this.token}`
@@ -347,12 +487,19 @@ export default {
     async getRecommendedVolunteers (ctx) {
       const eventId = this.event._id
       const skills = this.volunteerInvitation.recommendedVolunteers.filters.skills
+      const provinces = this.volunteerInvitation.recommendedVolunteers.filters.provinces
+      const cities = this.volunteerInvitation.recommendedVolunteers.filters.cities
+
       const perPage = this.volunteerInvitation.recommendedVolunteers.pagination.perPage
       const pageOffset = (this.volunteerInvitation.recommendedVolunteers.pagination.currentPage - 1) * this.volunteerInvitation.recommendedVolunteers.pagination.perPage
 
       const { results, total } = await eventRepository.getRecommendedVolunteers({
         eventId,
-        skills
+        skills,
+        location: {
+          provinces,
+          cities
+        }
       }, {
         limit: perPage,
         offset: pageOffset
@@ -440,6 +587,42 @@ export default {
       const skills = this.volunteerInvitation.recommendedVolunteers.filters.skills
 
       skills.splice(index, 1)
+
+      this.$refs.recommendedVolunteersTable.refresh()
+    },
+    selectProvince (province) {
+      const provinces = this.volunteerInvitation.recommendedVolunteers.filters.provinces
+
+      if (provinces.includes(province)) {
+        return
+      }
+
+      provinces.push(province)
+
+      this.$refs.recommendedVolunteersTable.refresh()
+    },
+    removeProvince (index) {
+      const provinces = this.volunteerInvitation.recommendedVolunteers.filters.provinces
+
+      provinces.splice(index, 1)
+
+      this.$refs.recommendedVolunteersTable.refresh()
+    },
+    selectCity (city) {
+      const cities = this.volunteerInvitation.recommendedVolunteers.filters.cities
+
+      if (cities.includes(city)) {
+        return
+      }
+
+      cities.push(city)
+
+      this.$refs.recommendedVolunteersTable.refresh()
+    },
+    removeCity (index) {
+      const cities = this.volunteerInvitation.recommendedVolunteers.filters.cities
+
+      cities.splice(index, 1)
 
       this.$refs.recommendedVolunteersTable.refresh()
     }

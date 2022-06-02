@@ -1069,6 +1069,22 @@ class EventsController {
       roles: 'volunteer'
     }
 
+    if (filters.location !== undefined) {
+      const { provinces, cities } = filters.location
+
+      if (Array.isArray(provinces) && provinces.length > 0) {
+        userFindQuery['location.province'] = {
+          $in: provinces
+        }
+      }
+
+      if (Array.isArray(cities) && cities.length > 0) {
+        userFindQuery['location.city'] = {
+          $in: cities
+        }
+      }
+    }
+
     const filteredSkills = filters.skillIds || []
 
     if (filteredSkills.length > 0 || skillIds.length > 0) {
@@ -1097,7 +1113,7 @@ class EventsController {
     const [users, total] = await Promise.all([
       UserModel.find(
         userFindQuery, 
-        ['_id', 'firstName', 'lastName', 'email', 'address', 'skills'], 
+        ['_id', 'firstName', 'lastName', 'email', 'location', 'skills'], 
         {
           populate: {
             path: 'skills'

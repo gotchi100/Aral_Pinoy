@@ -83,14 +83,18 @@ class EventRepository {
    *
    * @param {Object} params Parameters
    * @param {Object} params.eventId Event Id
-   * @param {Object} params.skills Skills
+   * @param {Object[]} params.skills Skills
+   * @param {Object} params.location Location
+   * @param {string[]} params.location.provinces List of provinces
+   * @param {string[]} params.location.cities List of cities
    * @param {Object} options Options
    * @returns
    */
   async getRecommendedVolunteers (params, options = {}) {
     const {
       eventId,
-      skills
+      skills,
+      location
     } = params
 
     const {
@@ -103,6 +107,25 @@ class EventRepository {
     if (Array.isArray(skills) && skills.length > 0) {
       for (const skill of skills) {
         queryString.append('filters.skillIds[]', skill._id)
+      }
+    }
+
+    if (location !== undefined) {
+      const {
+        provinces,
+        cities
+      } = location
+
+      if (Array.isArray(provinces) && provinces.length > 0) {
+        for (const province of provinces) {
+          queryString.append('filters.location.provinces[]', province)
+        }
+      }
+
+      if (Array.isArray(cities) && cities.length > 0) {
+        for (const city of cities) {
+          queryString.append('filters.location.cities[]', city)
+        }
       }
     }
 

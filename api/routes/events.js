@@ -11,6 +11,8 @@ Joi.objectId = joiObjectId(Joi)
 const { STATUSES } = require('../constants/events')
 const EventsController = require('../controllers/events')
 
+const { provinces, cities } = require('../constants/philippines')
+
 const upload = multer({
   limits: {
     fileSize: 5000000 // 5 MB
@@ -373,6 +375,12 @@ async function patchEventStatus(req, res, next) {
 
 const getRecommendedVolunteersValidator = Joi.object({
   'filters.skillIds': Joi.array().items(Joi.objectId()).unique(),
+  'filters.location.provinces': Joi.array().items(
+    Joi.string().valid(...provinces)
+  ).unique(),
+  'filters.location.cities': Joi.array().items(
+    Joi.string().valid(...cities)
+  ).unique(),
 })
 
 function validateGetRecommendedVolunteersQuery(req, res, next) {
@@ -398,7 +406,9 @@ async function getRecommendedVolunteers(req, res, next) {
   const { 
     offset,
     limit,
-    'filters.skillIds': filterSkillIds
+    'filters.skillIds': filterSkillIds,
+    'filters.location.provinces': filterLocationProvinces,
+    'filters.location.cities': filterLocationCities,
   } = req.query
 
   try {
@@ -406,7 +416,11 @@ async function getRecommendedVolunteers(req, res, next) {
       offset,
       limit,
       filters: {
-        skillIds: filterSkillIds
+        skillIds: filterSkillIds,
+        location: {
+          provinces: filterLocationProvinces,
+          cities: filterLocationCities
+        }
       }
     })
 
