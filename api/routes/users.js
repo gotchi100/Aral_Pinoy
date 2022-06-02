@@ -44,6 +44,10 @@ const updateUserValidator = Joi.object({
   gender: Joi.string().valid('Male', 'Female'),
   birthDate: Joi.date().iso(),
   contactNumber: Joi.string().trim().max(20).empty('').allow(null),
+  location: Joi.object({
+    province: Joi.string().valid(...provinces),
+    city: Joi.string().valid(...cities),
+  }),
   skillIds: Joi.array().items(Joi.objectId()).unique()
 })
 
@@ -152,6 +156,7 @@ async function updateUser(req, res, next) {
     gender,
     birthDate,
     contactNumber,
+    location,
     skillIds
   } = req.body
 
@@ -164,6 +169,7 @@ async function updateUser(req, res, next) {
       gender,
       birthDate,
       contactNumber,
+      location,
       skillIds
     })
 

@@ -37,6 +37,24 @@
                 <label
                   for="input-small"
                   style="font-family:'Bebas Neue', cursive;"
+                >Email Address</label>
+                <b-col>
+                  <b-skeleton
+                    v-if="isLoadingUser"
+                    type="input"
+                  />
+                  <b-form-input
+                    v-else
+                    v-model="user.email"
+                    disabled
+                  />
+                </b-col>
+              </b-row>
+
+              <b-row class="my-1">
+                <label
+                  for="input-small"
+                  style="font-family:'Bebas Neue', cursive;"
                 >First Name</label>
                 <b-col>
                   <b-skeleton
@@ -127,15 +145,41 @@
                 <label
                   for="input-small"
                   style="font-family:'Bebas Neue', cursive;"
-                >Email Address</label>
+                >
+                  Province
+                </label>
+
                 <b-col>
                   <b-skeleton
                     v-if="isLoadingUser"
                     type="input"
                   />
+
                   <b-form-input
                     v-else
-                    v-model="user.email"
+                    :value="user.location !== undefined ? user.location.province : ''"
+                    disabled
+                  />
+                </b-col>
+              </b-row>
+
+              <b-row class="my-1">
+                <label
+                  for="input-small"
+                  style="font-family:'Bebas Neue', cursive;"
+                >
+                  City
+                </label>
+
+                <b-col>
+                  <b-skeleton
+                    v-if="isLoadingUser"
+                    type="input"
+                  />
+
+                  <b-form-input
+                    v-else
+                    :value="user.location !== undefined ? user.location.city : ''"
                     disabled
                   />
                 </b-col>

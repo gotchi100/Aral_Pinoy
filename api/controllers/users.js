@@ -154,6 +154,7 @@ class UsersController {
       gender,
       birthDate,
       contactNumber,
+      location,
       skillIds
     } = update
 
@@ -184,6 +185,16 @@ class UsersController {
 
     if (birthDate !== undefined) {
       $set.birthDate = new Date(birthDate)
+    }
+
+    if (location !== undefined) {
+      if (location.province !== undefined) {
+        $set['location.province'] = location.province
+      }
+
+      if (location.city !== undefined) {
+        $set['location.city'] = location.city
+      }
     }
 
     if (contactNumber === null) {

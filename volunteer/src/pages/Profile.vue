@@ -287,6 +287,97 @@
               <b-row>
                 <b-col cols="12">
                   <label
+                    for="update-profile-location-country"
+                    style="font-family:'Bebas Neue', cursive;"
+                  >
+                    Country
+                  </label>
+
+                  <div class="input-group mb-3">
+                    <b-form-input
+                      id="update-profile-location-country"
+                      v-model="profile.location.country"
+                      type="text"
+                      class="form-control"
+                      disabled
+                    />
+                  </div>
+                </b-col>
+              </b-row>
+
+              <b-row>
+                <b-col cols="12">
+                  <validation-observer v-slot="{ changed, reset }">
+                    <label
+                      style="font-family:'Bebas Neue', cursive;"
+                    >
+                      Province & City
+                    </label>
+
+                    <div class="input-group mb-3">
+                      <div class="form-control">
+                        <select
+                          id="update-profile-location-province"
+                          v-model="profile.location.province"
+                          class="form-select"
+                          :disabled="loading.location"
+                        >
+                          <option
+                            v-for="province in philippineProvinces"
+                            :key="province"
+                            :value="province"
+                          >
+                            {{ province }}
+                          </option>
+                        </select>
+                      </div>
+
+                      <validation-provider
+                        v-slot="validationContext"
+                        class="form-control"
+                        :rules="{
+                          required: true
+                        }"
+                      >
+                        <select
+                          id="update-profile-location-city"
+                          v-model="profile.location.city"
+                          class="form-select"
+                          :state="getValidationState(validationContext)"
+                          :disabled="!profile.location.province || loading.location"
+                        >
+                          <option
+                            v-for="city in cityOptions"
+                            :key="city"
+                            :value="city"
+                          >
+                            {{ city }}
+                          </option>
+                        </select>
+                      </validation-provider>
+
+                      <button
+                        class="btn btn-outline-success"
+                        type="button"
+                        :disabled="!profile.location.city || !changed || loading.location"
+                        @click="updateProfile({ location: { province: profile.location.province, city: profile.location.city } }, 'location', reset)"
+                      >
+                        <b-spinner
+                          v-if="loading.location"
+                          style="width: 1rem; height: 1rem;"
+                        />
+                        <template v-else>
+                          <b-icon icon="file-earmark-check-fill" />
+                        </template>
+                      </button>
+                    </div>
+                  </validation-observer>
+                </b-col>
+              </b-row>
+
+              <b-row>
+                <b-col cols="12">
+                  <label
                     for="update-profile-skills"
                     style="font-family:'Bebas Neue', cursive;"
                   >
@@ -762,6 +853,8 @@ import EventVolunteerRepository from '../repositories/events/volunteers'
 import MonetaryDonationRepository from '../repositories/monetary-donations'
 import validationMixins from '../mixins/validation'
 
+import { provinceCityMap } from '../constants/philippines'
+
 const logo = require('../assets/aralpinoywords.png')
 
 extend('required', {
@@ -807,6 +900,11 @@ export default {
         contactNumber: '',
         email: '',
         gender: '',
+        location: {
+          country: '',
+          province: '',
+          city: ''
+        },
         skills: [],
         skillIds: []
       },
@@ -816,6 +914,7 @@ export default {
         contactNumber: false,
         email: false,
         gender: false,
+        location: false,
         skills: false
       },
       pageOptions: [5, 10, 15],
@@ -868,6 +967,7 @@ export default {
       isResettingPassword: false,
       genderOptions: ['Male', 'Female'],
       skillOptions: [],
+      cityOptions: [],
       regexRules: {
         filipinoCharacters: /^[a-zA-Z\u00f1\u00d1 -]+$/,
         phContactNumber: /^(09|\+639)\d{9}$/
@@ -881,6 +981,24 @@ export default {
     },
     eventVolunteersPageOffset () {
       return (this.eventVolunteers.pagination.currentPage - 1) * this.eventVolunteers.pagination.perPage
+    },
+    philippineProvinces () {
+      return Object.keys(provinceCityMap).sort()
+    }
+  },
+  watch: {
+    'profile.location.province' (value) {
+      const citiesMap = provinceCityMap[value]
+
+      if (citiesMap !== undefined) {
+        this.cityOptions = Object.keys(citiesMap).sort()
+      } else {
+        this.cityOptions = []
+      }
+
+      if (citiesMap[this.profile.location.city] !== true) {
+        this.profile.location.city = ''
+      }
     }
   },
   created () {
@@ -901,6 +1019,12 @@ export default {
     this.profile.gender = user.gender
     this.profile.skills = user.skills || []
     this.profile.skillIds = [].concat(this.profile.skills).map(toSkillId)
+
+    if (user.location !== undefined) {
+      this.profile.location.country = user.location.country
+      this.profile.location.province = user.location.province
+      this.profile.location.city = user.location.city
+    }
   },
   methods: {
     ...mapActions(['updateUser']),
@@ -1005,6 +1129,7 @@ export default {
       this.errorMessage = ''
 
       this.updateLoading(loadField, true)
+
       const payload = {}
 
       for (const [key, value] of Object.entries(update)) {
