@@ -95,6 +95,48 @@
                   </b-list-group>
                 </b-col>
               </b-row>
+
+              <b-row>
+                <b-col cols="12">
+                  <b-list-group style="text-align: left">
+                    <b-list-group-item class="mb-4 flex-column align-items-start">
+                      <div class="d-flex w-100 justify-content-between">
+                        <div>
+                          <h5 class="mb-1">
+                            Delete Expired Inventory Items
+                          </h5>
+
+                          <p class="mb-1">
+                            The system will delete inventory items that are expired
+                          </p>
+                        </div>
+
+                        <button
+                          :class="
+                            !!triggers.expiredInventoryItemsDeletion.message ? 'btn btn-outline-danger' : 'btn btn-danger'
+                          "
+                          type="button"
+                          :disabled="triggers.expiredInventoryItemsDeletion.loading || !!triggers.expiredInventoryItemsDeletion.message"
+                          @click="triggerExpiredInventoryItemsDeletion"
+                        >
+                          <b-spinner
+                            v-if="triggers.expiredInventoryItemsDeletion.loading"
+                            style="width: 1rem; height: 1rem;"
+                          />
+
+                          <span v-else-if="!!triggers.expiredInventoryItemsDeletion.message">
+                            {{ triggers.expiredInventoryItemsDeletion.message }}
+                          </span>
+
+                          <span v-else>
+                            Check now
+                          </span>
+                        </button>
+                      </div>
+                    </b-list-group-item>
+                  </b-list-group>
+                </b-col>
+              </b-row>
             </b-container>
           </b-card>
         </b-col>
@@ -124,6 +166,10 @@ export default {
           message: ''
         },
         expiringInventoryItems: {
+          loading: false,
+          message: ''
+        },
+        expiredInventoryItemsDeletion: {
           loading: false,
           message: ''
         }
@@ -163,6 +209,19 @@ export default {
         this.triggers.expiringInventoryItems.message = 'Unable to trigger the check.'
       } finally {
         this.triggers.expiringInventoryItems.loading = false
+      }
+    },
+    async triggerExpiredInventoryItemsDeletion () {
+      this.triggers.expiredInventoryItemsDeletion.loading = true
+
+      try {
+        await cronRepository.triggerExpiredInventoryItemsDeletion()
+
+        this.triggers.expiredInventoryItemsDeletion.message = 'System is now deleting expired inventory items'
+      } catch {
+        this.triggers.expiredInventoryItemsDeletion.message = 'Unable to trigger the check.'
+      } finally {
+        this.triggers.expiredInventoryItemsDeletion.loading = false
       }
     }
   }

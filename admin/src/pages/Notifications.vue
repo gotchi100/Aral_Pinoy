@@ -57,6 +57,13 @@
                           @onRead="redirectAndMarkAsRead"
                           @onVisible="markAsSeen(notification._id)"
                         />
+                        <expired-inventory-items-notification
+                          v-if="notification.type === 'EXPIRED_INVENTORY_ITEM'"
+                          :key="notification._id"
+                          :notification="notification"
+                          @onRead="redirectAndMarkAsRead"
+                          @onVisible="markAsSeen(notification._id)"
+                        />
                       </template>
 
                       <b-list-group-item
@@ -109,6 +116,12 @@
                           :notification="notification"
                           @onRead="redirectAndMarkAsRead"
                         />
+                        <expired-inventory-items-notification
+                          v-if="notification.type === 'EXPIRED_INVENTORY_ITEM'"
+                          :key="notification._id"
+                          :notification="notification"
+                          @onRead="redirectAndMarkAsRead"
+                        />
                       </template>
 
                       <b-list-group-item
@@ -138,6 +151,7 @@ import { mapActions, mapGetters } from 'vuex'
 
 import ExpiringInventoryItemNotification from '../components/notifications/ExpiringInventoryItemNotification'
 import EventVolunteersNeededNotification from '../components/notifications/EventVolunteersNeededNotification'
+import ExpiredInventoryItemsNotification from '../components/notifications/ExpiredInventoryItemsNotification'
 
 import NotificationRepository from '../repositories/notifications'
 import { apiClient } from '../axios'
@@ -150,7 +164,8 @@ export default {
   name: 'Notifications',
   components: {
     ExpiringInventoryItemNotification,
-    EventVolunteersNeededNotification
+    EventVolunteersNeededNotification,
+    ExpiredInventoryItemsNotification
   },
   data () {
     return {

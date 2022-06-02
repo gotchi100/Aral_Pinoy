@@ -35,6 +35,12 @@ class CronRepository {
       jobName: 'check expiring inventory items'
     })
   }
+
+  async triggerExpiredInventoryItemsDeletion () {
+    await this.apiClient.post(REPOSITORY_BASE_URL, {
+      jobName: 'delete expired inventory items'
+    })
+  }
 }
 
 module.exports = CronRepository

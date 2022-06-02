@@ -15,7 +15,8 @@ const agenda = new Agenda({
 const listValidator = Joi.object({
   jobName: Joi.string().valid(
     'check expiring inventory items',
-    'check events with insufficient volunteers'
+    'check events with insufficient volunteers',
+    'delete expired inventory items'
   ),
 }).options({ 
   stripUnknown: true
