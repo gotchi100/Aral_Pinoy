@@ -260,6 +260,7 @@
 
                             <template #cell(actions)="{ item }">
                               <b-button
+                                v-if="item.quantity <= 0 || (hasExpiration(item) && isExpiring(getItemExpirationDate(item)))"
                                 variant="danger"
                                 @click="showDeleteConfirmation(item)"
                               >
@@ -367,7 +368,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { addMonths } from 'date-fns'
+import { addMonths, endOfMonth } from 'date-fns'
 
 import InkindDonationCreateItemModal from '../../components/inkind-donations/InkindDonationCreateItemModal'
 import InkindDonationTransactionModal from '../../components/inkind-donations/InkindDonationTransactionModal'
@@ -569,7 +570,23 @@ export default {
       const date = new Date(dateStr)
       const todayAfterOneMonth = addMonths(new Date(), 1)
 
-      return date <= todayAfterOneMonth
+      return date <= endOfMonth(todayAfterOneMonth)
+    },
+    hasExpiration (item) {
+      if (item.category === undefined || item.category.customFields === undefined) {
+        return false
+      }
+
+      return item.category.customFields.bestBeforeDate !== undefined || item.category.customFields.expirationDate !== undefined
+    },
+    getItemExpirationDate (item) {
+      if (item.category.customFields.expirationDate !== undefined) {
+        return new Date(item.category.customFields.expirationDate)
+      }
+
+      if (item.category.customFields.bestBeforeDate !== undefined) {
+        return new Date(item.category.customFields.bestBeforeDate)
+      }
     }
   }
 }
