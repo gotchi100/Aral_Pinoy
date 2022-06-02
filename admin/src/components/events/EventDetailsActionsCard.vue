@@ -185,6 +185,51 @@
 
             <b-card header="Invitation List">
               <b-list-group class="mb-3">
+                <div class="mb-4">
+                  Total Invitations: {{ volunteerInvitation.userInvitations.length }}
+                </div>
+                <div class="mb-4">
+                  Volunteers Needed For Event:
+                  {{
+                    (event.goals.numVolunteers.target - event.goals.numVolunteers.current) >= 0 ?
+                      event.goals.numVolunteers.target - event.goals.numVolunteers.current :
+                      0
+                  }}
+                </div>
+
+                <b-dropdown
+                  text="Add a Volunteer"
+                  style="width: 100%"
+                  menu-class="w-100"
+                  variant="primary"
+                  class="mb-4"
+                  no-flip
+                >
+                  <b-dropdown-form>
+                    <b-form-group
+                      label="Search Volunteer"
+                      label-for="user-invitation-search-input"
+                      @submit.stop.prevent
+                    >
+                      <b-form-input
+                        id="user-invitation-search-input"
+                        debounce="250"
+                        @update="searchUsersForInvitation"
+                      />
+                    </b-form-group>
+                  </b-dropdown-form>
+
+                  <b-dropdown-divider />
+
+                  <b-dropdown-item
+                    v-for="user in userOptions"
+                    :key="user._id"
+                    @click="handleVolunteerInvite(user, true)"
+                  >
+                    {{ user.lastName }}, {{ user.firstName }} <span style="color: grey; font-size: 12px">{{ user.email }}</span>
+                  </b-dropdown-item>
+                </b-dropdown>
+
                 <b-list-group-item
                   v-for="(user, index) in volunteerInvitation.userInvitations"
                   :key="user._id"
@@ -202,38 +247,6 @@
                   </b-button>
                 </b-list-group-item>
               </b-list-group>
-
-              <b-dropdown
-                text="Add a Volunteer"
-                style="width: 100%"
-                menu-class="w-100"
-                variant="primary"
-                no-flip
-              >
-                <b-dropdown-form>
-                  <b-form-group
-                    label="Search Volunteer"
-                    label-for="user-invitation-search-input"
-                    @submit.stop.prevent
-                  >
-                    <b-form-input
-                      id="user-invitation-search-input"
-                      debounce="250"
-                      @update="searchUsersForInvitation"
-                    />
-                  </b-form-group>
-                </b-dropdown-form>
-
-                <b-dropdown-divider />
-
-                <b-dropdown-item
-                  v-for="user in userOptions"
-                  :key="user._id"
-                  @click="handleVolunteerInvite(user, true)"
-                >
-                  {{ user.lastName }}, {{ user.firstName }} <span style="color: grey; font-size: 12px">{{ user.email }}</span>
-                </b-dropdown-item>
-              </b-dropdown>
             </b-card>
           </b-col>
         </b-row>
