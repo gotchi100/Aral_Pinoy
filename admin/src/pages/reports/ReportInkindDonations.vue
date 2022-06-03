@@ -7,48 +7,6 @@
             bg-variant="light"
             style="border-radius: 20px;"
           >
-            <b-container fluid>
-              <b-row>
-                <b-col cols="12">
-                  <h2 style="font-family:'Bebas Neue', cursive;">
-                    Deleted Items Inventory Report
-                  </h2>
-                </b-col>
-              </b-row>
-
-              <b-row class="py-2">
-                <b-col cols="12">
-                  <b-button
-                    pill
-                    variant="danger"
-                    :disabled="report.deletedInventoryItems.isGeneratingReport"
-                    @click="getDeletedInventoryItems"
-                  >
-                    <b-spinner
-                      v-if="report.deletedInventoryItems.isGeneratingReport"
-                      style="width: 1rem; height: 1rem;"
-                    />
-
-                    <template v-else>
-                      Generate Report
-                    </template>
-                  </b-button>
-                </b-col>
-              </b-row>
-            </b-container>
-          </b-card>
-        </b-col>
-      </b-row>
-
-      <b-row
-        v-if="report.deletedInventoryItems.hasGeneratedReport"
-        class="pb-3"
-      >
-        <b-col cols="12">
-          <b-card
-            bg-variant="light"
-            style="border-radius: 20px;"
-          >
             <b-container
               fluid
             >
@@ -68,17 +26,38 @@
 
               <b-row class="pb-3">
                 <b-col cols="12">
-                  <b-list-group>
-                    <b-list-group-item
-                      v-for="inventoryItem in report.deletedInventoryItems.results"
-                      :key="inventoryItem._id"
-                    >
-                      {{ inventoryItem.name }} <br>
-                      <span style="color: grey; font-size: 12px">
-                        {{ new Date(inventoryItem.deletedOn).toLocaleString('en-us', { dateStyle: 'medium', timeStyle: 'short' }) }}
+                  <b-table
+                    :items="getDeletedInventoryItems"
+                    :fields="deletedInventoryItems.fields"
+                    :current-page="deletedInventoryItems.pagination.currentPage"
+                    :per-page="deletedInventoryItems.pagination.perPage"
+                    fixed
+                    stacked="sm"
+                    style="background:white"
+                    show-empty
+                    primary-key="_id"
+                  >
+                    <template #cell(deletedOn)="{ item }">
+                      <span>
+                        {{
+                          new Date(item.deletedOn).toLocaleString('en-us', {
+                            dateStyle: 'medium'
+                          })
+                        }}
                       </span>
-                    </b-list-group-item>
-                  </b-list-group>
+                    </template>
+                  </b-table>
+                </b-col>
+
+                <b-col cols="12">
+                  <b-pagination
+                    v-model="deletedInventoryItems.pagination.currentPage"
+                    :total-rows="deletedInventoryItems.total"
+                    :per-page="deletedInventoryItems.pagination.perPage"
+                    align="fill"
+                    size="sm"
+                    class="my-0"
+                  />
                 </b-col>
               </b-row>
             </b-container>
@@ -305,11 +284,6 @@ export default {
     return {
       isGeneratingReport: false,
       report: {
-        deletedInventoryItems: {
-          hasGeneratedReport: false,
-          isGeneratingReport: false,
-          results: []
-        },
         expiringInventoryItems: {
           hasGeneratedReport: false,
           isGeneratingReport: false,
@@ -321,6 +295,20 @@ export default {
           itemsByGroup: [],
           itemsByCategory: []
         }
+      },
+      deletedInventoryItems: {
+        results: [],
+        total: 0,
+        pagination: {
+          currentPage: 1,
+          perPage: 25
+        },
+        fields: [
+          { key: 'sku', label: 'SKU', sortable: true },
+          { key: 'name', label: 'Item', sortable: true },
+          { key: 'category.name', label: 'Category' },
+          { key: 'deletedOn', label: 'Date of Deletion', sortable: true }
+        ]
       }
     }
   },
@@ -333,23 +321,36 @@ export default {
     reportRepository.setAuthorizationHeader(authHeader)
   },
   methods: {
-    async getDeletedInventoryItems () {
-      const deletedInventoryItems = this.report.deletedInventoryItems
+    async getDeletedInventoryItems (ctx) {
+      const {
+        sortBy,
+        sortDesc
+      } = ctx
 
-      deletedInventoryItems.isGeneratingReport = true
-      deletedInventoryItems.hasGeneratedReport = false
+      const { currentPage, perPage } = this.deletedInventoryItems.pagination
 
-      try {
-        const { results } = await reportRepository.getDeletedInventoryItems({
-          start: new Date(0).toJSON(),
-          end: new Date().toJSON()
-        })
+      const offset = this.calculateOffset(currentPage, perPage)
+      let sort
 
-        deletedInventoryItems.results = results
-        deletedInventoryItems.hasGeneratedReport = true
-      } finally {
-        deletedInventoryItems.isGeneratingReport = false
+      if (sortBy !== undefined && sortBy !== '') {
+        sort = {
+          field: sortBy,
+          order: sortDesc ? 'desc' : 'asc'
+        }
       }
+
+      const { results, total } = await reportRepository.getDeletedInventoryItems({
+        start: new Date(0).toJSON(),
+        end: new Date().toJSON()
+      }, {
+        limit: perPage,
+        offset,
+        sort
+      })
+
+      this.deletedInventoryItems.total = total
+
+      return results
     },
     async getExpiringInventoryItems () {
       const expiringInventoryItems = this.report.expiringInventoryItems
@@ -390,6 +391,9 @@ export default {
       if (item.category.customFields.bestBeforeDate !== undefined) {
         return new Date(item.category.customFields.bestBeforeDate)
       }
+    },
+    calculateOffset (currentPage, perPage) {
+      return (currentPage - 1) * perPage
     }
   }
 }

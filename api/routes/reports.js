@@ -20,6 +20,13 @@ const dateRangeQueryValidator = Joi.object({
   endDate: Joi.date().iso().greater(Joi.ref('startDate')).required()
 })
 
+const paginationValidator = Joi.object({
+  offset: Joi.number().min(0).default(0),
+  limit: Joi.number().min(1).default(50).max(100),
+  'sort.field': Joi.string(),
+  'sort.order': Joi.string().valid('asc', 'desc')
+})
+
 function validateDateRangeQuery(req, res, next) {
   const { value: validatedQuery, error } = dateRangeQueryValidator.validate(req.query, {
     allowUnknown: true
@@ -33,7 +40,29 @@ function validateDateRangeQuery(req, res, next) {
     })
   }
 
-  req.query = validatedQuery
+  req.query = {
+    ...validatedQuery
+  }
+
+  next()
+}
+
+function validatePaginationQuery(req, res, next) {
+  const { value: validatedQuery, error } = paginationValidator.validate(req.query, {
+    allowUnknown: true
+  })
+
+  if (error !== undefined) {      
+    return res.status(400).json({
+      code: 'BadRequest',
+      status: 400,
+      message: error.message
+    })
+  }
+
+  req.query = {
+    ...validatedQuery
+  }
 
   next()
 }
@@ -94,16 +123,29 @@ async function getDeletedInventoryItemsReport(req, res, next) {
   const {
     startDate,
     endDate,
+    offset,
+    limit,
+    'sort.field': sortField,
+    'sort.order': sortOrder
   } = req.query
 
   try {
-    const results = await ReportDeletedInventoryItemsController.get({
-      start: startDate,
-      end: endDate
+    const { results, total } = await ReportDeletedInventoryItemsController.get({
+      dateRange: {
+        start: startDate,
+        end: endDate
+      },
+      offset,
+      limit,
+      sort: {
+        field : sortField,
+        order: sortOrder
+      }
     })
 
     return res.json({
-      results
+      results,
+      total
     })
   } catch (error) {
     next(error)
@@ -187,7 +229,7 @@ const router = express.Router()
 router.get('/events', validateDateRangeQuery, getEventsReport)
 router.get('/volunteers', validateDateRangeQuery, getVolunteersReport)
 router.get('/inventory-items', getInventoryItemsReport)
-router.get('/deleted-inventory-items', validateDateRangeQuery, getDeletedInventoryItemsReport)
+router.get('/deleted-inventory-items', validateDateRangeQuery, validatePaginationQuery, getDeletedInventoryItemsReport)
 router.get('/expiring-inventory-items', getExpiringInventoryItemsReport)
 router.get('/monetary-donations', validateDateRangeQuery, getMonetaryDonationsReport)
 router.get('/sdgs', validateDateRangeQuery, getSdgsReport)

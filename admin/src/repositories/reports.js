@@ -100,17 +100,42 @@ class ReportRepository {
    * @param {Object} dateRange Date range
    * @param {string} dateRange.start Start date
    * @param {string} dateRange.end End date
+   * @param {Object} [options={}] Options
+   * @param {number} [options.limit] Limit
+   * @param {number} [options.offset] Offset
+   * @param {Object} [options.sort] Sort
+   * @param {string} [options.sort.field] Sort field
+   * @param {string} [options.sort.order] Sort order
    * @returns {Promise<{ results: Object[] }>}
    */
-  async getDeletedInventoryItems (dateRange) {
+  async getDeletedInventoryItems (dateRange, options = {}) {
     const {
       start,
       end
     } = dateRange
 
+    const {
+      offset,
+      limit,
+      sort
+    } = options
+
     const queryString = new URLSearchParams()
     queryString.set('startDate', start)
     queryString.set('endDate', end)
+
+    if (offset !== undefined) {
+      queryString.set('offset', offset)
+    }
+
+    if (limit !== undefined) {
+      queryString.set('limit', limit)
+    }
+
+    if (sort !== undefined) {
+      queryString.set('sort.field', sort.field)
+      queryString.set('sort.order', sort.order)
+    }
 
     const { data } = await this.apiClient.get(`${REPOSITORY_BASE_URL}/deleted-inventory-items?${queryString.toString()}`)
 
