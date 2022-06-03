@@ -179,6 +179,82 @@ class ReportRepository {
   }
 
   /**
+   * @param {Object} [params={}] Options
+   * @param {Object} [params.group] Group
+   * @param {Object} [params.options={}] Options
+   * @param {number} [options.limit] Limit
+   * @param {number} [options.offset] Offset
+   * @returns {Promise<{ results: Object[], total: number }>}
+   */
+  async getInventoryItemsByGroup (params = {}) {
+    const {
+      group,
+      options = {}
+    } = params
+
+    const {
+      offset,
+      limit
+    } = options
+
+    const queryString = new URLSearchParams()
+
+    if (group !== undefined && group.length > 0) {
+      queryString.set('group', group)
+    }
+
+    if (offset !== undefined) {
+      queryString.set('offset', offset)
+    }
+
+    if (limit !== undefined) {
+      queryString.set('limit', limit)
+    }
+
+    const { data } = await this.apiClient.get(`${REPOSITORY_BASE_URL}/inventory-items-by-group?${queryString.toString()}`)
+
+    return data
+  }
+
+  /**
+   * @param {Object} [params={}] Options
+   * @param {Object} [params.category] Category
+   * @param {Object} [params.options={}] Options
+   * @param {number} [options.limit] Limit
+   * @param {number} [options.offset] Offset
+   * @returns {Promise<{ results: Object[], total: number }>}
+   */
+  async getInventoryItemsByCategory (params = {}) {
+    const {
+      category,
+      options = {}
+    } = params
+
+    const {
+      offset,
+      limit
+    } = options
+
+    const queryString = new URLSearchParams()
+
+    if (category !== undefined && category.length > 0) {
+      queryString.set('category', category)
+    }
+
+    if (offset !== undefined) {
+      queryString.set('offset', offset)
+    }
+
+    if (limit !== undefined) {
+      queryString.set('limit', limit)
+    }
+
+    const { data } = await this.apiClient.get(`${REPOSITORY_BASE_URL}/inventory-items-by-category?${queryString.toString()}`)
+
+    return data
+  }
+
+  /**
    *
    * @param {Object} dateRange Date range
    * @param {string} dateRange.start Start date

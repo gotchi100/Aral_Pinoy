@@ -27,6 +27,14 @@ const paginationValidator = Joi.object({
   'sort.order': Joi.string().valid('asc', 'desc')
 })
 
+const inventoryItemsByGroupValidator = Joi.object({
+  group : Joi.string()
+})
+
+const inventoryItemsByCategoryValidator = Joi.object({
+  category : Joi.string()
+})
+
 function validateDateRangeQuery(req, res, next) {
   const { value: validatedQuery, error } = dateRangeQueryValidator.validate(req.query, {
     allowUnknown: true
@@ -107,12 +115,90 @@ async function getVolunteersReport(req, res, next) {
   }
 }
 
-async function getInventoryItemsReport(req, res, next) {
+function validateInventoryItemsByGroupQuery(req, res, next) {
+  const { value: validatedQuery, error } = inventoryItemsByGroupValidator.validate(req.query, {
+    allowUnknown: true
+  })
+
+  if (error !== undefined) {      
+    return res.status(400).json({
+      code: 'BadRequest',
+      status: 400,
+      message: error.message
+    })
+  }
+
+  req.query = {
+    ...validatedQuery
+  }
+
+  next()
+}
+
+async function getInventoryItemsByGroupReport(req, res, next) {
+  const {
+    offset,
+    limit,
+    group
+  } = req.query
+  
   try {
-    const results = await ReportInventoryItemsController.get()
+    const { results, total } = await ReportInventoryItemsController.getItemsByGroup({
+      group,
+      options: {
+        offset,
+        limit
+      }
+    })
 
     return res.json({
-      results
+      results,
+      total
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+function validateInventoryItemsByCategoryQuery(req, res, next) {
+  const { value: validatedQuery, error } = inventoryItemsByCategoryValidator.validate(req.query, {
+    allowUnknown: true
+  })
+
+  if (error !== undefined) {      
+    return res.status(400).json({
+      code: 'BadRequest',
+      status: 400,
+      message: error.message
+    })
+  }
+
+  req.query = {
+    ...validatedQuery
+  }
+
+  next()
+}
+
+async function getInventoryItemsByCategoryReport(req, res, next) {
+  const {
+    offset,
+    limit,
+    category
+  } = req.query
+  
+  try {
+    const { results, total } = await ReportInventoryItemsController.getItemsByCategory({
+      category,
+      options: {
+        offset,
+        limit
+      }
+    })
+
+    return res.json({
+      results,
+      total
     })
   } catch (error) {
     next(error)
@@ -229,7 +315,8 @@ const router = express.Router()
 
 router.get('/events', validateDateRangeQuery, getEventsReport)
 router.get('/volunteers', validateDateRangeQuery, getVolunteersReport)
-router.get('/inventory-items', getInventoryItemsReport)
+router.get('/inventory-items-by-group', validatePaginationQuery, validateInventoryItemsByGroupQuery, getInventoryItemsByGroupReport)
+router.get('/inventory-items-by-category', validatePaginationQuery, validateInventoryItemsByCategoryQuery, getInventoryItemsByCategoryReport)
 router.get('/deleted-inventory-items', validateDateRangeQuery, validatePaginationQuery, getDeletedInventoryItemsReport)
 router.get('/expiring-inventory-items', validatePaginationQuery, getExpiringInventoryItemsReport)
 router.get('/monetary-donations', validateDateRangeQuery, getMonetaryDonationsReport)

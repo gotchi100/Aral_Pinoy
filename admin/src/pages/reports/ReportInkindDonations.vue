@@ -142,50 +142,8 @@
       </b-row>
     </b-container>
 
-    <b-container class="py-5">
+    <b-container class="pb-3">
       <b-row class="pb-3">
-        <b-col cols="12">
-          <b-card
-            bg-variant="light"
-            style="border-radius: 20px;"
-          >
-            <b-container fluid>
-              <b-row>
-                <b-col cols="12">
-                  <h2 style="font-family:'Bebas Neue', cursive;">
-                    Items Inventory Report
-                  </h2>
-                </b-col>
-              </b-row>
-
-              <b-row class="py-2">
-                <b-col cols="12">
-                  <b-button
-                    pill
-                    variant="danger"
-                    :disabled="report.inventoryItems.isGeneratingReport"
-                    @click="getInventoryItems"
-                  >
-                    <b-spinner
-                      v-if="report.inventoryItems.isGeneratingReport"
-                      style="width: 1rem; height: 1rem;"
-                    />
-
-                    <template v-else>
-                      Generate Report
-                    </template>
-                  </b-button>
-                </b-col>
-              </b-row>
-            </b-container>
-          </b-card>
-        </b-col>
-      </b-row>
-
-      <b-row
-        v-if="report.inventoryItems.hasGeneratedReport"
-        class="pb-3"
-      >
         <b-col cols="12">
           <b-card
             bg-variant="light"
@@ -209,19 +167,83 @@
               </b-row>
 
               <b-row class="pb-3">
-                <b-col cols="12">
-                  <b-list-group>
-                    <b-list-group-item
-                      v-for="inventoryItem in report.inventoryItems.itemsByGroup"
-                      :key="inventoryItem._id"
+                <b-col
+                  cols="12"
+                  class="pb-3"
+                >
+                  <b-dropdown
+                    :text="inventoryItemsByGroup.groupInput || 'Ungrouped Items'"
+                    style="width: 100%"
+                    menu-class="w-100"
+                    variant="outline-primary"
+                    :no-caret="!!inventoryItemsByGroup.groupInput"
+                    no-flip
+                  >
+                    <b-dropdown-form>
+                      <b-form-group
+                        label="Search Group"
+                        label-for="item-group"
+                        @submit.stop.prevent
+                      >
+                        <b-form-input
+                          id="item-group"
+                          debounce="250"
+                          @update="searchInventoryItemGroups"
+                        />
+                      </b-form-group>
+                    </b-dropdown-form>
+
+                    <b-dropdown-divider />
+
+                    <b-dropdown-item
+                      v-for="group in inventoryItemsByGroup.filterOptions.groupOptions"
+                      :key="group._id"
+                      @click="inventoryItemsByGroup.groupInput = group.name"
                     >
-                      {{ inventoryItem._id }} - <strong>{{ inventoryItem.quantity }}</strong>
-                    </b-list-group-item>
-                  </b-list-group>
+                      {{ group.name }}
+                    </b-dropdown-item>
+                  </b-dropdown>
+                </b-col>
+
+                <b-col cols="12">
+                  <b-table
+                    ref="inventoryItemsByGroupTable"
+                    :items="getInventoryItemsByGroup"
+                    :fields="inventoryItemsByGroup.fields"
+                    :current-page="inventoryItemsByGroup.pagination.currentPage"
+                    :per-page="inventoryItemsByGroup.pagination.perPage"
+                    fixed
+                    stacked="sm"
+                    style="background:white"
+                    show-empty
+                    primary-key="_id"
+                  />
+                </b-col>
+
+                <b-col cols="12">
+                  <b-pagination
+                    v-model="inventoryItemsByGroup.pagination.currentPage"
+                    :total-rows="inventoryItemsByGroup.total"
+                    :per-page="inventoryItemsByGroup.pagination.perPage"
+                    align="fill"
+                    size="sm"
+                    class="my-0"
+                  />
                 </b-col>
               </b-row>
             </b-container>
+          </b-card>
+        </b-col>
+      </b-row>
+    </b-container>
 
+    <b-container class="pb-3">
+      <b-row class="pb-3">
+        <b-col cols="12">
+          <b-card
+            bg-variant="light"
+            style="border-radius: 20px;"
+          >
             <b-container
               fluid
             >
@@ -240,15 +262,68 @@
               </b-row>
 
               <b-row class="pb-3">
-                <b-col cols="12">
-                  <b-list-group>
-                    <b-list-group-item
-                      v-for="inventoryItem in report.inventoryItems.itemsByCategory"
-                      :key="inventoryItem._id"
+                <b-col
+                  cols="12"
+                  class="pb-3"
+                >
+                  <b-dropdown
+                    :text="inventoryItemsByCategory.categoryInput || 'Uncategorized Items'"
+                    style="width: 100%"
+                    menu-class="w-100"
+                    variant="outline-primary"
+                    :no-caret="!!inventoryItemsByCategory.categoryInput"
+                    no-flip
+                  >
+                    <b-dropdown-form>
+                      <b-form-group
+                        label="Search Category"
+                        label-for="item-category"
+                        @submit.stop.prevent
+                      >
+                        <b-form-input
+                          id="item-group"
+                          debounce="250"
+                          @update="searchInventoryItemCategories"
+                        />
+                      </b-form-group>
+                    </b-dropdown-form>
+
+                    <b-dropdown-divider />
+
+                    <b-dropdown-item
+                      v-for="category in inventoryItemsByCategory.filterOptions.categoryOptions"
+                      :key="category._id"
+                      @click="inventoryItemsByCategory.categoryInput = category.name"
                     >
-                      {{ inventoryItem._id }} - <strong>{{ inventoryItem.quantity }}</strong>
-                    </b-list-group-item>
-                  </b-list-group>
+                      {{ category.name }}
+                    </b-dropdown-item>
+                  </b-dropdown>
+                </b-col>
+
+                <b-col cols="12">
+                  <b-table
+                    ref="inventoryItemsByCategoryTable"
+                    :items="getInventoryItemsByCategory"
+                    :fields="inventoryItemsByCategory.fields"
+                    :current-page="inventoryItemsByCategory.pagination.currentPage"
+                    :per-page="inventoryItemsByCategory.pagination.perPage"
+                    fixed
+                    stacked="sm"
+                    style="background:white"
+                    show-empty
+                    primary-key="_id"
+                  />
+                </b-col>
+
+                <b-col cols="12">
+                  <b-pagination
+                    v-model="inventoryItemsByCategory.pagination.currentPage"
+                    :total-rows="inventoryItemsByCategory.total"
+                    :per-page="inventoryItemsByCategory.pagination.perPage"
+                    align="fill"
+                    size="sm"
+                    class="my-0"
+                  />
                 </b-col>
               </b-row>
             </b-container>
@@ -263,23 +338,18 @@
 import { mapGetters } from 'vuex'
 
 import ReportRepository from '../../repositories/reports'
+import InkindDonationGroupRepository from '../../repositories/inkind-donations/groups'
+import InkindDonationCategoryRepository from '../../repositories/inkind-donations/categories'
 import { apiClient } from '../../axios'
 
 const reportRepository = new ReportRepository(apiClient)
+const inkindDonationGroupRepository = new InkindDonationGroupRepository(apiClient)
+const inkindDonationCategoryRepository = new InkindDonationCategoryRepository(apiClient)
 
 export default {
   name: 'ReportInkindDonations',
   data () {
     return {
-      isGeneratingReport: false,
-      report: {
-        inventoryItems: {
-          hasGeneratedReport: false,
-          isGeneratingReport: false,
-          itemsByGroup: [],
-          itemsByCategory: []
-        }
-      },
       deletedInventoryItems: {
         results: [],
         total: 0,
@@ -304,20 +374,67 @@ export default {
         fields: [
           { key: 'sku', label: 'SKU' },
           { key: 'name', label: 'Item' },
+          { key: 'quantity', label: 'Quantity' },
           { key: 'category.name', label: 'Category' },
           { key: 'bestBeforeDate', label: 'Best Before' },
           { key: 'expirationDate', label: 'Expiration Date' }
         ]
+      },
+      inventoryItemsByGroup: {
+        results: [],
+        total: 0,
+        pagination: {
+          currentPage: 1,
+          perPage: 25
+        },
+        fields: [
+          { key: 'sku', label: 'SKU' },
+          { key: 'name', label: 'Item' },
+          { key: 'quantity', label: 'Quantity' },
+          { key: 'category.name', label: 'Category' }
+        ],
+        groupInput: '',
+        filterOptions: {
+          groupOptions: []
+        }
+      },
+      inventoryItemsByCategory: {
+        results: [],
+        total: 0,
+        pagination: {
+          currentPage: 1,
+          perPage: 25
+        },
+        fields: [
+          { key: 'sku', label: 'SKU' },
+          { key: 'name', label: 'Item' },
+          { key: 'quantity', label: 'Quantity' },
+          { key: 'group', label: 'Group' }
+        ],
+        categoryInput: '',
+        filterOptions: {
+          categoryOptions: []
+        }
       }
     }
   },
   computed: {
     ...mapGetters(['token'])
   },
+  watch: {
+    'inventoryItemsByGroup.groupInput' () {
+      this.$refs.inventoryItemsByGroupTable.refresh()
+    },
+    'inventoryItemsByCategory.categoryInput' () {
+      this.$refs.inventoryItemsByCategoryTable.refresh()
+    }
+  },
   created () {
     const authHeader = `Bearer ${this.token}`
 
     reportRepository.setAuthorizationHeader(authHeader)
+    inkindDonationGroupRepository.setAuthorizationHeader(authHeader)
+    inkindDonationCategoryRepository.setAuthorizationHeader(authHeader)
   },
   methods: {
     async getDeletedInventoryItems (ctx) {
@@ -365,21 +482,39 @@ export default {
 
       return results
     },
-    async getInventoryItems () {
-      const inventoryItems = this.report.inventoryItems
+    async getInventoryItemsByGroup (ctx) {
+      const { currentPage, perPage } = this.inventoryItemsByGroup.pagination
 
-      inventoryItems.isGeneratingReport = true
-      inventoryItems.hasGeneratedReport = false
+      const offset = this.calculateOffset(currentPage, perPage)
 
-      try {
-        const { results } = await reportRepository.getInventoryItems()
+      const { results, total } = await reportRepository.getInventoryItemsByGroup({
+        group: this.inventoryItemsByGroup.groupInput,
+        options: {
+          limit: perPage,
+          offset
+        }
+      })
 
-        inventoryItems.itemsByGroup = results.inventoryItemsByGroup
-        inventoryItems.itemsByCategory = results.inventoryItemsByCategory
-        inventoryItems.hasGeneratedReport = true
-      } finally {
-        inventoryItems.isGeneratingReport = false
-      }
+      this.inventoryItemsByGroup.total = total
+
+      return results
+    },
+    async getInventoryItemsByCategory (ctx) {
+      const { currentPage, perPage } = this.inventoryItemsByCategory.pagination
+
+      const offset = this.calculateOffset(currentPage, perPage)
+
+      const { results, total } = await reportRepository.getInventoryItemsByCategory({
+        category: this.inventoryItemsByCategory.categoryInput,
+        options: {
+          limit: perPage,
+          offset
+        }
+      })
+
+      this.inventoryItemsByCategory.total = total
+
+      return results
     },
     getItemExpirationDate (item) {
       if (item.category.customFields.expirationDate !== undefined) {
@@ -399,6 +534,24 @@ export default {
       }
 
       return value[field] !== undefined
+    },
+    async searchInventoryItemGroups (value) {
+      const { results } = await inkindDonationGroupRepository.list({
+        name: value
+      }, {
+        limit: 5
+      })
+
+      this.inventoryItemsByGroup.filterOptions.groupOptions = results
+    },
+    async searchInventoryItemCategories (value) {
+      const { results } = await inkindDonationCategoryRepository.list({
+        name: value
+      }, {
+        limit: 5
+      })
+
+      this.inventoryItemsByCategory.filterOptions.categoryOptions = results
     }
   }
 }

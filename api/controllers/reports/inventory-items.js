@@ -4,108 +4,93 @@ const InkindDonationModel = require('../../models/inkind-donations')
 
 class ReportInventoryItemsController {
   /**
-   * @returns {Promise<Object[]>}
-   */
-  static async get() {
-    const inventoryItemsByGroup = await ReportInventoryItemsController.getItemsByGroup()
-    const inventoryItemsByCategory = await ReportInventoryItemsController.getItemsByCategory()
-    
+	 * @param {Object} [params={}] Parameters
+	 * @param {Object} [params.group] Group name
+	 * @param {number} [params.options={}] Options
+	 * @param {number} [params.options.offset] Pagination offset
+	 * @param {number} [params.options.limit] Pagination limit
+	 * @returns {Promise<Object[]>}
+	 */
+  static async getItemsByGroup(params = {}) {
+    const {
+      group,
+      options = {}
+    } = params
+
+    const {
+      offset,
+      limit,
+    } = options
+
+    const findQuery = {
+      deleted: false
+    }
+
+    if (group !== undefined) {
+      findQuery.group = group
+    } else {
+      findQuery.group = {
+        $exists: false
+      }
+    }
+
+    const [items, count] = await Promise.all([
+      InkindDonationModel.find(findQuery, undefined, {
+        skip: offset,
+        limit
+      }),
+      InkindDonationModel.countDocuments(findQuery)
+    ])
+
     return {
-      inventoryItemsByGroup,
-      inventoryItemsByCategory
+      results: items,
+      total:  count
     }
   }
 
-  static async getItemsByGroup() {
-    const aggregationResults = await InkindDonationModel.aggregate([
-      {
-        $match: {
-          deleted: false
-        }
-      },
-      {
-        $group: {
-          _id: '$group',
-          quantity: {
-            $sum: '$quantity'
-          }
-        }
-      },
-      { 
-        $addFields: {
-          fieldType: { 
-            $type: '$_id'
-          } 
-        } 
-      },
-      {
-        $sort: {
-          fieldType: -1,
-          _id: 1,
-        }
-      },
-      {
-        $project: {
-          fieldType: 0
-        }
-      },
-      {
-        $project: {
-          _id: {
-            $ifNull: ['$_id', 'Ungrouped Items'],
-          },
-          quantity: 1
-        }
+  /**
+	 * @param {Object} [params={}] Parameters
+	 * @param {Object} [params.category] Category name
+	 * @param {number} [params.options={}] Options
+	 * @param {number} [params.options.offset] Pagination offset
+	 * @param {number} [params.options.limit] Pagination limit
+	 * @returns {Promise<Object[]>}
+	 */
+  static async getItemsByCategory(params = {}) {
+    const {
+      category,
+      options = {}
+    } = params
+
+    const {
+      offset,
+      limit,
+    } = options
+
+    const findQuery = {
+      deleted: false
+    }
+
+    if (category !== undefined) {
+      findQuery['category.name'] = category
+    } else {
+      findQuery.category = {
+        $exists: false
       }
+    }
+
+    const [items, count] = await Promise.all([
+      InkindDonationModel.find(findQuery, undefined, {
+        skip: offset,
+        limit
+      }),
+      InkindDonationModel.countDocuments(findQuery)
     ])
 
-    return aggregationResults
-  }
-
-  static async getItemsByCategory() {
-    const aggregationResults = await InkindDonationModel.aggregate([
-      {
-        $match: {
-          deleted: false
-        }
-      },
-      {
-        $group: {
-          _id: '$category.name',
-          quantity: {
-            $sum: '$quantity'
-          }
-        }
-      },
-      { 
-        $addFields: {
-          fieldType: { 
-            $type: '$_id'
-          } 
-        } 
-      },
-      {
-        $sort: {
-          fieldType: -1,
-          _id: 1,
-        }
-      },
-      {
-        $project: {
-          fieldType: 0
-        }
-      },
-      {
-        $project: {
-          _id: {
-            $ifNull: ['$_id', 'Uncategorized Items'],
-          },
-          quantity: 1
-        }
-      }
-    ])
-
-    return aggregationResults
+    return {
+      results: items,
+      total:  count
+    }
   }
 }
 
