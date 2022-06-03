@@ -112,7 +112,7 @@
               >
                 <b-col cols="12">
                   <h2 style="font-family:'Bebas Neue', cursive;">
-                    Incomes
+                    Donations
                   </h2>
                 </b-col>
 
@@ -131,6 +131,12 @@
                         backgroundColor: [
                           'rgb(54, 235, 151)',
                         ],
+                      }, {
+                        ...report.incomeStatement.datasets[1],
+                        borderColor: 'rgb(54, 178, 235)',
+                        backgroundColor: [
+                          'rgb(54, 178, 235)',
+                        ],
                       }]
                     }"
                     :options="{
@@ -144,11 +150,6 @@
                         }
                       },
                       responsive: true,
-                      plugins: {
-                        legend: {
-                          display: false
-                        },
-                      }
                     }"
                   />
                 </b-col>
@@ -171,9 +172,15 @@
                     :height="500"
                     :width="500"
                     :chart-data="{
-                      labels: report.incomeStatement.labels,
+                      labels: report.expenses.labels,
                       datasets: [{
-                        ...report.incomeStatement.datasets[1],
+                        ...report.expenses.datasets[0],
+                        borderColor: 'rgb(54, 235, 151)',
+                        backgroundColor: [
+                          'rgb(54, 235, 151)',
+                        ],
+                      }, {
+                        ...report.expenses.datasets[1],
                         borderColor: 'rgb(255, 99, 132)',
                         backgroundColor: [
                           'rgb(255, 99, 132)',
@@ -190,12 +197,7 @@
                           }
                         }
                       },
-                      responsive: true,
-                      plugins: {
-                        legend: {
-                          display: false
-                        },
-                      }
+                      responsive: true
                     }"
                   />
                 </b-col>
@@ -235,6 +237,10 @@ export default {
         startDate: today,
         endDate: today,
         incomeStatement: {
+          labels: [],
+          datasets: []
+        },
+        expenses: {
           labels: [],
           datasets: []
         }
@@ -277,6 +283,7 @@ export default {
         })
 
         this.report.incomeStatement = results.incomeStatement
+        this.report.expenses = results.expenses
 
         this.report.isGenerated = true
       } finally {

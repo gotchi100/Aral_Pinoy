@@ -10,6 +10,7 @@ const {
 const MonetaryDonationModel = require('../../models/monetary-donations')
 const EventDonationModel = require('../../models/events/donations')
 const EventExpenseModel = require('../../models/events/expenses')
+const EventModel = require('../../models/events')
 
 const DATE_FORMAT = 'MM/dd/yy'
 
@@ -49,31 +50,43 @@ class ReportIncomeStatementController {
         $lte: endOfDay(end)
       }
     }, ['amount', 'createdAt'])
-    const expenses = await EventExpenseModel.find({
+    const eventExpenses = await EventExpenseModel.find({
       createdAt: {
         $gte: startOfDay(start),
         $lte: endOfDay(end)
       }
-    }, ['amount', 'createdAt'])
+    }, ['event', 'amount', 'createdAt'])
 
+    const eventIdsSet = new Set()
     const incomeStatement = {
       labels: [],
       datasets: [{
-        label: 'Income',
+        label: 'Event Donations',
         data: []
       }, {
-        label: 'Expense',
+        label: 'Aral Pinoy Donations',
+        data: []
+      }]
+    }
+    const expenses = {
+      labels: [],
+      datasets: [{
+        label: 'Proposed Expenses',
+        data: []
+      }, {
+        label: 'Actual Expenses',
         data: []
       }]
     }
 
-    if (monetaryDonations.length === 0 && eventDonations.length === 0 && expenses.length === 0) {
+    if (monetaryDonations.length === 0 && eventDonations.length === 0 && eventExpenses.length === 0) {
       return {
         incomeStatement
       }
     }
 
     const dateIncomeStatementMap = new Map()
+    const dateExpensesMap = new Map()
 
     for (const monetaryDonation of monetaryDonations) {
       const transactionDate = format(monetaryDonation.createdAt, 'MM/dd/yy')
@@ -82,14 +95,14 @@ class ReportIncomeStatementController {
 
       if (incomeStatementMap === undefined) {
         incomeStatementMap = {
-          totalIncome: 0,
-          totalExpense: 0
+          totalEventDonations: 0,
+          totalDonations: 0
         }
 
         dateIncomeStatementMap.set(transactionDate, incomeStatementMap)
       }
 
-      incomeStatementMap.totalIncome += monetaryDonation.amount
+      incomeStatementMap.totalDonations += monetaryDonation.amount
     }
 
     for (const eventDonation of eventDonations) {
@@ -99,49 +112,98 @@ class ReportIncomeStatementController {
 
       if (incomeStatementMap === undefined) {
         incomeStatementMap = {
-          totalIncome: 0,
-          totalExpense: 0
+          totalEventDonations: 0,
+          totalDonations: 0
         }
 
         dateIncomeStatementMap.set(transactionDate, incomeStatementMap)
       }
 
-      incomeStatementMap.totalIncome += eventDonation.amount
+      incomeStatementMap.totalEventDonations += eventDonation.amount
     }
 
-    for (const expense of expenses) {
+    for (const expense of eventExpenses) {
+      eventIdsSet.add(expense.event.toString())
+
       const transactionDate = format(expense.createdAt, 'MM/dd/yy')
 
-      let incomeStatementMap = dateIncomeStatementMap.get(transactionDate)
+      let expensesMap = dateExpensesMap.get(transactionDate)
 
-      if (incomeStatementMap === undefined) {
-        incomeStatementMap = {
-          totalIncome: 0,
-          totalExpense: 0
+      if (expensesMap === undefined) {
+        expensesMap = {
+          totalProposed: 0,
+          totalActual: 0
         }
 
-        dateIncomeStatementMap.set(transactionDate, incomeStatementMap)
+        dateExpensesMap.set(transactionDate, expensesMap)
       }
 
-      incomeStatementMap.totalExpense += expense.amount
+      expensesMap.totalActual += expense.amount
+    }
+
+    const events = await EventModel.find({
+      _id: {
+        $in: Array.from(eventIdsSet)
+      },
+      budget: {
+        $exists: true
+      }
+    })
+
+    for (const event of events) {
+      const transactionDate = format(event.date.start, 'MM/dd/yy')
+
+      let expensesMap = dateExpensesMap.get(transactionDate)
+
+      if (expensesMap === undefined) {
+        expensesMap = {
+          totalProposed: 0,
+          totalActual: 0
+        }
+
+        dateExpensesMap.set(transactionDate, expensesMap)
+      }
+
+      let totalBudget = 0
+
+      for (const item of event.budget.breakdown) {
+        totalBudget += item.amount
+      }
+
+      expensesMap.totalProposed += totalBudget
     }
 
     for (const [date, incomeStatementMap] of dateIncomeStatementMap.entries()) {
       incomeStatement.labels.push(date)
 
-      const { 
-        totalIncome,
-        totalExpense
+      const {
+        totalEventDonations,
+        totalDonations
       } = incomeStatementMap
 
-      incomeStatement.datasets[0].data.push(totalIncome)
-      incomeStatement.datasets[1].data.push(totalExpense)
+      incomeStatement.datasets[0].data.push(totalEventDonations)
+      incomeStatement.datasets[1].data.push(totalDonations)
     }
 
     incomeStatement.labels = incomeStatement.labels.sort(sortByDate)
 
+    for (const [date, expenseMap] of dateExpensesMap.entries()) {
+      expenses.labels.push(date)
+
+      const { 
+        totalProposed,
+        totalActual
+      } = expenseMap
+
+      expenses.datasets[0].data.push(totalProposed)
+      expenses.datasets[1].data.push(totalActual)
+    }
+
+    expenses.labels = expenses.labels.sort(sortByDate)
+
     return {
-      incomeStatement
+      incomeStatement,
+      expenses
     }
   }
 }
