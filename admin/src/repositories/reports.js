@@ -106,7 +106,7 @@ class ReportRepository {
    * @param {Object} [options.sort] Sort
    * @param {string} [options.sort.field] Sort field
    * @param {string} [options.sort.order] Sort order
-   * @returns {Promise<{ results: Object[] }>}
+   * @returns {Promise<{ results: Object[], total: number }>}
    */
   async getDeletedInventoryItems (dateRange, options = {}) {
     const {
@@ -143,10 +143,28 @@ class ReportRepository {
   }
 
   /**
-   * @returns {Promise<{ results: Object[] }>}
+   * @param {Object} [options={}] Options
+   * @param {number} [options.limit] Limit
+   * @param {number} [options.offset] Offset
+   * @returns {Promise<{ results: Object[], total: number }>}
    */
-  async getExpiringInventoryItems () {
-    const { data } = await this.apiClient.get(`${REPOSITORY_BASE_URL}/expiring-inventory-items`)
+  async getExpiringInventoryItems (options = {}) {
+    const {
+      offset,
+      limit
+    } = options
+
+    const queryString = new URLSearchParams()
+
+    if (offset !== undefined) {
+      queryString.set('offset', offset)
+    }
+
+    if (limit !== undefined) {
+      queryString.set('limit', limit)
+    }
+
+    const { data } = await this.apiClient.get(`${REPOSITORY_BASE_URL}/expiring-inventory-items?${queryString.toString()}`)
 
     return data
   }

@@ -154,10 +154,11 @@ async function getDeletedInventoryItemsReport(req, res, next) {
 
 async function getExpiringInventoryItemsReport(req, res, next) {
   try {
-    const results = await ReportExpiringInventoryItemsController.get()
+    const { results, total } = await ReportExpiringInventoryItemsController.get()
 
     return res.json({
-      results
+      results,
+      total
     })
   } catch (error) {
     next(error)
@@ -230,7 +231,7 @@ router.get('/events', validateDateRangeQuery, getEventsReport)
 router.get('/volunteers', validateDateRangeQuery, getVolunteersReport)
 router.get('/inventory-items', getInventoryItemsReport)
 router.get('/deleted-inventory-items', validateDateRangeQuery, validatePaginationQuery, getDeletedInventoryItemsReport)
-router.get('/expiring-inventory-items', getExpiringInventoryItemsReport)
+router.get('/expiring-inventory-items', validatePaginationQuery, getExpiringInventoryItemsReport)
 router.get('/monetary-donations', validateDateRangeQuery, getMonetaryDonationsReport)
 router.get('/sdgs', validateDateRangeQuery, getSdgsReport)
 router.get('/income-statement', validateDateRangeQuery, getIncomeStatementReport)

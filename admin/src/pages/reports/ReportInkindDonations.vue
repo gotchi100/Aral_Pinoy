@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-container class="py-5">
+    <b-container class="py-3">
       <b-row class="pb-3">
         <b-col cols="12">
           <b-card
@@ -66,50 +66,8 @@
       </b-row>
     </b-container>
 
-    <b-container class="py-5">
+    <b-container class="pb-3">
       <b-row class="pb-3">
-        <b-col cols="12">
-          <b-card
-            bg-variant="light"
-            style="border-radius: 20px;"
-          >
-            <b-container fluid>
-              <b-row>
-                <b-col cols="12">
-                  <h2 style="font-family:'Bebas Neue', cursive;">
-                    Expiring Items Inventory Report
-                  </h2>
-                </b-col>
-              </b-row>
-
-              <b-row class="py-2">
-                <b-col cols="12">
-                  <b-button
-                    pill
-                    variant="danger"
-                    :disabled="report.expiringInventoryItems.isGeneratingReport"
-                    @click="getExpiringInventoryItems"
-                  >
-                    <b-spinner
-                      v-if="report.expiringInventoryItems.isGeneratingReport"
-                      style="width: 1rem; height: 1rem;"
-                    />
-
-                    <template v-else>
-                      Generate Report
-                    </template>
-                  </b-button>
-                </b-col>
-              </b-row>
-            </b-container>
-          </b-card>
-        </b-col>
-      </b-row>
-
-      <b-row
-        v-if="report.expiringInventoryItems.hasGeneratedReport"
-        class="pb-3"
-      >
         <b-col cols="12">
           <b-card
             bg-variant="light"
@@ -134,17 +92,48 @@
 
               <b-row class="pb-3">
                 <b-col cols="12">
-                  <b-list-group>
-                    <b-list-group-item
-                      v-for="inventoryItem in report.expiringInventoryItems.results"
-                      :key="inventoryItem._id"
-                    >
-                      {{ inventoryItem.name }} <br>
-                      <span style="color: grey; font-size: 12px">
-                        {{ new Date(getItemExpirationDate(inventoryItem)).toLocaleString('en-us', { dateStyle: 'medium' }) }}
+                  <b-table
+                    :items="getExpiringInventoryItems"
+                    :fields="expiringInventoryItems.fields"
+                    :current-page="expiringInventoryItems.pagination.currentPage"
+                    :per-page="expiringInventoryItems.pagination.perPage"
+                    fixed
+                    stacked="sm"
+                    style="background:white"
+                    show-empty
+                    primary-key="_id"
+                  >
+                    <template #cell(bestBeforeDate)="{ item }">
+                      <span v-if="hasItemCustomCategory(item.category.customFields, 'bestBeforeDate')">
+                        {{
+                          new Date(item.category.customFields.bestBeforeDate).toLocaleString('en-us', {
+                            dateStyle: 'medium'
+                          })
+                        }}
                       </span>
-                    </b-list-group-item>
-                  </b-list-group>
+                    </template>
+
+                    <template #cell(expirationDate)="{ item }">
+                      <span v-if="hasItemCustomCategory(item.category.customFields, 'expirationDate')">
+                        {{
+                          new Date(item.category.customFields.expirationDate).toLocaleString('en-us', {
+                            dateStyle: 'medium'
+                          })
+                        }}
+                      </span>
+                    </template>
+                  </b-table>
+                </b-col>
+
+                <b-col cols="12">
+                  <b-pagination
+                    v-model="expiringInventoryItems.pagination.currentPage"
+                    :total-rows="expiringInventoryItems.total"
+                    :per-page="expiringInventoryItems.pagination.perPage"
+                    align="fill"
+                    size="sm"
+                    class="my-0"
+                  />
                 </b-col>
               </b-row>
             </b-container>
@@ -284,11 +273,6 @@ export default {
     return {
       isGeneratingReport: false,
       report: {
-        expiringInventoryItems: {
-          hasGeneratedReport: false,
-          isGeneratingReport: false,
-          results: []
-        },
         inventoryItems: {
           hasGeneratedReport: false,
           isGeneratingReport: false,
@@ -308,6 +292,21 @@ export default {
           { key: 'name', label: 'Item', sortable: true },
           { key: 'category.name', label: 'Category' },
           { key: 'deletedOn', label: 'Date of Deletion', sortable: true }
+        ]
+      },
+      expiringInventoryItems: {
+        results: [],
+        total: 0,
+        pagination: {
+          currentPage: 1,
+          perPage: 25
+        },
+        fields: [
+          { key: 'sku', label: 'SKU' },
+          { key: 'name', label: 'Item' },
+          { key: 'category.name', label: 'Category' },
+          { key: 'bestBeforeDate', label: 'Best Before' },
+          { key: 'expirationDate', label: 'Expiration Date' }
         ]
       }
     }
@@ -352,20 +351,19 @@ export default {
 
       return results
     },
-    async getExpiringInventoryItems () {
-      const expiringInventoryItems = this.report.expiringInventoryItems
+    async getExpiringInventoryItems (ctx) {
+      const { currentPage, perPage } = this.expiringInventoryItems.pagination
 
-      expiringInventoryItems.isGeneratingReport = true
-      expiringInventoryItems.hasGeneratedReport = false
+      const offset = this.calculateOffset(currentPage, perPage)
 
-      try {
-        const { results } = await reportRepository.getExpiringInventoryItems()
+      const { results, total } = await reportRepository.getExpiringInventoryItems({
+        limit: perPage,
+        offset
+      })
 
-        expiringInventoryItems.results = results
-        expiringInventoryItems.hasGeneratedReport = true
-      } finally {
-        expiringInventoryItems.isGeneratingReport = false
-      }
+      this.expiringInventoryItems.total = total
+
+      return results
     },
     async getInventoryItems () {
       const inventoryItems = this.report.inventoryItems
@@ -394,6 +392,13 @@ export default {
     },
     calculateOffset (currentPage, perPage) {
       return (currentPage - 1) * perPage
+    },
+    hasItemCustomCategory (value, field) {
+      if (value === undefined) {
+        return false
+      }
+
+      return value[field] !== undefined
     }
   }
 }

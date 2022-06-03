@@ -6,15 +6,23 @@ const InkindDonationModel = require('../../models/inkind-donations')
 
 class ReportExpiringInventoryItemsController {
   /**
+   * @param {Object} [params={}] Parameters
+   * @param {number} [params.offset] Pagination offset
+   * @param {number} [params.limit] Pagination limit
    * @returns {Promise<Object[]>}
    */
-  static async get() {
+  static async get(params = {}) {
+    const {
+      offset,
+      limit,
+    } = params
+
     const today = new Date()
 
     const nextMonth = addMonths(today, 1)
     const endOfNextMonth = endOfMonth(nextMonth)
-  
-    const expiringItems = await InkindDonationModel.find({
+
+    const findQuery = {
       $and: [
         {
           deleted : false,
@@ -42,14 +50,24 @@ class ReportExpiringInventoryItemsController {
           ]
         }
       ]
-    }, undefined, {
-      sort: {
-        'category.customFields.bestBeforeDate': 1,
-        'category.customFields.expirationDate' : 1
-      }
-    })
+    }
+  
+    const [expiringItems, count] = await Promise.all([
+      InkindDonationModel.find(findQuery, undefined, {
+        sort: {
+          'category.customFields.bestBeforeDate': 1,
+          'category.customFields.expirationDate' : 1
+        },
+        skip: offset,
+        limit
+      }),
+      InkindDonationModel.countDocuments(findQuery)
+    ])
     
-    return expiringItems
+    return {
+      results: expiringItems,
+      total: count
+    }
   }
 }
 
