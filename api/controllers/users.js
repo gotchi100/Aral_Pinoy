@@ -258,23 +258,66 @@ class UserController {
         pipeline: [
           {
             $match: {
-              $or: [{
-                absent: {
-                  $exists: false
+              $or: [
+                {
+                  absent: {
+                    $exists: false,
+                  },
+                },
+                {
+                  absent: false,
+                },
+              ],
+            },
+          },
+          {
+            $lookup: {
+              from: 'events',
+              localField: 'event',
+              foreignField: '_id',
+              pipeline: [
+                {
+                  $match: {
+                    status: 'ENDED',
+                  },
+                },
+              ],
+              as: 'events',
+            },
+          },
+          {
+            $set: { 
+              isEventEnded: {
+                $size: {
+                  $filter: {
+                    input: '$events',
+                    cond: {
+                      status: 'ENDED'
+                    }
+                  }
                 }
-              }, {
-                absent: false
-              }]
+              }
+            }
+          },
+          {
+            $project: {
+              events: 0,
+            },
+          },
+        ],
+        as: 'volunteeredEvents',
+      },
+    }, {
+      $set: { 
+        eventsVolunteeredCount: {
+          $size: {
+            $filter: {
+              input: '$volunteeredEvents',
+              cond: {
+                $eq: ['$$this.isEventEnded', 1]
+              }
             }
           }
-        ],
-        as: 'volunteeredEvents'
-      }
-    }, {
-      $addFields: { 
-        eventsVolunteeredCount: {
-          $size: { 
-            '$ifNull': ['$volunteeredEvents', [] ] } 
         }
       }
     }, {
