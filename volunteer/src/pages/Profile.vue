@@ -235,6 +235,51 @@
 
               <b-row>
                 <b-col cols="12">
+                  <validation-observer v-slot="{ changed, reset }">
+                    <validation-provider
+                      v-slot="validationContext"
+                    >
+                      <label
+                        for="update-profile-birthDate"
+                        style="font-family:'Bebas Neue', cursive;"
+                      >
+                        Date of Birth
+                      </label>
+
+                      <div class="input-group mb-3">
+                        <b-form-datepicker
+                          id="update-profile-birthDate"
+                          v-model="profile.birthDate"
+                          class="form-control"
+                          :state="getValidationState(validationContext)"
+                          :max="new Date(Date.now() - 567648000000)"
+                          :disabled="loading.birthDate"
+                          :date-format-options="{ month: 'long', day: 'numeric', year: 'numeric' }"
+                          value-as-date
+                        />
+
+                        <button
+                          class="btn btn-outline-success"
+                          type="button"
+                          :disabled="!changed || loading.birthDate"
+                          @click="updateProfile({ birthDate: profile.birthDate }, 'birthDate', reset)"
+                        >
+                          <b-spinner
+                            v-if="loading.birthDate"
+                            style="width: 1rem; height: 1rem;"
+                          />
+                          <template v-else>
+                            <b-icon icon="file-earmark-check-fill" />
+                          </template>
+                        </button>
+                      </div>
+                    </validation-provider>
+                  </validation-observer>
+                </b-col>
+              </b-row>
+
+              <b-row>
+                <b-col cols="12">
                   <validation-observer v-slot="{ invalid, changed, reset }">
                     <validation-provider
                       v-slot="validationContext"
@@ -900,6 +945,7 @@ export default {
         contactNumber: '',
         email: '',
         gender: '',
+        birthDate: '',
         location: {
           country: '',
           province: '',
@@ -914,6 +960,7 @@ export default {
         contactNumber: false,
         email: false,
         gender: false,
+        birthDate: false,
         location: false,
         skills: false
       },
@@ -1019,6 +1066,12 @@ export default {
     this.profile.gender = user.gender
     this.profile.skills = user.skills || []
     this.profile.skillIds = [].concat(this.profile.skills).map(toSkillId)
+
+    const birthDate = new Date(user.birthDate)
+
+    if (!isNaN(birthDate)) {
+      this.profile.birthDate = birthDate
+    }
 
     if (user.location !== undefined) {
       this.profile.location.country = user.location.country

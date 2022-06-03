@@ -113,6 +113,7 @@
                 v-model="user.birthDate"
                 class="mb-2"
                 :max="maxBirthDate"
+                :date-format-options="{ month: 'long', day: 'numeric', year: 'numeric' }"
               />
             </b-col>
           </b-row>
