@@ -404,7 +404,7 @@ export default {
 
         if (job.skills.length > 0) {
           jobToInsert.skillIds = job.skills.map((skill) => {
-            if (skill._id !== undefined || skill._id !== null) {
+            if (skill._id !== undefined && skill._id !== null) {
               return skill._id
             }
 
