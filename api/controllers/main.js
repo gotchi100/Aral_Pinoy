@@ -154,6 +154,8 @@ class MainController {
 
         if (birthDate === undefined) {
           return res.redirect(`${config.volunteer.google.oauth.redirectUri}?errorMessage=no_birth_date`)
+        } else if (isNaN(birthDate)) {
+          return res.redirect(`${config.volunteer.google.oauth.redirectUri}?errorMessage=no_birth_date_year`)
         } else {
           userDocument.birthDate = birthDate
         }

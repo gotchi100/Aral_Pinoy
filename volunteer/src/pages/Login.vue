@@ -131,7 +131,8 @@ const ERROR_MESSAGE_MAP = {
   invalid_user: 'Invalid User Login',
   google_no_family_name: 'Google account sign-in requires a family name',
   google_no_gender: 'Google account sign-in requires your gender to be available to the public',
-  google_no_birth_date: 'Google account sign-in requires your birth date to be available to the public'
+  google_no_birth_date: 'Google account sign-in requires your birth date to be available to the public',
+  google_no_birth_date_year: 'Google account sign-in requires the YEAR of your birth date to be available to the public'
 }
 
 export default {
