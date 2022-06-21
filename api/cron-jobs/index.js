@@ -13,7 +13,12 @@ const agenda = new Agenda({
   }
 })
 
+const TIMEZONE = {
+  ASIA_MANILA: 'Asia/Manila'
+}
+
 const EVERY_MIDNIGHT_CRON = '0 0 * * *'
+const EVERY_FIVE_MINUTES_CRON = '*/5 * * * *'
 
 module.exports = async function () {
   checkExpiringInventoryItems(agenda)
@@ -23,10 +28,15 @@ module.exports = async function () {
   await agenda.start()
 
   await agenda.every(EVERY_MIDNIGHT_CRON, [
-    'check expiring inventory items',
+    'delete expired inventory items',
     'check events with insufficient volunteers',
-    'delete expired inventory items'
   ], undefined, {
-    timezone: 'Asia/Manila'
+    timezone: TIMEZONE.ASIA_MANILA
+  })
+
+  await agenda.every(EVERY_FIVE_MINUTES_CRON, [
+    'check expiring inventory items',
+  ], undefined, {
+    timezone: TIMEZONE.ASIA_MANILA
   })
 }
