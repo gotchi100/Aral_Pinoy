@@ -72,6 +72,8 @@ import Donate from './pages/AdminDonate.vue'
 
 import DemoCronJobs from './pages/demo/DemoCronJobs'
 
+import Forms from './pages/Forms'
+
 import { apiClient } from './axios'
 import vuexStore from './store'
 
@@ -370,6 +372,14 @@ const routes = [
   {
     path: '/donate',
     component: Donate,
+    meta: {
+      requiresAuth: true
+    }
+  },
+
+  {
+    path: '/forms',
+    component: Forms,
     meta: {
       requiresAuth: true
     }

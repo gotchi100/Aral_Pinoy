@@ -148,6 +148,10 @@
               </span>
             </b-dropdown-item>
 
+            <b-dropdown-item to="/forms">
+              Forms
+            </b-dropdown-item>
+
             <b-dropdown-item to="/edit-homepage">
               Edit Homepage
             </b-dropdown-item>

@@ -42,6 +42,8 @@ const ikdOutboundTransactionsRouter = require('./routes/inkind-donations/outboun
 
 const notificationsRouter = require('./routes/notifications')
 
+const formTemplatesStaticRouter = require('./routes/form-templates/static')
+
 const seedSdgs = require('./db/seeders/sdg')
 const setupCronJobs = require('./cron-jobs/index')
 
@@ -87,6 +89,10 @@ const publicRoutes = [
   },
   {
     url: /^\/monetary-donations\/[A-Z0-9-]{36}\/redirectUri/,
+    methods: ['GET']
+  },
+  {
+    url: '/form-templates/static/post_event_form',
     methods: ['GET']
   },
 ]
@@ -135,6 +141,8 @@ app.use('/inkind-donation-transactions', ikdTransactionsRouter)
 app.use('/inkind-donation-outbound-transactions', ikdOutboundTransactionsRouter)
 
 app.use('/notifications', notificationsRouter)
+
+app.use('/form-templates/static', formTemplatesStaticRouter)
 
 app.use(function (req, res, next) {
   res.status(404).json({
